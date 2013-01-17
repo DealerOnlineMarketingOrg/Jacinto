@@ -17,6 +17,7 @@
 		public $selected_group;
 		public $selected_client;
 		public $theme_settings;
+		public $validser;
 		
 		public function __construct() {
 			parent::__construct();
@@ -55,7 +56,7 @@
 						
 			//This checks the user validation
 			$this->validUser = ($this->session->userdata('valid_user')) ? TRUE : FALSE;
-			if(!$this->validUser) redirect('login','refresh');
+			if(!$this->validUser) redirect('auth/login');
 			
 			$this->selected_agency = (($this->user['DropdownDefault']->SelectedAgency) ? $this->user['DropdownDefault']->SelectedAgency : $this->user['AgencyID']);
 			$this->selected_group = (($this->user['DropdownDefault']->SelectedGroup) ? $this->user['DropdownDefault']->SelectedGroup : $this->user['GroupID']);

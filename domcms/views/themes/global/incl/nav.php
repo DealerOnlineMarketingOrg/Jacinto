@@ -16,5 +16,7 @@
 </div>
 <!-- Sidebar -->
 <script type="text/javascript">
-	
+	$(document).ready(function() {
+		//$('li.<?= ACTIVE_BUTTON; ?>').find('ul.sub').css({'display':'block'});
+	});
 </script>
