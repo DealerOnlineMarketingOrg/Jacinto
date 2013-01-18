@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<title>It's Brain - premium admin HTML template by Eugene Kopyov</title>
+
+<link href="css/main.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Cuprum' rel='stylesheet' type='text/css' />
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+
+<script type="text/javascript" src="js/plugins/spinner/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="js/plugins/spinner/ui.spinner.js"></script>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script> 
+
+<script type="text/javascript" src="js/plugins/wysiwyg/jquery.wysiwyg.js"></script>
+<script type="text/javascript" src="js/plugins/wysiwyg/wysiwyg.image.js"></script>
+<script type="text/javascript" src="js/plugins/wysiwyg/wysiwyg.link.js"></script>
+<script type="text/javascript" src="js/plugins/wysiwyg/wysiwyg.table.js"></script>
+
+<script type="text/javascript" src="js/plugins/flot/jquery.flot.js"></script>
+<script type="text/javascript" src="js/plugins/flot/jquery.flot.orderBars.js"></script>
+<script type="text/javascript" src="js/plugins/flot/jquery.flot.pie.js"></script>
+<script type="text/javascript" src="js/plugins/flot/excanvas.min.js"></script>
+<script type="text/javascript" src="js/plugins/flot/jquery.flot.resize.js"></script>
+
+<script type="text/javascript" src="js/plugins/tables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="js/plugins/tables/colResizable.min.js"></script>
+
+<script type="text/javascript" src="js/plugins/forms/forms.js"></script>
+<script type="text/javascript" src="js/plugins/forms/autogrowtextarea.js"></script>
+<script type="text/javascript" src="js/plugins/forms/autotab.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.validationEngine-en.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.validationEngine.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.dualListBox.js"></script>
+<script type="text/javascript" src="js/plugins/forms/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.maskedinput.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.inputlimiter.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.tagsinput.min.js"></script>
+
+<script type="text/javascript" src="js/plugins/other/calendar.min.js"></script>
+<script type="text/javascript" src="js/plugins/other/elfinder.min.js"></script>
+
+<script type="text/javascript" src="js/plugins/uploader/plupload.js"></script>
+<script type="text/javascript" src="js/plugins/uploader/plupload.html5.js"></script>
+<script type="text/javascript" src="js/plugins/uploader/plupload.html4.js"></script>
+<script type="text/javascript" src="js/plugins/uploader/jquery.plupload.queue.js"></script>
+
+<script type="text/javascript" src="js/plugins/ui/jquery.progress.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.jgrowl.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.tipsy.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.alerts.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.colorpicker.js"></script>
+
+<script type="text/javascript" src="js/plugins/wizards/jquery.form.wizard.js"></script>
+<script type="text/javascript" src="js/plugins/wizards/jquery.validate.js"></script>
+
+<script type="text/javascript" src="js/plugins/ui/jquery.breadcrumbs.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.collapsible.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.ToTop.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.listnav.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.sourcerer.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.timeentry.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.prettyPhoto.js"></script>
+
+<script type="text/javascript" src="js/custom.js"></script>
+
+</head>
+
+<body>
+
+<!-- Top navigation bar -->
+<div id="topNav">
+    <div class="fixed">
+        <div class="wrapper">
+            <div class="welcome"><a href="#" title=""><img src="images/userPic.png" alt="" /></a><span>Howdy, Eugene!</span></div>
+            <div class="userNav">
+                <ul>
+                    <li><a href="#" title=""><img src="images/icons/topnav/profile.png" alt="" /><span>Profile</span></a></li>
+                    <li><a href="#" title=""><img src="images/icons/topnav/tasks.png" alt="" /><span>Tasks</span></a></li>
+                    <li class="dd"><a title=""><img src="images/icons/topnav/messages.png" alt="" /><span>Messages</span><span class="numberTop">8</span></a>
+                        <ul class="menu_body">
+                            <li><a href="#" title="" class="sAdd">new message</a></li>
+                            <li><a href="#" title="" class="sInbox">inbox</a></li>
+                            <li><a href="#" title="" class="sOutbox">outbox</a></li>
+                            <li><a href="#" title="" class="sTrash">trash</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#" title=""><img src="images/icons/topnav/settings.png" alt="" /><span>Settings</span></a></li>
+                    <li><a href="login.html" title=""><img src="images/icons/topnav/logout.png" alt="" /><span>Logout</span></a></li>
+                </ul>
+            </div>
+            <div class="fix"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Header -->
+<div id="header" class="wrapper">
+    <div class="logo"><a href="/" title=""><img src="images/loginLogo.png" alt="" /></a></div>
+    <div class="middleNav">
+    	<ul>
+        	<li class="iMes"><a href="#" title=""><span>Support tickets</span></a><span class="numberMiddle">9</span></li>
+            <li class="iStat"><a href="#" title=""><span>Statistics</span></a></li>
+            <li class="iUser"><a href="#" title=""><span>User list</span></a></li>
+            <li class="iOrders"><a href="#" title=""><span>Billing panel</span></a></li>
+        </ul>
+    </div>
+    <div class="fix"></div>
+</div>
+
+<!-- Main wrapper -->
+<div class="wrapper">
+
+	<!-- Left navigation -->
+    <div class="leftNav">
+    	<ul id="menu">
+        	<li class="dash"><a href="index.html" title="" class="active"><span>Dashboard</span></a></li>
+            <li class="graphs"><a href="charts.html" title="" class="exp"><span>Reports</span></a>
+            	<ul class="sub">
+                    <li><a href="403.html" title="">DPR</a></li>
+                    <li><a href="404.html" title="">Reports Query</a></li>
+                    <li><a href="405.html" title="">Game Day</a></li>
+                    <li><a href="500.html" title="">DMS Database</a></li>
+                    <li><a href="503.html" title="">Web</a></li>
+                    <li class="last"><a href="offline.html" title="">Leads</a></li>
+                </ul>
+            </li>
+            <li class="forms"><a href="form_elements.html" title="" class="exp"><span>Advertising</span></a>
+            	<ul class="sub">
+                    <li><a href="403.html" title="">Google</a></li>
+                    <li><a href="404.html" title="">Yahoo/Bing</a></li>
+                    <li class="last"><a href="offline.html" title="">Facebook</a></li>
+                </ul>
+            </li>
+            <li class="login"><a href="ui_elements.html" title="" class="exp"><span>Creative</span></a>
+            	<ul class="sub">
+                    <li><a href="403.html" title="">Campaigns</a></li>
+                    <li><a href="404.html" title="">E-Blasts</a></li>
+                    <li><a href="405.html" title="">Newsletters</a></li>
+                    <li><a href="500.html" title="">CRM Templates</a></li>
+                    <li><a href="503.html" title="">Specials</a></li>
+                    <li class="last"><a href="offline.html" title="">Misc</a></li>
+                </ul>
+            </li>
+            <li class="typo"><a href="typo.html" title="" class="exp"><span>Content</span></a>
+            	<ul class="sub">
+                    <li><a href="403.html" title="">Dealership Pages</a></li>
+                    <li><a href="404.html" title="">Variable Ops</a></li>
+                    <li class="last"><a href="offline.html" title="">Fixed Ops</a></li>
+                </ul>
+            </li>
+            <li class="tables"><a href="tables.html" title="" class="exp"><span>Merchandising</span></a>
+            	<ul class="sub">
+                    <li><a href="403.html" title="">New Car</a></li>
+                    <li><a href="404.html" title="">Reports Query</a></li>
+                    <li><a href="405.html" title="">Game Day</a></li>
+                    <li><a href="500.html" title="">DMS Database</a></li>
+                    <li><a href="503.html" title="">Web</a></li>
+                    <li class="last"><a href="offline.html" title="">Leads</a></li>
+                </ul>
+            </li>
+            <li class="cal"><a href="calendar.html" title="" class="exp"><span>Reputation/Social</span></a>
+            	<ul class="sub">
+                    <li><a href="403.html" title="">Google+</a></li>
+                    <li><a href="404.html" title="">Yelp</a></li>
+                    <li><a href="405.html" title="">Yahoo</a></li>
+                    <li class="last"><a href="offline.html" title="">Bing</a></li>
+                </ul>
+            </li>
+            <li class="gallery"><a href="gallery.html" title="" class="exp"><span>Admin</span></a>
+            	<ul class="sub">
+                    <li><a href="403.html" title="">Portal</a></li>
+                    <li><a href="404.html" title="">Agency</a></li>
+                    <li><a href="form_editgroups.html" title="">Groups</a></li>
+                    <li><a href="form_editclients.html" title="">Clients</a></li>
+                    <li><a href="form_addusers.html" title="">Users</a></li>
+                    <li><a href="form_elements.html" title="">Contacts</a></li>
+                    <li class="last"><a href="offline.html" title="">Leads</a></li>
+                </ul>
+            </li>
+            <li class="contacts"><a href="contacts.html" title=""><span>Contact list</span></a></li>
+        </ul>
+    </div>
+
+	<!-- Content -->
+    <div class="content" id="container">
+    	<div class="title"><h5>Admin</h5></div>
+        
+        <!-- Statistics -->
+        <div class="stats">
+        	<ul>
+            	<li><a href="#" class="count grey" title="">52</a><span>new pending tasks</span></li>
+                
+                <li><a href="#" class="count grey" title="">520</a><span>pending orders</span></li>
+                <li><a href="#" class="count grey" title="">14</a><span>new opened tickets</span></li>
+                <li class="last"><a href="#" class="count grey" title="">48</a><span>new user registrations</span></li>
+            </ul>
+            <div class="fix"></div>
+        </div>
+        
+        <!-- Form begins -->
+        <form id="usualValidate" class="mainForm" method="post" action="">
+        
+        	<!-- Input text fields -->
+            <fieldset>
+                <div class="widget first">
+                    <div class="head"><h5 class="iList">Add Client</h5></div>
+                        <div class="rowElem noborder">
+                            <label>First Name<span class="req">*</span></label>
+                            <div class="formRight"><input type="text" class="required" name="firstname" id="firstname"/></div><div class="fix"></div>
+                        </div>
+                        <div class="rowElem noborder">
+                            <label>Last Name<span class="req">*</span></label>
+                            <div class="formRight"><input type="text" class="required" name="lastname" id="lastname"/></div><div class="fix"></div>
+                        </div>
+                        <div class="rowElem noborder"><label>Address</label><div class="formRight"><input type="text" name="inputtext"/></div><div class="fix"></div></div>
+                        <div class="rowElem noborder"><label>City</label><div class="formRight"><input type="text" name="inputtext"/></div><div class="fix"></div></div>
+                        <div class="rowElem noborder">
+                            <label>State</label>
+                            <div class="formRight searchDrop">
+                            <select data-placeholder="Choose a State..." class="chzn-select" style="width:350px;" tabindex="2">
+                                			<option value=""></option> 
+                                            <option value="AL">Alabama</option>
+                                            <option value="AK">Alaska</option>
+                                            <option value="AZ">Arizona</option>
+                                            <option value="AR">Arkansas</option>
+                                            <option value="CA">California</option>
+                                            <option value="CO">Colorado</option>
+                                            <option value="CT">Connecticut</option>
+                                            <option value="DE">Delaware</option>
+                                            <option value="FL">Florida</option>
+                                            <option value="GA">Georgia</option>
+                                            <option value="HI">Hawaii</option>
+                                            <option value="ID">Idaho</option>
+                                            <option value="IL">Illinois</option>
+                                            <option value="IN">Indiana</option>
+                                            <option value="IA">Iowa</option>
+                                            <option value="KS">Kansas</option>
+                                            <option value="KY">Kentucky</option>
+                                            <option value="LA">Louisiana</option>
+                                            <option value="ME">Maine</option>
+                                            <option value="MD">Maryland</option>
+                                            <option value="MA">Massachusetts</option>
+                                            <option value="MI">Michigan</option>
+                                            <option value="MN">Minnesota</option>
+                                            <option value="MS">Mississippi</option>
+                                            <option value="MO">Missouri</option>
+                                            <option value="MT">Montana</option>
+                                            <option value="NE">Nebraska</option>
+                                            <option value="NV">Nevada</option>
+                                            <option value="NH">New Hampshire</option>
+                                            <option value="NJ">New Jersey</option>
+                                            <option value="NM">New Mexico</option>
+                                            <option value="NY">New York</option>
+                                            <option value="NC">North Carolina</option>
+                                            <option value="ND">North Dakota</option>
+                                            <option value="OH">Ohio</option>
+                                            <option value="OK">Oklahoma</option>
+                                            <option value="OR">Oregon</option>
+                                            <option value="PA">Pennsylvania</option>
+                                            <option value="RI">Rhode Island</option>
+                                            <option value="SC">South Carolina</option>
+                                            <option value="SD">South Dakota</option>
+                                            <option value="TN">Tennessee</option>
+                                            <option value="TX">Texas</option>
+                                            <option value="UT">Utah</option>
+                                            <option value="VT">Vermont</option>
+                                            <option value="VA">Virginia</option>
+                                            <option value="WA">Washington</option>
+                                            <option value="WV">West Virginia</option>
+                                            <option value="WI">Wisconsin</option>
+                                            <option value="WY">Wyoming</option>
+                            </select>
+                            </div>             
+                            <div class="fix"></div>
+                            </div>
+                            <div class="rowElem noborder"><label>Zip Code</label><div class="formRight"><input type="text" name="inputtext"/></div><div class="fix"></div></div>
+                            <div class="rowElem noborder">
+                                <label>Phone Number<span class="req">*</span></label>
+                                <div class="formRight"><input type="text" class="maskPhone" class="required" value="" /><span class="formNote">(999) 999-9999</span></div>
+                                <div class="fix"></div>
+                            </div>
+                            <div class="rowElem noborder"><label>Notes</label><div class="formRight"><textarea rows="8" cols="" class="auto" name="textarea"></textarea></div><div class="fix"></div></div>
+                            <div class="rowElem noborder">
+                                <label>Client Code<span class="req">*</span></label>
+                                <div class="formRight"><input type="text" class="required" name="clientcode" id="clientcode"/></div><div class="fix"></div>
+                            </div>
+                            <div class="rowElem noborder">
+                                <label>Member of<span class="req">*</span></label>
+                                <div class="formRight">
+                                <select name="select2" class="required" name="memberof">
+                                    	<option value="opt1">Choose a level...</option>
+										<option value="DDI">DDI</option>
+										<option value="DOM">Dealer Online Marketing</option>
+                                </select>
+                                </div>
+                                <div class="fix"></div>
+                            </div>
+                            <div class="rowElem noborder">
+                                <label>Tags</label>
+                                <div class="formRight">
+                                <select name="select2" name="tags">
+                                    <option value="opt1">Choose a team...</option>
+										<option>Red Team</option>
+										<option>Blue Team</option>
+										<option>Green Team</option>
+										<option>Purple Team</option>
+                                </select>
+                                </div>
+                                <div class="fix"></div>
+                            </div>
+                            <div class="submitForm"><input type="submit" value="submit" class="redBtn" /></div>
+                            <div class="fix"></div>
+                    </div>
+                
+            </fieldset>
+        </form>        
+            
+    </div>
+    
+    <div class="fix"></div>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+	<div class="wrapper">
+    	<span>&copy; Copyright 2011. All rights reserved. It's Brain admin theme by <a href="#" title="">Eugene Kopyov</a></span>
+    </div>
+</div>
+
+</body>
+</html>
