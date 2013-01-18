@@ -1132,6 +1132,18 @@ color: #656565;
 .chzn-disabled .chzn-choices .search-choice .search-choice-close { cursor: default; }
 
 
+/* Dealer Dropdown Styles */
+ul.chzn-results li.break {border-bottom:1px solid #ddd;}
+ul.chzn-results li.no-indent { padding-left:5px; }
+ul.chzn-results li.single-indent {padding-left:15px;}
+ul.chzn-results li.double-indent {padding-left:20px;}
+ul.chzn-results li.agency {color:red;}
+ul.chzn-results li.group {color:blue;}
+ul.chzn-results li.client {color:black}
+
+ul.chzn-results li.tag_green{color:green;}
+ul.chzn-results li.tag_blue {color:blue;}
+ul.chzn-results li.tag_red{color:red;}
 
 
 /* =====  Media queries  ===== */

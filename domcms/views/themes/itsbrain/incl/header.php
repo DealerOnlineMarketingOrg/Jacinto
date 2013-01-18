@@ -28,10 +28,10 @@
             </div>
             <div class="dropRight searchDrop" style="float:right;">
                 <select class="chzn-select" tabindex="7">
-                    <option>Denver Broncos</option>
-                    <option>Kansas City Chiefs</option>
-                    <option>Oakland Raiders</option>
-                    <option>San Diego Chargers</option>
+                    <option>-- All --</option>
+                    <option class="tag_green">Green Team</option>
+                    <option class="tag_red">Red Team</option>
+                    <option class="tag_blue">Blue Team</option>
                 </select>                      
             </div>
             <div class="fix"></div>
