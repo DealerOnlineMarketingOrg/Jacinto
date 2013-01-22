@@ -10,33 +10,6 @@
         </ul>
     </div>
     <div class="fix"></div>
-    <div class="dealerDropdowns">
-    	<div class="rowElem">
-        	<div class="dropLeft searchDrop" style="float:left;margin-right:5px;">
-				<?= dealer_selector(); ?>        
-                <script type="text/javascript">
-					$("select#client_dd>option").each( function(){
-						var $option = $(this);  
-						if($(this).prev().attr('data-level') == $option.attr('data-level')) {
-							if(!$(this).hasClass('agency')) {
-								$(this).prev().remove();
-								$(this).removeClass('double-indent').addClass('single-indent');
-							}
-						}
-					})
-				</script>    
-            </div>
-            <div class="dropRight searchDrop" style="float:right;">
-                <select class="chzn-select" tabindex="7">
-                    <option>-- All --</option>
-                    <option class="tag_green">Green Team</option>
-                    <option class="tag_red">Red Team</option>
-                    <option class="tag_blue">Blue Team</option>
-                </select>                      
-            </div>
-            <div class="fix"></div>
-        </div>
-    </div>
 </div>
 <div class="wrapper">
 	
