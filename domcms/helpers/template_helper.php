@@ -70,6 +70,18 @@ function dealer_selector() {
                         }); 
  
                     }); 
+                    jQuery("#dealerDropDown option").each( function(){
+                        var option = jQuery(this);  
+                        //alert(option);
+                        if(option.prev().attr("data-level") == option.attr("data-level")) {
+                            if(!option.hasClass("agency")) {
+                                option.prev().remove();
+                                option.removeClass("double-indent").addClass("single-indent"
+                                );
+                            }
+                        }
+                    })
+
                  </script>';
     return $options;
 }

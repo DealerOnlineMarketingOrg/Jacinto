@@ -8,7 +8,7 @@ jQuery(document).ready(function() {
             data:({Agency:name,Level:level}),
             method:"post",
             success:function(data) {
-                alert(data);
+                //alert(data);
                 $("#clientInformation").html(data);
                 //location.reload();
             }
