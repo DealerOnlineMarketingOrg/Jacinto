@@ -56,7 +56,7 @@
 						
 			//This checks the user validation
 			$this->validUser = ($this->session->userdata('valid_user')) ? TRUE : FALSE;
-			if(!$this->validUser) redirect('auth/login');
+			if(!$this->validUser) redirect('login');
 			
 			$this->selected_agency = (($this->user['DropdownDefault']->SelectedAgency) ? $this->user['DropdownDefault']->SelectedAgency : $this->user['AgencyID']);
 			$this->selected_group = (($this->user['DropdownDefault']->SelectedGroup) ? $this->user['DropdownDefault']->SelectedGroup : $this->user['GroupID']);
@@ -65,6 +65,8 @@
 			$this->load->model('nav');
 			$this->main_nav = $this->nav->main($this->user['DropdownDefault']->PermLevel);
 			$this->user_nav = $this->nav->user($this->user['AccessLevel']);
+			
+			//print_object($this->user['DropdownDefault']);
 		}
 		
 		public function LoadTemplate($filepath,$data = false, $header_data = false, $nav_data = false, $footer_data = false) {
@@ -79,7 +81,7 @@
 				'avatar' => $this->avatar,
 			);
 			$this->load->view($this->theme_settings['GlobalDir'] . '/incl/header', $this->theme_settings);
-			$this->load->view($this->theme_settings['GlobalDir'] . '/incl/user_nav');
+			$this->load->view($this->theme_settings['GlobalDir'] . '/incl/user_nav', $user_nav);
 			$this->load->view($this->theme_settings['ThemeDir']  . '/incl/header',($header_data) ? $header_data : array());
 			$this->load->view($this->theme_settings['GlobalDir'] . '/incl/nav', ($nav) ? $nav : array());
 			$this->load->view($this->theme_settings['ThemeDir'] . '/' . $filepath, ($data) ? $data : array());

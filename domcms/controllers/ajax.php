@@ -24,9 +24,7 @@
 			
 			print($this->input->get('Level'));
 			
-			/*$this->generateSessionVars($this->input->get('Level'));*/
-			
-			$this->session->sess_write();
+			$this->generateSessionVars($this->input->get('Level'));
 			
             print($levelName . $name);
         }
@@ -37,10 +35,12 @@
 			$group  =  $this->administration->getClient($client)->GroupID;
 			$agency = $this->administration->getGroups($group)->AgencyId;
 			
-			$this->user['DropdownDefault']->SelectedAgency = $agency;
-			$this->user['DropdownDefault']->SelectedGroup = $group;
-			$this->user['Dropdowndefault']->SelectedClient = $client;
+			$obj = new stdObject();
+			$obj->SelectedAgency = $agency;
+			$obj->SelectedGroup = $group;
+			$obj->SelectedClient = $client;
 			
+			$this->user['Selected'] = $obj;
 			$this->session->sess_write();
 		}
 		
