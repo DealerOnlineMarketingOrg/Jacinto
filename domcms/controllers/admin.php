@@ -343,10 +343,10 @@ class Admin extends DOM_Controller {
 
 
                     //If there is a message to the user, present it as it should be.
-                    if ($msg != 'error') {
+                    if ($msg AND $msg != 'error') {
                         //The success message after a group was added or edited.
-                        $html .= success_msg('The Group was added successfully!');
-                    } else {
+                        $html .= success_msg('The Group was added/edited successfully!');
+                    } elseif($msg AND $msg != 'success') {
                         //The error message after a group was added, or edited.
                         $html .= error_msg();
                     }
@@ -365,8 +365,7 @@ class Admin extends DOM_Controller {
 
                     $data = array(
                         'page_id' => 'groups',
-                        'page_html' => $html,
-                        'msg' => $msg
+                        'page_html' => $html
                     );
 
                     $this->LoadTemplate('pages/listings', $data);
@@ -400,13 +399,14 @@ class Admin extends DOM_Controller {
         $this->load->library('table');
         $this->load->helper('html');
         $this->load->helper('msg');
+        $this->load->helper('template');
 
         $agency_id = $this->user['DropdownDefault']->SelectedAgency;
         $group_id = $this->user['DropdownDefault']->SelectedGroup;
 
         switch ($page) :
             case 'add' :
-                $this->LoadTEmplate('forms/form_addclients');
+                $this->LoadTemplate('forms/form_addclients');
                 break;
 
             case 'edit' :
@@ -423,19 +423,18 @@ class Admin extends DOM_Controller {
                     $clients = (($level != 'a') ? $this->administration->getAllClientsInGroup($group_id) : $this->administration->getAllClientsInAgency($agency_id));
                     
                     //create html table with codeigniter library. This is awesome btw.
-                    $this->table->set_heading('Code' , 'Name', 'Member Of', 'Status', 'Actions');
+                    $this->table->set_heading('Code' , 'Name', 'Group Name', 'Status', 'Actions');
                     
                     $html = '';
                     
                     //If there is a message to the user, present it as it should be.
-                    if ($msg != 'error') {
+                    if ($msg AND $msg != 'error') {
                         //The success message after a group was added or edited.
-                        $html .= success_msg('The Client was added/edited successfully!');
-                    } else {
+                        $html .= success_msg('The Group was added/edited successfully!');
+                    } elseif($msg AND $msg != 'success') {
                         //The error message after a group was added, or edited.
                         $html .= error_msg();
                     }
-
                     
                     if(isset($clients) AND (count($clients) > 1)) {
                         //LOOP THROUGH EACH AGENCY AND CREATE A FORM BUTTON "EDIT" AND ROW FOR IT.
@@ -478,12 +477,18 @@ class Admin extends DOM_Controller {
                                     'class' => 'basicBtn',
                                     'value' => 'Edit'
                                 );
+                                
                                 //BUILD THE FORM ROW IN THE TABLE WITH NAME,DESCRIPTION,STATUS, and EDIT BUTTON, THE FORM ALSO HAS A HIDDEN ELEMENT WITH THE AGENCY ID, THIS IS WHAT WE
                                 //USE TO POST TO THE EDIT PAGE TO GRAB THE CORRECT AGENCY FROM THE DB.
-                                $this->table->add_row($client->ClientCode,
-                                        $client->Name, $client->GroupName, (($client->Status) ? 'Active' : 'Disabled'),
+                                $this->table->add_row(
+                                        $client->ClientCode,
+                                        $client->Name, 
+                                        $client->GroupName, (($client->Status) ? 'Active' : 'Disabled'),
                                         //IF THE USER HAS TO HAVE THE CORRECT PERMISSIONS TO VIEW A FEATURE
-                                        (($this->CheckModule('Client_Edit')) ? form_open('/admin/clients/edit', $form_attr) . form_hidden('client_id', $client->ClientID) . form_submit($button) . form_close() : ''));
+                                        (($this->CheckModule('Client_Edit')) ? 
+                                                form_open('/admin/clients/edit', $form_attr) . form_hidden('client_id', $client->ClientID) . form_submit($button) . form_close() 
+                                         : '')
+                                );
                             endif;
                         endforeach;
                     }else {
@@ -501,7 +506,8 @@ class Admin extends DOM_Controller {
                             );
                             //BUILD THE FORM ROW IN THE TABLE WITH NAME,DESCRIPTION,STATUS, and EDIT BUTTON, THE FORM ALSO HAS A HIDDEN ELEMENT WITH THE AGENCY ID, THIS IS WHAT WE
                             //USE TO POST TO THE EDIT PAGE TO GRAB THE CORRECT AGENCY FROM THE DB.
-                            $this->table->add_row($clients->ClientCode,
+                            $this->table->add_row(
+                                    $clients->ClientCode,
                                     $clients->Name, $clients->GroupName, (($clients->Status) ? 'Active' : 'Disabled'),
                                     //IF THE USER HAS TO HAVE THE CORRECT PERMISSIONS TO VIEW A FEATURE
                                     (($this->CheckModule('Client_Edit')) ? form_open('/admin/clients/edit', $form_attr) . form_hidden('client_id', $clients->ClientID) . form_submit($button) . form_close() : ''));
@@ -509,20 +515,29 @@ class Admin extends DOM_Controller {
                     }
                     //THE ADD AGENCY BUTTON
                     $add_button = array(
-                        'class' => 'button green float_right',
+                        'class' => 'greenBtn floatRight button',
                         'id' => 'add_client_btn',
                         'href' => 'javascript:void(0)',
                     );
 
                     $tmpl = array('table_open' => '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">');
                     $this->table->set_template($tmpl);
+                    
+                    //This builds the pages html out. We do this here so all our listing pages can have the same template view.
+                    $html .= '<div class="title">' . "\n";
+                    $html .= "\t" . heading('Clients', 5);
+                    $html .= '</div>' . "\n";
+                    $html .= $this->table->generate() . "\n";
+                    $html .= '<div class="fix"></div>';
 
-                    //BUILD THE HTML FOR THE PAGE HERE IN A STRING. THE VIEW JUST ECHOS THIS OUT.
-                    $page_html = ' <div class="title">' . heading('Clients', 5) . '</div>' . $this->table->generate() . (($this->CheckModule('Client_Add')) ? anchor(base_url() . 'admin/clients/add', '+', 'class="button green float_right" id="add_group_btn"') : '');
+                    //If the user has permission to add a new group, then show a button to do so.
+                    if ($this->CheckModule('Group_Add')) {
+                        $html .= anchor(base_url() . 'admin/clients/add', 'Add Client', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_client_btn"');
+                    }
 
                     $data = array(
                         'page_id' => 'clients',
-                        'page_html' => $page_html,
+                        'page_html' => $html,
                     );
                     //LOAD THE TEMPLATE
                     $this->LoadTemplate('pages/listings', $data);

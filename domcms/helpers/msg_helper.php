@@ -5,11 +5,11 @@
     }
     
     function error_msg() {
-        return '<div class="nNote nFailure hideit"><p><strong>Error:</strong> Something went wrong. Please try again or contact your admin.</p></div>';
+        return '<div class="nNote nFailure hideit"><p><strong>Error:</strong> Something went wrong. Please try again or contact your admin.</p></div><div class="fix"></div>';
     }
     
     function success_msg($msg) {
-        return '<div class="nNote nSuccess hideit"><p><strong>SUCCESS:</strong> ' . $msg . '</p></div>';
+        return '<div class="nNote nSuccess hideit"><p><strong>SUCCESS:</strong> ' . $msg . '</p></div><div class="fix"></div>';
     }
 
 ?>

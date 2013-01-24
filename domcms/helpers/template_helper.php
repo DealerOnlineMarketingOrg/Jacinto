@@ -34,13 +34,16 @@ function breadcrumb() {
 }
 
 function showStates() {
-    $ci = $get_instance();
+    $ci =& get_instance();
     $ci->load->model('utilities');
     $states = $ci->utilities->getStates();
-    $options = '';
+    
+    $options = '<select data-placeholder="Choose a State..." class="chzn-select" style="width:350px;" name="state">';
     foreach ($states as $state) {
-        $option .= '<option value="' . $state->Abbrev . '">' . $state->Name . '</option>';
+        $options .= '<option value="' . $state->Abbrev . '">' . $state->Name . '</option>';
     }
+    $options .= '</select>';
+    
     return $options;
 }
 
