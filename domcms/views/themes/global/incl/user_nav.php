@@ -6,10 +6,9 @@
         	<div class="welcome">
             	<a href="<?= base_url(); ?>user/profile"><img style="width:22px;" src="<?= $avatar; ?>" alt="<?= $user['FirstName'] . ' ' . $user['LastName']; ?>" /><span>Welcome, <?= $user['FirstName']; ?></span></a>
             </div>
-            <div class="clientInfo">
+            <div class="clientInfo" id="clientInformation">
             	<span class="title"><?= get_client_type(); ?></span><span><?= get_client_name(); ?></span>
             </div>
-            <?php endif; ?>
             <div class="userNav">
                 <ul>
                     <li><a href="#" title=""><img src="<?= base_url(); ?>assets/icons/topnav/profile.png" alt="" /><span>Profile</span></a></li>

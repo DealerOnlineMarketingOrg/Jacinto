@@ -1,4 +1,11 @@
 <div class="leftNav">
+    <div class="searchWidget searchMe">
+        <form action="#" method="post">
+            <input id="ac" class="ui-autocomplete-input" type="text" placeholder="Enter search text..." name="search" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true" />
+            <input type="submit" value="" name="find" />
+        </form>
+    </div>
+	<div class="fix"></div>
     <ul id="menu">
         <li class="dash"><a <?= ((ACTIVE_BUTTON == 'reports' && SUBNAV_BUTTON == '/reports/dashboard') ? 'class="active"' : ''); ?> href="<?= base_url(); ?>reports/dashboard"><span>Dashboard</span></a></li>
         <?php foreach($nav as $item) { ?>

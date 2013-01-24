@@ -1,15 +1,11 @@
 html { height: 100%; }
 * html body { height: 100%; }
-body { margin: 0; padding: 0; background: url(../imgs/bodyBg.jpg) repeat; font-size: 12px; color: #424242; font-family: Arial, Helvetica, sans-serif; line-height: 20px; min-height: 100%; position: relative; }
-
-
-
+body { margin: 0; padding: 0; background: url('../imgs/patterns/pat3.png') repeat; font-size: 12px; color: #424242; font-family: Arial, Helvetica, sans-serif; line-height: 20px; min-height: 100%; position: relative; }
 /* =================================
    =====  New styles for v2.0  =====
    ================================= */
 
 /* ===== Required fields error and field notes styling  ===== */
-
 label.error { color: #A73939; font-size: 11px; display: block; width: 100%; white-space: nowrap; float: none; margin: 8px 0 -8px 0; padding: 0!important; }
 .selector .error { margin-right: -220px; float: right; }
 .checker label.error, .radio label.error { display: inline; margin: 0; }
@@ -32,7 +28,7 @@ div.tagsinput div { display: block; float: left; }
 
 /* ===== Limit box for textareas  ===== */
 
-.limiterBox { border: 1px solid #ddd; border-top: none; background: #efefef url(../imgs/leftNavBg.png) repeat-x; padding: 4px 6px; font-size: 11px; margin-top:1px; }
+.limiterBox { border: 1px solid #ddd; border-top: none; background: #efefef url('../imgs/leftNavBg.png') repeat-x; padding: 4px 6px; font-size: 11px; margin-top:1px; }
 
 
 /* ===== Placeholder colors  ===== */
@@ -193,12 +189,20 @@ input[type=submit], input[type=reset], input[type=button], button, .button { fon
 
 /* ===== Top navigation ===== */
 
-#topNav { height: 36px; display: block; }
+#topNav { height: 36px; display: block;}
 .fixed { position: fixed; background: url(../imgs/topNav.jpg) repeat; width: 100%; color: #eeeeee; border-bottom: 1px solid #fff; z-index: 999; }
 
-.welcome { float: left; }
+.welcome{border-right:1px solid #2F2F2F;padding-right:10px;}
+.clientInfo{padding-left:10px;}
+.welcome,.clientInfo { float: left; }
 .welcome img { float: left; margin: 8px 8px 8px 0 }
-.welcome span { padding: 8px 5px; display: block; white-space: nowrap; float: left; font-size: 11px; }
+.welcome span,.clientInfo span { padding: 8px 5px; display: block; white-space: nowrap; float: left; font-size: 11px; }
+.welcome a ,.clientInfo a  {color:#fff;}
+.welcome a:hover,.clientInfo a:hover{color:#999;}
+.welcome span.title,.clientInfo span.title{font-weight:bold;color:yellow;text-transform:uppercase;}
+
+.searchMe {margin-top:5px;}
+div.searchWidget.searchMe{margin-top:5px;margin-right:5px;margin-bottom:10px;}
 
 .userNav { float: right; z-index: 6000; position: relative; font-size: 11px; }
 .userNav .lastNav { width: 2px; height: 36px; background: url(../imgs/navSep.png) repeat-y; position: absolute; top: 0; right: 0; }
@@ -226,8 +230,9 @@ div.userNav ul li div.tagsinput span.tag{padding:2px !important;}
 .sOutbox { background: url(../imgs/icons/topnav/subOutbox.png) no-repeat 14px 11px; }
 .sTrash { background: url(../imgs/icons/topnav/subTrash.png) no-repeat 14px 12px; }
 
+div.dealerDropdowns {float:right;z-index:2000;}
+div.dealerDropdowns div.rowElem {padding:5px 0 0 0;border-top:none;}
 
-div.dealerDropdowns {position:fixed; top:-7px;right:20.5%;z-index:2000;}
 
 /* ===== Header ===== */
 
@@ -299,10 +304,10 @@ ul.sub li ul li { padding-left: 10px; }
 .stats { margin-top: 25px; }
 .stats ul {  }
 .stats ul li { display: block;
-float: left;
-margin-left: 5%;
-vertical-align: top;
-width: 21.2%; }
+               float: left;
+               margin-left: 5%;
+               vertical-align: top;
+               width: 21.2%; }
 .stats ul li:first-child { margin: 0; }
 .stats ul li span { color: #424242; font-size: 16px; display: block; vertical-align: middle; white-space: normal; }
 .count { font-size: 26px; height: 40px; display: inline-block; float: left; line-height: 41px; padding: 0 10px; -moz-box-shadow: 0 1px 0 #fff; -webkit-box-shadow: 0 1px 0 #fff; box-shadow: 0 1px 0 #fff; margin-right: 10px; }
@@ -453,9 +458,9 @@ div.leftNav li.content { padding-bottom: 0px; overflow: hidden; }
 #eq span { height: 120px; float: left; margin-right: 30px; display: block; }
 
 /* Search */
-.searchWidget { position: relative; margin-top: 40px; }
-.searchWidget input[type=text] { background: #fafafa; border: 1px solid #d5d5d5; padding: 10px; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; }
-.searchWidget input[type=submit] { background: url(../imgs/searchBtn.png) no-repeat 0 0; position: absolute; top: 0; right: 0; border: none; width: 36px; height: 36px; }
+.searchWidget { position: relative; margin-top: 0px; min-width:100%;}
+.searchWidget input[type=text] { background: #fafafa; border: 1px solid #d5d5d5; padding: 7px 7px 6px 7px; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; }
+.searchWidget input[type=submit] { background: url(../imgs/searchBtn.png) no-repeat center center; position: absolute; top: 0; right: 0; border: none; width: 36px; height: 28px; border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;}
 
 /* Website stats */
 .webStatsLink { font-size: 16px; color: #B55D5C; font-weight: bold; }
@@ -562,7 +567,7 @@ div.checker span.checked { background-position: center bottom; }
 
 /* Radio */
 
-div.radio { width: 18px; height: 18px; position: relative; float: left; margin-top: 5px; }
+div.radio { width: 18px; height: 18px; position: relative; float: left; margin-top: 2px; }
 div.radio input { opacity: 0; filter: alpha(opacity:0); text-align: center; display: inline-block; background: none; width: 18px; height: 18px; }
 div.radio span { background: transparent url(../imgs/forms/radio.png) no-repeat 0 0; vertical-align: middle; height: 15px; width: 15px; display: block; display: -moz-inline-box; display: inline-block; text-align: center; }
 div.radio span.checked { background-position: center bottom; }
@@ -661,31 +666,31 @@ div.uploader input { width: 266px; opacity: 0; filter: alpha(opacity:0); positio
 
 div.jGrowl { z-index: 9999; color: #fff; font-size: 12px; }
 div.ie6.top-right { 
-	right: 				auto;
-	bottom: 			auto;
-	left: 				expression( ( 0 - jGrowl.offsetWidth + ( document.documentElement.clientWidth ? document.documentElement.clientWidth : document.body.clientWidth ) + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
-	top: 				expression( ( 0 + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+    right: 				auto;
+    bottom: 			auto;
+    left: 				expression( ( 0 - jGrowl.offsetWidth + ( document.documentElement.clientWidth ? document.documentElement.clientWidth : document.body.clientWidth ) + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
+    top: 				expression( ( 0 + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
 }
 
 div.ie6.top-left {
-	left: 				expression( ( 0 + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
-	top: 				expression( ( 0 + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+    left: 				expression( ( 0 + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
+    top: 				expression( ( 0 + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
 }
 
 div.ie6.bottom-right {
-	left: 				expression( ( 0 - jGrowl.offsetWidth + ( document.documentElement.clientWidth ? document.documentElement.clientWidth : document.body.clientWidth ) + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
-	top: 				expression( ( 0 - jGrowl.offsetHeight + ( document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight ) + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+    left: 				expression( ( 0 - jGrowl.offsetWidth + ( document.documentElement.clientWidth ? document.documentElement.clientWidth : document.body.clientWidth ) + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
+    top: 				expression( ( 0 - jGrowl.offsetHeight + ( document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight ) + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
 }
 
 div.ie6.bottom-left {
-	left: 				expression( ( 0 + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
-	top: 				expression( ( 0 - jGrowl.offsetHeight + ( document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight ) + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+    left: 				expression( ( 0 + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
+    top: 				expression( ( 0 - jGrowl.offsetHeight + ( document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight ) + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
 }
 
 div.ie6.center {
-	left: 				expression( ( 0 + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
-	top: 				expression( ( 0 + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
-	width: 				100%;
+    left: 				expression( ( 0 + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
+    top: 				expression( ( 0 + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+    width: 				100%;
 }
 
 /** Normal Style Positions **/
@@ -700,19 +705,19 @@ div.jGrowl.center { top: 0px; width: 50%; left: 25%; }
 /** Cross Browser Styling **/
 div.center div.jGrowl-notification, div.center div.jGrowl-closer { margin-left: auto; margin-right: auto; }
 div.jGrowl div.jGrowl-notification, div.jGrowl div.jGrowl-closer {
-background-color: black;
-opacity: .85;
--ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=85)";
-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=85);
-zoom: 1;
-width: 235px;
-padding: 10px;
-margin-top: 5px;
-margin-bottom: 5px;
-font-family: Tahoma,Arial,Helvetica,sans-serif;
-font-size: 1em;
-text-align: left;
-display: none;
+    background-color: black;
+    opacity: .85;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=85)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=85);
+    zoom: 1;
+    width: 235px;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-family: Tahoma,Arial,Helvetica,sans-serif;
+    font-size: 1em;
+    text-align: left;
+    display: none;
 }
 
 div.jGrowl div.jGrowl-notification { min-height: 40px; }
@@ -1023,7 +1028,7 @@ li.plupload_droptext { background: transparent; text-align: center; vertical-ali
 * html .timeEntry_control { margin-top: -4px; }
 
 
- 
+
 /* =====  Dual select boxes  ===== */
 
 .dualBoxes { padding: 22px 16px; position: relative; }
@@ -1090,11 +1095,11 @@ li.plupload_droptext { background: transparent; text-align: center; vertical-ali
 
 /*.chzn-container-multi { width: 50%!important; }*/
 .chzn-container-multi .chzn-choices { border: 1px solid #ddd; margin: 0; cursor: text; overflow: hidden; height: auto !important; height: 1%; position: relative;
-font-size: 12px;
-padding: 4px;
-background: white;
-color: #656565;
- }
+                                      font-size: 12px;
+                                      padding: 4px;
+                                      background: white;
+                                      color: #656565;
+}
 .chzn-container-multi .chzn-choices li { float: left; list-style: none; }
 .chzn-container-multi .chzn-choices .search-field { white-space: nowrap; margin: 0; padding: 0; }
 .chzn-container-multi .chzn-choices .search-field input { color: #666; background: transparent !important; border: 0 !important; font-family: sans-serif; font-size: 12px!important; padding: 11px 4px 10px 4px!important; margin: 0; outline: 0; box-shadow: none!important; }
@@ -1146,167 +1151,171 @@ ul.chzn-results li.tag_blue {color:blue;}
 ul.chzn-results li.tag_red{color:red;}
 
 
+.floatRight {float:right;}
+.floatLeft{float:left;}
+.floatNone{float:none;}
+
 /* =====  Media queries  ===== */
 
 /* Devices and browsers with max of 799px */
 @media only screen and (max-width: 799px) {
-	
-	.leftNav { float: none; background: url(../imgs/linesSep.png) repeat-x; padding-top: 24px; text-align: center; padding-bottom: 20px; margin: 0; width: 100%; max-width: none; }
-	.leftNav ul li { width: 49px; display: inline-block; margin: 0 0 4px 0; position: static; }
-	.leftNav ul li a span { text-indent: -9999px; background-position: 16px; }
-	.leftNav ul li a { margin-bottom: 3px; }
-	
-	.numberLeft { display: none!important; }
-	.widgets .left { float: none; width: 100%; margin-right: 0; }
-	.widgets .right { float: none; width: 100%; }
-	
-	#header { text-align: center; height: 100%; margin-bottom: 22px; }
-	
-	ul.sub { position: absolute; width: 100%; left: 0; z-index: 999; border: 1px solid #d5d5d5; border-bottom: 0; }
-	ul.sub li { display: block; width: 50%; float: left; margin-bottom: 0; text-align: left; border-bottom: 1px solid #d5d5d5; padding: 0; }
-	ul.sub li a { padding: 8px 10px 8px 24px; background: url(../imgs/arrow.gif) no-repeat 12px 16px; }
-	ul.sub li a:hover, .sub li a:active { background-position: 12px 16px; }
-	ul.sub li:nth-child(even) {  }
-	ul.sub li:nth-child(odd) { background: url(../imgs/tabsSepR.png) repeat-y 100% 0; }
-	ul#menu { position: relative; }
-	.leftNav .last { border-bottom: 1px solid #d5d5d5; }
+
+    .leftNav { float: none; background: url(../imgs/linesSep.png) repeat-x; padding-top: 24px; text-align: center; padding-bottom: 20px; margin: 0; width: 100%; max-width: none; }
+    .leftNav ul li { width: 49px; display: inline-block; margin: 0 0 4px 0; position: static; }
+    .leftNav ul li a span { text-indent: -9999px; background-position: 16px; }
+    .leftNav ul li a { margin-bottom: 3px; }
+
+    .numberLeft { display: none!important; }
+    .widgets .left { float: none; width: 100%; margin-right: 0; }
+    .widgets .right { float: none; width: 100%; }
+
+    #header { text-align: center; height: 100%; margin-bottom: 22px; }
+
+    ul.sub { position: absolute; width: 100%; left: 0; z-index: 999; border: 1px solid #d5d5d5; border-bottom: 0; }
+    ul.sub li { display: block; width: 50%; float: left; margin-bottom: 0; text-align: left; border-bottom: 1px solid #d5d5d5; padding: 0; }
+    ul.sub li a { padding: 8px 10px 8px 24px; background: url(../imgs/arrow.gif) no-repeat 12px 16px; }
+    ul.sub li a:hover, .sub li a:active { background-position: 12px 16px; }
+    ul.sub li:nth-child(even) {  }
+    ul.sub li:nth-child(odd) { background: url(../imgs/tabsSepR.png) repeat-y 100% 0; }
+    ul#menu { position: relative; }
+    .leftNav .last { border-bottom: 1px solid #d5d5d5; }
 
 }
 
 /* Devices and browsers with max of 767px and less than 799px */
 @media only screen and (max-width: 767px) {
-	
-	.stats ul li { display: inline-block; float: none; margin-left: 18px; vertical-align: top; width: 21%; text-align: center; }
-	.stats ul { text-align: center; }
-	.count { display: inline-block; float: none; padding: 0 15px; text-align: center; margin-bottom: 4px; margin-right: 0; }
-	
-	.middleNav { float: none; margin-right: 0px; display: block; text-align: center; margin-top: 2px; }
-	.middleNav ul {  }
-	.middleNav ul li { text-align: center; display: inline-block; float: none; margin-left: 5%; position: relative; }
-	.middleNav ul li:first-child { margin-left: 0; }
-	
-	.logo { float: none; }
-	
-	.userNav ul li span { display: none; }
-	.userNav ul li img { padding: 13px 14px 11px 14px; margin: 0; }
-	.userNav ul li ul { right: -3px; left: auto; }
-	
-	.listData .cNote { display: none; }
-	ul.listData li { padding: 0 0 1px 6px!important; }
-	
-	.rowElem > label { width: 100%; float: none; padding: 8px 0 6px 0; }
-	.formRight { width: 100%; margin: 0; padding: 12px 0; float: none; }
-	.rowElem .topLabel { padding: 5px 12px 5px 0; }
-	
-	.fc-header-right { width: 50%; }
-	.ln-letters a { padding: 4px 2%; margin-bottom: 1px; }
-	
-	#eq span { margin-right: 0; margin-left: 30px; }
-	#eq span:first-child { margin-left: 5px; }
-	
-	.formError { left: auto!important; right: 30px; }
-	.formErrorContent { width: 140px; }
-	
-	.formRight div.checker, .formRight div.radio { padding-bottom: 0; padding-top: 0; margin-top: 2px; }
-	div.selector { margin-bottom: 10px; }
-	.formRight > label { padding-top: 0; }
-	.rowElem > label { padding-bottom: 0; }
-	.step label.error { padding-top: 3px; }
-	
-	.userWidget .checker { margin-top: 6px; }
-	
+
+    .stats ul li { display: inline-block; float: none; margin-left: 18px; vertical-align: top; width: 21%; text-align: center; }
+    .stats ul { text-align: center; }
+    .count { display: inline-block; float: none; padding: 0 15px; text-align: center; margin-bottom: 4px; margin-right: 0; }
+
+    .middleNav { float: none; margin-right: 0px; display: block; text-align: center; margin-top: 2px; }
+    .middleNav ul {  }
+    .middleNav ul li { text-align: center; display: inline-block; float: none; margin-left: 5%; position: relative; }
+    .middleNav ul li:first-child { margin-left: 0; }
+
+    .logo { float: none; }
+
+    .userNav ul li span { display: none; }
+    .userNav ul li img { padding: 13px 14px 11px 14px; margin: 0; }
+    .userNav ul li ul { right: -3px; left: auto; }
+
+    .listData .cNote { display: none; }
+    ul.listData li { padding: 0 0 1px 6px!important; }
+
+    .rowElem > label { width: 100%; float: none; padding: 8px 0 6px 0; }
+    .formRight { width: 100%; margin: 0; padding: 12px 0; float: none; }
+    .rowElem .topLabel { padding: 5px 12px 5px 0; }
+
+    .fc-header-right { width: 50%; }
+    .ln-letters a { padding: 4px 2%; margin-bottom: 1px; }
+
+    #eq span { margin-right: 0; margin-left: 30px; }
+    #eq span:first-child { margin-left: 5px; }
+
+    .formError { left: auto!important; right: 30px; }
+    .formErrorContent { width: 140px; }
+
+    .formRight div.checker, .formRight div.radio { padding-bottom: 0; padding-top: 0; margin-top: 2px; }
+    div.selector { margin-bottom: 10px; }
+    .formRight > label { padding-top: 0; }
+    .rowElem > label { padding-bottom: 0; }
+    .step label.error { padding-top: 3px; }
+
+    .userWidget .checker { margin-top: 6px; }
+
 }
 
 /* Devices and browsers with min of 800px and max of 979px */
 @media only screen and (min-width: 800px) and (max-width: 979px) {
-	
-	.leftNav { width: 24%; }
-	
+
+    .leftNav { width: 24%; }
+
 }
-	
+
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (min-width: 320px) and (max-width: 479px) {
-	
-	.logo { float: none; text-align: center; }
-	.welcome { display: none; }
-	.userNav { float: none; text-align: center; position: relative; }
-	.userNav ul { height: 36px; text-align: center; }
-	.userNav > ul > li { display: inline-block; float: none; position: static; margin-left: -3px; }
-	.userNav ul li ul { height: auto; text-align: left; position: absolute; top: 36px; left: 50%; margin-left: -85px; width: 162px; }
-	
-	.middleNav ul { text-align: center; }
-	.middleNav ul li { text-align: center; display: inline-block; float: none; margin: 0 2%; position: relative; width: 45%; margin-bottom: 10px; }
-	.middleNav ul li:first-child { margin: 0 2%; }
-	
-	.stats ul { text-align: center; }
-	.stats ul li { display: inline-block; float: none; margin: 5px; vertical-align: top; width: 46%; text-align: center; }
-	.stats ul li:first-child { margin: 5px; }
-	.count { display: inline-block; float: none; padding: 0 15px; text-align: center; margin-bottom: 4px; margin-right: 0; width: 75%; }
 
-	.w40 { width: auto; }
-	.floatleft, .floatright { float: none; }
-	.floatright { margin-top: 95px; }
-	.countLabel { text-align: center; }
-	.dualControl { text-align: center; width: 90px; margin: 10px 1px; position: absolute; left: 50%; margin-left: -45px; }
-	
-	.moreFields ul li { width: 11.8%; }
-	.moreFields ul li span { display: none; }
-	
-	#header { margin-bottom: 15px; }
-	
-	.radio, .checker { clear: both; }
-	
-	.plupload_file_size, .plupload_file_status, .plupload_progress { width: 12%; }
-	.plupload_disabled span { padding: 5px 8px 6px 8px; }
-	.plupload_add span { background: url(../imgs/add.png) no-repeat 10px; padding: 5px 8px 6px 20px; display: block; }
-	
-	.fc-header-right { width: auto; }
-	
-	.dataTables_filter input[type="text"] { width: 86px; }
-	.dataTables_paginate { float: left; }
-	.dataTables_paginate .ui-buttonset .ui-button { margin: 0 1px; }
-	
-	.issueSummary .floatleft { display: none; }
-	.ticketInfo { margin-left: 0; }
-	
-	.breadCrumb { overflow: hidden; height: 100%; }
-	
-	.pages li { display: inline-block; margin: 4px 2px; }
-		
-	#popup_container { min-width: 250px; max-width: 300px; }
-	
-	.el-finder-nav { width: 100px; }
-	
-	.errorPage { width: auto; }
-	.errorPage .bubbles { display: none; }
-	.errorPage .errorTitle, .weAreOff { width: auto; }
-	.errorPage h1 { padding: 0; text-align: center; }
-	
-	#myList > li { clear: both; }
-	ul.listData { float: left; text-align: center; margin: 3px 0 5px 0; font-size: 11px; }
-	ul.listData li { padding: 0; margin: 0 20px 0 -6px; clear: both; }
-	
-	.displayNone { display: none; }
-	
-	.pieWidget { width: 100%; height: 250px; margin: 0 auto; }
-	
-	.paging_full_numbers .ui-button { padding: 2px 5px; }
-	table.display { table-layout: fixed; }
-	table.display thead th div.DataTables_sort_wrapper { overflow: hidden; padding-right: 10px; }
-	table.display thead th div.DataTables_sort_wrapper span { display: none; }
-	table.display td { overflow: hidden; }
-	.dataTables_length { float: none; margin: 6px auto 0 auto; width: 140px; }
-	.dataTables_paginate { float: none; width: 253px; display: inline-block; text-align: center; margin-top: 2px; }
-	
-	.chzn-container { width: 254px!important; }
-	.chzn-container-single .chzn-search input { max-width: 218px; }
+    .logo { float: none; text-align: center; }
+    .welcome { display: none; }
+    .userNav { float: none; text-align: center; position: relative; }
+    .userNav ul { height: 36px; text-align: center; }
+    .userNav > ul > li { display: inline-block; float: none; position: static; margin-left: -3px; }
+    .userNav ul li ul { height: auto; text-align: left; position: absolute; top: 36px; left: 50%; margin-left: -85px; width: 162px; }
+
+    .middleNav ul { text-align: center; }
+    .middleNav ul li { text-align: center; display: inline-block; float: none; margin: 0 2%; position: relative; width: 45%; margin-bottom: 10px; }
+    .middleNav ul li:first-child { margin: 0 2%; }
+
+    .stats ul { text-align: center; }
+    .stats ul li { display: inline-block; float: none; margin: 5px; vertical-align: top; width: 46%; text-align: center; }
+    .stats ul li:first-child { margin: 5px; }
+    .count { display: inline-block; float: none; padding: 0 15px; text-align: center; margin-bottom: 4px; margin-right: 0; width: 75%; }
+
+    .w40 { width: auto; }
+    .floatleft, .floatright { float: none; }
+    .floatright { margin-top: 95px; }
+    .countLabel { text-align: center; }
+    .dualControl { text-align: center; width: 90px; margin: 10px 1px; position: absolute; left: 50%; margin-left: -45px; }
+
+    .moreFields ul li { width: 11.8%; }
+    .moreFields ul li span { display: none; }
+
+    #header { margin-bottom: 15px; }
+
+    .radio, .checker { clear: both; }
+
+    .plupload_file_size, .plupload_file_status, .plupload_progress { width: 12%; }
+    .plupload_disabled span { padding: 5px 8px 6px 8px; }
+    .plupload_add span { background: url(../imgs/add.png) no-repeat 10px; padding: 5px 8px 6px 20px; display: block; }
+
+    .fc-header-right { width: auto; }
+
+    .dataTables_filter input[type="text"] { width: 86px; }
+    .dataTables_paginate { float: left; }
+    .dataTables_paginate .ui-buttonset .ui-button { margin: 0 1px; }
+
+    .issueSummary .floatleft { display: none; }
+    .ticketInfo { margin-left: 0; }
+
+    .breadCrumb { overflow: hidden; height: 100%; }
+
+    .pages li { display: inline-block; margin: 4px 2px; }
+
+    #popup_container { min-width: 250px; max-width: 300px; }
+
+    .el-finder-nav { width: 100px; }
+
+    .errorPage { width: auto; }
+    .errorPage .bubbles { display: none; }
+    .errorPage .errorTitle, .weAreOff { width: auto; }
+    .errorPage h1 { padding: 0; text-align: center; }
+
+    #myList > li { clear: both; }
+    ul.listData { float: left; text-align: center; margin: 3px 0 5px 0; font-size: 11px; }
+    ul.listData li { padding: 0; margin: 0 20px 0 -6px; clear: both; }
+
+    .displayNone { display: none; }
+
+    .pieWidget { width: 100%; height: 250px; margin: 0 auto; }
+
+    .paging_full_numbers .ui-button { padding: 2px 5px; }
+    table.display { table-layout: fixed; }
+    table.display thead th div.DataTables_sort_wrapper { overflow: hidden; padding-right: 10px; }
+    table.display thead th div.DataTables_sort_wrapper span { display: none; }
+    table.display td { overflow: hidden; }
+    .dataTables_length { float: none; margin: 6px auto 0 auto; width: 140px; }
+    .dataTables_paginate { float: none; width: 253px; display: inline-block; text-align: center; margin-top: 2px; }
+
+    .chzn-container { width: 254px!important; }
+    .chzn-container-single .chzn-search input { max-width: 218px; }
 
 }
 
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (min-width: 480px) and (max-width: 767px) {
-	
-	.moreFields ul li { width: 13.4%; }
-	.moreFields ul li span { display: none; }	
+
+    .moreFields ul li { width: 13.4%; }
+    .moreFields ul li span { display: none; }	
 
 }
