@@ -60,5 +60,10 @@
     <script type="text/javascript" src="<?= base_url(); ?>assets/<?= $GlobalDir; ?>/js/plugins/ui/jquery.prettyPhoto.js"></script>
     <script type="text/javascript" src="<?= base_url(); ?>assets/<?= $ThemeDir; ?>/js/custom.js"></script>
     <script type="text/javascript" src="<?= base_url(); ?>assets/<?= $GlobalDir; ?>/js/charts/chart.js"></script>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/<?= $GlobalDir; ?>/js/charts/auto.js"></script>
+	<script type="text/javascript" src="<?= base_url(); ?>assets/<?= $GlobalDir; ?>/js/charts/bar.js"></script>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/<?= $GlobalDir; ?>/js/charts/hBar.js"></script>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/<?= $GlobalDir; ?>/js/charts/pie.js"></script>
+    <?php if(isset($TagCss)) { echo $TagCss; }; ?>   
 </head>
 <body>

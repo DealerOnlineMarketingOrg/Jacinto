@@ -16,6 +16,8 @@
 			   xaxis: { min: 0, max: 20 }
              });
 
+			 
+
     function showTooltip(x, y, contents) {
         $('<div id="tooltip" class="tooltip">' + contents + '</div>').css( {
             position: 'absolute',

@@ -33,64 +33,52 @@ function breadcrumb() {
     return $link;
 }
 
-function showStates() {
+function showStates($selected = false) {
     $ci =& get_instance();
     $ci->load->model('utilities');
     $states = $ci->utilities->getStates();
-    
+
     $options = '<select data-placeholder="Choose a State..." class="chzn-select" style="width:350px;" name="state">';
+	$options .= '<option value=""></option>';
     foreach ($states as $state) {
-        $options .= '<option value="' . $state->Abbrev . '">' . $state->Name . '</option>';
+        $options .= '<option ' . (($selected AND $selected == $state->Abbrev) ? 'selected="selected"' : '') . ' value="' . $state->Abbrev . '">' . $state->Name . '</option>';
     }
     $options .= '</select>';
-    
+
     return $options;
 }
 
 function dealer_selector() {
-    $ci = & get_instance();
+	$ci =& get_instance();
+	$ci->load->model('utilities');
+	$dropdown = $ci->utilities->clientList();
+	return $dropdown;	
+}
+
+function levelSelect() {
+    $ci =& get_instance();
     $ci->load->library('dropdowngen');
     $ci->load->helper('string_parser');
-    //grap the string to build the options from
     $dropdown = $ci->dropdowngen->drivedrop();
 
-    //create the select box
-    $options = '<select id="dealerDropDown" data-placeholder="Dealer Dropdown" class="chzn-select" style="width:100%">' . dropdown_parser($dropdown) . '</select>';
+    $options = '<select id="levelSelector" data-placeholder="Select a Level" class="chzn-select" style="width:300px;">' . dropdown_parser($dropdown) . '</select>';
     $options .= '<script type="text/javascript">
-                    jQuery("#dealerDropDown").change(function() { 
-                        //alert("change");
-                        var name = jQuery(this).find("option:selected").text();
-                        var level = jQuery(this).find("option:selected").val();
-                        jQuery.ajax({
-                            url:"/ajax/name_changer",
-                            data:({Agency:name,Level:level}),
-                            method:"post",
-                            success:function(data) {
-                                //alert(data);
-                                //jQuery("#clientInformation").html(data);
-                                location.reload();
-                            }
-                        }); 
- 
-                    }); 
-                    jQuery("#dealerDropDown option").each( function(){
-                        var option = jQuery(this);  
-                        //alert(option);
+                    jQuery("#levelSelector option").each(function() {
+                        var option = jQuery(this);
                         if(option.prev().attr("data-level") == option.attr("data-level")) {
                             if(!option.hasClass("agency")) {
                                 option.prev().remove();
-                                option.removeClass("double-indent").addClass("single-indent"
-                                );
+                                option.removeClass("double-indent").addClass("single-indent");
                             }
                         }
-                    })
-
-                 </script>';
+                    });
+                </script>';
     return $options;
+
 }
 
 function permission_selector() {
-    $ci = & get_instance();
+    $ci =& get_instance();
     $ci->load->model('administration');
     $permissions = $ci->administration->getPermissionsList($ci->user['AccessLevel']);
 
@@ -155,10 +143,38 @@ function get_client_name() {
         $name = $results->GROUP_Name;
     elseif ($level_type == 3 OR $level_type == 'c') :
         $results = $ci->dropdown->ClientQuery($level_id, false, true);
-        $name = $results->CLIENT_Name;
+        $name = ((isset($results->CLIENT_Name)) ? $results->CLIENT_Name : '');
     else :
         $results = NULL;
         $name = '';
     endif;
     return $name;
+}
+
+function get_user_modules($level) {
+   switch($level) {
+       case 1 :
+           return '1:1,2:1,3:1,4:1,5:1,6:1,7:1,8:1,9:1,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:1,18:1,19:1,20:1,21:1,22:1,23:1,24:1,25:1,26:1,27:1,28:1,29:1,30:1,31:1,32:1,33:1,34:1,35:1,36:1,37:1,38:1,39:1,40:1,41:1,42:1,43:1,44:1,45:1';
+       break;
+   
+       case 2 :
+           return '1:0,2:0,3:0,4:0,5:0,6:1,7:1,8:1,9:1,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:1,18:1,19:1,20:1,21:1,22:1,23:1,24:1,25:1,26:1,27:1,28:1,29:1,30:1,31:1,32:1,33:1,34:1,35:1,36:1,37:1,38:1,39:1,40:1,41:1,42:1,43:1,44:1,45:1';
+       break;
+   
+       case 3 :
+           return '1:0,2:0,3:0,4:0,5:0,6:1,7:1,8:1,9:1,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:1,18:1,19:1,20:1,21:1,22:1,23:1,24:1,25:1,26:1,27:1,28:1,29:1,30:1,31:1,32:1,33:1,34:1,35:1,36:1,37:1,38:1,39:1,40:1,41:1,42:1,43:1,44:1,45:1';
+       break;
+   
+       case 4 :
+           return '1:0,2:0,3:0,4:0,5:0,6:1,7:1,8:1,9:1,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:1,18:1,19:1,20:1,21:1,22:1,23:1,24:1,25:1,26:1,27:1,28:1,29:1,30:1,31:1,32:1,33:1,34:1,35:1,36:1,37:1,38:1,39:1,40:1,41:1,42:1,43:1,44:1,45:1';
+       break;
+   
+       case 5 :
+           return '1:0,2:0,3:0,4:0,5:0,6:1,7:1,8:1,9:1,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:1,18:1,19:1,20:1,21:1,22:1,23:1,24:1,25:1,26:1,27:1,28:1,29:1,30:1,31:1,32:1,33:1,34:1,35:1,36:1,37:1,38:1,39:1,40:1,41:1,42:1,43:1,44:1,45:1';
+       break;
+   
+       default:
+           return '1:0,2:0,3:0,4:0,5:0,6:1,7:1,8:1,9:1,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:1,18:1,19:1,20:1,21:1,22:1,23:1,24:1,25:1,26:1,27:1,28:1,29:1,30:1,31:1,32:1,33:1,34:1,35:1,36:1,37:1,38:1,39:1,40:1,41:1,42:1,43:1,44:1,45:1';
+       break;
+   }
 }

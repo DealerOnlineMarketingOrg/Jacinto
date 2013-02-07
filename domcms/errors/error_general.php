@@ -1,62 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Error</title>
-<style type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<title><?= SITETITLE; ?></title>
 
-::selection{ background-color: #E13300; color: white; }
-::moz-selection{ background-color: #E13300; color: white; }
-::webkit-selection{ background-color: #E13300; color: white; }
+<link type="text/css" rel="stylesheet" href="<?= base_url(); ?>assets/themes/global/css/reset.css" />
+<link type="text/css" rel="stylesheet" href="<?= base_url(); ?>assets/themes/global/css/dataTable.css" />
+<link type="text/css" rel="stylesheet" href="<?= base_url(); ?>assets/themes/global/css/ui_custom.css" />
+<link type="text/css" rel="stylesheet" href="<?= base_url(); ?>assets/themes/global/css/fullcalendar.css" />
+<link type="text/css" rel="stylesheet" href="<?= base_url(); ?>assets/themes/global/css/icons.css" />
+<link type="text/css" rel="stylesheet" href="<?= base_url(); ?>assets/themes/global/css/elfinder.css" />
+<link type="text/css" rel="stylesheet" href="<?= base_url(); ?>assets/themes/global/css/wysiwyg.css" />
+<link type="text/css" rel="stylesheet" href="<?= base_url(); ?>assets/themes/global/css/prettyPhoto.css" />
+<link type="text/css" rel="stylesheet" href="<?= base_url(); ?>assets/themes/itsbrain/css/main.css" />
 
-body {
-	background-color: #fff;
-	margin: 40px;
-	font: 13px/20px normal Helvetica, Arial, sans-serif;
-	color: #4F5155;
-}
+<link href='http://fonts.googleapis.com/css?family=Cuprum' rel='stylesheet' type='text/css' />
 
-a {
-	color: #003399;
-	background-color: transparent;
-	font-weight: normal;
-}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
 
-h1 {
-	color: #444;
-	background-color: transparent;
-	border-bottom: 1px solid #D0D0D0;
-	font-size: 19px;
-	font-weight: normal;
-	margin: 0 0 14px 0;
-	padding: 14px 15px 10px 15px;
-}
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/spinner/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/spinner/ui.spinner.js"></script>
 
-code {
-	font-family: Consolas, Monaco, Courier New, Courier, monospace;
-	font-size: 12px;
-	background-color: #f9f9f9;
-	border: 1px solid #D0D0D0;
-	color: #002166;
-	display: block;
-	margin: 14px 0 14px 0;
-	padding: 12px 10px 12px 10px;
-}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 
-#container {
-	margin: 10px;
-	border: 1px solid #D0D0D0;
-	-webkit-box-shadow: 0 0 8px #D0D0D0;
-}
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/wysiwyg/jquery.wysiwyg.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/wysiwyg/wysiwyg.image.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/wysiwyg/wysiwyg.link.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/wysiwyg/wysiwyg.table.js"></script>
 
-p {
-	margin: 12px 15px 12px 15px;
-}
-</style>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/flot/jquery.flot.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/flot/jquery.flot.orderBars.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/flot/jquery.flot.pie.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/flot/excanvas.min.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/flot/jquery.flot.resize.js"></script>
+
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/tables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/tables/colResizable.min.js"></script>
+
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/forms/forms.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/forms/autogrowtextarea.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/forms/autotab.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/forms/jquery.validationEngine-en.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/forms/jquery.validationEngine.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/forms/jquery.dualListBox.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/forms/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/forms/jquery.maskedinput.min.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/forms/jquery.inputlimiter.min.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/forms/jquery.tagsinput.min.js"></script>
+
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/other/calendar.min.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/other/elfinder.min.js"></script>
+
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/uploader/plupload.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/uploader/plupload.html5.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/uploader/plupload.html4.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/uploader/jquery.plupload.queue.js"></script>
+
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.progress.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.jgrowl.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.tipsy.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.alerts.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.colorpicker.js"></script>
+
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/wizards/jquery.form.wizard.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/wizards/jquery.validate.js"></script>
+
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.breadcrumbs.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.collapsible.min.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.ToTop.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.listnav.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.sourcerer.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.timeentry.min.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/global/js/plugins/ui/jquery.prettyPhoto.js"></script>
+
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/custom.js"></script>
+
 </head>
+
 <body>
-	<div id="container">
-		<h1><?php echo $heading; ?></h1>
-		<?php echo $message; ?>
-	</div>
+<!-- Error info area -->
+<div class="wrapper">
+    <div class="errorPage">
+        <h2 class="red errorTitle"><span><?php echo $heading; ?></span></h2>
+        <h1>Error</h1>
+        <span class="bubbles"></span>
+	<p><?php echo $message; ?></p>
+        <div class="backToDash"><a href="<?= base_url(); ?>" title="" class="seaBtn button">Back to Dashboard</a></div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+	<div class="wrapper">
+    	<span>&copy; Copyright <?= date('Y'); ?>. All rights reserved.</span>
+    </div>
+</div>
+
 </body>
 </html>

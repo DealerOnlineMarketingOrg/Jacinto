@@ -11,7 +11,6 @@
 			if($query->num_rows() > 1) {
 				return $query->result();
 			}else {
-				//else we use the row() function to bring back one result. 
 				return $query->row();	
 			}
 		endif;

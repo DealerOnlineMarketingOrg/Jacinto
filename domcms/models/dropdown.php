@@ -12,19 +12,19 @@ class Dropdown extends CI_Model {
 				a.AGENCY_ID as AgencyID, 
 				a.AGENCY_Name as AgencyName, 
 				a.AGENCY_Active as AgencyStatus
-			    from Agencies a
+			    from Agencies a WHERE a.AGENCY_Active = '1'
 				ORDER BY a.AGENCY_ID ASC";
 		return query_results($this,$sql);
 	}
 	
 	public function getGroupByAgencyID($id) {
-		$sql = "SELECT g.GROUP_ID as GroupID, g.GROUP_Name as GroupName,g.GROUP_Active as GroupStatus from Groups g WHERE g.AGENCY_ID = '" . $id . "' ORDER BY g.GROUP_ID ASC;";
+		$sql = "SELECT g.GROUP_ID as GroupID, g.GROUP_Name as GroupName,g.GROUP_Active as GroupStatus from Groups g WHERE g.AGENCY_ID = '" . $id . "' AND g.GROUP_Active = '1' ORDER BY g.GROUP_ID ASC;";
 		return query_results($this,$sql);
 					
 	}
 	
 	public function getClientsByGroupID($id) {
-		$sql = "SELECT c.CLIENT_ID as ClientID,c.CLIENT_Name as ClientName,c.CLIENT_Active as ClientStatus from Clients c WHERE c.GROUP_ID = '" . $id . "' ORDER BY c.CLIENT_ID ASC;";
+		$sql = "SELECT c.CLIENT_ID as ClientID,c.CLIENT_Name as ClientName,c.CLIENT_Active as ClientStatus from Clients c WHERE c.GROUP_ID = '" . $id . "' AND c.CLIENT_Active = '1' ORDER BY c.CLIENT_ID ASC;";
 		return query_results($this,$sql);
 	}
 

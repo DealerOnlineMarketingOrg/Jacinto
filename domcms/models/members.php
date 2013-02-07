@@ -6,6 +6,7 @@ class Members extends CI_Model {
         parent::__construct();
         $this->load->helper('pass');
 		$this->load->helper('string_parser');
+                $this->load->helper('query');
     }
     
 	public function validate() {
@@ -226,6 +227,38 @@ class Members extends CI_Model {
             return TRUE;
         }else {
             return FALSE;
+        }
+    }
+    
+    public function addUsers($data) {
+        $insert = $this->db->insert('Users',$data);
+        if($insert) {
+            $sql = 'SELECT USER_ID as ID FROM Users WHERE USER_Name = "' . $data['USER_Name'] . '" LIMIT 1';
+            $results = query_results($this,$sql);
+            return $results;
+        }else {
+            return false;
+        }
+    }
+    
+    public function addDirectory($data) {
+        $insert = $this->db->insert('Directories',$data);
+        if($insert) {
+            //get id of inserted
+            $sql = 'SELECT DIRECTORY_ID as ID FROM Directories WHERE DIRECTORY_FirstName = "' . $data['DIRECTORY_FirstName'] . '" AND DIRECTORY_LastName = "' . $data['DIRECTORY_LastName'] . '" AND DIRECTORY_Email ="' . $data['DIRECTORY_Email'] . '" LIMIT 1;';          
+            $results = query_results($this, $sql);
+            return $results;
+        }else {
+            return false;
+        }    
+    }
+    
+    public function addUserInfo($data) {
+        $insert = $this->db->insert('Users_Info',$data);
+        if($insert) {
+            return true;
+        }else {
+            return false;
         }
     }
     

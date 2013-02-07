@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-	class Nav extends CI_Model {
+	class Nav extends DOM_Model {
 		
 		public function __construct() {
 			parent::__construct();	
@@ -10,7 +10,7 @@
 		//Main query
 		private function get_nav($parent,$user_lvl,$group) {
 			$sql = "SELECT NAV_ID as Id, NAV_Name as Label, NAV_Parent as Parent, NAV_Ref as Href, NAV_Level as Level, NAV_Active as Status, NAV_Class as Class FROM xSystemNav WHERE NAV_Level <= " . (float)$user_lvl . " AND NAV_Parent = '" . $parent . "' AND NAV_Group = '" . $group . "' AND NAV_Active = '1' ORDER BY NAV_Order;";
-			return query_results($this,$sql);
+			return $this->db->query($sql)->result();
 		}
 		
 		public function main($user_lvl) {

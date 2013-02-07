@@ -37,6 +37,11 @@
 | in the URL cannot be matched to a valid route.
 |
 */
+/*DPR Reports*/
+$route['reputations/yahoo']			= 'reputations/yahoo';
+
+$route['reports/dpr/(:any)'] 			= 'dpr/manage';
+$route['reputation/(:any)']				= 'reputation/dashboard';
 
 //login page form
 $route['login'] 						= 'auth/login';
@@ -53,7 +58,7 @@ $route['authenticate'] 					= 'auth/login_user';
 //logout
 $route['logout']						= 'auth/logout';
 //system routes
-$route['default_controller']            = "reports/dashboard";
+$route['default_controller']            = "admin/index";
 $route['404_override'] 					= 'errors/file_not_found';
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

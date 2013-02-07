@@ -60,4 +60,11 @@
 			$this->LoadTemplate('pages/dashboard');	
 		}
 		
+		public function test() {
+			$this->load->model('utilities');
+			$hiarchy = $this->utilities->clientList();
+			print_object($hiarchy);	
+		}
+
+		
 	}

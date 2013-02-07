@@ -398,7 +398,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .ui-tabs .ui-tabs-hide { display: none !important; }
 
 /* ===== UI Datepicker ===== */
-.datepicker { width: 58px!important; }
+.datepicker { width: 88px!important; }
 .ui-datepicker { width: 17em; padding: .2em .2em 0; border: 1px solid #d5d5d5; background: #fafafa; margin-top: 1px; z-index: 3; display: none; }
 .ui-datepicker-append { margin-left: 10px; }
 .ui-datepicker .ui-datepicker-header { position:relative; padding:.2em 0; border: 1px solid #E7E7E7; background: url(../imgs/leftNavBg.png) repeat-x; }

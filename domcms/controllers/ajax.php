@@ -15,13 +15,17 @@ class Ajax extends DOM_Controller {
         $this->user = $this->session->userdata('valid_user');
         $this->load->library('security');
     }
+	
+	public function yahooReviews() {
+		
+	}
 
     public function name_changer() {
         $this->load->model('administration');
         
         $name = '<span>' . $this->input->get('Agency') . '</span>';
         $type = substr($this->input->get('Level'), 0, 1);
-        $selected = substr($this->input->get('Level'), -1);
+        $selected = substr($this->input->get('Level'), 1);
         $level = $this->generateLevelName($type);
 
         //rewrite session vars
@@ -44,7 +48,7 @@ class Ajax extends DOM_Controller {
                 break;
             case 'c':
                 
-                $group_id = $this->administration->getClientID($id)->GroupID;
+                $group_id = $this->administration->getClientID($selected)->GroupID;
                 
                 $this->user['DropdownDefault']->SelectedClient = $this->administration->getClientID($selected)->ClientID;
                 $this->user['DropdownDefault']->SelectedGroup = $this->administration->getClientID($selected)->GroupID;
@@ -53,8 +57,6 @@ class Ajax extends DOM_Controller {
         }
 
         $this->session->sess_write();
-
-        print $level . $name;
     }
 
     public function selected_dealer($selected_id) {
@@ -62,7 +64,7 @@ class Ajax extends DOM_Controller {
         $this->session->set_userdata['valid_user']['DropdownDefault']->SelectedID = $selected_id;
 
         //$this->session->userdata['valid_user']['DropdownDefault']->SelectedID = $selected_id;
-        //$this->session->sess_write();
+        $this->session->sess_write();
     }
 
     public function selected_tag() {
@@ -70,6 +72,33 @@ class Ajax extends DOM_Controller {
         $this->session->userdata['valid_user']['DropdownDefault']->SelectedTag = $selected_tag;
         $this->session->sess_write();
     }
+	
+	public function reset_dd_session($page) {
+		$type = $this->user['DropdownDefault']->LevelType;
+        switch ($type) {
+            case 'a':
+				$this->user['DropdownDefault']->LevelType = 'a';
+                $this->user['DropdownDefault']->SelectedAgency = 1;
+                $this->user['DropdownDefault']->SelectedGroup = NULL;
+                $this->user['DropdownDefault']->SelectedClient = NULL;
+                break;
+            case 'g':
+				$this->user['DropdownDefault']->LevelType = 'a';
+                $this->user['DropdownDefault']->SelectedGroup  = NULL;
+                $this->user['DropdownDefault']->SelectedAgency = $this->administration->getGroupID($selected)->AgencyID;
+                $this->user['DropdownDefault']->SelectedClient = NULL;
+                break;
+            case 'c':
+				$this->user['DropdownDefault']->LevelType = 'g';
+                $this->user['DropdownDefault']->SelectedClient = NULL;
+                $this->user['DropdownDefault']->SelectedGroup = $this->administration->getClientID($selected)->GroupID;
+                $this->user['DropdownDefault']->SelectedAgency = $this->administration->getGroupID($selected)->AgencyID;
+                break;
+        }
+		
+		$this->session->sess_write();
+		
+	}
 
     /*
       ADMIN CONTROLLERS
@@ -83,5 +112,9 @@ class Ajax extends DOM_Controller {
         );
         $this->load->view(THEMEDIR . 'popups/basic_form', $data);
     }
+	
+	public function add_new_tag() {
+		$this->load->view('themes/itsbrain/forms/form_addtags');
+	}
 
 }

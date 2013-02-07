@@ -95,21 +95,74 @@
 			$DropString 		= '';
 			$selected 			= FALSE;
 			$aQuery 			= $this->ci->dropdown->AgenciesQuery();
-			foreach ($aQuery as $aRow){
+			
+			if(count($aQuery) > 1) {
+				foreach ($aQuery as $aRow){
+					// And no-indent and  agency style
+					$agentstyle 	= 'no-indent agency break';
+					//check for default agency
+					$selected 		= FALSE;
+					
+					if($aRow->AGENCY_ID == $id AND $type == 1):
+						$selected 	= TRUE;
+					else:
+						$selected 	= FALSE;
+					endif;
+					
+					//write out a string like: a:1;Name of agency^css_name,true|
+					$DropString .= 'a:' . $aRow->AGENCY_ID . ';' . $aRow->AGENCY_Name . '^' . $agentstyle . ',' . $selected . '|';
+					$gQuery 	 = $this->ci->dropdown->GroupsQuery(false, $aRow->AGENCY_ID);
+					
+					foreach ($gQuery as $gRow) {
+						$selected 		  = FALSE;
+						if($gRow->GROUP_ID == $id AND $type == 2):
+							$selected 	  = TRUE;
+						else:
+							$selected 	  = FALSE;
+						endif;
+						
+						//styles to append to string
+						$groupstyle  	  = 'single-indent group';
+						//write out a string
+						$DropString 	 .= 'g:' . $gRow->GROUP_ID . ';' . $gRow->GROUP_Name . '^' . $groupstyle . ',' . $selected . '|';
+						//query
+						$cQuery 		  =  $this->ci->dropdown->ClientQuery(false, $gRow->GROUP_ID);
+						
+						$clientstyle = 'double-indent client';
+						//And style client as double 
+						foreach ($cQuery as $cRow){
+							$selected = FALSE;
+							
+							if($cRow->CLIENT_ID == $id AND $type == 3):
+								$selected = TRUE;
+							else:
+								$selected = FALSE;
+							endif;
+							
+							if (!isset($tag_c_ids) OR $tag_c_ids==false) {
+								$DropString .= 'c:' . $cRow->CLIENT_ID . ';' . $cRow->CLIENT_Name . '^' . $clientstyle . ',' . $selected . '|';
+							}
+							else if(isset($tag_c_ids) AND in_array($cRow->CLIENT_ID, $tag_c_ids)){
+								$DropString .= 'c:' . $cRow->CLIENT_ID . ';' . $cRow->CLIENT_Name . '^' . $clientstyle . ',' . $selected . '|';
+							}
+						}//end cQuery
+					}//end gQuery
+				}//end aQuery
+			}else {
 				// And no-indent and  agency style
 				$agentstyle 	= 'no-indent agency break';
 				//check for default agency
 				$selected 		= FALSE;
 				
-				if($aRow->AGENCY_ID == $id AND $type == 1):
+				if($aQuery->AGENCY_ID == $id AND $type == 1):
 					$selected 	= TRUE;
 				else:
 					$selected 	= FALSE;
 				endif;
 				
 				//write out a string like: a:1;Name of agency^css_name,true|
-				$DropString .= 'a:' . $aRow->AGENCY_ID . ';' . $aRow->AGENCY_Name . '^' . $agentstyle . ',' . $selected . '|';
-				$gQuery 	 = $this->ci->dropdown->GroupsQuery(false, $aRow->AGENCY_ID);
+				$DropString .= 'a:' . $aQuery->AGENCY_ID . ';' . $aQuery->AGENCY_Name . '^' . $agentstyle . ',' . $selected . '|';
+				$gQuery 	 = $this->ci->dropdown->GroupsQuery(false, $aQuery->AGENCY_ID);
 				
 				foreach ($gQuery as $gRow) {
 					$selected 		  = FALSE;
@@ -129,23 +182,23 @@
 					$clientstyle = 'double-indent client';
 					//And style client as double 
 					foreach ($cQuery as $cRow){
+						$selected = FALSE;
+						
+						if($cRow->CLIENT_ID == $id AND $type == 3):
+							$selected = TRUE;
+						else:
 							$selected = FALSE;
-							
-							if($cRow->CLIENT_ID == $id AND $type == 3):
-								$selected = TRUE;
-							else:
-								$selected = FALSE;
-							endif;
-							
-							if (!isset($tag_c_ids) OR $tag_c_ids==false) {
-								$DropString .= 'c:' . $cRow->CLIENT_ID . ';' . $cRow->CLIENT_Name . '^' . $clientstyle . ',' . $selected . '|';
-							}
-							else if(isset($tag_c_ids) AND in_array($cRow->CLIENT_ID, $tag_c_ids)){
-								$DropString .= 'c:' . $cRow->CLIENT_ID . ';' . $cRow->CLIENT_Name . '^' . $clientstyle . ',' . $selected . '|';
-							}
+						endif;
+						
+						if (!isset($tag_c_ids) OR $tag_c_ids==false) {
+							$DropString .= 'c:' . $cRow->CLIENT_ID . ';' . $cRow->CLIENT_Name . '^' . $clientstyle . ',' . $selected . '|';
 						}
-					}
-				}
+						else if(isset($tag_c_ids) AND in_array($cRow->CLIENT_ID, $tag_c_ids)){
+							$DropString .= 'c:' . $cRow->CLIENT_ID . ';' . $cRow->CLIENT_Name . '^' . $clientstyle . ',' . $selected . '|';
+						}
+					}//end cQuery
+				}//end gQuery
+			}
 			return $DropString;			
 		}
 		

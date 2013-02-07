@@ -1,17 +1,57 @@
+function filterTags() {
+	var selectedTags = jQuery('#tagFilter').val() || [];
+	if(selectedTags.length > 0) {
+		jQuery('.tagElement').hide();
+		for(var i = 0; i < selectedTags.length; i++) {
+			jQuery('.'+selectedTags[i]).show();
+			
+		}
+	}else {
+		jQuery('.tagElement').show();	
+	}
+}
+
 $(function() {
-	
 	//===== Autocomplete =====//
 	
-	var availableTags = [ "ActionScript", "AppleScript", "Asp", "BASIC", "C", "C++", "Clojure", "COBOL", "ColdFusion", "Erlang", "Fortran", "Groovy", "Haskell", "Java", "JavaScript", "Lisp", "Perl", "PHP", "Python", "Ruby", "Scala", "Scheme" ];
-	$( "#ac" ).autocomplete({
-	source: availableTags
-	});	
+	var availableTags = ["Green",
+						 "Black", 
+						 "Purple", 
+						 "BASIC", 
+						 "C", 
+						 "C++", 
+						 "Clojure", 
+						 "COBOL", 
+						 "ColdFusion",
+						 "Erlang",
+						 "Fortran",
+						 "Groovy",
+						 "Haskell",
+						 "Java",
+						 "JavaScript",
+						 "Lisp",
+						 "Perl",
+						 "PHP",
+						 "Python",
+						 "Ruby",
+						 "Scala",
+						 "Scheme"];
+						 
+	$("#ac").autocomplete({source:availableTags});	
 	
 	
 	//===== Tags =====//	
 		
 	$('#tags').tagsInput({width:'100%'});
 	
+	$('#tagFilter').change(function() {
+		filterTags();
+	});
+	
+	
+	if($('div.content').hasClass('hideTagFilter')) {
+		$('div#system_tags').remove();	
+	}
 	
 	//===== Input limiter =====//
 	
@@ -36,6 +76,14 @@ $(function() {
 	$(".maskPo").mask("PO: aaa-999-***");
 	$(".maskPct").mask("99%");
 	
+	if($('form')) {
+		var i = 1;
+		$('form input, form select,form checkbox, form radio,form textarea').each(function() {
+			$(this).attr('tabindex',i);
+			i++;
+		});
+	}
+	
 	
 	//===== Placeholder =====//
 	
@@ -45,7 +93,7 @@ $(function() {
 	//===== Multiple select with dropdown =====//
 	
 	$(".chzn-select").chosen(); 
-	
+	//dealer dropdown
 	
 	//===== Usual validation engine=====//
 
@@ -149,6 +197,20 @@ $(function() {
 		}
 	 }
 	);
+	
+	$('#AddTags').click(function() {
+		$('#blackout').fadeIn('fast',function() {
+			$('#ajaxPopup').fadeIn('fast',function() {
+				
+			});
+		});
+	});
+	
+	$('#blackout').dblclick(function() {
+		$('#ajaxPopup').fadeOut('fast',function() {
+			$('#blackout').fadeOut('fast');
+		});
+	});
 
 	
 	//===== UI dialog =====//
@@ -163,7 +225,7 @@ $(function() {
 		}
 	});
 	
-	$( "#opener" ).click(function() {
+	$( "#opener,.opener" ).click(function() {
 		$( "#dialog-message" ).dialog( "open" );
 		return false;
 	});	
@@ -434,6 +496,19 @@ $(function() {
 	var m = date.getMonth();
 	var y = date.getFullYear();
 	
+	/*$('#calendar').fullCalendar({
+		header:{
+			left:'prev,next',
+			center:'title',
+			right:'month,basicWeek,basicDay'
+		},editable:true,
+		events: {
+			url: 'http://www.google.com/calendar/feeds/jwdavis%40dealeronlinemarketing.com/public/basic',
+			className:'gcal-event',
+			currentTimezone:'America/NewYork'
+		}
+	}); */
+	
 	$('#calendar').fullCalendar({
 		header: {
 			left: 'prev,next',
@@ -443,52 +518,76 @@ $(function() {
 		editable: true,
 		events: [
 			{
-				title: 'All day event',
-				start: new Date(y, m, 1)
+				title: 'Create Digital Performance Reports',
+				start: new Date(y, m, 1),
+				end: new Date(y, m, 7),
+				color: '#662d91'
 			},
 			{
-				title: 'Long event',
-				start: new Date(y, m, 5),
-				end: new Date(y, m, 8)
+				title: 'New Finance & Lease Specials',
+				start: new Date(y, m, 3),
+				end: new Date(y, m, 9),
+				color: '#00aeef'
 			},
 			{
-				id: 999,
-				title: 'Repeating event',
-				start: new Date(y, m, 2, 16, 0),
-				end: new Date(y, m, 3, 18, 0),
-				allDay: false
+				title: 'Updated Homepage Slides',
+				start: new Date(y, m, 3),
+				end: new Date(y, m, 9),
+				color: '#62693f'
 			},
 			{
-				id: 999,
-				title: 'Repeating event',
-				start: new Date(y, m, 9, 16, 0),
-				end: new Date(y, m, 10, 18, 0),
-				allDay: false
+				title: 'Dealer Newsletters',
+				start: new Date(y, m, 8),
+				end: new Date(y, m, 15),
+				color: '#d2232a'
 			},
 			{
-				title: 'Actually any color could be applied for background',
-				start: new Date(y, m, 30, 10, 30),
-				end: new Date(y, m, d+1, 14, 0),
-				allDay: false,
-				color: '#B55D5C'
+				title: 'Submit Manufacturer Compliance',
+				start: new Date(y, m, 10),
+				end: new Date(y, m, 17),
+				color: '#f58020'
 			},
 			{
-				title: 'Lunch',
-				start: new Date(y, m, 14, 12, 0),
-				end: new Date(y, m, 15, 14, 0),
-				allDay: false
+				title: 'Sales eBlasts',
+				start: new Date(y, m, 11),
+				end: new Date(y, m, 22),
+				color: '#d2232a'
 			},
 			{
-				title: 'Birthday PARTY',
-				start: new Date(y, m, 18),
-				end: new Date(y, m, 20),
-				allDay: false
+				title: 'New Car Competitive Analysis',
+				start: new Date(y, m, 11),
+				end: new Date(y, m, 15),
+				color: '#40ae49'
 			},
 			{
-				title: 'Click for Google',
-				start: new Date(y, m, 27),
-				end: new Date(y, m, 29),
-				url: 'http://google.com/'
+				title: 'Creative Presentation & Monthly Marketing Checklist',
+				start: new Date(y, m, 14),
+				end: new Date(y, m, 18),
+				color: '#7b0708'
+			},
+			{
+				title: 'Secret Shop - CRM Automated Check',
+				start: new Date(y, m, 15),
+				end: new Date(y, m, 22),
+				color: '#fff200'
+			},
+			{
+				title: 'Digital Marketing for Next Month',
+				start: new Date(y, m, 22),
+				end: new Date(y, m, 28),
+				color: '#23408f'
+			},
+			{
+				title: 'Service/Parts Competitive Analysis',
+				start: new Date(y, m, 21),
+				end: new Date(y, m, 24),
+				color: '#40ae49'
+			},
+			{
+				title: 'Update Parts, Service & Body Shop Specials',
+				start: new Date(y, m, 23),
+				end: new Date(y, m, 28),
+				color: '#23408f'
 			}
 		]
 	});
@@ -510,7 +609,7 @@ $(function() {
 	
 	//===== Form validation engine =====//
 
-	$("#valid").validationEngine();
+	$("#valid").validationEngine({promptPosition : "topLeft", scroll: true});
 	
 
 	//===== Datepickers =====//
