@@ -40,6 +40,7 @@
 				$('div.content div.Dd').remove();
 				$('div.LPb').remove();
 				$('div.a-Ua-ya').remove();
+				$('div#footer').remove();
 			}
 		</script>
         <div class="fix"></div>

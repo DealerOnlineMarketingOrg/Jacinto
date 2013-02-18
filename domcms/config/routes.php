@@ -38,26 +38,26 @@
 |
 */
 /*DPR Reports*/
-$route['reputations/yahoo']			= 'reputations/yahoo';
-
 $route['reports/dpr/(:any)'] 			= 'dpr/manage';
 $route['reputation/(:any)']				= 'reputation/dashboard';
-
-//login page form
 $route['login'] 						= 'auth/login';
-//reset password form
 $route['reset_password'] 				= 'auth/reset_password';
-//change password form
 $route['change_password'] 				= 'auth/change_password';
-//used to process the password_reset form
 $route['generate_password']				= 'auth/process_forgot_pass';
-//process change password
 $route['process_change_password']       = 'auth/password_change';
-//used to process the login
 $route['authenticate'] 					= 'auth/login_user';
-//logout
 $route['logout']						= 'auth/logout';
-//system routes
+$route['groups']						= 'admin/groups';
+$route['edit_group']					= 'admin/groups/edit';
+$route['view_group']					= 'admin/groups/view';
+$route['clients']						= 'admin/clients';
+$route['edit_client']					= 'admin/clients/edit';
+$route['view_group']					= 'admin/clients/view';
+$route['users']							= 'admin/users';
+$route['edit_user']						= 'admin/users/edit';
+$route['user/(:any)']					= 'admin/users/view';
+$route['reputation']					= 'reputations';
+$route['reputation/(:any)']				= 'reputations/$1';
 $route['default_controller']            = "admin/index";
 $route['404_override'] 					= 'errors/file_not_found';
 /* End of file routes.php */

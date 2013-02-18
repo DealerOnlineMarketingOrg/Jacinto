@@ -48,10 +48,10 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'mysql51-016.wc1.ord1.stabletransit.com';
-$db['default']['username'] = '718973_ci_domcm';
-$db['default']['password'] = 'Dom123456';
-$db['default']['database'] = '718973_ci_domcms';
+$db['default']['hostname'] = 'mysql51-020.wc1.ord1.stabletransit.com';
+$db['default']['username'] = '718973_jacinto';
+$db['default']['password'] = 'Q?noodle*09';
+$db['default']['database'] = '718973_domcms_prod';
 $db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

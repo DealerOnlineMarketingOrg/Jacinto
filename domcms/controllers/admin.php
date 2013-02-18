@@ -69,7 +69,14 @@ class Admin extends DOM_Controller {
             default:
 				$html = '';
 			//print_object($this->user['DropdownDefault']);
-				$client_id = (($this->user['DropdownDefault']->SelectedClient) ? $this->user['DropdownDefault']->SelectedClient : 1);
+				$level = $this->user['DropdownDefault']->LevelType;
+				if($level == 1 OR $level == 'a') {
+					$client_id = $this->user['DropdownDefault']->SelectedAgency;	
+				}elseif($level == 2 OR $level == 'g') {
+					$client_id = $this->user['DropdownDefault']->SelectedGroup;	
+				}elseif($level == 3 OR $level == 'c') {
+					$client_id = $this->user['DropdownDefault']->SelectedClient;	
+				}
 				//echo $client_id;
                 $users = $this->administration->getUsersByUserInfo($client_id);
                 //Creating the table headings (th)
@@ -131,9 +138,6 @@ class Admin extends DOM_Controller {
 
 
                 //BUILD THE HTML FOR THE PAGE HERE IN A STRING. THE VIEW JUST ECHOS THIS OUT.
-                $html .= '<div class="title">';
-                $html .= "\t" . heading('Users', 5);
-                $html .= '</div>';
                 $html .=  ((count($users) > 0) ? $this->table->generate() : $error_msg);
 
                 if ($this->CheckModule('User_Add')) {
@@ -142,6 +146,7 @@ class Admin extends DOM_Controller {
 
                 //Prepare data for template in $data array; when in template, you call the keys like vars: example => $html;
                 $data = array(
+					'page_id' => 'Users',
                     'page_html' => $html
                 );
 
@@ -216,7 +221,7 @@ class Admin extends DOM_Controller {
                     $agency_id = (($level != 'a') ? $this->user['DropdownDefault']->SelectedAgency : false);
                     $agencies = $this->administration->getAgencies($agency_id);
 
-                    if(isset($agencies) AND (count($agencies) > 1)) {
+                    if($agencies) {
 
                         //LOOP THROUGH EACH AGENCY AND CREATE A FORM BUTTON "EDIT" AND ROW FOR IT.
                         foreach ($agencies as $agency) :
@@ -248,30 +253,6 @@ class Admin extends DOM_Controller {
                             $this->table->add_row($agency->Name, $agency->Description, (($agency->Status) ? 'Active' : 'Disabled'), $form);
                         endforeach;
                     }else {
-                        if(isset($agencies)) {
-                            $form_attr = array(
-                              'name' => 'edit_' . $agencies->ID,
-                              'id' => 'edit_form_' . $agencies->ID,
-                            );
-
-                            $button = array(
-                                'name' => 'submit',
-                                'id' => 'agency_id_' . $agencies->ID,
-                                'class' => 'basicBtn',
-                                'value' => 'Edit'
-                            );
-
-                            $tmpl = array('table_open' => '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">');
-                            $this->table->set_template($tmpl);
-
-                            $form = '';
-                            if($this->CheckModule('Agency_Edit')) {
-                                $form .= form_open('/admin/agency/edit',$form_attr) . form_hidden('agency_id',$agencies->ID) . form_submit($button) . form_close();
-                            }
-
-                            $this->table->add_row($agencies->Name,$agencies->Description,(($agencies->Status) ? 'Active' : 'Disabled'), $form);
-
-                       };
                     }
 
                     //If there is a message to the user, present it as it should be.
@@ -285,9 +266,6 @@ class Admin extends DOM_Controller {
 
 
                     //BUILD THE HTML FOR THE PAGE HERE IN A STRING. THE VIEW JUST ECHOS THIS OUT.
-                    $html .= '<div class="title">';
-                    $html .= "\t" . heading('Agencies', 5);
-                    $html .= '</div>';
                     $html .= $this->table->generate();
 
                     if ($this->CheckModule('Agency_Add')) {
@@ -296,7 +274,7 @@ class Admin extends DOM_Controller {
 
                     //Prepare data for template in $data array; when in template, you call the keys like vars: example => $html;
                     $data = array(
-                        'page_id' => 'agency',
+                        'page_id' => 'Agencies',
                         'page_html' => $html
                     );
 
@@ -334,28 +312,33 @@ class Admin extends DOM_Controller {
                 $this->LoadTemplate('forms/form_addgroups',$data);
                 break;
             case 'edit' :
-                
+			
+					$level = $this->user['DropdownDefault']->LevelType;
+					
+					if($level == 'c') {
+						redirect('/admin/clients/edit','refresh');	
+					}
+					
+					if($level == 'a') {
+						redirect('/admin/agencies/edit','refresh');	
+					}
+			
                     $html = '';
-                    
                     if($msg AND $msg != 'error') {
                         $html .= success_msg('Your group was successfully edited!');
                     }elseif($msg AND $msg == 'error') {
                         $html .= error_msg();
                     }
-                
-                     //WE POST WHAT AGENCY WERE EDITING, THIS IS THE ID IN THE DB.
-                    $group_id = $this->input->post('group_id');
+                     //WE POST WHAT Group WERE EDITING, THIS IS THE ID IN THE DB.
+                    $group_id = ($this->input->post('group_id')) ? $this->input->post('group_id') : $this->user['DropdownDefault']->SelectedGroup;
                     $this->load->model('administration');
                     $group = $this->administration->getSelectedGroup($group_id);
-                    
-                    //print_object($group);
                     //PREPARE THE VIEW FOR THE FORM
                     $data = array(
                         'group' => $group,
                         'html' => $html
                     );
                     //THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
-
                 $this->LoadTemplate('forms/form_editgroups',$data);
                 break;
             default:
@@ -434,9 +417,6 @@ class Admin extends DOM_Controller {
                     }
 					
                     //This builds the pages html out. We do this here so all our listing pages can have the same template view.
-                    $html .= '<div class="title">' . "\n";
-                    $html .= "\t" . heading('Groups', 5);
-                    $html .= '</div>' . "\n";
                     $html .= $tmpl . "\n";
                     $html .= '<div class="fix"></div>';
 
@@ -446,7 +426,7 @@ class Admin extends DOM_Controller {
                     }
 
                     $data = array(
-                        'page_id' => 'groups',
+                        'page_id' => 'Groups',
                         'page_html' => $html
                     );
                     $this->LoadTemplate('pages/listings', $data);
@@ -468,7 +448,7 @@ class Admin extends DOM_Controller {
         switch ($page) {
             case 'add':
                 $html = '';
-
+				$titles = '';
                 //If there is a message to the user, present it as it should be.
                 if ($msg AND $msg != 'error') {
                     //The success message after a group was added or edited.
@@ -512,12 +492,41 @@ class Admin extends DOM_Controller {
 					
                 $this->LoadTemplate('forms/form_editcontacts',$data);
                 break;
+			case 'view':
+				$contact = $this->administration->getContact($this->input->post('view_id'));
+				$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
+				$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
+				$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;
+				$contact->Email = mod_parser($contact->Email);
+				$data = array(
+					'display'=>$contact
+				);
+				$this->LoadTemplate('pages/details',$data);
+			break;
             default:
+			
+				$table = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
+			
 				$level = $this->user['DropdownDefault']->LevelType;
-				$client_id = (($this->user['DropdownDefault']->SelectedClient) ? $this->user['DropdownDefault']->SelectedClient : false);			
-                $contacts = $this->administration->getContacts($client_id);
+				if($level == 'g') {
+					$clients = $this->administration->getClientIDSInGroup($this->user['DropdownDefault']->SelectedGroup);
+					$contacts = array();
+					foreach($clients as $client) {
+						$Groupedcontacts = $this->administration->getContacts($client->ID);
+						if($Groupedcontacts)
+							foreach($Groupedcontacts as $newContact) {
+								array_push($contacts,$newContact);
+							}
+						//array_push($contacts,$this->administration->getContacts($client->ID));	
+					}
+				}elseif($level == 'a') {
+					$contacts = $this->administration->getAllContactsInAgency($this->user['DropdownDefault']->SelectedAgency);
+				}else {
+					$client_id = $this->user['DropdownDefault']->SelectedClient;
+					$contacts = $this->administration->getContacts($client_id);
+				}
+                
                 //table heading
-                $this->table->set_heading('Title', 'Name', 'Email', 'Phone','Actions');
                 $html = '';
 
                 //If there is a message to the user, present it as it should be.
@@ -529,12 +538,21 @@ class Admin extends DOM_Controller {
                     $html .= error_msg();
                 }
                 
+				if($contacts) :
+					$table .= '<thead><tr>' . '<th>Team</th>' . (($level == 'g' OR $level == 'a') ? '<th style="text-align:left;">Dealership</th>' : '' ) . '<th style="width:10%;">Title</th><th>Name</th><th>Email</th><th>Phone</th><th style="text-align:center">Edit</th><th style="text-align:center">View</tr></thead>';
+					$table .= '<tbody>';
 					foreach($contacts as $contact) {
 						$edit_button = '';
 						$edit_button .= form_open('/admin/contacts/edit',array('name'=>'EditForm','id'=>'contact_' . $contact->ContactID));
 						$edit_button .= form_hidden('contact_id',$contact->ContactID);
-						$edit_button .= form_submit('editContact','Edit Contact','class="basicBtn"');
+						$edit_button .= form_submit('editContact','Edit','class="redBtn" ');
 						$edit_button .= form_close();
+						
+						$view_button = '';
+						$view_button .= form_open('/admin/contacts/view',array('name'=>'ViewContact','id'=>'view_' . $contact->ContactID));
+						$view_button .= form_hidden('view_id',$contact->ContactID);
+						$view_button .= form_submit('viewContact','View','class="blueBtn"');
+						$view_button .= form_close();
 
 						
 						
@@ -543,39 +561,40 @@ class Admin extends DOM_Controller {
 						$contact->Email 	= mod_parser($contact->Email);
 						$contact->Phone 	= mod_parser($contact->Phone);
 						$contact->Title 	= $this->administration->getContactTitle($contact->Title);
-						$this->table->add_row(
-							$contact->Title,
-							$contact->Name,
-							'<span style="font-weight:bold;">Personal Email</span><br /><a href="mailto:' . $contact->Email["home"] . '">' . $contact->Email['home'] . '</a></span>' .
-							((isset($contact->Email['work'])) ? '<br /><span style="font-weight:bold;">Work Email</span><br /><a href="mailto:' . $contact->Email["work"] . '">' . $contact->Email['work'] . '</a></span>' : ''),
-							'<span style="font-weight:bold;">Direct</span><br /><span style="white-space:nowrap;"><a href="tel:' . $contact->Phone['main'] . '">' . $contact->Phone['main'] . '</a></span>' .
-							((isset($contact->Phone['mobile'])) ? 
-								'<br /><span style="font-weight:bold;">Mobile</span><br />
-								 <span style="white-space:nowrap;">
-									<a href="tel:' . $contact->Phone['mobile'] . '">' . $contact->Phone['mobile'] . '</a>
-								</span>' : '') . 
-							((isset($contact->Phone['fax'])) ? '<br /><span style="font-weight:bold;">Fax</span><br /><span style="white-space:nowrap;"><a href="tel:' . $contact->Phone['fax'] . '">' . $contact->Phone['fax'] . '</a></span>' : ''),
-							$edit_button
-						);
+						$table .= '<tr class="tagElement ' . $contact->Tag . '">';
+						$table .= '<td class="tags"><div class="' . $contact->Tag . '">&nbsp;</div></td>';
+						if($level == 'g' OR $level == 'a') {
+							$table .= '<td style="width:auto;white-space:no-wrap;text-align:left;">' . $this->administration->getClient(substr($contact->Type,4))->Name . '</td>';
+						}
+						$table .= '<td style="text-align:left;">' . $contact->JobTitle . '</td>';
+						$table .= '<td>' . $contact->Name . '</td>';
+						
+						$table .= '<td>' . '<span style="font-weight:bold;">Personal Email</span><br /><a href="mailto:' . $contact->Email["home"] . '">' . $contact->Email['home'] . '</a></span>' . ((isset($contact->Email['work'])) ? '<br /><span style="font-weight:bold;">Work Email</span><br /><a href="mailto:' . $contact->Email["work"] . '">' . $contact->Email['work'] . '</a></span>' : '') . '</td>';
+							
+						$table .= '<td>' . '<span style="font-weight:bold;">Direct</span><br /><span style="white-space:nowrap;"><a href="tel:' . $contact->Phone['main'] . '">' . $contact->Phone['main'] . '</a></span>' . ((isset($contact->Phone['mobile'])) ? '<br /><span style="font-weight:bold;">Mobile</span><br /><span style="white-space:nowrap;"><a href="tel:' . $contact->Phone['mobile'] . '">' . $contact->Phone['mobile'] . '</a></span>' : '') . ((isset($contact->Phone['fax'])) ? '<br /><span style="font-weight:bold;">Fax</span><br /><span style="white-space:nowrap;"><a href="tel:' . $contact->Phone['fax'] . '">' . $contact->Phone['fax'] . '</a></span>' : '') . '</td>';
+						
+						$table .= '<td style="text-align:center;vertical-align:middle;border-right:none;">' . $edit_button . '</td>' . '<td style="text-align:center;vertical-align:middle;">' . $view_button . '</td>';
+						$table .= '</tr>';
 					}
-                
-                $tmpl = array('table_open' => '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">');
-                $this->table->set_template($tmpl);
-
+					$table .= '</tbody>';
+				else :
+				   $table .= '<thead><tr><th>Error</th></tr></thead>';
+				   $table .= '<tbody><tr><td><p>Sorry, No contacts found for this client. Select another client from the dropdown selector or add a contact by clicking the add contact button below.</p></td></tr></tbody>';
+				endif;
+                $table .= '</table><div class="fix"></div>';
                 //This builds the pages html out. We do this here so all our listing pages can have the same template view.
-                $html .= '<div class="title">' . "\n";
-                $html .= "\t" . heading('Contacts', 5);
-                $html .= '</div>' . "\n";
-                $html .= ((count($contacts) > 0) ? $this->table->generate() . "\n":$error_msg);
+                $html .= ((count($contacts) > 0) ? $table . "\n":$error_msg);
                 $html .= '<div class="fix"></div>';
                 
                 //If the user has permission to add a new group, then show a button to do so.
-                if ($this->CheckModule('Client_Add')) {
+                if ($this->CheckModule('Client_Add') && $level == 'c') {
                     $html .= anchor(base_url() . 'admin/contacts/add', 'Add New Contact', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_contact_btn"');
-                }
+                }else {
+					$html .= '<p style="float:right;">To add new contacts, please select a client from the Dealer Dropdown</p>';	
+				}
 
                 $data = array(
-                    'page_id' => 'clients',
+                    'page_id' => 'Contacts',
                     'page_html' => $html,
                 );
                 //LOAD THE TEMPLATE
@@ -611,12 +630,22 @@ class Admin extends DOM_Controller {
 					'html' => $html,
 					'tags' => $tags
 				);
-                
 
                 $this->LoadTemplate('forms/form_addclients',$data);
                 break;
 
             case 'edit' :
+					
+					$level = $this->user['DropdownDefault']->LevelType;
+					
+					if($level == 'g') {
+						redirect('/admin/groups/edit','refresh');	
+					}
+					
+					if($level == 'a') {
+						redirect('/admin/agencies/edit','refresh');	
+					}
+			
                     $html = '';
                     
                     if($msg AND $msg != 'error') {
@@ -626,22 +655,30 @@ class Admin extends DOM_Controller {
                     }
                 
                      //WE POST WHAT AGENCY WERE EDITING, THIS IS THE ID IN THE DB.
-                    $client_id = $this->input->post('client_id');
+                    $client_id = ($this->input->post('client_id'))?$this->input->post('client_id'):$this->user['DropdownDefault']->SelectedClient;
                     $this->load->model('administration');
                     $client = $this->administration->getSelectedClient($client_id);
-                    
+                    $tags = $this->administration->getAllTags();    
                     if($client) {
                         $client->Address = (isset($client->Address)) ? mod_parser($client->Address) : false;
                         $client->Phone = (isset($client->Phone)) ? mod_parser($client->Phone) : false;
+						$client->Reviews = array(
+							'Google'   => $this->administration->getSelectedClientsReviews($client_id,1)->URL,
+							'GoogleID' => $this->administration->getSelectedClientsReviews($client_id,1)->ID,
+							'Yelp'     => $this->administration->getSelectedClientsReviews($client_id,2)->URL,
+							'YelpID'   => $this->administration->getSelectedClientsReviews($client_id,2)->ID,
+							'Yahoo'    => $this->administration->getSelectedClientsReviews($client_id,3)->URL,
+							'YahooID'  => $this->administration->getSelectedClientsReviews($client_id,3)->ID
+						);
                     }
                     
-                    //print_object($client);
+                    //print_object($this->administration->getSelectedClientsReviews($client_id,1));
                     
                     //print_object($group);
                     //PREPARE THE VIEW FOR THE FORM
                     $data = array(
                         'client' => $client,
-                        'html' => $html
+                        'html' => $html,'tags'=>$tags
                     );
                     //THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
 
@@ -748,9 +785,6 @@ class Admin extends DOM_Controller {
                     $this->table->set_template($tmpl);
 
                     //This builds the pages html out. We do this here so all our listing pages can have the same template view.
-                    $html .= '<div class="title">' . "\n";
-                    $html .= "\t" . heading('Clients', 5);
-                    $html .= '</div>' . "\n";
                     $html .= $this->table->generate() . "\n";
                     $html .= '<div class="fix"></div>';
 
@@ -760,7 +794,7 @@ class Admin extends DOM_Controller {
                     }
 
                     $data = array(
-                        'page_id' => 'clients',
+                        'page_id' => 'Clients',
                         'page_html' => $html,
                     );
                     //LOAD THE TEMPLATE

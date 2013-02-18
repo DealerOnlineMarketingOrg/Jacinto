@@ -250,39 +250,131 @@ class DOM_Controller extends CI_Controller {
 						$form = $this->input->post();
 						$data = array(
 							'GROUP_ID' => (($this->user['DropdownDefault']->SelectedGroup) ? $this->user['DropdownDefault']->SelectedGroup : 1),
-							'CLIENT_Name' => $form['ClientName'],
-							'CLIENT_Address' => 'street:' . $form['street'] . ',city:' . $form['city'] . ',state:' . $form['state'] . ',zipcode:' . $form['zip'],
-							'CLIENT_Phone' => 'main:' . $form['phone'],
-							'CLIENT_Notes' => $form['Notes'],
-							'CLIENT_Code' => $form['ClientCode'],
-							'CLIENT_Active' => $form['Status'],
+							'CLIENT_Name'    => $form['ClientName'],
+							'CLIENT_Address' => 'street:'   . $form['street'] . 
+												',city:'    . $form['city'] . 
+												',state:'   . $form['state'] . 
+												',zipcode:' . $form['zip'],
+							'CLIENT_Phone'   => 'main:' . $form['phone'],
+							'CLIENT_Notes'   => $form['Notes'],
+							'CLIENT_Code'    => $form['ClientCode'],
+							'CLIENT_Active'  => $form['Status'],
 							'CLIENT_Created' => date('Y-m-d H:i:s'),
-							'CLIENT_Tag' => $form['tags']
+							'CLIENT_Tag'     => $form['tags']
 						);
-					
+						//add posted client to database
 						$addClient = $this->administration->addClient($data);
 						
 						if($addClient) {
-							redirect('/admin/clients/add/success','refresh');	
+							$review = array(
+								array(
+									'ClientID' => $this->user['DropdownDefault']->SelectedClient,
+									'ServicesID' => 1,
+									'URL' => $form['GoogleReviewURL']
+								),array(
+									'ClientID' => $this->user['DropdownDefault']->SelectedClient,
+									'ServicesID' => 2,
+									'URL' => $form['YelpReviewURL']
+								),array(
+									'ClientID' => $this->user['DropdownDefault']->SelectedClient,
+									'ServicesID' => 3,
+									'URL' => $form['YahooReviewURL']
+								)
+							);
+							
+							$addGoogleReview = $this->administration->addReview($review[0]);
+							$addYelpReview = $this->administration->addReview($review[1]);
+							$addYahooReview = $this->administration->addReview($review[2]);
+							
+							if($addClient) {
+								redirect('/admin/clients/add/success','refresh');
+							}else {
+								redirect('/admin/clients/add/error','refresh');	
+							}
 						}else {
 							redirect('/admin/clients/add/error','refresh');	
 						}
 					break;
 					case "edit":
-						
 						$form = $this->input->post();
+						$client_id = $form['ClientID'];
+						
+						
 						$data = array(
-							'GROUP_ID' => (($this->user['DropdownDefault']->SelectedGroup) ? $this->user['DropdownDefault']->SelectedGroup : 1),
-							'CLIENT_Name' => $form['ClientName'],
-							'CLIENT_Address' => 'street:' . $form['street'] . ',city:' . $form['city'] . ',state:' . $form['state'] . ',zipcode:' . $form['zip'],
-							'CLIENT_Phone' => 'main:' . $form['phone'],
-							'CLIENT_Notes' => $form['Notes'],
-							'CLIENT_Code' => $form['ClientCode'],
-							'CLIENT_Active' => $form['Status'],
-							'CLIENT_Created' => date('Y-m-d H:i:s')
+							'GROUP_ID' 		 => (($this->user['DropdownDefault']->SelectedGroup)?$this->user['DropdownDefault']->SelectedGroup:1),
+							'CLIENT_Name'    => $form['ClientName'],
+							'CLIENT_Address' => 'street:'   . $form['street'] . 
+												',city:'    . $form['city']   . 
+												',state:'   . $form['state']  . 
+												',zipcode:' . $form['zip'],
+							'CLIENT_Phone'   => 'main:' . $form['phone'],
+							'CLIENT_Notes'   => $form['Notes'],
+							'CLIENT_Code'    => $form['ClientCode'],
+							'CLIENT_Active'  => $form['Status'],
+							'CLIENT_Created' => date('Y-m-d H:i:s'),
 						);
 						
+						$reviews = array();
+						
+						if($form['GoogleID'] == 0) {
+							$google = array(
+								'ClientID' => $form['ClientID'],
+								'ServicesID' => 1,
+								'URL' => $form['GoogleReviewURL'],
+							);
+							$addGoogleReview = $this->administration->addReview($google);
+							array_push($reviews,$addGoogleReview);
+						}else {
+							$google = array(
+								'ID' => $form['GoogleID'],
+								'ClientID' => $form['ClientID'],
+								'ServicesID' => 1,
+								'URL' => $form['GoogleReviewURL'],
+							);
+							$updateGoogleReview = $this->administration->editReviews($google,$client_id,1);
+							array_push($reviews,$updateGoogleReview);
+						}
+						
+						if($form['YelpID'] == 0) {
+							$yelp = array(
+								'ClientID' => $form['ClientID'],
+								'ServicesID' => 2,
+								'URL' => $form['YelpReviewURL']
+							);
+							$addYelpReview = $this->administration->addReview($yelp);
+							array_push($reviews,$addYelpReview);
+						}else {
+							$yelp = array(
+								'ID' => $form['YelpID'],
+								'ClientID' => $form['ClientID'],
+								'ServicesID' => 2,
+								'URL' => $form['YelpReviewURL']
+							);
+							$updateYelpReview = $this->administration->editReviews($yelp,$client_id,2);
+							array_push($reviews,$updateYelpReview);
+						}
+						
+						if($form['YahooID'] == 0 && $form['YahooReviewURL'] != '') {
+							$yahoo = array(
+								'ClientID' => $form['ClientID'],
+								'ServicesID' => 3,
+								'URL' => $form['YahooReviewURL']
+							);
+							$addYahooReview = $this->administration->addReview($yahoo);
+							array_push($reviews,$addYahooReview);
+						}else {
+							$yahoo = array(
+								'ID' => $form['YahooID'],
+								'ClientID' => $form['ClientID'],
+								'ServicesID' => 3,
+								'URL' => $form['YahooReviewURL']
+							);
+							$updateYahooReview = $this->administration->editReviews($yahoo,$client_id,3);
+							array_push($reviews,$updateYahooReview);
+						}
+						
 						$updateClient = $this->administration->editClient($data, $this->input->post('ClientID'));
+						
 						if($updateClient) {
 							if($form['Status'] == '0') {
 								$this->reset_dd_session('/admin/clients/success');
@@ -292,6 +384,7 @@ class DOM_Controller extends CI_Controller {
 						}else {
 							redirect('/admin/clients/error','refresh');	
 						}
+						
 						
 					break;
 				endswitch;
@@ -381,7 +474,9 @@ class DOM_Controller extends CI_Controller {
                             'DIRECTORY_Email' => $email,
                             'DIRECTORY_Phone' => $phone,
                             'DIRECTORY_Notes' => $notes,
-                            'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME)
+                            'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME),
+							'JobTitle'=>$form['JobTitle'],
+							'CLIENT_Owner'=>$this->user['DropdownDefault']->SelectedClient
                         );
                         
                         $addContact = $this->administration->addContact($data);
@@ -414,7 +509,9 @@ class DOM_Controller extends CI_Controller {
                             'DIRECTORY_Email' => $email,
                             'DIRECTORY_Phone' => $phone,
                             'DIRECTORY_Notes' => $notes,
-                            'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME)
+                            'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME),
+							'JobTitle'=>$form['JobTitle'],
+							'CLIENT_Owner'=>$this->user['DropdownDefault']->SelectedClient
                         );
                         
                         //print_object($data);
@@ -422,9 +519,9 @@ class DOM_Controller extends CI_Controller {
                         $addContact = $this->administration->updateContact($data, $this->input->post('contact_id'));
                         
                         if($addContact) {
-                            redirect('/admin/contacts/add/success','refresh');
+                            redirect('/admin/contacts/success','refresh');
                         }else {
-                            redirect('/admin/contacts/add/error','refresh');
+                            redirect('/admin/contacts/error','refresh');
                         }
 
                          
@@ -437,21 +534,7 @@ class DOM_Controller extends CI_Controller {
                         //create array from port post elements
                         $form = $this->input->post();
                         $add = $this->administration->addAgencies($form);
-
-                        //print_object($form);
-
-                        //print_object($add);
-
-                        /*
-
-                          if($add) {
-                          redirect('/admin/agency/listing/success','location');
-                          }else {
-                          redirect('/admin/agency/add/error', 'location');
-                          }
-
-                         */
-                        break;
+                    break;
                     case "edit":
                         $form = $this->input->post();
 
@@ -470,11 +553,7 @@ class DOM_Controller extends CI_Controller {
                         } else {
                             redirect('/admin/agency/edit/error', 'location');
                         }
-                        break;
-                        
-                    case "disable":
-                        //disable
-                        break;
+                    break;
                 endswitch;
                 break;
             case "users":
@@ -498,10 +577,10 @@ class DOM_Controller extends CI_Controller {
 						
 						$accessID               = $this->input->post('AccessLevel');
 						$status                 = $this->input->post('Status');
-						$generated_password     = createRandomString(8,'ALPHANUMSYM');
+						$generated_password     = 'dom123456';
 				
                         //add users
-                        $user_generated = '0';
+                        $user_generated = 0;
                         $created = date(FULL_MILITARY_DATETIME);
                         
                         $usersTable = array(
@@ -550,7 +629,7 @@ class DOM_Controller extends CI_Controller {
                                     'USER_Password'         => encrypt_password($generated_password),
                                     'USER_Active'           => 1,
                                     'USER_ActiveTS'         => date(FULL_MILITARY_DATETIME),
-                                    'USER_Generated'        => 1,
+                                    'USER_Generated'        => 0,
                                     'USER_Created'           => date(FULL_MILITARY_DATETIME)
                                 );
                                 

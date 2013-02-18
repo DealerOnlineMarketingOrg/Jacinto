@@ -1,36 +1,57 @@
 <?php
 
-if (!defined('BASEPATH'))
-    exit('No direct script access allowed');
+if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 function get_welcome_message() {
-    $ci = & get_instance();
+    $ci =& get_instance();
     return 'Welcome, ' . $ci->session->userdata['valid_user']['FirstName'] . ' ' . $ci->session->userdata['valid_user']['LastName'];
 }
 
-function breadcrumb() {
-    $ci = &get_instance();
-    $i = 1;
-    $uri = $ci->uri->segment($i);
-    $link = '<div class="container' . ((FLUIDLAYOUT) ? '-fluid' : '') . '">';
-    $link .= "\t" . '<ul class="breadcrumbs">';
-    $link .= "\t\t" . '<li><a href="' . base_url() . '"><i class="icon-home"></i></a></li>';
-    while ($uri != '') {
-        $prep_link = '';
-        for ($j = 1; $j <= $i; $j++) {
-            $prep_link .= $ci->uri->segment($j) . '/';
-        }
-        if ($ci->uri->segment($i + 1) == '') {
-            $link .= "\t\t" . '<li><a href="' . site_url($prep_link) . '">' . $ci->uri->segment($i) . '</a></li>';
-        } else {
-            $link .= "\t\t" . '<li><a href="' . site_url($prep_link) . '">' . $ci->uri->segment($i) . '</a></li>';
-        }
-        $i++;
-        $uri = $ci->uri->segment($i);
-    }
-    $link .= "\t" . '</ul>';
-    $link .= '</div>';
-    return $link;
+function breadcrumb($replacement = false) {
+	//create a empty var to hold the breakcrumb html
+	$link = '';
+	
+	//get codeigniter instance so we can use its features
+    $ci =& get_instance();
+		
+	//grab the url with the url helper
+    $url = $ci->uri->uri_string();
+	$uri = explode('/', $url);
+	
+	$i=0;
+	$link .= '<li class="firstB"><a href="' . base_url() . '">Home</a></li>';
+	$prep_link = '';
+	
+	//loop through array and create the breadcrumb elements
+	foreach($uri as $section) {
+		if($section == '') {
+			unset($uri[$i]);	
+		}
+		
+		$prep_link .= $uri[$i] . '/';	
+
+		if($section != '') {
+			if($i >= count($uri)) {
+				$link .= '<li class="lastB" style="text-transform:capitalize">'. $section . '</li>';
+			}else {
+				$link .= '<li style="text-transform:capitalize"><a href="' . $prep_link . '">' . $section . '</a></li>';
+			}
+		}
+		$i++;
+		/*for($j = 0; $j <= $i; $j++) {
+			$prep_link .= $uri[$j] . '/';	
+		}
+		
+		if(count($uri - 1) > $i) {
+			$link = '<li><a href="' . site_url($prep_link) . '">' . $section . '</a></li>';
+		}else {
+			$link = '<li class="lastB">' . ($replacement) ? $replacement : $section . '</li>';	
+		}
+		
+		$i++;*/
+	}
+	
+	return $link;
 }
 
 function showStates($selected = false) {

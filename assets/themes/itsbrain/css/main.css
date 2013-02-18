@@ -167,7 +167,8 @@ div.dealerDropdowns * {text-align:left;}
 div.dealerDropdowns div.rowElem {padding:5px 0 0 0;border-top:none;}
 /* ===== Header ===== */
 #header { height: 106px; clear: both; }
-.logo { float: left; margin-top: 30px; margin-right:3%;width:12%; }
+.logo { float: left; margin-top: 30px; margin-right:41px;width:212px; }
+.logo img {width:100%;}
 .middleNav { float: right; margin-right: 1px; }
 .middleNav ul { margin-top: 25px; }
 .middleNav ul li { height: 55px;  text-align: center; display: block; float: left; margin-left: 25px; position: relative; }
@@ -859,6 +860,7 @@ table.display td:first-child{width:30px;text-align:center;}
     .middleNav ul li { text-align: center; display: inline-block; float: none; margin-left: 5%; position: relative; }
     .middleNav ul li:first-child { margin-left: 0; }
     .logo { float: none; }
+	.logo img {width:80%;}
     .userNav ul li span { display: none; }
     .userNav ul li img { padding: 13px 14px 11px 14px; margin: 0; }
     .userNav ul li ul { right: -3px; left: auto; }
@@ -886,7 +888,9 @@ table.display td:first-child{width:30px;text-align:center;}
 }
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (min-width: 320px) and (max-width: 479px) {
-    .logo { float: none; text-align: center; }
+    .logo { float: none; text-align: center;}
+	.logo img {width:100px;}
+	div.dealerDropdowns,div#system_tags{display:none;}
     .welcome { display: none; }
     .userNav { float: none; text-align: center; position: relative; }
     .userNav ul { height: 36px; text-align: center; }
@@ -944,4 +948,9 @@ table.display td:first-child{width:30px;text-align:center;}
 @media only screen and (min-width: 480px) and (max-width: 767px) {
     .moreFields ul li { width: 13.4%; }
     .moreFields ul li span { display: none; }	
+}
+@media only screen and (min-width:1px) and (max-width:480px) {
+	#topNav{display:none;}
+	div.dealerDropdowns,div#system_tags{display:none;}
+	
 }

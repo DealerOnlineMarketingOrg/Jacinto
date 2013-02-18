@@ -53,6 +53,8 @@ $(function() {
 		$('div#system_tags').remove();	
 	}
 	
+	$('li.CID_1').remove();
+	
 	//===== Input limiter =====//
 	
 	$('.limit').inputlimiter({

@@ -80,6 +80,32 @@
                 </div>
                 
                 <div class="rowElem noborder">
+                	<label>Google Review</label>
+                    <div class="formRight">
+                    	<?= form_input(array('class'=>'validate[custum[url]]','name'=>'GoogleReviewURL','id'=>'GoogleReview')); ?>
+                        <p class="formNote">The Web Address for the clients Google Review Page</p>
+                    </div>
+                    <div class="fix"></div>
+                </div>
+                
+                <div class="rowElem noborder">
+                	<label>Yelp Review</label>
+                    <div class="formRight">
+                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YelpReviewURL','id'=>'YelpReview')); ?>
+                        <p class="formNote">The Web Address for the clients Yelp Review Page</p>
+                    </div>
+                    <div class="fix"></div>
+                </div>
+                
+                <div class="rowElem noborder">
+                	<label>Yahoo Review</label>
+                    <div class="formRight">
+                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YahooReviewURL','id'=>'YahooReview')); ?>
+                        <p class="formNote">The Web Address for the clients Yahoo Review Page</p>
+                    </div>
+                </div>
+                
+                <div class="rowElem noborder">
                     <label><span class="req">*</span> Tags</label>
                     <div class="formRight searchDrop">
                         <select style="width:200px;" name="tags" data-placeholder="Link Tags To Client..." class="chzn-select validate[required]" tabindex="9">

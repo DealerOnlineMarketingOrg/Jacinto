@@ -18,6 +18,14 @@
                     <div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
+                	<label><span class="req">*</span> Job Title</label>
+                    <div class="formRight">
+                    	<?= form_input(array('class'=>'validate[required]','name'=>'JobTitle','id'=>'JobTitle','value'=>$contact->JobTitle)); ?>
+                        <p class="formNote">Contacts Job Title</p>
+                    </div>
+                    <div class="fix"></div>
+                </div>
+                <div class="rowElem noborder">
                     <label><span class="req">*</span> Personal Email</label>
                     <div class="formRight"><?= form_input(array('class'=>'required validate[required,custom[email]]','name'=>'PersonalEmailAddress','id'=>'email','value'=>((isset($contact->Email['home'])) ? $contact->Email['home'] : ''))); ?></div><div class="fix"></div>
                 </div>

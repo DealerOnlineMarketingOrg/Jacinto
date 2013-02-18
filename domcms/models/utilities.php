@@ -21,6 +21,7 @@
 		public function clientList() {
 			$this->load->helper('form');
 			$clientList = array();
+			
 			//Get the selected item
 			$type = $this->usr['DropdownDefault']->LevelType;
 			//user permission level
@@ -38,12 +39,14 @@
 			}else {
 				$selected = '';	
 			}
+			
 			//Grab all agencies,groups and clients and return them to an array
 			$a_sql = 'SELECT AGENCY_ID as AID, AGENCY_Name as AName, AGENCY_Active as AStatus, AGENCY_Tags as ATags from Agencies WHERE AGENCY_Active = "1" ORDER BY AGENCY_Name ASC';
 			$agents = $this->db->query($a_sql)->result();
 			$g_sql = 'SELECT AGENCY_ID as AID, GROUP_Name as GName, GROUP_ID as GID, GROUP_Active as GStatus, GROUP_Tags as GTags FROM Groups WHERE GROUP_Active = "1" ORDER BY GROUP_Name ASC';
 			$groups = $this->db->query($g_sql)->result();
 			$c_sql = 'SELECT CLIENT_ID as CID, GROUP_ID as GID, CLIENT_Name as CName, CLIENT_Code as Code, CLIENT_Tag as CTag, CLIENT_Active as CStatus FROM Clients WHERE CLIENT_Active = "1" ORDER BY CLIENT_Name ASC';
+			
 			$clients = $this->db->query($c_sql)->result();
 			foreach($agents as $agent) {
 				$agent->Class = 'AID_' . $agent->AID;

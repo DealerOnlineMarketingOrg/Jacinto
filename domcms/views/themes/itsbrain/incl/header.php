@@ -1,6 +1,6 @@
 <!-- Header -->
 <div id="header" class="wrapper">
-    <div class="logo"><a href="/" title=""><img src="<?= base_url(); ?>assets/themes/global/imgs/loginLogo.png" style="width:100%;" alt="" /></a></div>
+    <div class="logo"><a href="/" title=""><img src="<?= base_url(); ?>assets/themes/global/imgs/loginLogo.png"  alt="Dealer Online Marketing" /></a></div>
     <div id="system_tags">
 		<fieldset>
 			<div class="widget" style="border:none;">

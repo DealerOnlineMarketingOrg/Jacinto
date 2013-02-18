@@ -1,6 +1,6 @@
 
 <!-- Content -->
-<div class="content" id="container">
+<div class="content hideTagFilter" id="container">
     <div class="title"><h5>Admin</h5></div>
     <?= (($html) ? $html : ''); ?>
     <!-- Form begins -->
@@ -56,7 +56,7 @@
 
                 </div>
                 <div class="rowElem noborder">
-                    <label><span class="req">*</span>Phone Number</label>
+                    <label><span class="req">*</span> Phone Number</label>
                     <div class="formRight">
                         <?= form_input(array('class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value' => ((isset($client->Phone['main'])) ? $client->Phone['main'] : ''))); ?>
                         <span class="formNote">(999) 999-9999</span>
@@ -72,9 +72,50 @@
 
                 </div>
                 <div class="rowElem noborder">
-                    <label><span class="req">*</span>Client Code</label>
+                    <label><span class="req">*</span> Client Code</label>
                     <div class="formRight">
                         <?= form_input(array('class'=>'required validate[required]','name'=>'ClientCode','id'=>'code','value'=>$client->Code)); ?>
+                    </div>
+                    <div class="fix"></div>
+                </div>
+                <div class="rowElem noborder">
+                	<label>Google Review</label>
+                    <div class="formRight">
+                    	<?= form_input(array('class'=>'validate[custum[url]]','name'=>'GoogleReviewURL','id'=>'GoogleReview','value'=>$client->Reviews['Google'])); ?>
+                        <?= form_hidden('GoogleID',($client->Reviews['GoogleID']) ? $client->Reviews['GoogleID'] : 0); ?>
+                        <p class="formNote">The Web Address for the clients Google Review Page</p>
+                    </div>
+                    <div class="fix"></div>
+                </div>
+                
+                <div class="rowElem noborder">
+                	<label>Yelp Review</label>
+                    <div class="formRight">
+                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YelpReviewURL','id'=>'YelpReview','value'=>$client->Reviews['Yelp'])); ?>
+                        <?= form_hidden('YelpID',($client->Reviews['YelpID']) ? $client->Reviews['YelpID'] : 0); ?>
+                        <p class="formNote">The Web Address for the clients Yelp Review Page</p>
+                    </div>
+                    <div class="fix"></div>
+                </div>
+                
+                <div class="rowElem noborder">
+                	<label>Yahoo Review</label>
+                    <div class="formRight">
+                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YahooReviewURL','id'=>'YahooReview','value'=>$client->Reviews['Yahoo'])); ?>
+                        <?= form_hidden('YahooID',($client->Reviews['YahooID']) ? $client->Reviews['YahooID'] : 0); ?>
+                        <p class="formNote">The Web Address for the clients Yahoo Review Page</p>
+                    </div>
+                </div>
+                
+                <div class="rowElem noborder">
+                    <label><span class="req">*</span> Tags</label>
+                    <div class="formRight searchDrop">
+                        <select style="width:200px;" name="tags" data-placeholder="Link Tags To Client..." class="chzn-select validate[required]" tabindex="9">
+                            <option value=""></option>
+                            <?php foreach($tags as $tag) : ?>
+                            	<option <?= (($tag->ID == $client->Tag) ? 'selected="selected"' : ''); ?> value="<?= $tag->ID; ?>"><?= $tag->Name; ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="fix"></div>
                 </div>
@@ -82,39 +123,35 @@
                     <label>Enable/Disable</label>
                     <div class="formRight">
                         <div class="radio" id="uniform-radio1">
-                            <input type="radio" id="radio1" name="Status" value="1" <?= (($client->Status != 0) ? 'checked="checked"' : ''); ?> style="opacity:0;" />
+                            <input 
+                            	type="radio" 
+                                id="radio1" 
+                                name="Status" 
+                                value="1" <?= (($client->Status != 0) ? 'checked="checked"' : ''); ?> 
+                                style="opacity:0;" />
                         </div>
                         <label for="radio1">Enabled</label>
 
                         <div class="radio" id="uniform-radio2">
-                            <input type="radio" id="radio2" name="Status" value="0" <?= (($client->Status != 1) ? 'checked="checked"' : ''); ?> style="opacity:0;" />
+                            <input 
+                            	type="radio" 
+                                id="radio2" 
+                                name="Status" 
+                                value="0" <?= (($client->Status != 1) ? 'checked="checked"' : ''); ?> 
+                                style="opacity:0;" />
                         </div>
                         <label for="radio2">Disabled</label>
+                        <div class="fix"></div>
                     </div>
                     <div class="fix"></div>
                 </div>
-
-                <!-- <div class="rowElem noborder">
-                    <label>Member of<span class="req">*</span></label>
-                    <div class="formRight">
-                        
-                    </div>
-                    <div class="fix"></div>
+                
+                
+                <div class="submitForm">
+               		<input type="hidden" name="ClientID" value="<?= $client->ClientID; ?>" />
+                    <input type="submit" value="submit" class="redBtn" />
+                    
                 </div>
-                <div class="rowElem noborder">
-                    <label>Tags</label>
-                    <div class="formRight">
-                        <select name="select2" name="tags">
-                            <option value="opt1">Choose a team...</option>
-                            <option>Red Team</option>
-                            <option>Blue Team</option>
-                            <option>Green Team</option>
-                            <option>Purple Team</option>
-                        </select>
-                    </div>
-                    <div class="fix"></div>
-                </div> -->
-                <div class="submitForm"><input type="hidden" name="ClientID" value="<?= $client->ClientID; ?>" /><input type="submit" value="submit" class="redBtn" /></div>
                 <div class="fix"></div>
             </div>
 

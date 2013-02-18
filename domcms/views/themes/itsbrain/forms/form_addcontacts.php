@@ -19,6 +19,14 @@
                             </div>
                             <div class="fix"></div>
                         </div>
+                        <div class="rowElem noborder">
+                            <label><span class="req">*</span> Job Title</label>
+                            <div class="formRight">
+                                <?= form_input(array('class'=>'validate[required]','name'=>'JobTitle','id'=>'JobTitle','value'=>$contact->JobTitle)); ?>
+                                <p class="formNote">Contacts Job Title</p>
+                            </div>
+                            <div class="fix"></div>
+                        </div>
                         <!-- <div class="rowElem noborder">
                             <label>Is contact also a user?</label>
                             <div class="formRight">

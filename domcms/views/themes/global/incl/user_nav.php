@@ -11,7 +11,7 @@
             </div>
             <div class="userNav">
                 <ul>
-                    <li><a href="<?= base_url(); ?>logout"><img src="<?= base_url(); ?>assets/icons/topnav/logout.png" alt="" /><span>Logout</a></li>
+                    <li><a href="<?= base_url(); ?>logout"><img src="<?= base_url(); ?>assets/themes/global/imgs/icons/topnav/logout.png" alt="" /><span>Logout</a></li>
                 </ul>
             </div>
             <div class="dealerDropdowns">
