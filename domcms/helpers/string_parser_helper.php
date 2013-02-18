@@ -15,7 +15,7 @@ function mod_parser($str) {
     foreach ($str as $item) {
         //expload the array values and create an array with keys that make sense to the app
         $mod = explode(':', $item);
-        $simple[trim($mod[0])] = trim($mod[1]);
+        $simple[trim($mod[0])] = (isset($mod[1])) ? trim($mod[1]) : '';
     }
 
     return $simple;

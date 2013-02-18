@@ -21,14 +21,14 @@ function breadcrumb($replacement = false) {
 	$i=0;
 	$link .= '<li class="firstB"><a href="' . base_url() . '">Home</a></li>';
 	$prep_link = '';
-	
+		
 	//loop through array and create the breadcrumb elements
 	foreach($uri as $section) {
 		if($section == '') {
 			unset($uri[$i]);	
 		}
 		
-		$prep_link .= $uri[$i] . '/';	
+		if($i != 0) $prep_link .= $uri[$i] . '/';	
 
 		if($section != '') {
 			if($i >= count($uri)) {

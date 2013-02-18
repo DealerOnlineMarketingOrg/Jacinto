@@ -22,58 +22,11 @@
                         <div class="rowElem noborder">
                             <label><span class="req">*</span> Job Title</label>
                             <div class="formRight">
-                                <?= form_input(array('class'=>'validate[required]','name'=>'JobTitle','id'=>'JobTitle','value'=>$contact->JobTitle)); ?>
+                                <?= form_input(array('class'=>'validate[required]','name'=>'JobTitle','id'=>'JobTitle')); ?>
                                 <p class="formNote">Contacts Job Title</p>
                             </div>
                             <div class="fix"></div>
                         </div>
-                        <!-- <div class="rowElem noborder">
-                            <label>Is contact also a user?</label>
-                            <div class="formRight">
-                                <div class="radio" id="uniform-radio1">
-                                    <input type="radio" id="isUser" name="isUser" value="1" style="opacity:0;"/>
-                                </div>
-                                <label for="radio1">Yes</label>
-
-                                <div class="radio" id="uniform-radio2">
-                                    <input type="radio" id="isContact" name="isUser" value="0" checked="checked" style="opacity:0;" />
-                                </div>
-                                <label for="radio2">No</label>
-                            </div>
-                            <div class="fix"></div>
-                        </div>
-                        <div id="perms" class="rowElem noborder" style="display:none;">
-                            <label>Permission Level<span class="req">*</span></label>
-                            <div class="formRight">
-                                <select class="required" name="permissionlevel" id="permOptions">
-                                    <option value="">Choose a level...</option>
-                                    <option value="1">Super-Admin</option>
-                                    <option value="2">Admin</option>
-                                    <option value="3">Group Admin/option>
-                                    <option value="4">Client Admin</option>
-                                    <option value="5">Manager</option>
-                                    <option value="6">User</option>
-                                </select>
-                            </div>
-                            <div class="fix"></div>
-                       </div>
-                       <script type="text/javascript">
-                           jQuery(document).ready(function() {
-							   jQuery('#isUser').click(function() {
-								  if(jQuery(this).is(':checked')) {
-									jQuery('#permOptions').attr('class','validate[required]');
-									jQuery('#perms').slideDown('slow');  
-								  }
-							   });
-							   
-							   jQuery('#isContact').click(function() {
-								  if(jQuery(this).is(':checked')) {
-									jQuery('#permOptions').attr('class','');
-									jQuery('#perms').slideUp('slow');  
-								  }
-							   });
-                           }(jQuery));
-                       </script> -->
 
                         <div class="rowElem noborder">
                             <label>First Name<span class="req">*</span></label>

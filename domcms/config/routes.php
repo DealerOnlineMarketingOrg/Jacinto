@@ -37,27 +37,30 @@
 | in the URL cannot be matched to a valid route.
 |
 */
-/*DPR Reports*/
-$route['reports/dpr/(:any)'] 			= 'dpr/manage';
-$route['reputation/(:any)']				= 'reputation/dashboard';
+/*auth redirects*/
 $route['login'] 						= 'auth/login';
-$route['reset_password'] 				= 'auth/reset_password';
-$route['change_password'] 				= 'auth/change_password';
-$route['generate_password']				= 'auth/process_forgot_pass';
-$route['process_change_password']       = 'auth/password_change';
 $route['authenticate'] 					= 'auth/login_user';
 $route['logout']						= 'auth/logout';
+
+//admin redirects
 $route['groups']						= 'admin/groups';
-$route['edit_group']					= 'admin/groups/edit';
-$route['view_group']					= 'admin/groups/view';
+$route['groups/(:any)']					= 'admin/groups/$1';
+
 $route['clients']						= 'admin/clients';
-$route['edit_client']					= 'admin/clients/edit';
-$route['view_group']					= 'admin/clients/view';
+$route['clients/(:any)']				= 'admin/clients/$1';
+
 $route['users']							= 'admin/users';
-$route['edit_user']						= 'admin/users/edit';
-$route['user/(:any)']					= 'admin/users/view';
+$route['users/(:any)']					= 'admin/users/$1';
+
+$route['contacts']						= 'admin/contacts';
+$route['contacts/(:any)']				= 'admin/contacts/$1';
+
+$route['agency']						= 'admin/agency';
+$route['agency/(:any)']					= 'admin/agency/$1';
+
+//redirects
 $route['reputation']					= 'reputations';
-$route['reputation/(:any)']				= 'reputations/$1';
+
 $route['default_controller']            = "admin/index";
 $route['404_override'] 					= 'errors/file_not_found';
 /* End of file routes.php */

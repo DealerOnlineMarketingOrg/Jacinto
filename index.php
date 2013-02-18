@@ -18,6 +18,11 @@
  * NOTE: If you change these, also change the error_reporting() code below
  *
  */
+ 
+ //were setting the environment by the url.
+ //content.dealeronlinemarketing.com = production
+ //dev is whatever dev environment were on...varies between developers
+
 function full_url() {
 	$s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
 	$sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
@@ -43,14 +48,11 @@ endif;
  * By default development will show errors but testing and live will hide them.
  */
 
-if (defined('ENVIRONMENT'))
-{
-	switch (ENVIRONMENT)
-	{
+if (defined('ENVIRONMENT')) {
+	switch (ENVIRONMENT) {
 		case 'development':
 			error_reporting(E_ALL);
 		break;
-	
 		case 'testing':
 		case 'production':
 			error_reporting(0);
