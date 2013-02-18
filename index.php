@@ -18,7 +18,22 @@
  * NOTE: If you change these, also change the error_reporting() code below
  *
  */
-	define('ENVIRONMENT', 'production');
+function full_url() {
+	$s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
+	$sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
+	$protocol = substr($sp, 0, strpos($sp, "/")) . $s;
+	$port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":".$_SERVER["SERVER_PORT"]);
+	return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
+}
+$actual_link = full_url();
+
+if($actual_link != 'http://content.dealeronlinemarketing.com') :
+	define('ENVIRONMENT', 'development');
+else :
+	define('ENVIRONMENT','production');
+endif;
+
+
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING
