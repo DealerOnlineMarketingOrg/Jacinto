@@ -160,10 +160,10 @@ class Members extends CI_Model {
 		return $modules;
    }
    
-   public function reset_password($email,$new_pass) {
+   public function reset_password($email) {
 		$this->load->helper('msg_helper');
 		$email = $this->security->xss_clean($this->input->post('email'));
-		$new_pass = createRandomString(8,'ALPHANUM');
+		$new_pass = createRandomString(10,'ALPHANUMSYM');
 		
         $sql = 'SELECT * FROM Users WHERE USER_Name = "' . $email . '";';
         $query = $this->db->query($sql);

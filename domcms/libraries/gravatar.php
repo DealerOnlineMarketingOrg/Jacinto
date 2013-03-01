@@ -46,7 +46,7 @@ class Gravatar {
     *
     * @return string gratavar url
     */
-    public function get_gravatar($email, $rating = NULL, $size = NULL, $default_image = NULL, $secure = NULL)
+    public function get_gravatar($email, $rating = NULL, $size = NULL, $default_image = NULL, $secure = TRUE)
     {
         $hash = $this->set_email($email);
         

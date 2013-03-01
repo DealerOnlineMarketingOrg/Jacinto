@@ -15,8 +15,12 @@
 |
 */
 $urlParts = explode('.',$_SERVER['HTTP_HOST']);
-//This allows the install to work on any subdomain of dealeronlinemarketing.com
-$config['base_url']	= 'http://' . $urlParts[0] . '.dealeronlinemarketing.com';
+if($urlParts[0] == 'jeremy' || $urlParts[0] == 'alena' || $urlParts[0] == 'phil') {
+	$config['base_url'] = 'http://' . $urlParts[0] . '.com';	
+}else {
+	$config['base_url']	= (($urlParts[0] != 'content') ? 'http://' : 'https://') . $urlParts[0] . '.dealeronlinemarketing.com';
+}
+
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +50,7 @@ $config['index_page'] = '';
 | 'ORIG_PATH_INFO'	Uses the ORIG_PATH_INFO
 |
 */
-$config['uri_protocol']	= 'PATH_INFO';
+$config['uri_protocol']	= 'AUTO';
 
 /*
 |--------------------------------------------------------------------------
@@ -193,7 +197,7 @@ $config['log_threshold'] = 0;
 | application/logs/ folder. Use a full server path with trailing slash.
 |
 */
-$config['log_path'] = '';
+$config['log_path'] = 'domcms/logs/';
 
 /*
 |--------------------------------------------------------------------------
@@ -248,7 +252,7 @@ $config['encryption_key'] = '22C8BC9CDEC92F31419CE1B4E1125';
 */
 
 $config['sess_cookie_name']		= 'dom_sess';
-$config['sess_expiration']		= 7200;
+$config['sess_expiration']		= 3400;
 $config['sess_expire_on_close'] = TRUE;
 $config['sess_encrypt_cookie']  = FALSE;
 $config['sess_use_database']    = TRUE;
@@ -269,7 +273,7 @@ $config['sess_time_to_update']  = 300;
 |
 */
 $config['cookie_prefix']	= "DOM_";
-$config['cookie_domain']	= $urlParts[0] . ".dealeronlinemarketing.com";
+$config['cookie_domain']	= ENVIRONMENT != 'production' && ENVIRONMENT != 'content' ? $urlParts[0] . '.com' : $urlParts[0] . 'dealeronlinemarketing.com';
 $config['cookie_path']		= "/";
 $config['cookie_secure']	= FALSE;
 
@@ -282,7 +286,7 @@ $config['cookie_secure']	= FALSE;
 | COOKIE data is encountered
 |
 */
-$config['global_xss_filtering'] = FALSE;
+$config['global_xss_filtering'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -296,7 +300,7 @@ $config['global_xss_filtering'] = FALSE;
 | 'csrf_cookie_name' = The cookie name
 | 'csrf_expire' = The number in seconds the token should expire.
 */
-$config['csrf_protection'] = FALSE;
+$config['csrf_protection'] = TRUE;
 $config['csrf_token_name'] = 'csrf_test_name';
 $config['csrf_cookie_name'] = 'csrf_cookie_name';
 $config['csrf_expire'] = 7200;

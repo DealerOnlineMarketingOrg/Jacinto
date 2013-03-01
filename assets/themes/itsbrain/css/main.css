@@ -64,7 +64,7 @@ p { padding: 12px 0 0 0; }
 .ml122 { margin-left: 122px; }
 .w40 { width: 40%; position: relative; }
 /* ==========  Login page  ========== */
-.loginPanel { width: 320px; background: #fafafa; border: 1px solid #d5d5d5; border-top: 0; display: block; height: 212px; }
+.loginPanel { width: 320px; background: #fafafa; border: 1px solid #d5d5d5; border-top: 0; display: block; height: auto !important; }
 .loginWrapper { margin: -106px 0 0 -160px; position: absolute; top: 50%; left: 50%; }
 .loginLogo { position: absolute; width: 190px; height: 44px; display: block; top: -80px; left: 50%; margin-left: -95px; } 
 .loginPanel h5 { font-weight: normal; padding: 9px 12px 9px 35px; float: left; } 
@@ -202,7 +202,7 @@ div.dealerDropdowns div.rowElem {padding:5px 0 0 0;border-top:none;}
 .leftNav ul li.admin a span { background-image: url(../imgs/icons/dark/adminUser.png); }
 .leftNav ul li.weird span { background-image: url(../imgs/icons/dark/create.png); padding-bottom:0 !important;}
 .leftNav ul li.merchandising a span { background-image: url(../imgs/icons/dark/money.png); }
-.leftNav ul li.reputations a span { background-image: url(../imgs/icons/dark/facebook.png); }
+.leftNav ul li.reputation a span { background-image: url(../imgs/icons/dark/facebook.png); }
 .leftNav ul li.errors a span { background-image: url(../imgs/icons/dark/alert.png); }
 .leftNav ul li.files a span { background-image: url(../imgs/icons/dark/files.png); }
 .leftNav ul li.creative a span { background-image: url(../imgs/icons/dark/paintBrush.png); }
@@ -214,9 +214,10 @@ div.dealerDropdowns div.rowElem {padding:5px 0 0 0;border-top:none;}
 ul.sub { border: 2px solid #3c4049; border-top: none; background: url(../imgs/leftNavSub.png) repeat; }
 ul.sub li { border-bottom: 1px dotted #d5d5d5; padding: 1px; }
 ul.sub li a { background: url(../imgs/arrow.gif) no-repeat 8px 16px; border: none; font-family: Arial, Helvetica, sans-serif; color: #494949; font-size: 11px; padding: 8px 10px 8px 18px; }
-ul.sub li a:hover, .sub li a:active { font-style: normal; border: none; color: #676767; background: url(../imgs/arrow.gif) no-repeat 8px 16px; }
+ul.sub li a:hover, .sub li a:active { font-style: normal; border: none; color: #676767 !important; background: url(../imgs/arrow.gif) no-repeat 8px 16px; }
 ul.sub li ul { border: none; border-top: 1px solid #c9c9c9; }
 ul.sub li ul li { padding-left: 10px; }
+ul.sub li.current a {color:rgb(58,11,165) !important}
 /* ===== Statistics ===== */
 .stats { margin-top: 25px; }
 .stats ul {  }
@@ -830,6 +831,10 @@ div#dealerDropdown_chzn.chzn-container{display:block;}
 .floatLeft{float:left;}
 .floatNone{float:none;}
 table.display td:first-child{width:30px;text-align:center;}
+
+ul.thirdparty li{display:inline;}
+ul.thirdparty li a {float:left;margin-right:8px;}
+div.ui-dialog-buttonset{display:none !important;}
 /* =====  Media queries  ===== */
 /* Devices and browsers with max of 799px */
 @media only screen and (max-width: 799px) {

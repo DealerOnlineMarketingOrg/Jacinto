@@ -18,6 +18,7 @@ class Groups extends DOM_Controller {
         $this->agency_id = $this->user['DropdownDefault']->SelectedAgency;
         $this->group_id  = $this->user['DropdownDefault']->SelectedGroup;
         $this->level     = $this->user['DropdownDefault']->LevelType;
+		$this->activeNav = 'admin';
     }
 
     public function index($msg=false) {
@@ -40,6 +41,7 @@ class Groups extends DOM_Controller {
 			$tmpl .= 		'<th style="text-align:left;">Name</th>';
 			$tmpl .= 		'<th style="text-align:center;">Member Of</th>';
 			$tmpl .= 		'<th style="text-align:center;">Status</th>';
+			$tmpl .=		'<th style="text-align:left;">Notes</th>';
 			$tmpl .= 		'<th>Actions</th>';
 			$tmpl .= 	'</tr>';
 			$tmpl .= '</thead>';
@@ -77,6 +79,7 @@ class Groups extends DOM_Controller {
 				$tmpl .= '<td class="client_name">' . $group->Name . '</td>';
 				$tmpl .= '<td class="agency" style="width:155px;text-align:center;">' . $group->AgencyName . '</td>';
 				$tmpl .= '<td class="status" style="width:75px;text-align:center;">' . (($group->Status) ? 'Active' : 'Disabled') . '</td>';
+				$tmpl .= '<td class="notes" style="width:auto;text-align:left;"><p>' . (($group->Notes) ? $group->Notes : 'No notes available') . '</p></td>';
 				$tmpl .= '<td class="editButtons" style="width:55px;">' . $form . '</td>';
 				
 			endforeach;

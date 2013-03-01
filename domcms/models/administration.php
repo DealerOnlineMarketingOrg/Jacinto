@@ -33,6 +33,15 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
 	}
 	
+	public function getUsersInformation($user_id) {
+		$sql = 'SELECT 
+				u.USER_ID as ID, 
+				u.USER_Name as UserName,
+				ui.USER_Modules as Modules,
+				ui.USER_ActiveTS as LastUpdated,
+				ui.USER_Created as DateJoined,
+				';	
+	}
 	
 	public function getAllContactsInAgency($id) {
 		$all_contacts = array();
@@ -378,6 +387,7 @@ class Administration extends CI_Model {
                 g.AGENCY_ID as AgencyID,
                 g.GROUP_Name as Name,
                 g.GROUP_Notes as Description,
+				g.GROUP_Notes as Notes,
                 g.GROUP_Active as Status,
                 g.GROUP_Created as DateCreated,
                 a.AGENCY_Name as AgencyName,

@@ -24,85 +24,141 @@ class DOM_Controller extends CI_Controller {
     public $validser;
 	public $TagCss;
 	public $TagHTML;
+	public $activeNav;
+	
 
     public function __construct() {
         parent::__construct();
+		
+		//force secure content
+		$this->load->helper('securecontent');
+		$protocol = get_protocol();
+		
+		if((ENVIRONMENT == 'production') AND ($protocol != 'https')) {
+			redirect('https://content.dealeronlinemarketing.com','refresh');
+		}
+		
         $this->load->helper('template');
         $this->load->library('gravatar');
-        $this->load->helper('template');
         $this->load->model('mods');
 		$this->load->model('utilities');
-		
-		$this->TagCss = $this->utilities->getTagCss();
+		$this->load->helper('err_helper');
+		$this->load->library('session');
+
+		$this->TagCss  = $this->utilities->getTagCss();
 		$this->TagHTML = $this->utilities->getTagSelect();
 
         $this->theme_settings = array(
-            'ThemeDir' => $this->config->item('ThemeDir'),
-            'GlobalDir' => $this->config->item('GlobalDir'),
-            'Title' => $this->config->item('Title'),
-            'CompanyName' => $this->config->item('CompanyName'),
-            'AppName' => $this->config->item('AppName'),
-            'Logo' => '<img src="' . base_url() . $this->config->item('GLobalDir') . '/' . $this->config->item('Logo') . '" alt="' . $this->config->item('CompanyName') . '" />',
-            'AppVersion' => $this->config->item('AppVersion'),
-            'GapiEmail' => $this->config->item('GapiEmail'),
-            'GapiPass' => $this->config->item('GapiPass'),
-            'GoogleFonts' => $this->config->item('GoogleFonts'),
-            'DocType' => $this->config->item('DocType'),
-            'HTML' => $this->config->item('HTML'),
-            'MetaTags' => $this->config->item('MetaTags'),
-            'Files' => $this->config->item('Files'),
-            'Breadcrums' => $this->config->item('Breadcrumbs'),
-			'TagCss' => $this->TagCss
+            'ThemeDir' 		=> $this->config->item('ThemeDir'),
+            'GlobalDir' 	=> $this->config->item('GlobalDir'),
+            'Title' 		=> $this->config->item('Title'),
+            'CompanyName' 	=> $this->config->item('CompanyName'),
+            'AppName' 		=> $this->config->item('AppName'),
+            'Logo' 			=> '<img src="' . base_url() . $this->config->item('GLobalDir') . '/' . $this->config->item('Logo') . '" alt="' . $this->config->item('CompanyName') . '" />',
+            'AppVersion' 	=> $this->config->item('AppVersion'),
+            'GapiEmail' 	=> $this->config->item('GapiEmail'),
+            'GapiPass' 		=> $this->config->item('GapiPass'),
+            'GoogleFonts' 	=> $this->config->item('GoogleFonts'),
+            'DocType' 		=> $this->config->item('DocType'),
+            'HTML' 			=> $this->config->item('HTML'),
+            'MetaTags' 		=> $this->config->item('MetaTags'),
+            'Files' 		=> $this->config->item('Files'),
+            'Breadcrums' 	=> $this->config->item('Breadcrumbs'),
+			'TagCss' 		=> $this->TagCss,
+			'Publisher'		=> $this->config->item('CityGridPublisher')
         );
 
         //Active button sets the highlighted icon on the view
         $active_button = $this->router->fetch_class();
-        $current_subnav_button = $this->uri->rsegment(2); // The Function 
-        define('ACTIVE_BUTTON', $active_button);
-        define('SUBNAV_BUTTON', '/' . $active_button . '/' . $current_subnav_button);
-
-        $this->user = $this->session->userdata('valid_user');
-        $this->avatar = $this->gravatar->get_gravatar((($this->user['Gravatar']) ? $this->user['Gravatar'] : $this->user['Username']));
-
-        //This checks the user validation
-        $this->validUser = ($this->session->userdata('valid_user')) ? TRUE : FALSE;
-        if (!$this->validUser)
-            redirect('login');
-
-        $this->user['DropdownDefault']->SelectedAgency = (($this->user['DropdownDefault']->SelectedAgency) ? $this->user['DropdownDefault']->SelectedAgency : $this->user['AgencyID']);
-        $this->user['DropdownDefault']->SelectedGroup = (($this->user['DropdownDefault']->SelectedGroup) ? $this->user['DropdownDefault']->SelectedGroup : $this->user['GroupID']);
-        $this->user['DropdownDefault']->SelectedClient = (($this->user['DropdownDefault']->SelectedClient) ? $this->user['DropdownDefault']->SelectedClient : $this->user['ClientID']);
-
-        $this->session->sess_write();
+		//if the page is on one of the authentication pages, we dont need the rest.
+		if($active_button != 'login' && $active_button != 'logout' && $active_button != 'authenticate') :
+			$current_subnav_button = $this->uri->rsegment(2); // The Function 
+			define('ACTIVE_BUTTON', $active_button);
+			define('SUBNAV_BUTTON', '/' . $active_button . '/' . $current_subnav_button);
+	
+			$this->user = $this->session->userdata('valid_user');
+			$this->avatar = $this->gravatar->get_gravatar((($this->user['Gravatar']) ? $this->user['Gravatar'] : $this->user['Username']));
+	
+			
+			//This checks the user validation
+			$this->validUser = ($this->session->userdata('valid_user')) ? TRUE : FALSE;
+			if (!$this->validUser) {
+				redirect('login');
+			}
+			
+			$this->user['DropdownDefault']->SelectedAgency = (($this->user['DropdownDefault']->SelectedAgency) ? $this->user['DropdownDefault']->SelectedAgency : $this->user['AgencyID']);
+			$this->user['DropdownDefault']->SelectedGroup  = (($this->user['DropdownDefault']->SelectedGroup)  ? $this->user['DropdownDefault']->SelectedGroup  : $this->user['GroupID']);
+			$this->user['DropdownDefault']->SelectedClient = (($this->user['DropdownDefault']->SelectedClient) ? $this->user['DropdownDefault']->SelectedClient : $this->user['ClientID']);
+	
+			// This is for communicating errors (both error and successes) around pages.
+			// Used with data adds, updates and removal.
+			// Pages can react to successes/errors from other pages, such as data input models.
+			$err = array(
+				// Different levels of error.
+				// Standard: -1 = error from last page, 0 = normal redirect, 1 = success from last page.
+				'Level' => 0,
+				// Message being sent about the error/success.
+				'Msg' => '',
+				// An array of element names which are affected by the error.
+				// Typically the list of elements which need to be corrected.
+				// The keys are the element name, while the values are the
+				//  error messages for those keys.
+				'ElementList' => array()
+			);
+			$this->user['DropdownDefault']->err = (object)$err;
+			$this->err = $this->user['DropdownDefault']->err;
+			
+			$this->session->sess_write();
+			
+			$this->load->model('nav');
+			$this->main_nav = $this->nav->main($this->user['AccessLevel']);
+			$this->user_nav = $this->nav->user($this->user['AccessLevel']);
+		endif;
 		
-        $this->load->model('nav');
-        $this->main_nav = $this->nav->main($this->user['DropdownDefault']->PermLevel);
-		//print_object($this->main_nav);
-        //$this->user_nav = $this->nav->user($this->user['AccessLevel']);
-        //print_object($this->user['DropdownDefault']);
     }
 
     public function LoadTemplate($filepath, $data = false, $header_data = false, $nav_data = false, $footer_data = false) {
 		
-        $nav = array(
-            'nav' => $this->main_nav,
-        );
-        $user_nav = array(
-            'nav' => $this->user_nav,
-            'user' => $this->user,
-            'avatar' => $this->avatar,
-        );
-		
-		$header_data = array(
-			'tagHtml' => $this->TagHTML
-		);
+		//Get what page we are currently on, we need this to load the pieces we need.
+		$page = $this->router->fetch_class();		
 		
         $this->load->view($this->theme_settings['GlobalDir'] . '/incl/header', $this->theme_settings);
-        $this->load->view($this->theme_settings['GlobalDir'] . '/incl/user_nav', $user_nav);
-        $this->load->view($this->theme_settings['ThemeDir'] . '/incl/header', ($header_data) ? $header_data : array());
-        $this->load->view($this->theme_settings['GlobalDir'] . '/incl/nav', $nav);
+		//if were not on the login screen, show the user nav
+        if($page != 'login' && $page != 'sign_in') { 
+			$user_nav = array(
+				'nav' => $this->user_nav,
+				'user' => $this->user,
+				'avatar' => $this->avatar,
+			);
+			$this->load->view($this->theme_settings['GlobalDir'] . '/incl/user_nav', $user_nav); 
+		}
+		
+		//if were not on the login screen, show the header
+        if($page != 'login' && $page != 'sign_in') { 
+			$header_data = array(
+				'tagHtml' => $this->TagHTML
+			);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/incl/header', ($header_data) ? $header_data : array()); 
+		}
+		
+		//if were not on the login screen, show the nav
+        if($page != 'login' && $page != 'sign_in') { 
+			$nav = array(
+				'nav' => $this->main_nav,
+				'active_button' => $this->activeNav
+			);
+			$this->load->view($this->theme_settings['GlobalDir'] . '/incl/nav', $nav);
+		}
+		
+		//load the content
         $this->load->view($this->theme_settings['ThemeDir'] . '/' . $filepath, ($data) ? $data : array());
-		$this->load->view('themes/itsbrain/forms/form_addtags');
+		
+		//if were not on the login screen, load the tags form in the footer. Its hidden by default.
+		if($page != 'login' && $page != 'sign_in') { 
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addtags');
+		}
+		
+		//Load the footers
         $this->load->view($this->theme_settings['ThemeDir'] . '/incl/footer', ($footer_data) ? $footer_data : array());
         $this->load->view($this->theme_settings['GlobalDir'] . '/incl/footer');
     }
@@ -237,10 +293,13 @@ class DOM_Controller extends CI_Controller {
         }
     }
 
+
     public function Form_processor($page, $which) {
         $this->load->helper('template');
         $this->load->model('members');
         $this->load->model('administration');
+		$this->load->model('rep');
+		
         switch ($page) :
 			case "clients":
 							
@@ -718,6 +777,84 @@ class DOM_Controller extends CI_Controller {
                     break;
                 endswitch;
            break;
+		   
+		   case "dpr":
+		   		switch ($which) :
+		   			case "add":
+						$form = $this->input->post();
+						
+						$provider_id = $form['providers'];
+						// Pull custom info (use if select value is AddCustom)
+						$customProvider = $form['customProvider'];
+						$customProviderURL = $form['customProviderURL'];
+						
+						$agency_id = $form['agencies'];
+						// Pull custom info (use if select value is AddCustom)
+						$customAgency = $form['customAgency'];
+						
+						$date = $form['date'];
+						$total = $form['total'];
+						
+						$err_msg = '';
+						$err_level = 0;
+						$err_elements = array();
+						// Validate data and alert user if error (if javascript validation isn't working).
+						if ($provider_id == '' ||
+						    ($provider_id == 'AddCustom' && ($customProvider == '' || $customProviderURL == '')) ||
+							$agency_id == '' ||
+							($agency_id == 'AddCustom' && $customAgency == '') ||
+							$date == '' ||
+							$total == '') {
+								$err_msg = 'All fields are required.';
+						} else if (!(preg_match('/^[0-9]+|([0-9]+)?\.[0-9]+$/', $total))) {
+								$err_msg = 'Total field must be numeric.';
+						}
+						if ($err_msg != '') {
+							$err_level = -1;
+							
+						} else {
+							// If provider does not exist.
+							if ($provider_id == 'AddCustom') {
+								$provider_data = array(
+									'provider' => $customProvider,
+									'providerURL' => $customProviderURL
+								);
+								// ..add to database.
+								$provider_id = $this->rep->addProvider($provider_data);
+							}
+							// If service does not exist..
+							if ($agency_id == 'AddCustom') {
+								$agency_data = array(
+									'service' => $customAgency
+								);
+								// ..add to database.
+								$agency_id = $this->rep->addService($agency_data);
+							}
+							
+							// Add total to report table.
+							$lead_data = array(
+								'providerID' => $provider_id,
+								'serviceID' => $agency_id,
+								'date' => $date,
+								'total' => $total,
+								'clientID' => $this->user['DropdownDefault']->SelectedClient
+							);
+							$this->rep->addLeadTotal($lead_data);
+							
+							$err_level = 1;
+							$err_msg = 'Total lead successfully saved.';
+						}
+						
+						// Redirect with Err info back to DPR.
+						//SetErr($err_level, $err_msg, $err_elements);
+						if($err_level = 1) {
+							redirect('dpr/success','refresh');
+						}else{
+							redirect('dpr/failure','refresh');
+						}
+					break;
+				endswitch;
+				
         endswitch;
     }
 	public function reset_dd_session($page) {

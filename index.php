@@ -1,5 +1,5 @@
 <?php
-
+date_default_timezone_set('America/New_York');
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
@@ -23,21 +23,15 @@
  //content.dealeronlinemarketing.com = production
  //dev is whatever dev environment were on...varies between developers
 
-function full_url() {
-	$s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
-	$sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
-	$protocol = substr($sp, 0, strpos($sp, "/")) . $s;
-	$port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":".$_SERVER["SERVER_PORT"]);
-	return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
-}
-$actual_link = full_url();
+$subdomain = explode('.',$_SERVER['HTTP_HOST']);
 
-if($actual_link != 'http://content.dealeronlinemarketing.com') :
+if($subdomain[0] != 'content' && $subdomain[0] != 'testing') :
 	define('ENVIRONMENT', 'development');
-else :
+elseif($subdomain[0] == 'testing') :
+	define('ENVIRONMENT','testing');
+elseif($subdomain[0] == 'content') :
 	define('ENVIRONMENT','production');
 endif;
-
 
 /*
  *---------------------------------------------------------------
@@ -54,6 +48,7 @@ if (defined('ENVIRONMENT')) {
 			error_reporting(E_ALL);
 		break;
 		case 'testing':
+			error_reporting(E_ALL);
 		case 'production':
 			error_reporting(0);
 		break;
@@ -73,7 +68,7 @@ if (defined('ENVIRONMENT')) {
  * as this file.
  *
  */
-	$system_path = '/mnt/stor08-wc1-ord1/718973/DOMsystem';
+	$system_path = ENVIRONMENT != 'testing' && ENVIRONMENT != 'production' ? '/home/lbs9000/public_html/lib/CI/2.1.3/system' : '/mnt/stor08-wc1-ord1/718973/DOMsystem';
 
 /*
  *---------------------------------------------------------------

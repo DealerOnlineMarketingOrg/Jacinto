@@ -20,6 +20,7 @@ $config['AppVersion'] 	= 'Beta 0.2';
 $config['GapiEmail'] 	= '';
 $config['GapiPass'] 	= '';
 $config['GoogleFonts'] 	= array('Cuprum','Open+Sans+Condensed:300','Open+Sans');
+$config['CityGridPublisher'] = '10000004725';
 
 /* Enabled features */
 $config['Breadcrumbs'] = true;

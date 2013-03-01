@@ -1,10 +1,10 @@
 	<!-- Content -->
     <div class="content" id="container">
     	<div class="title"><h5>Admin</h5></div>
-        <?= (($html) ? $html : ''); ?>
+        <?php echo  (($html) ? $html : ''); ?>
         <!-- Statistics -->        
         <!-- Form begins -->
-        <?= form_open('/admin/form_processor/contacts/add',array('name'=>'addContacts','id'=>'valid','class'=>'mainForm')); ?>
+        <?php echo  form_open('/admin/form_processor/contacts/add',array('name'=>'addContacts','id'=>'valid','class'=>'mainForm')); ?>
         	<!-- Input text fields -->
             <fieldset>
                 <div class="widget first">
@@ -22,7 +22,7 @@
                         <div class="rowElem noborder">
                             <label><span class="req">*</span> Job Title</label>
                             <div class="formRight">
-                                <?= form_input(array('class'=>'validate[required]','name'=>'JobTitle','id'=>'JobTitle')); ?>
+                                <?php echo  form_input(array('class'=>'validate[required]','name'=>'JobTitle','id'=>'JobTitle')); ?>
                                 <p class="formNote">Contacts Job Title</p>
                             </div>
                             <div class="fix"></div>
@@ -100,25 +100,25 @@
                             <div class="rowElem noborder"><label>Zip Code</label><div class="formRight"><input id="zip" type="text" name="zip" /></div><div class="fix"></div></div>
                             <div class="rowElem noborder">
                                 <label><span class="req">*</span> Personal Email</label>
-                                <div class="formRight"><?= form_input(array('class'=>'validate[required,custom[email]]','name'=>'PersonalEmailAddress','id'=>'email')); ?></div><div class="fix"></div>
+                                <div class="formRight"><?php echo  form_input(array('class'=>'validate[required,custom[email]]','name'=>'PersonalEmailAddress','id'=>'email')); ?></div><div class="fix"></div>
                             </div>
                             <div class="rowElem noborder">
                                 <label>Work Email</label>
-                                <div class="formRight"><?= form_input(array('class'=>'validate[custom[email]]','name'=>'WorkEmailAddress','id'=>'email')); ?></div><div class="fix"></div>
+                                <div class="formRight"><?php echo  form_input(array('class'=>'validate[custom[email]]','name'=>'WorkEmailAddress','id'=>'email')); ?></div><div class="fix"></div>
                             </div>
                             <div class="rowElem noborder">
                                 <label><span class="req">*</span> Direct Number</label>
-                                <div class="formRight"><?= form_input(array('name'=>'DirectPhone','id'=>'phone','class'=>'maskPhone validate[required,custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
+                                <div class="formRight"><?php echo  form_input(array('name'=>'DirectPhone','id'=>'phone','class'=>'maskPhone validate[required,custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
                                 <div class="fix"></div>
                             </div>
                             <div class="rowElem noborder">
                                 <label>Mobile Number</label>
-                                <div class="formRight"><?= form_input(array('name'=>'MobilePhone','id'=>'phone','class'=>'maskPhone validate[custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
+                                <div class="formRight"><?php echo  form_input(array('name'=>'MobilePhone','id'=>'phone','class'=>'maskPhone validate[custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
                                 <div class="fix"></div>
                             </div>
                             <div class="rowElem noborder">
                                 <label>Fax Number</label>
-                                <div class="formRight"><?= form_input(array('name'=>'FaxPhone','id'=>'phone','class'=>'maskPhone validate[custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
+                                <div class="formRight"><?php echo  form_input(array('name'=>'FaxPhone','id'=>'phone','class'=>'maskPhone validate[custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
                                 <div class="fix"></div>
                             </div>
                             <div class="rowElem noborder"><label>Notes</label><div class="formRight"><textarea rows="8" cols="" class="auto" name="notes"></textarea></div><div class="fix"></div></div>

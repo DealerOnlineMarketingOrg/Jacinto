@@ -11,16 +11,20 @@
     </div> -->
 	<div class="fix"></div>
     <ul id="menu">
-        <li class="dash"><a <?= ((ACTIVE_BUTTON == 'reports' && SUBNAV_BUTTON == '/reports/dashboard') ? 'class="active"' : ''); ?> href="<?= base_url(); ?>reports/dashboard"><span>Dashboard</span></a></li>
+        <li class="dash"><a <?php echo  (!$active_button) ? 'class="active"' : ''; ?> href="<?php echo  base_url(); ?>reports/dashboard"><span>Dashboard</span></a></li>
         <?php foreach($nav as $item) { ?>
-        <li class="<?= $item['Class']; ?>"><a class="<?= (($full_url[3] == $item['Class'] && SUBNAV_BUTTON != '/reports/dashboard') ? 'active' : 'exp'); ?>" href="<?= $item['Href']; ?>"><span><?= $item['Label']; ?></span></a>
-        <?php if(count($item['Subnav']) > 0) { ?>
-            <ul class="sub">
-                <?php foreach($item['Subnav'] as $sub) { ?>
-                    <li <?= ((SUBNAV_BUTTON == $sub->Href) ? 'class="current"' : ''); ?>><a href="<?= $sub->Href; ?>"><?= $sub->Label; ?></a></li>
-                <?php } //end subnav foreach?>
-            </ul>
-        <?php } //end count?>
+			<?php if($item['Class'] == $active_button) { ?>
+                <li class="<?php echo  $item['Class']; ?>"><a class="active" href="<?php echo  $item['Href']; ?>"><span><?php echo  $item['Label']; ?></span></a>
+            <?php }else { ?>
+                <li class="<?php echo  $item['Class']; ?>"><a class="exp" href="<?php echo  $item['Href']; ?>"><span><?php echo  $item['Label']; ?></span></a>
+            <?php } ?>
+			<?php if(count($item['Subnav']) > 0) { ?>
+                <ul class="sub">
+                    <?php foreach($item['Subnav'] as $sub) { ?>
+                        <li <?php echo  ('/' . $full_url[3] == $sub->Href) ? 'class="current"' : ''; ?>><a href="<?php echo  $sub->Href; ?>"><?php echo  $sub->Label; ?></a></li>
+                    <?php } //end subnav foreach?>
+                </ul>
+            <?php } //end count?>
         </li>
     <?php } //endforeach ?>
     </ul>
@@ -28,6 +32,6 @@
 <!-- Sidebar -->
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('li.<?= $full_url[3]; ?>').find('ul.sub').css({'display':'block'});
+		$('li.<?php echo  $full_url[3]; ?>').find('ul.sub').css({'display':'block'});
 	});
 </script>

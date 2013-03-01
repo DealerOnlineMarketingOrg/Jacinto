@@ -15,5 +15,9 @@
     function success_msg($msg) {
         return '<div class="nNote nSuccess hideit"><p><strong>SUCCESS:</strong> ' . $msg . '</p></div>';
     }
+	
+	function failed_form_submit() {
+		return '<div class="nNote">The form your trying to submit failed. Please try again.</div>';	
+	}
 
 ?>

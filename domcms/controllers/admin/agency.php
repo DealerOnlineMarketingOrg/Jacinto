@@ -8,6 +8,7 @@ class Agency extends DOM_Controller {
         $this->load->library('table');
         $this->load->helper('html');
         $this->load->helper('msg');
+		$this->activeNav = 'admin';
     }
 	
 	public function Edit($msg=false) {

@@ -2,9 +2,9 @@
 <!-- Content -->
 <div class="content" id="container">
     <div class="title"><h5>Admin</h5></div>
-    <?= (($html) ? $html : ''); ?>
+    <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
-    <?= form_open('/admin/form_processor/groups/add',array('name'=>'addGroups','id'=>'valid','class'=>'mainForm')); ?>
+    <?php echo  form_open('/admin/form_processor/groups/add',array('name'=>'addGroups','id'=>'valid','class'=>'mainForm')); ?>
         <!-- Input text fields -->
         <fieldset>
             <div class="widget first">
@@ -14,14 +14,14 @@
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Group Name</label>
                     <div class="formRight">
-                        <?= form_input(array('name'=>'GroupName','id'=>'GroupName','class'=>'required validate[required]')); ?>
+                        <?php echo  form_input(array('name'=>'GroupName','id'=>'GroupName','class'=>'required validate[required]')); ?>
                     </div>
                     <div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
                     <label>Group Description</label>
                     <div class="formRight">
-                        <?= form_textarea(array('name'=>'Description','id'=>'description','cols'=>'','rows'=>'8')); ?>
+                        <?php echo  form_textarea(array('name'=>'Description','id'=>'description','cols'=>'','rows'=>'8')); ?>
                     </div>
                     <div class="fix"></div>
                 </div>
@@ -43,13 +43,13 @@
 
                 <div class="submitForm">
                 
-                    <?= form_submit(array('class'=>'redBtn','value'=>'Add Group')); ?>
+                    <?php echo  form_submit(array('class'=>'redBtn','value'=>'Add Group')); ?>
                 </div>
                 <div class="fix"></div>
             </div>
 
         </fieldset>
-    <?= form_close(); ?>
+    <?php echo  form_close(); ?>
 
 </div>
 <div class="fix"></div>

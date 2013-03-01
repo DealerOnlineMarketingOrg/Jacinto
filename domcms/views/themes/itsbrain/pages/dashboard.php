@@ -1,6 +1,3 @@
-
-<script type="text/javascript" src="/assets/themes/global/js/plugins/other/gcal.js"></script>
-
 <!-- Content -->
     <div class="content">
     	<div class="title"><h5>Dashboard</h5></div>
@@ -26,12 +23,12 @@
         </div> -->
         
         <div class="widget first" style="border:none;">
-        	<img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/unique_visitors.png" style="width:100%;" />
+        	<img src="<?php echo  base_url(); ?>assets/themes/itsbrain/imgs/unique_visitors.png" style="width:100%;" />
         </div>
         <div class="widgets">
         	<div class="left">
                 <div class="widget" style="border:none;">
-                    <img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/lead_sources.png" style="width:100%;" />
+                    <img src="<?php echo  base_url(); ?>assets/themes/itsbrain/imgs/lead_sources.png" style="width:100%;" />
                 </div>
             </div>
         <!-- Widgets -->

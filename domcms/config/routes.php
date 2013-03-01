@@ -39,7 +39,7 @@
 */
 /*auth redirects*/
 $route['login'] 						= 'auth/login';
-$route['authenticate'] 					= 'auth/login_user';
+$route['authenticate'] 					= 'auth/login/authenticate';
 $route['logout']						= 'auth/logout';
 
 //admin redirects
@@ -58,10 +58,14 @@ $route['contacts/(:any)']				= 'admin/contacts/$1';
 $route['agency']						= 'admin/agency';
 $route['agency/(:any)']					= 'admin/agency/$1';
 
-//redirects
-$route['reputation']					= 'reputations';
+$route['dpr']							= 'reports/dpr';
+$route['dpr/(:any)']					= 'reports/dpr/$1';
 
-$route['default_controller']            = "admin/index";
+//redirects
+$route['reputation']					= 'reputations/dashboard';
+$route['bing']							= 'reputations/bing/dashboard';
+
+$route['default_controller']            = "admin/dashboard";
 $route['404_override'] 					= 'errors/file_not_found';
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

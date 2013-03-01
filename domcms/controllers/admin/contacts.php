@@ -11,6 +11,7 @@ class Contacts extends DOM_Controller {
         $this->load->model('administration');
         $this->load->helper('string_parser');
         $this->load->helper('msg');
+		$this->activeNav = 'admin';
     }
 
     public function index($msg=false) {

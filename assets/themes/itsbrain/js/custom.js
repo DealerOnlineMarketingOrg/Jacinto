@@ -55,6 +55,38 @@ $(function() {
 	
 	$('li.CID_1').remove();
 	
+	
+	//===== Mutable Select =====//
+	// Allows a select element, an input element, and a button element
+	//  to be paired up via name on the same document, to provide a
+	//  user-mutable select element.
+	
+	// This is the select element portion of the Mutable Select //
+	// Used for: select element (class msSelect)
+	// Triggered on: value = 'AddCustom' line
+	// Affects: all elements with the attribute data-binding set
+	//  to the select element's name.
+	
+	$('select.msSelect').change(function() {
+	  var inputStr = '[data-binding="' + $(this).attr('name') + '"]';
+	  if ($(this).attr('value') == 'AddCustom') {
+		$(inputStr).show('fast');
+		// Require this field now.
+		$(inputStr).addClass('required validate[required]');
+	  } else {
+		$(inputStr).hide('fast');
+		// Don't require fields that you can't see.
+		$(inputStr).removeClass('required validate[required]');
+	  };
+	});
+	
+	// This is the button portion of a Mutable Select //
+	// Locates the text box with the same name, applies the add callback,
+	//  and then applies the refresh callback.
+	// The callbacks allow updates to the select itself, a database, a xml file,
+	//  or any other definable storage, while using the same class.
+	
+	
 	//===== Input limiter =====//
 	
 	$('.limit').inputlimiter({
@@ -600,7 +632,8 @@ $(function() {
 	oTable = $('#example').dataTable({
 		"bJQueryUI": true,
 		"sPaginationType": "full_numbers",
-		"sDom": '<""f>t<"F"lp>'
+		"sDom": '<""f>t<"F"lp>',
+		'iDisplayLength':100
 	});
 	
 	
@@ -611,7 +644,7 @@ $(function() {
 	
 	//===== Form validation engine =====//
 
-	$("#valid").validationEngine({promptPosition : "topLeft", scroll: true});
+	$("#valid,.valid").validationEngine({promptPosition : "right", scroll: true});
 	
 
 	//===== Datepickers =====//

@@ -1,9 +1,9 @@
 <!-- Login form area -->
 <div class="loginWrapper">
-	<div class="loginLogo"><img src="<?= base_url(); ?>assets/themes/global/imgs/loginLogo.png" alt="" style="height:100%; " /></div>
+	<div class="loginLogo"><img src="<?php echo  base_url(); ?>assets/themes/global/imgs/loginLogo.png" alt="" style="height:100%; " /></div>
     <div class="loginPanel">
         <div class="head"><h5 class="iUser">Forgot Password</h5></div>
-        <form action="<?= base_url(); ?>authenticate" id="valid" class="mainForm">
+        <form action="<?php echo  base_url(); ?>authenticate" id="valid" class="mainForm">
             <fieldset>
                 <div class="loginRow noborder">
                     <label for="req1">Enter Password:</label>

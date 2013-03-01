@@ -14,9 +14,11 @@ class Clients extends DOM_Controller {
         $this->load->helper('msg');
         $this->load->helper('template');
         $this->load->helper('string_parser');
+		$this->load->model('administration');
 
         $this->agency_id = $this->user['DropdownDefault']->SelectedAgency;
         $this->group_id = $this->user['DropdownDefault']->SelectedGroup;
+		$this->activeNav = 'admin';
     }
 
     public function index($msg=false) {
@@ -27,7 +29,7 @@ class Clients extends DOM_Controller {
 			$this->AccessDenied();
 		} else {
 			$level = $this->user['DropdownDefault']->LevelType;
-			$clients = (($level != 'c') ? $this->administration->getAllClientsInGroup($group_id) : $this->administration->getClientByID($this->user['DropdownDefault']->SelectedClient));
+			$clients = (($level != 'c') ? $this->administration->getAllClientsInGroup($this->group_id) : $this->administration->getClientByID($this->user['DropdownDefault']->SelectedClient));
 			//print_object($clients);
 			//create html table with codeigniter library. This is awesome btw.
 			$this->table->set_heading('Tag', 'Code' , 'Name', 'Group Name', 'Status', 'Actions');

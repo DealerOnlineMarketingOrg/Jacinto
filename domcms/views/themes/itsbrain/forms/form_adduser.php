@@ -5,9 +5,9 @@
         });
     </script>
     <div class="title"><h5>Admin</h5></div>
-    <?= (($html) ? $html : ''); ?>
+    <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
-    <?= form_open('/admin/form_processor/users/add',array('id'=>'valid','class'=>'mainForm','name'=>'AddUser')); ?>
+    <?php echo  form_open('/admin/form_processor/users/add',array('id'=>'valid','class'=>'mainForm','name'=>'AddUser')); ?>
 
         <!-- Input text fields -->
         <fieldset>
@@ -34,50 +34,50 @@
                 </div>
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Username</label>
-                    <div class="formRight"><?= form_input(array('class'=>'required validate[required,custom[email]]','name'=>'Username','id'=>'username')); ?></div><div class="fix"></div>
+                    <div class="formRight"><?php echo  form_input(array('class'=>'required validate[required,custom[email]]','name'=>'Username','id'=>'username')); ?></div><div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Personal Email</label>
-                    <div class="formRight"><?= form_input(array('class'=>'required validate[required,custom[email]]','name'=>'PersonalEmailAddress','id'=>'personalEmail')); ?></div><div class="fix"></div>
+                    <div class="formRight"><?php echo  form_input(array('class'=>'required validate[required,custom[email]]','name'=>'PersonalEmailAddress','id'=>'personalEmail')); ?></div><div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
                     <label>Work Email</label>
-                    <div class="formRight"><?= form_input(array('class'=>'required validate[custom[email]]','name'=>'WorkEmailAddress','id'=>'workEmail')); ?></div><div class="fix"></div>
+                    <div class="formRight"><?php echo  form_input(array('class'=>'required validate[custom[email]]','name'=>'WorkEmailAddress','id'=>'workEmail')); ?></div><div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> First Name</label>
-                    <div class="formRight"><?= form_input(array('class'=>'required validate[required,custom[onlyLetterSp]]','name'=>'FirstName','id'=>'firstname')); ?></div><div class="fix"></div>
+                    <div class="formRight"><?php echo  form_input(array('class'=>'required validate[required,custom[onlyLetterSp]]','name'=>'FirstName','id'=>'firstname')); ?></div><div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Last Name</label>
-                    <div class="formRight"><?= form_input(array('class'=>'required validate[required,custom[onlyLetterSp]]','name'=>'LastName','id'=>'lastname')); ?></div><div class="fix"></div>
+                    <div class="formRight"><?php echo  form_input(array('class'=>'required validate[required,custom[onlyLetterSp]]','name'=>'LastName','id'=>'lastname')); ?></div><div class="fix"></div>
                 </div>
-                <div class="rowElem noborder"><label>Address</label><div class="formRight"><?= form_input(array('class'=>'validate[custom[onlyLetterNumberSp]','name'=>'Street','id'=>'address')); ?></div><div class="fix"></div></div>
-                <div class="rowElem noborder"><label>City</label><div class="formRight"><?= form_input(array('class'=>'validate[onlyLetterSp]','name'=>'City','id'=>'city')); ?></div><div class="fix"></div></div>
+                <div class="rowElem noborder"><label>Address</label><div class="formRight"><?php echo  form_input(array('class'=>'validate[custom[onlyLetterNumberSp]','name'=>'Street','id'=>'address')); ?></div><div class="fix"></div></div>
+                <div class="rowElem noborder"><label>City</label><div class="formRight"><?php echo  form_input(array('class'=>'validate[onlyLetterSp]','name'=>'City','id'=>'city')); ?></div><div class="fix"></div></div>
                 <div class="rowElem noborder">
                     <label>State</label>
                     <div class="formRight searchDrop">
-                        <?= showStates(); ?>
+                        <?php echo  showStates(); ?>
                     </div>
                     <div class="fix"></div>
                 </div>
-                <div class="rowElem noborder"><label>Zip Code</label><div class="formRight"><?= form_input(array('class'=>'validate[custom[onlyNumber]]','name'=>'ZipCode','id'=>'zip')); ?></div><div class="fix"></div></div>
+                <div class="rowElem noborder"><label>Zip Code</label><div class="formRight"><?php echo  form_input(array('class'=>'validate[custom[onlyNumber]]','name'=>'ZipCode','id'=>'zip')); ?></div><div class="fix"></div></div>
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Direct Number</label>
-                    <div class="formRight"><?= form_input(array('name'=>'DirectPhone','id'=>'DirectPhone','class'=>'maskPhone validate[required,custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
+                    <div class="formRight"><?php echo  form_input(array('name'=>'DirectPhone','id'=>'DirectPhone','class'=>'maskPhone validate[required,custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
                     <div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
                     <label>Mobile Number</label>
-                    <div class="formRight"><?= form_input(array('name'=>'MobilePhone','id'=>'MobilePhone','class'=>'maskPhone validate[custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
+                    <div class="formRight"><?php echo  form_input(array('name'=>'MobilePhone','id'=>'MobilePhone','class'=>'maskPhone validate[custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
                     <div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
                     <label>Fax Number</label>
-                    <div class="formRight"><?= form_input(array('name'=>'FaxPhone','id'=>'FaxPhone','class'=>'maskPhone validate[custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
+                    <div class="formRight"><?php echo  form_input(array('name'=>'FaxPhone','id'=>'FaxPhone','class'=>'maskPhone validate[custom[phone]]')); ?><span class="formNote">(999) 999-9999</span></div>
                     <div class="fix"></div>
                 </div>
-                <div class="rowElem noborder"><label>Notes</label><div class="formRight"><?= form_textarea(array('class'=>'validate[custom[onlyLetterNumberSpAndPunctuation]]','name'=>'Notes','id'=>'notes')); ?></div><div class="fix"></div></div>
+                <div class="rowElem noborder"><label>Notes</label><div class="formRight"><?php echo  form_textarea(array('class'=>'validate[custom[onlyLetterNumberSpAndPunctuation]]','name'=>'Notes','id'=>'notes')); ?></div><div class="fix"></div></div>
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Permission Level</label>
                     <div class="formRight">
@@ -96,7 +96,7 @@
                 <div class="fix"></div>
             </div>
         </fieldset>
-    <?= form_close(); ?>
+    <?php echo  form_close(); ?>
 
 </div>
 

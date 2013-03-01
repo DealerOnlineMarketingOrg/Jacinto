@@ -7,6 +7,10 @@ function get_welcome_message() {
     return 'Welcome, ' . $ci->session->userdata['valid_user']['FirstName'] . ' ' . $ci->session->userdata['valid_user']['LastName'];
 }
 
+function strip_chars_from_phone($phone) {
+	return preg_replace("/[^0-9]/", "", $phone);
+}
+
 function breadcrumb($replacement = false) {
 	//create a empty var to hold the breakcrumb html
 	$link = '';

@@ -2,7 +2,7 @@
 <!-- Content -->
 <div class="content hideTagFilter" id="container">
     <div class="title"><h5>Admin</h5></div>
-    <?= (($html) ? $html : ''); ?>
+    <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
     <?php
         $form = array(
@@ -20,21 +20,21 @@
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Client Name</label>
                     <div class="formRight">
-                        <?= form_input(array('class'=>'required validate[required]','name'=>'ClientName','id'=>'name')); ?>
+                        <?php echo  form_input(array('class'=>'required validate[required]','name'=>'ClientName','id'=>'name')); ?>
                     </div>
                     <div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
                     <label>Address</label>
                     <div class="formRight">
-                        <?= form_input(array('name'=>'street','id'=>'address')); ?>
+                        <?php echo  form_input(array('name'=>'street','id'=>'address')); ?>
                     </div>
                     <div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
                     <label>City</label>
                     <div class="formRight">
-                        <?= form_input(array('name'=>'city','id'=>'city')); ?>
+                        <?php echo  form_input(array('name'=>'city','id'=>'city')); ?>
 
                     </div>
                     <div class="fix"></div>
@@ -43,14 +43,14 @@
                 <div class="rowElem noborder">
                     <label>State</label>
                     <div class="formRight searchDrop">
-                        <?= showStates(); ?>
+                        <?php echo  showStates(); ?>
                     </div>
                     <div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
                     <label>Zip Code</label>
                     <div class="formRight">
-                        <?= form_input(array('name'=>'zip','id'=>'zip','maxlength'=>'5')); ?>
+                        <?php echo  form_input(array('name'=>'zip','id'=>'zip','maxlength'=>'5')); ?>
                     </div>
                     <div class="fix"></div>
 
@@ -58,7 +58,7 @@
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Phone Number</label>
                     <div class="formRight">
-                        <?= form_input(array('class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone')); ?>
+                        <?php echo  form_input(array('class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone')); ?>
                         <span class="formNote">(999) 999-9999</span>
                     </div>
                     <div class="fix"></div>
@@ -66,7 +66,7 @@
                 <div class="rowElem noborder">
                     <label>Notes</label>
                     <div class="formRight">
-                        <?= form_textarea(array('rows'=>'8','cols'=>'','class'=>'auto','name'=>'Notes','id'=>'notes')); ?>
+                        <?php echo  form_textarea(array('rows'=>'8','cols'=>'','class'=>'auto','name'=>'Notes','id'=>'notes')); ?>
                     </div>
                     <div class="fix"></div>
 
@@ -74,7 +74,7 @@
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Client Code</label>
                     <div class="formRight">
-                        <?= form_input(array('class'=>'required validate[required]','name'=>'ClientCode','id'=>'code')); ?>
+                        <?php echo  form_input(array('class'=>'required validate[required]','name'=>'ClientCode','id'=>'code')); ?>
                     </div>
                     <div class="fix"></div>
                 </div>
@@ -82,7 +82,7 @@
                 <div class="rowElem noborder">
                 	<label>Google Review</label>
                     <div class="formRight">
-                    	<?= form_input(array('class'=>'validate[custum[url]]','name'=>'GoogleReviewURL','id'=>'GoogleReview')); ?>
+                    	<?php echo  form_input(array('class'=>'validate[custum[url]]','name'=>'GoogleReviewURL','id'=>'GoogleReview')); ?>
                         <p class="formNote">The Web Address for the clients Google Review Page</p>
                     </div>
                     <div class="fix"></div>
@@ -91,7 +91,7 @@
                 <div class="rowElem noborder">
                 	<label>Yelp Review</label>
                     <div class="formRight">
-                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YelpReviewURL','id'=>'YelpReview')); ?>
+                    	<?php echo  form_input(array('class'=>'validate[custom[url]]','name'=>'YelpReviewURL','id'=>'YelpReview')); ?>
                         <p class="formNote">The Web Address for the clients Yelp Review Page</p>
                     </div>
                     <div class="fix"></div>
@@ -100,7 +100,7 @@
                 <div class="rowElem noborder">
                 	<label>Yahoo Review</label>
                     <div class="formRight">
-                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YahooReviewURL','id'=>'YahooReview')); ?>
+                    	<?php echo  form_input(array('class'=>'validate[custom[url]]','name'=>'YahooReviewURL','id'=>'YahooReview')); ?>
                         <p class="formNote">The Web Address for the clients Yahoo Review Page</p>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                         <select style="width:200px;" name="tags" data-placeholder="Link Tags To Client..." class="chzn-select validate[required]" tabindex="9">
                             <option value=""></option>
                             <?php foreach($tags as $tag) : ?>
-                            	<option value="<?= $tag->ID; ?>"><?= $tag->Name; ?></option>
+                            	<option value="<?php echo  $tag->ID; ?>"><?php echo  $tag->Name; ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -146,7 +146,7 @@
             </div>
 
         </fieldset>
-    <?= form_close(); ?>
+    <?php echo  form_close(); ?>
     
 </div>
 <div class="fix"></div>
