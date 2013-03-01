@@ -33,19 +33,26 @@
 		$objWriter->save($file_name);
 	}
 	
-	// Sets the style markup on the specified cell.
-	function SetStyleMarkup(&$worksheet, $col, $row, $nodeName, $attrName, $attrValue) {
+	// Returns the style markup for the specified cell.
+	function GetStyleMarkup(&$worksheet, $col, $row, $nodeName, $attrName, $attrValue) {
 		// Get style markups.
-		$styleArray = '';
+		$styleArray = array();
+		
 		switch ($nodeName) {
 			case 'table':
 				switch ($attrName) {
 					case 'background-color':
+						break;
 					case 'height':
+						break;
 					case 'weight':
+						break;
 					case 'font-family':
+						break;
 					case 'font-size':
+						break;
 					case 'font-weight':
+						break;
 				}
 				break;
 			case 'col':
@@ -58,60 +65,83 @@
 				break;
 			case 'tr':
 				switch ($attrName) {
-					case 'dir':
+					case 'background-color':
 						break;
-					case 'style':
+					case 'height':
+						break;
+					case 'weight':
+						break;
+					case 'font-family':
+						break;
+					case 'font-size':
+						break;
+					case 'font-weight':
 						break;
 				}
 				break;
 			case 'th':
 				switch ($attrName) {
-					case 'colspan':
+					case 'background-color':
 						break;
-					case 'rowspan':
+					case 'height':
 						break;
-					case 'dir':
+					case 'weight':
 						break;
-					case 'style':
+					case 'font-family':
+						break;
+					case 'font-size':
+						break;
+					case 'font-weight':
 						break;
 				}
 				break;
 			case 'td':
 				switch ($attrName) {
-					case 'colspan':
+					case 'background-color':
+					    $styleArray = array('fill' => array(
+							'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				            'color' => array('rgb' => 'FF0000')));
 						break;
-					case 'rowspan':
+					case 'height':
 						break;
-					case 'dir':
+					case 'weight':
 						break;
-					case 'style':
+					case 'font-family':
+						break;
+					case 'font-size':
+						break;
+					case 'font-weight':
 						break;
 				}
 				break;
 		}
 		
 		// Set style markup.
-		$worksheet->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
+		return $styleArray;
 	}
 	
 	// Sets the markup on the specified cell.
 	// 
 	function SetMarkup(&$worksheet, $col, $row, $nodeName, $attrName, $attrValue) {
 		// Get style markups.
-		$styleArray = '';
+		$styleArray = array();
+		
 		switch ($nodeName) {
 			case 'table':
 				switch ($attrName) {
 					case 'defaults':
-						SetMarkup($worksheet, $col, $row, $nodeName, 'border', 'none');
+						SetMarkup($worksheet, $col, $row, $nodeName, 'border', '');
 						break;
 					case 'border':
-						$styleArray = array('borders' => array('outline' => array(
-							'style' => PHPExcel_Style_Border::BORDER_NONE)));
-						break;
-					case 'dir':
+						if ($attrValue == '1')
+							$styleArray = array('borders' => array('outline' => array(
+								'style' => PHPExcel_Style_Border::BORDER_THIN)));
+						else
+							$styleArray = array('borders' => array('outline' => array(
+								'style' => PHPExcel_Style_Border::BORDER_NONE)));
 						break;
 					case 'style':
+						$styleArray = GetStyleMarkup($worksheet, $col, $row, $nodeName, $attrName, $attrValue);
 						break;
 				}
 				break;
@@ -127,9 +157,8 @@
 				switch ($attrName) {
 					case 'defaults':
 						break;
-					case 'dir':
-						break;
 					case 'style':
+						$styleArray = GetStyleMarkup($worksheet, $col, $row, $nodeName, $attrName, $attrValue);
 						break;
 				}
 				break;
@@ -141,9 +170,8 @@
 						break;
 					case 'rowspan':
 						break;
-					case 'dir':
-						break;
 					case 'style':
+						$styleArray = GetStyleMarkup($worksheet, $col, $row, $nodeName, $attrName, $attrValue);
 						break;
 				}
 				break;
@@ -155,26 +183,16 @@
 						break;
 					case 'rowspan':
 						break;
-					case 'dir':
-						break;
 					case 'style':
+						$styleArray = GetStyleMarkup($worksheet, $col, $row, $nodeName, $attrName, $attrValue);
 						break;
 				}
 				break;
 		}
 		
 		// Set style markup.
-		$worksheet->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
-	}
-	
-	// Helper function that gets the value of a style attribute.
-	function getStyleAttr($style, $attr) {
-		preg_match('/(^|;) *' . $attr . ':([^;]+) *(;|$)/i', $style, $matches);
-		if (count($matches) > 1) {
-			return $matches[2];
-		} else {
-			return '';
-		}
+		if (count($styleArray) > 0)
+			$worksheet->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
 	}
 	
 	// Returns an array of each attribute in style, with the
