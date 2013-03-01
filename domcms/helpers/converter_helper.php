@@ -6,6 +6,371 @@
 	// Author: mamuscia
 	// Modified: Phillip Kazda [2/27/13] for Dealer Online Marketing use.
 	
+	/*	$file_name : The path and name of the excel file being created.
+		$isExcel2007 : Set True if an Excel 2007 file is required (.xlsx).
+	                   False if Excel 5 (.xls). Defaults to Excel 2007.
+	*/
+	function CreateExcel($file_name, &$objPHPExcel, $isExcel2007 = TRUE) {
+		require_once 'domcms/libraries/PHPExcel.php';
+		require_once 'domcms/libraries/PHPExcel/IOFactory.php';
+		
+		if ($isExcel2007) {
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		} else
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+		$objWriter->save($file_name);
+	}
+	
+	/*	$file_name : The path and name of the PDF file being created.
+	*/
+	function CreatePDF($file_name, $objPHPExcel) {
+		require_once 'domcms/libraries/PHPExcel.php';
+		require_once 'domcms/libraries/PHPExcel/IOFactory.php';
+
+		$objWriter = new PHPExcel_Writer_PDF($objPHPExcel);
+		$objWriter->setPreCalculateFormulas(false);
+		$objWriter->writeAllSheets();
+		$objWriter->save($file_name);
+	}
+	
+	// Sets the style markup on the specified cell.
+	function SetStyleMarkup(&$worksheet, $col, $row, $nodeName, $attrName, $attrValue) {
+		// Get style markups.
+		$styleArray = '';
+		switch ($nodeName) {
+			case 'table':
+				switch ($attrName) {
+					case 'background-color':
+					case 'height':
+					case 'weight':
+					case 'font-family':
+					case 'font-size':
+					case 'font-weight':
+				}
+				break;
+			case 'col':
+			case 'colgroup':
+			case 'caption':
+			case 'thead':
+			case 'tbody':
+			case 'tfoot':
+				// Table elements not yet implemented.
+				break;
+			case 'tr':
+				switch ($attrName) {
+					case 'dir':
+						break;
+					case 'style':
+						break;
+				}
+				break;
+			case 'th':
+				switch ($attrName) {
+					case 'colspan':
+						break;
+					case 'rowspan':
+						break;
+					case 'dir':
+						break;
+					case 'style':
+						break;
+				}
+				break;
+			case 'td':
+				switch ($attrName) {
+					case 'colspan':
+						break;
+					case 'rowspan':
+						break;
+					case 'dir':
+						break;
+					case 'style':
+						break;
+				}
+				break;
+		}
+		
+		// Set style markup.
+		$worksheet->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
+	}
+	
+	// Sets the markup on the specified cell.
+	// 
+	function SetMarkup(&$worksheet, $col, $row, $nodeName, $attrName, $attrValue) {
+		// Get style markups.
+		$styleArray = '';
+		switch ($nodeName) {
+			case 'table':
+				switch ($attrName) {
+					case 'defaults':
+						SetMarkup($worksheet, $col, $row, $nodeName, 'border', 'none');
+						break;
+					case 'border':
+						$styleArray = array('borders' => array('outline' => array(
+							'style' => PHPExcel_Style_Border::BORDER_NONE)));
+						break;
+					case 'dir':
+						break;
+					case 'style':
+						break;
+				}
+				break;
+			case 'col':
+			case 'colgroup':
+			case 'caption':
+			case 'thead':
+			case 'tbody':
+			case 'tfoot':
+				// Table elements not yet implemented.
+				break;
+			case 'tr':
+				switch ($attrName) {
+					case 'defaults':
+						break;
+					case 'dir':
+						break;
+					case 'style':
+						break;
+				}
+				break;
+			case 'th':
+				switch ($attrName) {
+					case 'defaults':
+						break;
+					case 'colspan':
+						break;
+					case 'rowspan':
+						break;
+					case 'dir':
+						break;
+					case 'style':
+						break;
+				}
+				break;
+			case 'td':
+				switch ($attrName) {
+					case 'defaults':
+						break;
+					case 'colspan':
+						break;
+					case 'rowspan':
+						break;
+					case 'dir':
+						break;
+					case 'style':
+						break;
+				}
+				break;
+		}
+		
+		// Set style markup.
+		$worksheet->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
+	}
+	
+	// Helper function that gets the value of a style attribute.
+	function getStyleAttr($style, $attr) {
+		preg_match('/(^|;) *' . $attr . ':([^;]+) *(;|$)/i', $style, $matches);
+		if (count($matches) > 1) {
+			return $matches[2];
+		} else {
+			return '';
+		}
+	}
+	
+	// Returns an array of each attribute in style, with the
+	//  dom-standard nodeName and nodeValue fields.
+	// Extra spaces are stripped.
+	function GetStyleAttributes($style) {
+		preg_match('/^( *([^ ]+) *: *(.+) *(;|$))+ *$/i', $style, $matches);
+		$attr = array( 'nodeName' => '', 'nodeValue' => '' );
+		$attrs = array();
+		$count = 0;
+		while ($count < count($matches)) {
+			$attr['nodeName'] = $matches[$count+2];
+			$attr['nodeValue'] = $matches[$count+3];
+			$attrs[] = (object)$attr;
+			$count += 5;
+		}
+		
+		return $attrs;
+	}
+	
+	// Creates a new worksheet for a table.
+	function CreateWorksheet(&$objPHPExcel) {
+		// Sheets are 0-indexed.
+		$sheet = $objPHPExcel->getSheetCount() - 1;
+		if ($sheet > 0)
+			// Sheet 0 is created by default.
+			$objPHPExcel->createSheet($sheet);
+		$suf = $sheet + 1;
+		$wksheetname = 'Worksheet' . $suf;
+		$objPHPExcel->setActiveSheetIndex($sheet);
+		// Worksheet tab name.
+		$objPHPExcel->getActiveSheet()->setTitle($wksheetname);
+		$worksheet = $objPHPExcel->getActiveSheet();
+
+		return $worksheet;
+	}
+	
+	// isMarkup = true, only cell/data markup is applied.
+	// isMarkup = false, data is set.
+	function ProcessTable(&$objPHPExcel, &$worksheet, &$col, &$row, $node, $isMarkup) {
+		// Process the different table tags.
+		switch (strtolower($node->nodeName)) {
+			case 'table':
+				// New table. Create new worksheet from it.
+				$worksheet = CreateWorksheet($objPHPExcel);
+				break;
+			case 'col':
+			case 'colgroup':
+			case 'caption':
+			case 'thead':
+			case 'tbody':
+			case 'tfoot':
+				// Table elements not yet implemented.
+				break;
+			case 'tr':
+				// New row.
+				$row++;
+				$col = -1;
+				break;
+			case 'th':
+			case 'td':
+				// New column.
+				$col++;
+				break;
+			case '#text':
+				if (!$isMarkup) {
+					// Apply only if not markup.
+					// Data node.
+					$worksheet->setCellValueByColumnAndRow($col, $row, $node->nodeValue);
+				}
+				break;
+			default:
+				// Other node. Ignore.
+				break;
+		}
+		
+		if ($isMarkup) {
+			// Apply attribute markup, only if specified.
+			// Currently implemented: <th> and <td> markup.
+			// Inline styles have precedence.
+			//
+			// Set the default markups first.
+			SetMarkup($worksheet, $col, $row, $node->nodeName, 'defaults', '');
+			// Set the coded attribute markups.
+			if ($node->hasAttributes()) {
+				$attrs = $node->attributes;
+				foreach ($attrs as $attr) {
+					if ($attr->nodeName == 'style') {
+						$styles = GetStyleAttributes($attr->nodeValue);
+						foreach ($styles as $style)
+							SetMarkup($worksheet, $col, $row, $node->nodeName, $style->nodeName, $style->nodeValue);
+					} else {
+						SetMarkup($worksheet, $col, $row, $node->nodeName, $attr->nodeName, $attr->nodeValue);
+					}
+				}
+			}
+		}
+		
+		// Go through the child nodes.
+		if ($node->hasChildNodes()) {
+			$children = $node->childNodes;
+			foreach ($children as $child)
+				ProcessTable($objPHPExcel, $worksheet, $col, $row, $child, $isMarkup);
+		}
+	}
+	
+	// Processes the tables in the HTML.
+	function ProcessHTML(&$objPHPExcel, $dom) {
+		$tables = $dom->getElementsByTagName('table');
+		foreach ($tables as $table) {
+			// Go through all elements in the tables to
+			//  produce cells in the worksheets.
+			// Columns start at 0. Rows start at 1.
+			// Start off the page so the first new cell
+			//  will land on the first worksheet cell.
+			$col = -1;
+			$row = 0;
+			// We'll traverse the table twice.
+			// First we'll do the markup, then we'll do the data.
+			// We do this because when markup is changed in PHPExcel,
+			//  all data is rechecked. This can slow large worksheets down.
+			ProcessTable($objPHPExcel, $worksheet, $col, $row, $table, true);
+			// Reset column and row.
+			$col = -1;
+			$row = 0;
+			ProcessTable($objPHPExcel, $worksheet, $col, $row, $table, false);
+		}
+	}
+	
+	function CreateExcelWorkbook($user_id) {
+		//
+		// Create new PHPExcel object with default attributes
+		//
+		require_once 'domcms/libraries/PHPExcel.php';
+		require_once 'domcms/libraries/PHPExcel/IOFactory.php';
+		$objPHPExcel = new PHPExcel();
+		$objPHPExcel->getDefaultStyle()->getFont()->setName('Arial');
+		$objPHPExcel->getDefaultStyle()->getFont()->setSize(9);
+		
+		$objPHPExcel->getProperties()->setCreator($user_id)
+									 ->setLastModifiedBy($user_id)
+									 ->setTitle("Automated Export")
+									 ->setSubject("Automated Report Generation")
+									 ->setDescription("Automated Report Generation.")
+									 ->setKeywords("Report")
+									 ->setCompany("Dealer Online Marketing")
+									 ->setCategory("Report");
+									 
+		return $objPHPExcel;
+	}
+	
+	function CreateDom($html) {
+		$htmltable = $html;
+		// Check table validity.
+		if(strlen($htmltable) == strlen(strip_tags($htmltable)) ) {     // anything left after we strip HTML?
+		  echo "<br />Invalid HTML Table after Stripping Tags, nothing to Export.";
+		  exit;
+		}
+		
+		// Prepare bare html for use with loadHTML.
+		$htmltable = strip_tags($htmltable, "<table><tr><th><thead><tbody><tfoot><td><br><b><span>");
+		$htmltable = str_replace("<br />", "\n", $htmltable);
+		$htmltable = str_replace("<br/>", "\n", $htmltable);
+		$htmltable = str_replace("<br>", "\n", $htmltable);
+		$htmltable = str_replace("&nbsp;", " ", $htmltable);
+		$htmltable = str_replace("\n\n", "\n", $htmltable);
+		
+		$dom = new domDocument;
+		$dom->loadHTML($htmltable);
+		if ($dom)
+			// remove redundant whitespace
+			$dom->preserveWhiteSpace = false;
+		return $dom;
+		
+	}
+	
+	function HTMLToobjPHPExcel($user_id, $html) {
+		$ci =& get_instance();
+		$ci->load->helper('html_codes_helper');
+		require_once 'domcms/libraries/PHPExcel.php';
+		require_once 'domcms/libraries/PHPExcel/IOFactory.php';
+		
+		$dom = CreateDom($html);
+		if(!$dom) {
+		  echo "<br />Invalid HTML DOM, nothing to Export.";
+		  exit;
+		}
+		
+		$objPHPExcel = CreateExcelWorkbook($user_id);
+		ProcessHTML($objPHPExcel, $dom);
+		// set to first worksheet before close
+		$objPHPExcel->setActiveSheetIndex(0);
+		
+		return $objPHPExcel;
+	}
+	
 	/* Generic function which writes out an html table to an excel spreadsheet using PHPExcel.
 	   $user_id : The name of the user creating the report.
 	   $html : Needs to contain the table(s) which will be converted into spreadsheets.
@@ -14,7 +379,7 @@
 	   $debug_on : Some basic debug functions. Default false.
 	*/
 	
-	function HTMLToobjPHPExcel($user_id, $html, $table_limit = 0, $debug_on = FALSE) {	
+	function HTMLToobjPHPExcel_Old($user_id, $html, $table_limit = 0, $debug_on = FALSE) {	
 		ini_set("memory_limit", "-1");
 		ini_set("set_time_limit", "0");
 		set_time_limit(0);
