@@ -21,8 +21,14 @@
 			require_once 'domcms/libraries/PHPExcel/IOFactory.php';
 			
 			// Set up PDF library
-			$rendererName = PHPExcel_Settings::PDF_RENDERER_TCPDF;
-			$rendererLibrary = 'tcpdf';
+			$library = 'tcpdf';
+			if ($library == 'tcpdf') {
+				$rendererName = PHPExcel_Settings::PDF_RENDERER_TCPDF;
+				$rendererLibrary = 'tcpdf';
+			} else if ($library == 'dompdf') {
+				$rendererName = PHPExcel_Settings::PDF_RENDERER_DOMPDF;
+				$rendererLibrary = 'domPDF0.6.0beta3';
+			}
 			$rendererLibraryPath = 'domcms/libraries/' . $rendererLibrary;
 			if (!PHPExcel_Settings::setPdfRenderer(
 					$rendererName,

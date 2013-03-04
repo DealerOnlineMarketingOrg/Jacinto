@@ -65,6 +65,8 @@ $route['dpr/(:any)']					= 'reports/dpr/$1';
 $route['reputation']					= 'reputations/dashboard';
 $route['bing']							= 'reputations/bing/dashboard';
 
+$route['converter']						= 'converter';
+
 $route['default_controller']            = "admin/dashboard";
 $route['404_override'] 					= 'errors/file_not_found';
 /* End of file routes.php */
