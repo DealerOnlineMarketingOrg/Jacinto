@@ -17,7 +17,7 @@
 	
 	/*	$file_name : The path and name of the PDF file being created.
 	*/
-	function CreatePDF($file_name, $objPHPExcel) {
+	function CreatePDF($file_name, &$objPHPExcel) {
 		require_once 'domcms/libraries/PHPExcel.php';
 		require_once 'domcms/libraries/PHPExcel/IOFactory.php';
 
@@ -42,28 +42,6 @@
 		switch ($nodeName) {
 			case 'table':
 				switch ($attrName) {
-					// Background
-					case 'background-color':
-						break;
-					// Dimensions
-					case 'height':
-						break;
-					case 'width':
-						break;
-					// Font
-					case 'font-family':
-						break;
-					case 'font-size':
-						break;
-					case 'font-weight':
-						break;
-					// Text
-					case 'color':
-						break;
-					case 'text-align':
-						break;
-					case 'vertical-align':
-						break;
 				}
 				break;
 			case 'col':
@@ -76,54 +54,10 @@
 				break;
 			case 'tr':
 				switch ($attrName) {
-					// Background
-					case 'background-color':
-						break;
-					// Dimensions
-					case 'height':
-						break;
-					case 'width':
-						break;
-					// Font
-					case 'font-family':
-						break;
-					case 'font-size':
-						break;
-					case 'font-weight':
-						break;
-					// Text
-					case 'color':
-						break;
-					case 'text-align':
-						break;
-					case 'vertical-align':
-						break;
 				}
 				break;
 			case 'th':
 				switch ($attrName) {
-					// Background
-					case 'background-color':
-						break;
-					// Dimensions
-					case 'height':
-						break;
-					case 'width':
-						break;
-					// Font
-					case 'font-family':
-						break;
-					case 'font-size':
-						break;
-					case 'font-weight':
-						break;
-					// Text
-					case 'color':
-						break;
-					case 'text-align':
-						break;
-					case 'vertical-align':
-						break;
 				}
 				break;
 			case 'td':
