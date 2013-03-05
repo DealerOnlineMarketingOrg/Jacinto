@@ -249,7 +249,7 @@ $(function() {
 	
 	//===== UI dialog =====//
 	
-	$( "#dialog-message" ).dialog({
+	$( "#dialog-message,.dialog-message" ).dialog({
 		autoOpen: false,
 		modal: true,
 		buttons: {

@@ -41,6 +41,15 @@
 $route['login'] 						= 'auth/login';
 $route['authenticate'] 					= 'auth/login/authenticate';
 $route['logout']						= 'auth/logout';
+$route['reset_password']				= 'auth/password/processResetPass';
+$route['signin']						= 'auth/login/login_user';
+$route['log']							= 'auth/login/log_failed_attempt';
+$route['check_pass']					= 'auth/password/checkIfPasswordIsGenerated';
+$route['change_pass']					= 'auth/password/processChangePassword';
+$route['change']						= 'auth/password/change';
+$route['change_password_form']			= 'auth/password/loadChangePasswordForm';
+$route['reset_password_form']			= 'auth/password/loadResetPasswordForm';
+$route['lock_user']						= 'auth/login/breach_warning';
 
 //admin redirects
 $route['groups']						= 'admin/groups';

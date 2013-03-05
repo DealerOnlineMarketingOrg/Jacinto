@@ -11,6 +11,7 @@
     <div class="middleNav">
     	<ul>
             <li class="iUser"><a href="<?php echo  base_url(); ?>admin/users" title=""><span>User list</span></a></li>
+            <li class="iLocked2"><a  href="#" title=""><span>Passwords</span></a></li>
         </ul>
     </div>
     <div class="fix"></div>

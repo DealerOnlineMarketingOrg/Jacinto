@@ -1,0 +1,1 @@
+[02-Mar-2013 22:44:44 UTC] PHP Fatal error:  Call to undefined method Dashboard::Dashboard() in /home/lbs9000/public_html/domcms/jeremy.com/domcms/controllers/reports/dashboard.php on line 12

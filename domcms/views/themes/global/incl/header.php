@@ -64,6 +64,6 @@
 	<script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/charts/bar.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/charts/hBar.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/charts/pie.js"></script>
-    <?php if(isset($TagCss)) { echo $TagCss; }; ?>   
+    <?php if(isset($TagCss)) { echo $TagCss; }; ?>  
 </head>
 <body>

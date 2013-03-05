@@ -179,6 +179,7 @@ div.dealerDropdowns div.rowElem {padding:5px 0 0 0;border-top:none;}
 .middleNav ul li.iStat a span { background: url(../imgs/icons/middlenav/graph.png) no-repeat 50% 10px; }
 .middleNav ul li.iUser a span { background: url(../imgs/icons/middlenav/users.png) no-repeat 50% 10px; }
 .middleNav ul li.iOrders a span { background: url(../imgs/icons/middlenav/money.png) no-repeat 50% 10px; }
+.middleNav ul li.iLocked2 a span {background:url(../imgs/icons/middlenav/locked2.png) no-repeat 50% 10px;}
 .middleNav ul li a:hover { background: #f6f6f6; }
 .middleNav ul li a:active { background: #f1f1f1; }
 #system_tags {width:55%;float:left;position:relative;}
@@ -514,6 +515,10 @@ div.jGrowl div.jGrowl-notification, div.jGrowl div.jGrowl-closer { margin: 10px;
 div.jGrowl div.jGrowl-notification div.jGrowl-header { font-weight: bold; font-size: .85em; }
 div.jGrowl div.jGrowl-notification div.jGrowl-close { z-index: 99; float: right; font-weight: bold; font-size: 1em; cursor: pointer; }
 div.jGrowl div.jGrowl-closer { padding-top: 4px; padding-bottom: 4px; cursor: pointer; font-size: .9em; font-weight: bold; text-align: center; }
+
+/*login screen loading technique */
+#whiteout{background-color:white;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;opacity:0.8;z-index:1999;}
+#loader{position:absolute;width:100%;top:50%;margin-top:-8px;text-align:center;z-index:2000;}
 /** Hide jGrowl when printing **/
 @media print { div.jGrowl { display: none; } }
 /* ===== Page scrolling ===== */
@@ -834,7 +839,6 @@ table.display td:first-child{width:30px;text-align:center;}
 
 ul.thirdparty li{display:inline;}
 ul.thirdparty li a {float:left;margin-right:8px;}
-div.ui-dialog-buttonset{display:none !important;}
 /* =====  Media queries  ===== */
 /* Devices and browsers with max of 799px */
 @media only screen and (max-width: 799px) {

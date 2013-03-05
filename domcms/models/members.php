@@ -6,12 +6,12 @@ class Members extends CI_Model {
         parent::__construct();
         $this->load->helper('pass');
 		$this->load->helper('string_parser');
-                $this->load->helper('query');
+        $this->load->helper('query');
     }
     
-	public function validate() {
-		$email 		= $this->security->xss_clean($this->input->post('email'));
-		$password 	= encrypt_password($this->security->xss_clean($this->input->post('password')));
+	public function validate($email,$password) {
+		$email 		= $this->security->xss_clean($email);
+		$password 	= encrypt_password($this->security->xss_clean($password));
 		
 		$sql = "SELECT u.*,ui.*,d.*,sa.*,c.*,g.*,a.* FROM Users u
 				INNER JOIN Users_Info ui ON u.USER_ID = ui.USER_ID
@@ -144,7 +144,17 @@ class Members extends CI_Model {
 		   return (object)$data;
 
 	   }
-   }    
+   }  
+   
+   public function checkPasswordGeneration($email) {
+		$sql = 'SELECT u.USER_ID as ID, ui.USER_Generated as IsGenerated FROM Users u INNER JOIN Users_Info ui ON u.USER_ID = ui.USER_ID WHERE u.USER_Name = "' . $email . '"';
+		$query = $this->db->query($sql)->row();
+		if($query) {
+			return $query->IsGenerated;	
+		}else {
+			return 'ERROR';	
+		}
+   }
    
    public function UserModules($mods) {
 		$modules = array();
@@ -158,6 +168,15 @@ class Members extends CI_Model {
 			}
 		}
 		return $modules;
+   }
+   
+   public function valid_email($email) {
+		$sql = 'SELECT USER_Name from Users WHERE USER_Name = "' . $email . '";';
+		$query = $this->db->query($sql);
+		if($query)
+			return TRUE;
+		else
+			return FALSE;   
    }
    
    public function reset_password($email) {
@@ -179,7 +198,7 @@ class Members extends CI_Model {
             if($update) {
                 //return TRUE;
                 $subject = 'Password Reset';
-				$msg = email_reset_msg();
+				$msg = email_reset_msg($new_pass);
                 $emailed = $this->email_results($email, $subject, $msg);
                 if($emailed) {
                     return TRUE;
@@ -192,31 +211,51 @@ class Members extends CI_Model {
         }
         return FALSE;
     }
-    
-    public function password_change() {
-		$email = $this->security->xss_clean($this->input->post('email'));
-		$password = $this->security->xss_clean(encrypt_password($this->input->post('new_pass')));
-		//Get the user id
-		$user_sql = "SELECT USER_ID from Users WHERE USER_Name = '" . $email . "';";
-		$user = $this->db->query($sql);
-		if($user->num_rows() == 1) :
-			$user_id = $user->row()->USER_ID;
-			
-			//update the password based on the user id
-			$update_sql = "UPDATE Users_Info SET USER_Password = '" . $password . "', USER_Generated='0' WHERE USER_ID = '" . $user_id . "';";
-			$update = $this->db->query($update_sql);
-			
-			//if the update successfully triggers return true, else false;
-			if($update) :
-				return TRUE;
-			else:
-				return FALSE;
-			endif;
-		else :
+	
+	public function validateUser($email, $password) {
+		$this->load->helper('pass');
+		$password = encrypt_password($password);
+		
+		//validate against the database
+		$sql = 'SELECT u.USER_ID as ID FROM Users u RIGHT JOIN Users_Info ui ON u.USER_ID = ui.USER_ID WHERE u.USER_Name = "' . $email . '" AND ui.USER_Password = "' . $password . '"';
+		
+		$query = $this->db->query($sql)->row();
+		
+		//if the query found a match, return true, return false.
+		if($query) : 
+			return $query->ID;
+		else : 
 			return FALSE;
 		endif;
-    }
-    
+				
+	}
+	
+	public function change_password($email, $oldPass, $newPass) {
+		$this->load->helper('pass');
+		$savedPass = $newPass;
+		$newPass = encrypt_password($newPass);
+		//validate users old credentials
+		$isValidUser = $this->validateUser($email,$oldPass);
+		
+		if(!$isValidUser) :
+			return FALSE;
+		else :
+			$data = array(
+				'USER_Password' => $newPass,
+				'USER_Generated' => 0
+			);
+			$this->db->where('USER_ID', $isValidUser);
+			
+			// If the update succeeds, create the session and return the object to the system.
+			if(!$this->db->update('Users_Info',$data)) {
+				return FALSE;	
+			}else {
+				$user = $this->validate($email,$savedPass);
+				return $user;
+			}
+		endif;
+	}
+	
     public function email_results($email, $subject, $msg) {
         $this->load->library('email');
         $this->email->from('no-reply@dealeronlinemarketing.com','Dealer Online Marketing');
