@@ -6,6 +6,7 @@
 			// Call the Model constructor
 			parent::__construct();
 			$this->load->helper('query');
+			$this->load->helper('converter_helper');
 		}
 
 		// Returns the provider ID if exists, else FALSE.
@@ -174,6 +175,174 @@
 						$item = '';
 		}
 		
+		// Adds an array of data to a spreadsheet row, starting at specified cell.
+		public function AddRowData(&$worksheet, $data_array, $start_cell) {
+			$col = substr($start_cell, 0, 1);
+			$row = substr($start_cell, 1);
+			foreach ($data_array as $data) {
+				$worksheet->setCellValue($col.$row, $data);
+				$col++;
+			}
+		}
+		
+		// Returns a 2-dimensional array that holds the spreadsheet's data.
+		// Formulas fields will get calculated, and the calculated value returned.
+		public function SpreadsheetToCalculatedArray(&$worksheet) {
+			$highCol = $worksheet->getHighestColumn();
+			$highRow = $worksheet->getHighestRow();
+			
+			$data_array = array();
+			for ($col = 'A'; $col != $highCol; $col++) {
+				$row_array = array();
+				for ($row = 1; $row < $highRow; $row++) {
+					$row_array[] = $worksheet->getCell($col.$row)->getCalculatedValue();
+				}
+				$data_array[] = $row_array;
+			}
+			
+			return $data_array;
+		}
+		
+		// Creates a spreadsheet that'll hold the data and do the calculations of the report.
+		public function CreateSpreadsheet($query) {
+			require_once 'domcms/libraries/PHPExcel.php';
+			require_once 'domcms/libraries/PHPExcel/IOFactory.php';
+			
+			$query_result = $query->result();
+			
+			$objPHPExcel = CreateExcelWorkbook('report');
+			$worksheet = CreateWorksheet($objPHPExcel);
+
+			// Go through each row in the query and build the data array.
+			// $data is an array of arrays (rows).
+			$data_body = array ();
+			$months = array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
+			// Generate empty array.
+			$empty_row = array();
+				// The first element in each row array indicates the type of data the row represents.
+				// This will be used for formatting.
+				$blank_array['Type'] = '';
+				$empty_row['Name'] = '';
+				foreach($months as $month)
+					$empty_row[$month] = '';
+				$empty_row['YTD'] = '';
+				
+			if ($query->num_rows() > 0) {
+				// Leave blank at first to force routine to initialize.
+				$current = array (
+					'provider' => '',
+					'year' => '',
+					'service' => '');
+				
+				$data_row = $empty_row;
+				// Set true to close the current excel row.
+				$closeRow = false;
+				// Set true to close the current row as a header.
+				$isHeaderRow = false;
+				// States for the routine.
+				// advance: moves to the next query row.
+				// process: processes the current row.
+				// closeRow: closes the current row and advances.
+				// closeNoAdvance: closes the current row without further processing, but doesn't advance.
+				//   Used when more processing is needed.
+				// closeHeader: closes the current row without further processing, and advances.
+				$states = array( 'advance' => 1, 'process' => 2, 'closeDataRow' => 3, 'closeNoAdvance' => 4, 'closeHeaderRow' => 5 );
+				$state = $states->advance;
+				$advance = false;
+				$current_row = 1;
+				foreach ($query_result as $row) {
+					$state = $states->process;
+					while ($state != $states->advance) {
+						if ($current['provider'] != $row->PName) {
+							// If we're processing a line, close out..
+							if ($state == $states->process)
+								$state = $states->closeNoAdvance;
+							// ..else if we're done with the first close..
+							else if ($state == $states) {
+								// Add special provider header line.
+								$data_row['Name'] = $row->PName;
+								$state = $states->closeHeaderRow;
+								// Update current provider.
+								$current['provider'] = $row->PName;
+							}
+						}
+						
+						if ($current['year'] != $row->Year) {
+							// Flag for row closure.
+							$state = $states->closeDataRow;
+							$current['year'] = $row->Year;
+						}
+						
+						if ($current['service'] != $row->SName) {
+							// Flag for row closure.
+							$state = $states->closeDataRow;
+							$current['service'] = $row->SName;
+						}
+						
+						switch ($state) {
+							case $states->closeDataRow:
+								// Add YTD formula to row.
+								$data_row['YTD'] = '=SUM(B' . $current_row . ':M' . $current_row .')';
+								// Add row to body and go to next data_body row.
+								$data_body[] = $data_row;
+								$data_row = $empty_row;
+								// Advance row pointer and continue processing.
+								$current_row++;
+								$state = $states->advance;
+								break;
+							case $states->closeNoAdvance:
+								// Add row to body.
+								$data_body[] = $data_row;
+								$data_row = $empty_row;
+								break;
+							case $states->closeHeaderRow:
+								// Add row to body and go to next data_body row.
+								$data_body[] = $data_row;
+								$data_row = $empty_row;
+								// Advance row pointer and continue processing.
+								$current_row++;
+								$state = $states->advance;
+								break;
+							default:
+								// Get this query row's monthly value.
+								$data_row[$months[($row->Month)-1]] = $row->Value;
+						}
+					}
+				}
+			}
+
+			// Create header and footer rows.
+			$data_header = array ( array (
+				'Lead Provider','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Total YTD' ) );
+			$data_footer = array ( array (
+				) );
+			
+			// Write data to worksheet.
+			$coli = 'A';
+			$rowi = 1;
+			foreach ($data_header as $data) {
+				$this->AddRowData($worksheet, $data, $coli.$rowi);
+				$rowi++;
+			}
+			foreach ($data_body as $data) {
+				$this->AddRowData($worksheet, $data, $coli.$rowi);
+				$rowi++;
+			}
+			foreach ($data_footer as $data) {
+				$this->AddRowData($worksheet, $data, $coli.$rowi);
+				$rowi++;
+			}
+			//ProcessHTML($objPHPExcel, $dom);
+			// set to first worksheet before close
+			$objPHPExcel->setActiveSheetIndex(0);
+			
+			$test = $this->SpreadsheetToCalculatedArray($worksheet);
+			$file_name = 'domcms/cache/dprTest_' . date('m-d-Y') . '.xlsx';
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+			$objWriter->save($file_name);
+			print_object($data_body);
+		}
+		
 		public function getDPRReportData($client_id, $beginning_year, $ending_year) {
 			// The first element in each row array indicates the type of data the row represents.
 			// This will be used for formatting.
@@ -209,16 +378,17 @@
 			$end_date = (string)($ending_year) . '-12-31';
 			// Pull data from last n years.
 			$columns = array ('ProviderName', 'Date', 'ServiceType', 'ServiceName', 'Value');
-			$qu_report = "SELECT p.PROVIDER_Name AS PName, r.REPORT_Date AS Date, s.SERVICE_Type AS SType, s.SERVICE_Name AS SName, r.REPORT_Value AS Value " .
+			$qu_report = "SELECT p.PROVIDER_Name AS PName, YEAR(r.REPORT_Date) as Year, s.SERVICE_Name AS SName, s.SERVICE_Type AS SType, MONTH(r.REPORT_Date) as Month, r.REPORT_Value AS Value, r.REPORT_Date as Date " .
 			             "FROM DPRReports AS r, DPRProviders AS p, DPRReportServices AS s " .
 						 "WHERE r.CLIENT_ID = " . $client_id .
-						 "  AND r.REPORT_Date >= " . $begin_date . " <= " . $end_date .
+						 "  AND r.REPORT_Date >= '" . $begin_date . "' AND r.REPORT_Date <= '" . $end_date . "'" .
 						 "  AND r.REPORT_Provider = p.PROVIDER_ID" .
 						 "  AND r.REPORT_Service = s.SERVICE_ID" .
 						 "  AND (s.SERVICE_Type = 1 OR s.SERVICE_Type = 2) " .
-						 "ORDER BY p.PROVIDER_Name, r.REPORT_Date, s.SERVICE_Type, s.SERVICE_Name ASC";
+						 "ORDER BY p.PROVIDER_Name, Year, s.SERVICE_Type, s.SERVICE_Name ASC, Month";
 			$query = $this->db->query($qu_report);
 			$result = $query->result();
+			$this->CreateSpreadsheet($query);
 			
 			$providers = $this->getRepProviders($result);
 			$last = end($providers);

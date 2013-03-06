@@ -19,6 +19,7 @@
                 	<div style="width:1;float:right;vertical-align:middle">
                         <input ID="excel" class="greyishBtn" type="button" value="Excel" />
                         <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
+                        <input ID="test" class="greyishBtn" type="button" value="Test" />
                     </div>
                 </div>
                 <div class="rowElem noborder">
@@ -63,20 +64,31 @@
 		
 		jQuery(window).load (function() {plotGraphs(); writeImg();});
 		
-		// Gets the visual flow of the rendered web page, starting from the specified element.
-		function getVisualFlow($rootElement) {
-			getVisualFlowRec($rootElement);
-		}
-		
-		// Recursively goes through the elements to get the flow.
-		function getVisualFlowRec($element) {
-			// Go through the child nodes recursively.
-			$node = (Node) $element;
-			if ($node.hasChildNodes()) {
-				$children = $node->childNodes;
-				foreach ($children as $child)
-					getVisualFlowRec($child);
+		jQuery('input#test').click(function() {
+			alert('begin');
+			$layout = getVisualLayout();
+			$str = "";
+			for (var i = 0; i <$layout.length; i++) {
+				$str += $layout[i]['id'] + ",";
 			}
+			alert($str);
+		});
+		// Returns the visual layout of the rendered web page, starting from the specified element.
+		function getVisualLayout() {
+			// The report root object should have an ID of reportBlock
+			$str = "";
+			// Layout will be an array of objects, each one having id, left and top.
+			$Layout = [];
+			jQuery("#reportBlock, #reportBlock *").each(function(index, domElem) {
+				$id = $(this).attr('id');
+				$offset = $(this).offset();
+				$Layout.push({
+					"id": $id,
+					"left": Math.round($offset['left']),
+					"top": Math.round($offset['top'])
+				});
+			});
+			return $Layout;
 		}
 		
 		jQuery(window).resize(function() {
@@ -167,7 +179,7 @@
 					backgroundColor: { colors: ["#fff", "#eee"]},
 				},
 				legend: {
-					position: "se",
+					position: "ne",
 					backgroundColor: "#ff4",
 					backgroundOpacity: 0.35
 				}

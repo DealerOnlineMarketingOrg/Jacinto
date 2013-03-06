@@ -35,10 +35,14 @@
 			}
 			// Processing for dpr report page.
 			if ($page == 'reports') {
+				$report_element_i = 1;
 				$prov_list = '';
 				$report_data = $this->rep->getDPRReportData(1, 2010, 2012);
 				$months = array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
-				$prov_list .= "<table border='0' width='100%' style='color:black'>";
+				$prov_list .= "<div id='reportBlock'>";
+				$id = "reportID_" . $report_element_i; $report_element_i++;
+				$prov_list .= "<table id='" . $id . "' border='0' width='100%' style='color:black'>";
+				// Report element counter. Gives each element in the report a unique id.
 				foreach ($report_data as $data_row) {
 					$style = ''; $ytd_style = '';
 					switch ($data_row['Type']) {
@@ -47,19 +51,26 @@
 						case 'Year': $style = 'background-color:yellow'; $ytd_style = $style; break;
 						case 'ThisYear': $ytd_style = 'font-weight:bold'; break;
 						case 'Total': $style = 'font-weight:bold'; $ytd_style = $style; break;
-						case 'Seperator': $style = 'height:0px;border-bottom:solid 1px black'; $ytd_style = $style; break;
+						case 'Seperator': $style = 'height:0px; border-bottom:solid 1px black'; $ytd_style = $style; break;
 					}
-					$prov_list .= "<tr>";
+					$id = "reportID_" . $report_element_i; $report_element_i++;
+					$prov_list .= "<tr id='" . $id . "'>";
 					// The name (description) of the row.
-					$prov_list .= '<td style="' . $style . '">' . $data_row['Name'] . '</td>';
+					$id = "reportID_" . $report_element_i; $report_element_i++;
+					$prov_list .= "<td id='" . $id . "' style='" . $style . "'>" . $data_row['Name'] . "</td>";
 					// Each month in the row.
-					for ($m = 0; $m < count($months); $m++)
-						$prov_list .= "<td style='" . $style . "'>" . $data_row[$months[$m]] . "</td>";
+					for ($m = 0; $m < count($months); $m++) {
+						$id = "reportID_" . $report_element_i; $report_element_i++;
+						$prov_list .= "<td id='" . $id . "' style='" . $style . "'>" . $data_row[$months[$m]] . "</td>";
+					}
 					// The YTD field.
-					$prov_list .= "<td style='" . $ytd_style . "'>" . $data_row['YTD'] . "</td>";
+					$id = "reportID_" . $report_element_i; $report_element_i++;
+					$prov_list .= "<td id='" . $id . "' style='" . $ytd_style . "'>" . $data_row['YTD'] . "</td>";
+					$id = "reportID_" . $report_element_i; $report_element_i++;
 					$prov_list .= "</tr>";
 				}
 				$prov_list .= "</table>";
+				$prov_list .= "</div>";
 				
 				$data = array(
 					'html' => '',
