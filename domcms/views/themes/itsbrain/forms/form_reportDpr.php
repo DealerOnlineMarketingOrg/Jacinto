@@ -49,7 +49,7 @@
                 <div class="rowElem noborder">
                 	<!-- Provider data lists -->
                     <div>
-                    	<?php echo $providers; ?>
+                    	<?php echo $report_leads; ?>
                     </div>
                     <div class="fix"></div>
                 </div>
