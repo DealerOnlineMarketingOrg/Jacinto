@@ -3,7 +3,7 @@
 	class Dpr extends DOM_Controller {
 	
 		public function __construct() {
-		parent::__construct();	
+		parent::__construct();
 			//loading the member model here makes it available for any member of the controller.
 			$this->load->model('getdpr');
 		}
@@ -20,39 +20,54 @@
 		// $report_element_start is where the id numbering (int) should start for this report.
 		// $report_element_start will return with the next available id.
 		// Returns a string containing the table code.
-		private function GenerateTableReport($report_data, $report_id, &$report_element_start) {
+		private function generateTableReport($report, $report_id, &$report_element_start) {
 			$report_element_i = $report_element_start;
-			$report = '';
+			$report_html = '';
 			$style = '';
 			$id = "reportID_" . $report_element_i; $report_element_i++;
-			$report .= "<table id='" . $id . "' border='0' width='100%' style='color:black'>";
+			$report_html .= "<table id='" . $id . "' border='0' width='100%' style='color:black'>";
 			// Report element counter. Gives each element in the report a unique id.
-			foreach ($report_data as $row) {
-				// Create row.
-				$id = "reportID_" . $report_element_i; $report_element_i++;
-				$report .= "<tr id='" . $id . "'>";
-				foreach ($row as $item) {
-					switch ($item['style']) {
-						case 'Header': $style = 'font-weight:bold'; break;
-						case 'Name': $style = 'font-weight:bold; font-size:150%'; break;
-						case 'Year': $style = 'background-color:yellow'; break;
-						case 'ThisYear': $ytd_style = 'font-weight:bold'; break;
-						case 'Total': $style = 'font-weight:bold'; break;
-						case 'Seperator': $style = 'height:0px; border-bottom:solid 1px black'; break;
-					}
-					// Create item on row and set style.
+			foreach ($report as $report_row) {
+				$first = reset($report_row);
+				if ($first['reportID'] == $report_id) {
+					// Create row.
 					$id = "reportID_" . $report_element_i; $report_element_i++;
-					$report .= "<td id='" . $id . "' style='" . $style . "'>" . $item['data'] . "</td>";
+					$report_html .= "<tr id='" . $id . "'>";
+					foreach ($report_row as $item) {
+						$style = '';
+						switch ($item['format']['class']) {
+							case 'Header': $style = 'font-weight:bold'; break;
+							case 'Name': $style = 'font-weight:bold; font-size:150%'; break;
+							case 'Year': $style = 'background-color:yellow'; break;
+							case 'ThisYear': $style = ''; break;
+							case 'Total': $style = 'font-weight:bold'; break;
+							case 'Seperator': $style = 'height:0px; border-bottom:solid 1px black'; break;
+						}
+						$format = '';
+						if ($item['data'] == '' || $item['data'] === 0 || $item['data'] == '#DIV/0!')
+							$data = '';
+						else
+							$data = $this->rep->formatData($item['data'], $item['format']['functions']);
+						// Create item on row and set style.
+						$id = "reportID_" . $report_element_i; $report_element_i++;
+						// Convert data to floating-point string to force output of needed precision.
+						if (substr($data, strlen($data), 1) == '%')
+							$data = numberToString($data, 2);
+						else
+							$data = numberToString($data, 2, TRUE);
+						$report_html .= "<td id='" . $id . "' style='" . $style . "'>" . $data . "</td>";
+					}
 				}
-				$report .= "</tr>";
+				$report_html .= "</tr>";
 			}
-			$report .= "</table>";
+			$report_html .= "</table>";
 			
 			$report_element_start = $report_element_i + 1;
-			return $report;
+			return $report_html;
 		}
 		
 		public function Load($page, $err = FALSE) {
+			
 			// Processing for dpr entry page.
 			if ($page == 'add') {
 				$report_data = $this->getdpr->get('Provider');
@@ -69,16 +84,16 @@
 					'agencies' => $agency_options
 				);
 			}
+			
 			// Processing for dpr report page.
 			if ($page == 'reports') {
-				$report_data = $this->rep->getDPRReportData(1, 2010, 2012);
+				$report = $this->rep->getDPRReport(1, 2010, 2012);
 				// Wrap our table report in a div for logical and report conversion seperation.
 				$reports['leads'] = "<div id='reportID_1'>";
 				$report_element_start = 2;
-				//$report = GenerateTableReport($report_data, 'leads', $report_element_start);
-				$report="<table><tr><td></td></tr></table>";
+				$report_html = $this->generateTableReport($report, 'leads', $report_element_start);
 				// Wrap our table report in a div for logical and report conversion seperation.
-				$reports['leads'] .= $report . "</div>";
+				$reports['leads'] .= $report_html . "</div>";
 				
 				$data = array(
 					'html' => '',
@@ -93,6 +108,7 @@
 				case 'add':		$this->LoadTemplate('forms/form_addDpr',$data); break;
 				case 'reports': $this->LoadTemplate('forms/form_reportDpr',$data); break;
 			}	
+			
 		}
 		
 		public function Success() {

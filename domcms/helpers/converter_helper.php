@@ -144,20 +144,13 @@
 		return $attrs;
 	}
 	
-	// array_merge that can merge empty arrays as well as filled ones.
-	function array_merge_recursive_(array $array1, array $array2) {
-		if (IsSet($array1))
-			$mergedArray = array_merge_recursive($array1, $array2);
-		else
-			$mergedArray = array_merge_recursive($array2);
-		return $mergedArray;
-	}
-	
 	// Sets the markup on the specified cell.
 	// $defaultStyleArray only applies to the worksheet itself.
 	// This is done in the table markup, since the worksheet represents the table.
 	// 
 	function SetMarkup(&$worksheet, $globals, $col, $row, $nodeName, $attrName, $attrValue) {
+		$this->load->helper('phpext_helper');
+		
 		// Get style markups.
 		$defaultStyleArray = array();
 		$styleArray = array();
