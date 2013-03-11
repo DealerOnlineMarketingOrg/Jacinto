@@ -94,11 +94,11 @@
 		}
 		
 		// Returns true if the function is in the function list.
-		public function hasFunction($functionList, $function) {
+		public function hasFunction($functionList, $functionName) {
 			$functions = $this->getFunctions($functionList);
 			foreach ($functions as $function) {
 				$args = $this->getArguments($function);
-				if ($args[0] == $function)
+				if ($args[0] == $functionName)
 					return true;
 			}
 			
@@ -151,11 +151,12 @@
 			$row = 1;
 			foreach ($report as $report_row) {
 				$col = 'A';
-				foreach ($report_row as $item) {
+				foreach ($report_row['Cells'] as $item) {
 					if ($item['formula'] != '')
 						$worksheet->setCellValue($col.$row, $item['formula']);
 					else
 						$worksheet->setCellValue($col.$row, $item['data']);
+
 					$col++;
 				}
 				$row++;
@@ -178,8 +179,9 @@
 			$row = 1;
 			foreach ($report as &$report_row) {
 				$col = 'A';
-				foreach ($report_row as &$item) {
+				foreach ($report_row['Cells'] as &$item) {
 					$item['data'] = $worksheet->getCell($col.$row)->getCalculatedValue();
+
 					$col++;
 				}
 				$row++;
@@ -208,13 +210,24 @@
 			//   class: the class name of the format.
 			//   style: the ccs style for the visual format of the data.
 			//   dataType: the type of data.
-			$empty_item = array('reportID' => $report_id, 'format' => array('class'=>'', 'style'=>'', 'functions'=>''), 'data' => '', 'formula' => '');
+			// calcID defines this cell as a cell in a calculation.
+			// It will replace a part of a formula with the syntax {ID}.
+			// If more then one cell has the same ID, will create a
+			//   comma-delimited list for the formula.
+			//  Example: A1:calcID=TotalJan, B1:calcID=TotalJan will convert
+			//    {TotalJan} to A1,B1
+			$empty_item = array('calcID' => NULL, 'format' => array('class'=>'', 'style'=>'', 'functions'=>''), 'data' => '', 'formula' => '');
 			// Empty row contains the structure of the report and the data items for each.
 			$empty_row = array();
-				$empty_row['Name'] = $empty_item;
+				// Hidden determines if this is a hidden data row.
+				// Usually used for calculation data.
+				$empty_row['Hidden'] = false;
+				$empty_row['ReportID'] = $report_id;
+				$empty_cell['Name'] = $empty_item;
 				foreach($months as $month)
-					$empty_row[$month] = $empty_item;
-				$empty_row['YTD'] = $empty_item;
+					$empty_cell[$month] = $empty_item;
+				$empty_cell['YTD'] = $empty_item;
+				$empty_row['Cells'] = $empty_cell;
 				
 			// Headers.
 			$header_row = array($empty_row);
@@ -235,205 +248,314 @@
 				'YTD'  => 'Total YTD'
 			);
 			foreach ($header_descs as $key => $desc) {
-				$header_row[0][$key]['format']['class'] = 'Header';
-				$header_row[0][$key]['data'] = $desc;
+				$header_row[0]['Cells'][$key]['format']['class'] = 'Header';
+				$header_row[0]['Cells'][$key]['data'] = $desc;
 			}
 			$headers = $header_row;
 			
 			$data_body = array();
 			$row_count = $query->num_rows();
-			$calc_block['YTD']['const'] = true;
-			$calc_block['YTD']['first'] = $month_columns['Jan'];
-			$calc_block['YTD']['last'] = $month_columns['Dec'];
-			$calc_block['visitors']['const'] = false;
-			$calc_block['visitors']['first'] = 0;
-			$calc_block['visitors']['last'] = 0;
-			$calc_block['leads']['const'] = false;
-			$calc_block['leads']['first'] = 0;
-			$calc_block['leads']['last'] = 0;
+			$month_first = $month_columns['Jan'];
+			$month_last = $month_columns['Dec'];
+
 			if ($row_count > 0) {
-				// Leave blank at first to force routine to initialize.
+				// Initialize $current variables.
+				$row = $query_result[0];
 				$current = array (
-					'provider' => '',
-					'year' => '',
-					'service' => '');
+					'provider' => $row->PName,
+					'year' => $row->Year,
+					'month' => $months[$row->Month-1],
+					'service' => $row->SName,
+					'serviceType' => $row->SType
+				);
 				
 				$data_row = $empty_row;
-				// Set true to close the current excel row.
-				$closeRow = false;
-				// Set true to close the current row as a header.
-				$isHeaderRow = false;
 				// Adjust for header rows. Affects formulas.
 				$current_row = 1 + count($headers);
 				$first_row = true;
-				$write_row = false;
-				$write_provider = false;
+				$write_header = true;
+				$write_data = false;
+				$write_seperator = false;
+				$write_totals = false;
+				$write_rates = false;
+				$write_blank = false;
+				
+				// Populate data for table chart.
 				for ($qi = 0; $qi <= $row_count; $qi++) {
 					if ($qi == $row_count) {
 						// Past the end of the query. Close out.
-						$write_row = true;
-						$write_provider = true;
+						$write_data = true;
+						$write_seperator = true;
+						$write_totals = true;
+						$write_rates = true;
 					} else {
 						// Still processing query rows.
 						$row = $query_result[$qi];
 					
-						// Provider changed.
-						if ($current['provider'] != $row->PName) {
-							$write_row = true;
-							$write_provider = true;
-							// Set new provider.
-							$current['provider'] = $row->PName;							
+						// Month changed.
+						if ($current['month'] != $months[$row->Month-1]) {
+
 						}
 						
 						// Year changed.
 						if ($current['year'] != $row->Year) {
-							$write_row = true;
-							// Set new year.
-							$current['year'] = $row->Year;
+							$write_data = true;
+							$write_totals = true;
 						}
-						
+
 						// Service changed.
 						if ($current['service'] != $row->SName) {
-							$write_row = true;
-							// Set new service.
-							$current['service'] = $row->SName;
+							$write_data = true;
+						}
+						
+						// Provider changed.
+						if ($current['provider'] != $row->PName) {
+							// Write current data line, then write new header.
+							$write_data = true;
+							$write_seperator = true;
+							$write_totals = true;
+							$write_rates = true;
+							$write_header = true;
+							$write_blank = true;
 						}
 					}
 					
-					if ($write_row) {
-						if (!$first_row) {
-							// Write row data to body and advance.
-							// Add YTD formula to row, and style it the same as the Name.
-							$data_row['YTD']['format']['class'] = $data_row['Name']['format']['class'];
-							$data_row['YTD']['formula'] = '=SUM(' . $calc_block['YTD']['first'].$current_row . ':' . $calc_block['YTD']['last'].$current_row .')';
-							$data_body[] = $data_row;
-							// Visitors block.
-							if ($calc_block['visitors']['first'] == 0 && $data_row['Name']['format']['class'] == 'ThisYear' && $lastRow->SType == 1) {
-								$calc_block['visitors']['first'] = $current_row;
-							}
-							if ($calc_block['visitors']['last'] == 0 && $data_row['Name']['format']['class'] == 'ThisYear' && $lastRow->SType != 1)
-								$calc_block['visitors']['last'] = $current_row-1;
-							// Leads block.
-							if ($calc_block['leads']['first'] == 0 && $data_row['Name']['format']['class'] == 'ThisYear' && $lastRow->SType == 2) {
-								$calc_block['leads']['first'] = $current_row;
-							}
+					// Visitors formula ID.
+					$visitorsID = $current['year'] . '.' . $current['provider'] . '.visitors.';
+					// Total visitors formula ID.
+					$totalVisitorsID = $current['year'] . '.' . $current['provider'] . '.totalVisitors.';
+					// Leads formula ID.
+					$leadsID = $current['year'] . '.' . $current['provider'] . '.leads.';
+					// Total Leads formula ID.
+					$totalLeadsID = $current['year'] . '.' . $current['provider'] . '.totalLeads.';
+					// Total Conversion formula ID.
+					$conversionID = $current['year'] . '.' . $current['provider'] . '.conversion.';
+					
+					if ($write_data) {
+						// Name data row.
+						$data_row['Cells']['Name']['data'] = $current['year'] . ' ' . $current['service'];
+						
+						// Hide all leads that don't fall into the current report year.
+						// Total leads will continue to show.
+						if ($current['serviceType'] == 2 && $current['year'] != $ending_year)
+							$data_row['Hidden'] = TRUE;
+						
+						// Set class and clcIDs for data.
+						foreach ($data_row['Cells'] as $key => &$item)
+							$item['format']['class'] = ($current['year'] == $ending_year) ? 'ThisYear' : 'Year';
 							
-							$current_row++;
-							$data_row = $empty_row;
-							// Name new row.
-							$data_row['Name']['format']['class'] = ($current['year'] == $ending_year) ? 'ThisYear' : 'Year';
-							$data_row['Name']['data'] = $current['year'] . ' ' . $current['service'];
+						// Tag each month as visitor or lead for row, per month, and per service (for end-of-year YTD).
+						foreach ($months as $month) {
+							if ($current['serviceType'] == 1) {
+								// Visitor
+								$data_row['Cells'][$month]['calcID'] = $visitorsID;
+								$data_row['Cells'][$month]['calcID'] .= ',' . $visitorsID.$month;
+								$data_row['Cells'][$month]['calcID'] .= ',' . $visitorsID.$current['service'];
+							} else {
+								// Lead
+								$data_row['Cells'][$month]['calcID'] = $leadsID;
+								$data_row['Cells'][$month]['calcID'] .= ',' . $leadsID.$month;
+								$data_row['Cells'][$month]['calcID'] .= ',' . $leadsID.$current['service'];
+							}
 						}
 						
-						$write_row = false;
+						// Add YTD formula to row.
+						if ($current['serviceType'] == 1)
+							$data_row['Cells']['YTD']['formula'] = '=SUM({' . $visitorsID.$current['service'] .'})';
+						else
+							$data_row['Cells']['YTD']['formula'] = '=SUM({' . $leadsID.$current['service'] .'})';
+						// Set class of YTD as total.
+						if (isset($data_row['Cells']['YTD']['format']['class']))
+							$data_row['Cells']['YTD']['format']['class'] .= ', Total';
+						else
+							$data_row['Cells']['YTD']['format']['class'] = 'Total';
+	
+						$data_body[] = $data_row;
+						
+						// Go to next row.
+						$current_row++;
+						$data_row = $empty_row;
+						
+						$write_data = false;
 					}
 					
-					if ($write_provider) {
-						// Bottom calculation block.
-						if (!$first_row) {
-							// Set calculation block bottom.
-							$calc_block['leads']['last'] = $current_row-1;
-							
-							// This will be the horizontal rule seperator. Use a blank line for now.
-							foreach ($data_row as &$item)
-								$item['format']['class'] = 'Seperator';
-							$data_row['Name']['data'] = ' ';
-							$data_body[] = $data_row;
-							
-							// Leads totals
-							$current_row++;
-							$data_row = $empty_row;
-							foreach ($data_row as &$item)
-								$item['format']['class'] = 'Total';
-							$data_row['Name']['data'] = $ending_year . ' Total';
-							foreach ($months as $month) {
-								$data_row[$month]['formula'] = '=SUM(' . $month_columns[$month].$calc_block['leads']['first'] .':' . $month_columns[$month].$calc_block['leads']['last'] . ')';
-							}
-							$data_row['YTD']['formula'] = '=SUM(' . $calc_block['YTD']['first'].$current_row . ':' . $calc_block['YTD']['last'].$current_row .')';
-							$data_body[] = $data_row;
-							
-							// Conversion ratios
-							$current_row++;
-							$data_row = $empty_row;
-							foreach ($data_row as &$item)
-								$item['format']['class'] = 'Total';
-							$data_row['Name']['data'] = $ending_year . ' Conversion Ratio';
-							foreach ($months as $month) {
-								// If we don't have any visitors, we shouldn't calculate this.
-								if ($calc_block['visitors']['first'] > 0) {
-									$data_row[$month]['formula'] = '=' . $month_columns[$month].($current_row-1) . '/SUM(' . $month_columns[$month].$calc_block['visitors']['first'] . ':' . $month_columns[$month].$calc_block['visitors']['last'] . ') * 100';
-									$data_row[$month]['format']['functions'] = 'round(2);append(%)';
-								}
-							}
-							$data_row['YTD']['formula'] = '=AVERAGE(' . $calc_block['YTD']['first'].$current_row . ':' . $calc_block['YTD']['last'].$current_row .')';
-							$data_row['YTD']['format']['functions'] = 'round(2);append(%)';
-							$data_body[] = $data_row;
-							
-							// Costs.
-							$current_row++;
-							$data_row = $empty_row;
-							foreach ($data_row as &$item)
-								$item['format']['class'] = 'Total';
-							$data_row['Name']['data'] = $ending_year . ' Cost';
-							$data_row['YTD']['formula'] = '=SUM(' . $calc_block['YTD']['first'].$current_row . ':' . $calc_block['YTD']['last'].$current_row .')';
-							$data_body[] = $data_row;
-							
-							// Costs per lead.
-							$current_row++;
-							$data_row = $empty_row;
-							foreach ($data_row as &$item)
-								$item['format']['class'] = 'Total';
-							$data_row['Name']['data'] = $ending_year . ' Cost per lead';
-							$data_row['YTD']['formula'] = '=SUM(' . $calc_block['YTD']['first'].$current_row . ':' . $calc_block['YTD']['last'].$current_row .')';
-							$data_body[] = $data_row;
-							
-							// Blank line.
-							$current_row++;
-							$data_row = $empty_row;
-							// Actual blank line.
-							foreach ($data_row as &$item)
-								$item['format']['class'] = 'Blank';
-							$data_row['Name']['data'] = '&nbsp;';
-							$data_body[] = $data_row;
-							
-							// Clear calc blocks.
-							foreach ($calc_block as &$calc_type)
-								if (!$calc_type['const'])
-									foreach ($calc_type as $key => &$item)
-										if ($key != 'const')
-											$item = 0;
-							
-							// Go to next row.
-							$current_row++;
-							$data_row = $empty_row;
-						}
+					if ($write_seperator) {
+						// Seperator line.
+						$label_row = $empty_row;
+						// This will be the horizontal rule seperator. Use a blank line for now.
+						foreach ($label_row['Cells'] as &$item)
+							$item['format']['class'] = 'Seperator';
+						$label_row['Cells']['Name']['data'] = ' ';
+						$data_body[] = $label_row;
 						
-						// Provider header.
-						if ($qi != $row_count) {
-							// Add special provider header line.
-							foreach ($data_row as &$item)
-								$item['format']['class'] = 'Name';
-							$data_row['Name']['data'] = $row->PName;
-							$data_body[] = $data_row;
-							$current_row++;
-							
-							$data_row = $empty_row;
-							// Name new row.
-							$data_row['Name']['format']['class'] = ($current['year'] == $ending_year) ? 'ThisYear' : 'Year';
-							$data_row['Name']['data'] = $current['year'] . ' ' . $current['service'];
-						}
+						// Go to next row.
+						$current_row++;
 						
-						$write_provider = false;
+						$write_seperator = false;
+					}
+
+					if ($write_totals) {
+						$total_row = $empty_row;
+
+						// Name row.						
+						$total_row['Cells']['Name']['data'] = $current['year'] . ' Total Visitors';
+						// Total visitors are hidden rows.
+						$total_row['Hidden'] = TRUE;
+						
+						// Set class for this row.
+						foreach ($total_row['Cells'] as &$item)
+							$item['format']['class'] = ($current['year'] == $ending_year) ? 'ThisYear, Total' : 'Year';
+						
+						foreach ($months as $month) {
+							// Set the formula to the total leads for the month.
+							$total_row['Cells'][$month]['formula'] = '=SUM({' . $visitorsID.$month . '})';
+							// Tag each month as total lead for row and per month.
+							$total_row['Cells'][$month]['calcID'] = $totalVisitorsID;
+							$total_row['Cells'][$month]['calcID'] .= ',' . $totalVisitorsID.$month;
+						}
+						// Set YTD formula to total Leads ID.
+						$total_row['Cells']['YTD']['formula'] = '=SUM({' . $totalVisitorsID .'})';
+						// Set class of YTD as total.
+						if (isset($total_row['Cells']['YTD']['format']['class']))
+							$total_row['Cells']['YTD']['format']['class'] .= ', Total';
+						else
+							$total_row['Cells']['YTD']['format']['class'] = 'Total';
+							
+						$data_body[] = $total_row;
+	
+						// Go to next row.
+						$current_row++;
+						$total_row = $empty_row;
+
+						// Name row.
+						$total_row['Cells']['Name']['data'] = $current['year'] . ' Total Leads';
+
+						// Set class for this row.
+						foreach ($total_row['Cells'] as &$item)
+							$item['format']['class'] = ($current['year'] == $ending_year) ? 'ThisYear, Total' : 'Year';
+						
+						foreach ($months as $month) {
+							// Set the formula to the total leads for the month.
+							$total_row['Cells'][$month]['formula'] = '=SUM({' . $leadsID.$month . '})';
+							// Tag each month as total lead for row and per month.
+							$total_row['Cells'][$month]['calcID'] = $totalLeadsID;
+							$total_row['Cells'][$month]['calcID'] .= ',' . $totalLeadsID.$month;
+						}
+						// Set YTD formula to total Leads ID.
+						$total_row['Cells']['YTD']['formula'] = '=SUM({' . $totalLeadsID .'})';
+						// Set calcID to total leads YTD.
+						$total_row['Cells']['YTD']['calcID'] = $totalLeadsID . 'YTD';
+						// Set class of YTD as total.
+						if (isset($total_row['Cells']['YTD']['format']['class']))
+							$total_row['Cells']['YTD']['format']['class'] .= ', Total';
+						else
+							$total_row['Cells']['YTD']['format']['class'] = 'Total';
+							
+						$data_body[] = $total_row;
+	
+						// Go to next row.
+						$current_row++;
+						
+						$write_totals = false;
+					}
+					
+					if ($write_rates) {
+						$total_row = $empty_row;
+						
+						// Conversion ratios
+						$total_row['Cells']['Name']['data'] = $ending_year . ' Conversion Ratio';
+						// Set class
+						foreach ($total_row['Cells'] as &$item)
+							$item['format']['class'] = 'Total';
+						foreach ($months as $month) {
+							// Set formula as total leads per month / total visitors per month
+							$total_row['Cells'][$month]['formula'] = '=SUM({' . $totalLeadsID.$month . '})/SUM({' . $totalVisitorsID.$month . '})*100';
+							// Tag each month as total conversion.
+							$total_row['Cells'][$month]['calcID'] = $conversionID;
+							// Set function to create a percentage.
+							$total_row['Cells'][$month]['format']['functions'] = 'append(%)';
+						}
+						// Set YTD formula to average of total conversions.
+						$total_row['Cells']['YTD']['formula'] = '=AVERAGE({' . $conversionID .'})';
+						// Set function to create a percentage.
+						$total_row['Cells']['YTD']['format']['functions'] = 'append(%)';
+						$data_body[] = $total_row;
+						
+						$current_row++;
+						$total_row = $empty_row;
+						// Costs.
+						$total_row['Cells']['Name']['data'] = $ending_year . ' Cost';
+						foreach ($total_row['Cells'] as &$item)
+							$item['format']['class'] = 'Total';
+						$total_row['Cells']['YTD']['formula'] = '';
+						$data_body[] = $total_row;
+						
+						$current_row++;
+						$total_row = $empty_row;
+						// Costs per lead.
+						$total_row['Cells']['Name']['data'] = $ending_year . ' Cost per lead';
+						foreach ($total_row['Cells'] as &$item)
+							$item['format']['class'] = 'Total';
+						$total_row['Cells']['YTD']['formula'] = '';
+						$data_body[] = $total_row;
+						
+						// Go to next row.
+						$current_row++;
+						
+						$write_rates = false;
+					}
+					
+					if ($write_blank) {
+						// Blank line.
+						$label_row = $empty_row;
+						// Actual blank line.
+						foreach ($label_row['Cells'] as &$item)
+							$item['format']['class'] = 'Blank';
+						$label_row['Cells']['Name']['data'] = '&nbsp;';
+						$data_body[] = $label_row;
+						
+						// Go to next row.
+						$current_row++;
+						
+						$write_blank = false;
 					}
 					
 					if ($qi != $row_count) {
 						// Set this query row's style to the same as it's Name.
-						$data_row[$months[($row->Month)-1]]['format']['class'] = $data_row['Name']['format']['class'];
+						$data_row['Cells'][$months[($row->Month)-1]]['format']['class'] = $data_row['Cells']['Name']['format']['class'];
 						// Get this query row's monthly value.
-						$lastRow = $row;
-						$data_row[$months[($row->Month)-1]]['data'] = $row->Value;
+						$data_row['Cells'][$months[($row->Month)-1]]['data'] = $row->Value;
 					}
 
+					// Update $current.
+					if ($current['month'] != $months[$row->Month-1])
+						$current['month'] = $months[$row->Month-1];
+					if ($current['year'] != $row->Year)
+						$current['year'] = $row->Year;
+					if ($current['service'] != $row->SName) {
+						$current['service'] = $row->SName;
+						$current['serviceType'] = $row->SType;
+					}
+					if ($current['provider'] != $row->PName)
+						$current['provider'] = $row->PName;
+					
+					// Write header for new provider.
+					if ($write_header) {
+						// Blank line.
+						$label_row = $empty_row;
+						// Provider header line.
+						$label_row['Cells']['Name']['data'] = $row->PName;
+						foreach ($label_row['Cells'] as &$item)
+							// This is a Name class row.
+							$item['format']['class'] = 'Name';
+						$data_body[] = $label_row;
+						
+						// Go to next row.
+						$current_row++;
+						
+						$write_header = false;
+					}
+					
 					if ($first_row)
 						$first_row = false;
 				}
@@ -442,14 +564,154 @@
 			// Footers.
 			$footers = array();
 			
-			// Build report.
+			// Build table report.
 			$report = array();
 			$report = array_merge_($report, $headers);
 			$report = array_merge_($report, $data_body);
 			$report = array_merge_($report, $footers);
 			
+			// Create report rows for line graph. Data will be based off of above table report.
+			// Line graph will have each year, each year will be broken into each month, and
+			//   each month will represent the grand total leads for that year.
+			if ($row_count > 0) {
+				$row = $query_result[0];
+				$current['year'] = '';
+				$lineChart_body = array();
+				$processed_years = array();
+				
+				for ($qi = 0; $qi < $row_count; $qi++) {
+					$row = $query_result[$qi];
+					
+					// New year
+					if ($current['year'] != $row->year)
+					{
+						$current['year'] = $row->year;
+						
+						// If we haven't already calculated this year..
+						if (array_search($current['year'], $processed_years)) {
+							$lineGraph_row = $empty_row;
+							// This belongs to the lineChart report.
+							$lineGraph_row['ReportID'] = 'lineChart';
+							$lineGraph_row['Hidden'] = TRUE;
+							// Name the label for this row.
+							$lineGraph_row['Cells']['Name']['data'] = $current['year'];
+							// This year's Total Leads formula ID.
+							$totalLeadsID = $current['year'] . '.' . $current['provider'] . '.totalLeads.';
+							// Set each month's formula.
+							foreach ($months as $month)
+								$lineGraph_row['Cells'][$month]['formula'] = '=SUM({' . $totalLeadsID . '})';
+							
+							// Add line chart row to $report.
+							$lineChart_body[] = $lineGraph_row;
+							
+							$processed_years[] = $current['year'];
+						}
+					}
+				}
+			}
+			// Add line chart to main $report.
+			$report = array_merge_($report, $lineChart_body);
+			
+			// Create report rows for pie graph. Data will be based off of above table report.
+			// Pie graph will have each web-site provider, and the YTD value will be based off
+			//   of the YTD of the Total Leads for that provider.
+			if ($row_count > 0) {
+				$row = $query_result[0];
+				$current['provider'] = '';
+				$pieChart_body = array();
+				$processed_providers = array();
+				
+				for ($qi = 0; $qi < $row_count; $qi++) {
+					$row = $query_result[$qi];
+					
+					// New year
+					if ($current['provider'] != $row->year)
+					{
+						$current['provider'] = $row->year;
+						
+						// If we haven't already calculated this provider..
+						if (array_search($current['provider'], $processed_providers)) {
+							$lineGraph_row = $empty_row;
+							// This belongs to the pieChart report.
+							$lineGraph_row['ReportID'] = 'pieChart';
+							$lineGraph_row['Hidden'] = TRUE;
+							// Name the label for this row.
+							$lineGraph_row['Cells']['Name']['data'] = $current['provider'];
+							// This year's Total Leads formula ID.
+							$totalLeadsID = $current['year'] . '.' . $current['provider'] . '.totalLeads.';
+							// Set each month's formula.
+							foreach ($months as $month)
+								$lineGraph_row['Cells'][$month]['formula'] = '=SUM({' . $totalLeadsID . 'YTD' . '})';
+							
+							// Add line chart row to $report.
+							$pieChart_body[] = $lineGraph_row;
+							
+							$processed_providers[] = $current['provider'];
+						}
+					}
+				}
+			}
+			// Add line chart to main $report.
+			$report = array_merge_($report, $lineChart_body);
+			
+			// Replace all formula IDs with their respective cells.
+			// Build up a list of IDs and their cells.
+			$calcIDs = $this->getCalcList($report);
+			// In all formulas, replace {calcID} with the cell list.
+			$report = $this->setFormulasFromList($report, $calcIDs);
+			
 			// Calculate report.
 			$report = $this->CalculateData($report);
+			
+			return $report;
+		}
+		
+		
+		// Gets a list of all the calculation tags in the report.
+		public function getCalcList($report) {
+			$row = 1;
+			foreach ($report as $report_row) {
+				$col = 'A';
+				foreach ($report_row['Cells'] as $item) {
+					$calcIDList = explode(',', $item['calcID']);
+					foreach ($calcIDList as $calcID) {
+						if ($calcID != '')
+							if (isset($calcIDs[$calcID]))
+								$calcIDs[$calcID] .= ',' . $col.$row;
+							else
+								$calcIDs[$calcID] = $col.$row;
+					}
+					
+					$col++;
+				}
+				$row++;
+			}
+			
+			return $calcIDs;
+		}
+		
+		// Using the list from getCalcList, sets all formulas to their respective
+		//  cell ranges.
+		public function setFormulasFromList($report, $calcIDs) {
+			$row = 1;
+			foreach ($report as &$report_row) {
+				$col = 'A';
+				foreach ($report_row['Cells'] as &$item) {
+					if ($item['formula'] != '') {
+						foreach ($calcIDs as $key => $calcID) {
+							if (strpos($item['formula'], '{' . $key . '}') > -1)
+								// Replace {calcID} with cell list if found.
+								$item['formula'] = str_replace('{' . $key . '}', $calcID, $item['formula']);
+						}
+						// If there's still a formula variable in the formula, there's no data to support
+						//  the formula. Replace with 0.
+						if (preg_match('/\{[^}]+\}/', $item['formula']))
+							$item['formula'] = preg_replace('/\{[^}]+\}/', '0', $item['formula']);
+					}
+					$col++;
+				}
+				$row++;
+			}
 			
 			return $report;
 		}

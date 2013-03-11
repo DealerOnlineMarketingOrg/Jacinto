@@ -47,7 +47,7 @@
 				$int_part = $num_part;
 			} else {
 				$data_type = 'double';
-				$int_part = substr($num_part, 0, $dpLoc+1);
+				$int_part = substr($num_part, 0, $dpLoc);
 				$float_part = substr($num_part, $dpLoc+1);
 			}
 		} else {

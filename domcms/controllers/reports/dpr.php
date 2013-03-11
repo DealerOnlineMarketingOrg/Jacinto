@@ -16,6 +16,23 @@
 			$this->Load('reports');
 		}
 		
+		// Sets a style attribute in a style string.
+		// If it doesn't exist, adds it.
+		// If it exists, replaces the value.
+		// Returns the modified style.
+		private function SetStyle($style, $attribute, $value) {
+			if (preg_match('/(^|;)' . $attribute . ':/', $style))
+				$style = preg_replace('/(^|;)' . $attribute . ':[^;]+/', '$1' . $attribute . ':' . $value, $style);
+			else {
+				if ($style == '')
+					$style = $attribute . ':' . $value;
+				else
+					$style .= ';' . $attribute . ':' . $value;
+			}
+			
+			return $style;
+		}
+		
 		// Creates an HTML table containing the report specified by $report_id.
 		// $report_element_start is where the id numbering (int) should start for this report.
 		// $report_element_start will return with the next available id.
@@ -28,34 +45,54 @@
 			$report_html .= "<table id='" . $id . "' border='0' width='100%' style='color:black'>";
 			// Report element counter. Gives each element in the report a unique id.
 			foreach ($report as $report_row) {
-				$first = reset($report_row);
-				if ($first['reportID'] == $report_id) {
-					// Create row.
-					$id = "reportID_" . $report_element_i; $report_element_i++;
-					$report_html .= "<tr id='" . $id . "'>";
-					foreach ($report_row as $item) {
-						$style = '';
-						switch ($item['format']['class']) {
-							case 'Header': $style = 'font-weight:bold'; break;
-							case 'Name': $style = 'font-weight:bold; font-size:150%'; break;
-							case 'Year': $style = 'background-color:yellow'; break;
-							case 'ThisYear': $style = ''; break;
-							case 'Total': $style = 'font-weight:bold'; break;
-							case 'Seperator': $style = 'height:0px; border-bottom:solid 1px black'; break;
-						}
-						$format = '';
-						if ($item['data'] == '' || $item['data'] === 0 || $item['data'] == '#DIV/0!')
-							$data = '';
-						else
-							$data = $this->rep->formatData($item['data'], $item['format']['functions']);
-						// Create item on row and set style.
+				if ($report_row['ReportID'] == $report_id) {
+					// If this row isn't hidden..
+					if ($report_row['Hidden'] != true) {
+						// ..create row.
 						$id = "reportID_" . $report_element_i; $report_element_i++;
-						// Convert data to floating-point string to force output of needed precision.
-						if (substr($data, strlen($data), 1) == '%')
-							$data = numberToString($data, 2);
-						else
-							$data = numberToString($data, 2, TRUE);
-						$report_html .= "<td id='" . $id . "' style='" . $style . "'>" . $data . "</td>";
+						$report_html .= "<tr id='" . $id . "'>";
+						//print_object($report);
+						foreach ($report_row['Cells'] as $item) {
+							$style = '';
+							$classes = explode(',', $item['format']['class']);
+							foreach ($classes as $class) {
+								switch (trim($class)) {
+									case 'Header':
+										$style = $this->SetStyle($style,'font-weight','bold');
+										break;
+									case 'Name':
+										$style = $this->SetStyle($style,'font-weight','bold');
+										$style = $this->SetStyle($style,'font-size','150%');
+										break;
+									case 'Year':
+										$style = $this->SetStyle($style,'background-color','yellow');
+										break;
+									case 'ThisYear':
+										/* No extra style set */;
+										break;
+									case 'Total':
+										$style = $this->SetStyle($style,'font-weight','bold');
+										 break;
+									case 'Seperator':
+										$style = $this->SetStyle($style,'height','0px');
+										$style = $this->SetStyle($style,'border-bottom','solid 1px black');
+										break;
+								}
+							}
+							$format = '';
+							if ($item['data'] == '' || $item['data'] === 0 || $item['data'] == '#DIV/0!')
+								$data = '';
+							else
+								$data = $this->rep->formatData($item['data'], $item['format']['functions']);
+							// Create item on row and set style.
+							$id = "reportID_" . $report_element_i; $report_element_i++;
+							// Convert data to floating-point string to force output of needed precision.
+							if (substr($data, strlen($data)-1, 1) == '%')
+								$data = numberToString($data, 2);
+							else
+								$data = numberToString($data, 2, TRUE);
+							$report_html .= "<td id='" . $id . "' style='" . $style . "'>" . $data . "</td>";
+						}
 					}
 				}
 				$report_html .= "</tr>";
