@@ -583,9 +583,9 @@
 					$row = $query_result[$qi];
 					
 					// New year
-					if ($current['year'] != $row->year)
+					if ($current['year'] != $row->Year)
 					{
-						$current['year'] = $row->year;
+						$current['year'] = $row->Year;
 						
 						// If we haven't already calculated this year..
 						if (array_search($current['year'], $processed_years)) {
@@ -625,9 +625,9 @@
 					$row = $query_result[$qi];
 					
 					// New year
-					if ($current['provider'] != $row->year)
+					if ($current['provider'] != $row->Year)
 					{
-						$current['provider'] = $row->year;
+						$current['provider'] = $row->Year;
 						
 						// If we haven't already calculated this provider..
 						if (array_search($current['provider'], $processed_providers)) {
@@ -651,8 +651,10 @@
 					}
 				}
 			}
-			// Add line chart to main $report.
-			$report = array_merge_($report, $lineChart_body);
+			// Add pie chart to main $report.
+			$report = array_merge_($report, $pieChart_body);
+			
+			print_object($report);
 			
 			// Replace all formula IDs with their respective cells.
 			// Build up a list of IDs and their cells.
