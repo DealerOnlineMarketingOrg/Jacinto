@@ -33,6 +33,50 @@
 			return $style;
 		}
 		
+		// Creates a line chart from a report.
+		// First column in each row is the tag name for that series of data.
+		// 2nd row on are the individual points of data.
+		// This routine uses flot line graph charts, and creates the
+		//   script for one.
+		// Returns the HTML snippet for the chart, and sets $javascript to the
+		//   javascript snippet needed. Script is functionless. It can be
+		//   placed in an anonymous function, or under a function name.
+		private function generateLineChart($report, $report_id, &$report_element_start, &$javascript) {
+			$report_html = "<div id='lineChart' class='chart' style='width:900px; height:200px'></div>";
+			
+			// Create series arrays.
+			$data = '[';
+			foreach ($report as $report_row) {
+				if ($report_row['ReportID'] == $report_id) {
+					$keys = array_keys($report_row['Cells']);
+					// First column is label name.
+					$data .= '{label: "' . $report_row['Cells'][$keys[0]]['data'] . '",';
+					// Second column on are data columns for the chart.
+					// Each column is a 2-dimensional data item, comma-delimited.
+					// First value is X-axis, second value is Y-axis.
+					$data .= 'data: [';
+					for ($i = 1; $i < count($keys); $i++) {
+						$data .= '[' . $report_row['Cells'][$keys[$i]]['data'] . '],';
+					}
+					$data .= ']},';
+				}
+			}
+			// Strip trailing comma.
+			$data = substr($data, 0, strlen($data)-1);
+			$data .= ']';
+			
+			$options = '{' .
+					   'series:{lines:{show:true}},' .
+					   'legend: {position:"ne",backgroundColor:"#ff4",backgroundOpacity:0.35},' .
+					   'xaxis: {min:0, max:13, ticks: [[1,"Jan"],[2,"Feb"],[3,"Mar"],[4,"Apr"],[5,"May"],[6,"Jun"],[7,"Jul"],[8,"Aug"],[9,"Sep"],[10,"Oct"],[11,"Nov"],[12,"Dec"]]}' .
+					   '}';
+					   
+			$plot = '$.plot($("#lineChart"),' . $data . ',' . $options . ');';
+
+			$javascript = $plot;
+			return $report_html;
+		}
+		
 		// Creates an HTML table containing the report specified by $report_id.
 		// $report_element_start is where the id numbering (int) should start for this report.
 		// $report_element_start will return with the next available id.
@@ -118,7 +162,10 @@
 					'err_level' => ($err) ? $err['level'] : 0,
 					'err_msg' => ($err) ? $err['msg'] : '',
 					'providers' => $prov_options,
-					'agencies' => $agency_options
+					'agencies' => $agency_options,
+					'report_leads' => '',
+					'report_lineChart' => '',
+					'report_lineChart_script' => '{}'
 				);
 			}
 			
@@ -126,18 +173,25 @@
 			if ($page == 'reports') {
 				$report = $this->rep->getDPRReport(1, 2010, 2012);
 				// Wrap our table report in a div for logical and report conversion seperation.
-				$reports['leads'] = "<div id='reportID_1'>";
+				$report_leads = "<div id='reportID_1'>";
 				$report_element_start = 2;
 				$report_html = $this->generateTableReport($report, 'leads', $report_element_start);
 				// Wrap our table report in a div for logical and report conversion seperation.
-				$reports['leads'] .= $report_html . "</div>";
+				$report_leads .= $report_html . "</div>";
+				
+				$report_lineChart_script = '';
+				$report_lineChart = $this->generateLineChart($report, 'lineChart', $report_element_start, $report_lineChart_script);
 				
 				$data = array(
 					'html' => '',
 					// Success level: -1 for error, 0 for none, 1 for success.
 					'err_level' => ($err) ? $err['level'] : 0,
 					'err_msg' => ($err) ? $err['msg'] : '',
-					'report_leads' => $reports['leads']
+					'providers' => '',
+					'agencies' => '',
+					'report_leads' => $report_leads,
+					'report_lineChart' => $report_lineChart,
+					'report_lineChart_script' => $report_lineChart_script
 				);
 			}
 

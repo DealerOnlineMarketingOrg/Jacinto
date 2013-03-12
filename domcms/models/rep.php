@@ -328,6 +328,8 @@
 					$leadsID = $current['year'] . '.' . $current['provider'] . '.leads.';
 					// Total Leads formula ID.
 					$totalLeadsID = $current['year'] . '.' . $current['provider'] . '.totalLeads.';
+					// Total Leads per year formula ID.
+					$totalLeadsYearlyID = $current['year'] . '.totalLeads.';
 					// Total Conversion formula ID.
 					$conversionID = $current['year'] . '.' . $current['provider'] . '.conversion.';
 					
@@ -437,9 +439,10 @@
 						foreach ($months as $month) {
 							// Set the formula to the total leads for the month.
 							$total_row['Cells'][$month]['formula'] = '=SUM({' . $leadsID.$month . '})';
-							// Tag each month as total lead for row and per month.
+							// Tag each month as total lead for row, per month and per year.
 							$total_row['Cells'][$month]['calcID'] = $totalLeadsID;
 							$total_row['Cells'][$month]['calcID'] .= ',' . $totalLeadsID.$month;
+							$total_row['Cells'][$month]['calcID'] .= ',' . $totalLeadsYearlyID.$month;
 						}
 						// Set YTD formula to total Leads ID.
 						$total_row['Cells']['YTD']['formula'] = '=SUM({' . $totalLeadsID .'})';
@@ -588,21 +591,30 @@
 						$current['year'] = $row->Year;
 						
 						// If we haven't already calculated this year..
-						if (array_search($current['year'], $processed_years)) {
-							$lineGraph_row = $empty_row;
+						if (array_search($current['year'], $processed_years) === FALSE) {
+							$lineChart_row = $empty_row;
 							// This belongs to the lineChart report.
-							$lineGraph_row['ReportID'] = 'lineChart';
-							$lineGraph_row['Hidden'] = TRUE;
-							// Name the label for this row.
-							$lineGraph_row['Cells']['Name']['data'] = $current['year'];
+							$lineChart_row['ReportID'] = 'lineChart';
+							$lineChart_row['Hidden'] = TRUE;
+							// Name the label for this row. Use the first row (Name in this report).
+							$keys = array_keys($lineChart_row['Cells']);
+							$lineChart_row['Cells'][$keys[0]]['data'] = $current['year'];
 							// This year's Total Leads formula ID.
 							$totalLeadsID = $current['year'] . '.' . $current['provider'] . '.totalLeads.';
-							// Set each month's formula.
-							foreach ($months as $month)
-								$lineGraph_row['Cells'][$month]['formula'] = '=SUM({' . $totalLeadsID . '})';
+							// Set each data point's formula. Monthly in this report.
+							// Use rows 2 on for data points for the line chart.
+							foreach ($months as $month) {
+								// Total Leads per year  formula ID.
+								$totalLeadsYearlyID = $current['year'] . '.totalLeads.';
+								// Line charts require a 2-dimensional data item, comma-delimited.
+								// First value is X-axis, second value is Y-axis.
+								// For this chart, X is the month number, and Y is the leads value.
+								$month_num = array_search($month, $months)+1;
+								$lineChart_row['Cells'][$month]['formula'] = '=CONCATENATE(' . $month_num . ',",",SUM({' . $totalLeadsYearlyID.$month . '}))';
+							}
 							
 							// Add line chart row to $report.
-							$lineChart_body[] = $lineGraph_row;
+							$lineChart_body[] = $lineChart_row;
 							
 							$processed_years[] = $current['year'];
 						}
@@ -625,26 +637,27 @@
 					$row = $query_result[$qi];
 					
 					// New year
-					if ($current['provider'] != $row->Year)
+					if ($current['provider'] != $row->PName)
 					{
-						$current['provider'] = $row->Year;
+						$current['provider'] = $row->PName;
 						
 						// If we haven't already calculated this provider..
-						if (array_search($current['provider'], $processed_providers)) {
-							$lineGraph_row = $empty_row;
+						if (array_search($current['provider'], $processed_providers) === FALSE) {
+							$pieGraph_row = $empty_row;
 							// This belongs to the pieChart report.
-							$lineGraph_row['ReportID'] = 'pieChart';
-							$lineGraph_row['Hidden'] = TRUE;
-							// Name the label for this row.
-							$lineGraph_row['Cells']['Name']['data'] = $current['provider'];
+							$pieGraph_row['ReportID'] = 'leads';
+							$pieGraph_row['Hidden'] = FALSE;
+							// Name the label for this row. Use the first row (Name in this report).
+							$keys = array_keys($pieGraph_row['Cells']);
+							$pieGraph_row['Cells'][$keys[0]]['data'] = $current['provider'];
 							// This year's Total Leads formula ID.
 							$totalLeadsID = $current['year'] . '.' . $current['provider'] . '.totalLeads.';
-							// Set each month's formula.
-							foreach ($months as $month)
-								$lineGraph_row['Cells'][$month]['formula'] = '=SUM({' . $totalLeadsID . 'YTD' . '})';
+							// Set the formula for the pie data.
+							// Only one column is required. Use the second column (Jan in this report).
+							$pieGraph_row['Cells'][$keys[1]]['formula'] = '=SUM({' . $totalLeadsID . 'YTD' . '})';
 							
 							// Add line chart row to $report.
-							$pieChart_body[] = $lineGraph_row;
+							$pieChart_body[] = $pieGraph_row;
 							
 							$processed_providers[] = $current['provider'];
 						}
@@ -653,8 +666,6 @@
 			}
 			// Add pie chart to main $report.
 			$report = array_merge_($report, $pieChart_body);
-			
-			print_object($report);
 			
 			// Replace all formula IDs with their respective cells.
 			// Build up a list of IDs and their cells.

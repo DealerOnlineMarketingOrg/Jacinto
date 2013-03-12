@@ -29,8 +29,7 @@
                             <div class="widget"><!-- Pie chart 1 -->
                                 <div class="head"><h5 id="update" class="iGraph">Line Graph</h5></div>
                                 <div class="body">
-                                    <div id="lineChart" class="chart" style="width:900px; height:200px"></div>
-                                    <div id="lineChartLegend" style="display:inline;float:right"></div>
+                                	<? echo $report_lineChart; ?>
                                 </div>
                             </div>
                         </div>
@@ -62,7 +61,8 @@
 		//	jQuery("input#excel").hide();
 		//});
 		
-		jQuery(window).load (function() {plotGraphs(); writeImg();});
+		jQuery(window).load (function() {plotGraphs();});
+		function plotGraphs() {<? echo $report_lineChart_script; ?>}
 		
 		jQuery('input#test').click(function() {
 			alert('begin');
@@ -99,12 +99,12 @@
 		jQuery('input#excel').click(function() {
 			var form_vars = {
 				type: "excel",
-				html: "<?php echo str_replace('"', '\\"',$providers); ?>"
+				html: "<?php echo str_replace('"','\\"',$providers); ?>"
 			}
 			$.ajax({
 				type: "post",
 				url: "<?= base_url(); ?>converter", 
-				data: {type:'excel',html:"<?php echo str_replace('"', '\\"',$providers); ?>"},
+				data: {type:'excel',html:"<?php echo str_replace('"','\\"',$providers); ?>"},
 				success:function(data) {
 					alert(data);
 				}
@@ -121,6 +121,7 @@
 			}
 			jQuery.post('/converter', form_vars, function(data) {alert(data);}, "text");
 		});
+		
 		/*
 		var series1 = {
 		            label: "series 1",
@@ -145,6 +146,7 @@
 		var linePlot = jQuery.plot(jQuery("#lineChart"), data, options);
 		*/
 		
+		/*
 		function plotGraphs() {
 		    var d1 = [];
 			for (var i = 0; i < Math.PI * 2; i += 0.25)
@@ -158,11 +160,7 @@
 			for (var i = 0; i < Math.PI * 2; i += 0.1)
 				d3.push([i, Math.tan(i)]);
 		
-			$.plot($("#lineChart"), [
-				{ label: "sin(x)",  data: d1},
-				{ label: "cos(x)",  data: d2},
-				{ label: "tan(x)",  data: d3}
-			], {
+			var options =  {
 				series: {
 					lines: { show: true },
 					points: { show: true }
@@ -183,8 +181,15 @@
 					backgroundColor: "#ff4",
 					backgroundOpacity: 0.35
 				}
-			});	
+			}
+				
+			$.plot($("#lineChart"), [
+				{ label: "sin(x)",  data: d1},
+				{ label: "cos(x)",  data: d2},
+				{ label: "tan(x)",  data: d3}
+			], options);	
 		}
+		*/
 		
 		function writeImg() {
 			var divobj = document.getElementById("lineChart");
