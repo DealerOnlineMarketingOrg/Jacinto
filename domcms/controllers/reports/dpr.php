@@ -42,7 +42,7 @@
 		//   javascript snippet needed. Script is functionless. It can be
 		//   placed in an anonymous function, or under a function name.
 		private function generateLineChart($report, $report_id, &$report_element_start, &$javascript) {
-			$report_html = "<div id='lineChart' class='chart' style='width:900px; height:200px'></div>";
+			$report_html = '<div id="lineChart" class="chart" style="width:900px; height:200px"></div>';
 			
 			// Create series arrays.
 			$data = '[';
@@ -68,10 +68,56 @@
 			$options = '{' .
 					   'series:{lines:{show:true}},' .
 					   'legend: {position:"ne",backgroundColor:"#ff4",backgroundOpacity:0.35},' .
-					   'xaxis: {min:0, max:13, ticks: [[1,"Jan"],[2,"Feb"],[3,"Mar"],[4,"Apr"],[5,"May"],[6,"Jun"],[7,"Jul"],[8,"Aug"],[9,"Sep"],[10,"Oct"],[11,"Nov"],[12,"Dec"]]}' .
+					   'xaxis: {min:1, max:12, ticks: [[1,"Jan"],[2,"Feb"],[3,"Mar"],[4,"Apr"],[5,"May"],[6,"Jun"],[7,"Jul"],[8,"Aug"],[9,"Sep"],[10,"Oct"],[11,"Nov"],[12,"Dec"]]}' .
 					   '}';
 					   
 			$plot = '$.plot($("#lineChart"),' . $data . ',' . $options . ');';
+
+			$javascript = $plot;
+			return $report_html;
+		}
+		
+		// Creates a pie chart from a report.
+		// First column in each row is the tag name for that series of data.
+		// 2nd row is the individual data point.
+		// This routine uses flot line graph charts, and creates the
+		//   script for one.
+		// Returns the HTML snippet for the chart, and sets $javascript to the
+		//   javascript snippet needed. Script is functionless. It can be
+		//   placed in an anonymous function, or under a function name.
+		private function generatePieChart($report, $report_id, &$report_element_start, &$javascript) {
+			$report_html = '<div id="pieChart" class="pieWidget" style="width:210px; height:210px"></div>';
+			
+			// Create series arrays.
+			$data = '[';
+			foreach ($report as $report_row) {
+				if ($report_row['ReportID'] == $report_id) {
+					$keys = array_keys($report_row['Cells']);
+					// First column is label name.
+					$data .= '{label: "' . $report_row['Cells'][$keys[0]]['data'] . '",';
+					// Second column is the data point for the pie slice.
+					// Each column is a single data point.
+					$data .= 'data: ' . $report_row['Cells'][$keys[1]]['data'] . '},';
+				}
+			}
+			// Strip trailing comma.
+			$data = substr($data, 0, strlen($data)-1);
+			$data .= ']';
+			
+			$options = '{canvas:false,' .
+					   'series:{pie:{show:true,' .
+					                'radius:1,' .
+									'label:{show:true,radius:2/3,' .
+										'formatter: function(label, series){' .
+                        					'return \'<div style="font-size:8pt;text-align:center;padding:2px;color:white;">\'+Math.round(series.percent)+\'%</div>\';' .
+										'},' .
+	                    				'threshold: 0.1' .
+									'}' .
+						'}},' .
+						'legend:{position:"nw"}' .
+						'}';
+					   
+			$plot = '$.plot($("#pieChart"),' . $data . ',' . $options . ');';
 
 			$javascript = $plot;
 			return $report_html;
@@ -173,14 +219,18 @@
 			if ($page == 'reports') {
 				$report = $this->rep->getDPRReport(1, 2010, 2012);
 				// Wrap our table report in a div for logical and report conversion seperation.
-				$report_leads = "<div id='reportID_1'>";
-				$report_element_start = 2;
+				$report_element_start = 1;
 				$report_html = $this->generateTableReport($report, 'leads', $report_element_start);
 				// Wrap our table report in a div for logical and report conversion seperation.
-				$report_leads .= $report_html . "</div>";
+				$report_leads = "<div id='reportBlock' class='report'>" . $report_html . "</div>";
 				
 				$report_lineChart_script = '';
-				$report_lineChart = $this->generateLineChart($report, 'lineChart', $report_element_start, $report_lineChart_script);
+				$report_html = $this->generateLineChart($report, 'lineChart', $report_element_start, $report_lineChart_script);
+				$report_lineChart = "<div id='reportBlock' class='report'>" . $report_html . "</div>";
+				
+				$report_pieChart_script = '';
+				$report_html = $this->generatePieChart($report, 'pieChart', $report_element_start, $report_pieChart_script);
+				$report_pieChart = "<div id='reportBlock' class='report'>" . $report_html . "</div>";
 				
 				$data = array(
 					'html' => '',
@@ -191,7 +241,9 @@
 					'agencies' => '',
 					'report_leads' => $report_leads,
 					'report_lineChart' => $report_lineChart,
-					'report_lineChart_script' => $report_lineChart_script
+					'report_lineChart_script' => $report_lineChart_script,
+					'report_pieChart' => $report_pieChart,
+					'report_pieChart_script' => $report_pieChart_script
 				);
 			}
 

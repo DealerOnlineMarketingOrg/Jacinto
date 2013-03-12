@@ -1,6 +1,6 @@
 <!-- Content -->
 <div class="content" id="container">
-    <div class="title"><h5>Admin</h5></div>
+    <div class="title"><h5>Reports</h5><?php NotifyError(); ?></div>
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
     <?php
@@ -10,6 +10,7 @@
         );
 		
         echo form_open('/dpr/form_processor/dpr/add',$form);
+		print_object($this->err);
     ?>
         <!-- Input text fields -->
         <fieldset>

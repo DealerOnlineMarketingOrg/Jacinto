@@ -24,6 +24,7 @@
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/flot/jquery.flot.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/flot/jquery.flot.orderBars.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/flot/jquery.flot.pie.js"></script>
+    <!-- <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/flot/jquery.flot.canvas.js"></script> -->
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/flot/excanvas.min.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/flot/jquery.flot.resize.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/tables/jquery.dataTables.js"></script>
@@ -59,11 +60,14 @@
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/ui/jquery.timeentry.min.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/ui/jquery.prettyPhoto.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $ThemeDir; ?>/js/custom.js"></script>
-    <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/charts/chart.js"></script>
+    <!-- <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/charts/chart.js"></script> -->
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/charts/auto.js"></script>
 	<script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/charts/bar.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/charts/hBar.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/charts/pie.js"></script>
+    <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/html2canvas/html2canvas.js"></script>
+    <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/html2canvas/html2canvas.min.js"></script>
+    <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/html2canvas/jquery.plugin.html2canvas.js"></script>
     <?php if(isset($TagCss)) { echo $TagCss; }; ?>  
 </head>
 <body>

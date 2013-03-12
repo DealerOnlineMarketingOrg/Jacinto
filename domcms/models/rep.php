@@ -162,10 +162,12 @@
 				$row++;
 			}
 			
+			// For testing
+			/*
 			$file_name = 'domcms/cache/dprTest_' . date('m-d-Y') . '.xlsx';
 			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 			$objWriter->save($file_name);
-			//print_object($report);
+			*/
 			
 			// Retrieve data back from worksheet, in calculated form,
 			//  and merge data back into report. Data will have the
@@ -577,48 +579,49 @@
 			// Line graph will have each year, each year will be broken into each month, and
 			//   each month will represent the grand total leads for that year.
 			if ($row_count > 0) {
-				$row = $query_result[0];
-				$current['year'] = '';
-				$lineChart_body = array();
-				$processed_years = array();
 				
+				// Get a list of all years and sort.
+				$current['year'] = '';
+				$report_years = array();
 				for ($qi = 0; $qi < $row_count; $qi++) {
 					$row = $query_result[$qi];
-					
 					// New year
 					if ($current['year'] != $row->Year)
 					{
 						$current['year'] = $row->Year;
-						
 						// If we haven't already calculated this year..
-						if (array_search($current['year'], $processed_years) === FALSE) {
-							$lineChart_row = $empty_row;
-							// This belongs to the lineChart report.
-							$lineChart_row['ReportID'] = 'lineChart';
-							$lineChart_row['Hidden'] = TRUE;
-							// Name the label for this row. Use the first row (Name in this report).
-							$keys = array_keys($lineChart_row['Cells']);
-							$lineChart_row['Cells'][$keys[0]]['data'] = $current['year'];
-							// This year's Total Leads formula ID.
-							$totalLeadsID = $current['year'] . '.' . $current['provider'] . '.totalLeads.';
-							// Set each data point's formula. Monthly in this report.
-							// Use rows 2 on for data points for the line chart.
-							foreach ($months as $month) {
-								// Total Leads per year  formula ID.
-								$totalLeadsYearlyID = $current['year'] . '.totalLeads.';
-								// Line charts require a 2-dimensional data item, comma-delimited.
-								// First value is X-axis, second value is Y-axis.
-								// For this chart, X is the month number, and Y is the leads value.
-								$month_num = array_search($month, $months)+1;
-								$lineChart_row['Cells'][$month]['formula'] = '=CONCATENATE(' . $month_num . ',",",SUM({' . $totalLeadsYearlyID.$month . '}))';
-							}
-							
-							// Add line chart row to $report.
-							$lineChart_body[] = $lineChart_row;
-							
-							$processed_years[] = $current['year'];
-						}
+						if (array_search($current['year'], $report_years) === FALSE)
+							$report_years[] = $current['year'];
 					}
+				}
+				sort($report_years);
+				
+				// Go through all years and create report data.
+				$lineChart_body = array();
+				foreach ($report_years as $year) {
+					$lineChart_row = $empty_row;
+					// This belongs to the lineChart report.
+					$lineChart_row['ReportID'] = 'lineChart';
+					$lineChart_row['Hidden'] = TRUE;
+					// Name the label for this row. Use the first row (Name in this report).
+					$keys = array_keys($lineChart_row['Cells']);
+					$lineChart_row['Cells'][$keys[0]]['data'] = $year;
+					// This year's Total Leads formula ID.
+					$totalLeadsID = $year . '.' . $current['provider'] . '.totalLeads.';
+					// Set each data point's formula. Monthly in this report.
+					// Use rows 2 on for data points for the line chart.
+					foreach ($months as $month) {
+						// Total Leads per year  formula ID.
+						$totalLeadsYearlyID = $year . '.totalLeads.';
+						// Line charts require a 2-dimensional data item, comma-delimited.
+						// First value is X-axis, second value is Y-axis.
+						// For this chart, X is the month number, and Y is the leads value.
+						$month_num = array_search($month, $months)+1;
+						$lineChart_row['Cells'][$month]['formula'] = '=CONCATENATE(' . $month_num . ',",",SUM({' . $totalLeadsYearlyID.$month . '}))';
+					}
+					
+					// Add line chart row to $report.
+					$lineChart_body[] = $lineChart_row;
 				}
 			}
 			// Add line chart to main $report.
@@ -645,8 +648,8 @@
 						if (array_search($current['provider'], $processed_providers) === FALSE) {
 							$pieGraph_row = $empty_row;
 							// This belongs to the pieChart report.
-							$pieGraph_row['ReportID'] = 'leads';
-							$pieGraph_row['Hidden'] = FALSE;
+							$pieGraph_row['ReportID'] = 'pieChart';
+							$pieGraph_row['Hidden'] = TRUE;
 							// Name the label for this row. Use the first row (Name in this report).
 							$keys = array_keys($pieGraph_row['Cells']);
 							$pieGraph_row['Cells'][$keys[0]]['data'] = $current['provider'];

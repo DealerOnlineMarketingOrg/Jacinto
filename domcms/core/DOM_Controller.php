@@ -90,23 +90,44 @@ class DOM_Controller extends CI_Controller {
 			$this->user['DropdownDefault']->SelectedGroup  = (($this->user['DropdownDefault']->SelectedGroup)  ? $this->user['DropdownDefault']->SelectedGroup  : $this->user['GroupID']);
 			$this->user['DropdownDefault']->SelectedClient = (($this->user['DropdownDefault']->SelectedClient) ? $this->user['DropdownDefault']->SelectedClient : $this->user['ClientID']);
 	
-			// This is for communicating errors (both error and successes) around pages.
-			// Used with data adds, updates and removal.
-			// Pages can react to successes/errors from other pages, such as data input models.
-			$err = array(
-				// Different levels of error.
-				// Standard: -1 = error from last page, 0 = normal redirect, 1 = success from last page.
-				'Level' => 0,
-				// Message being sent about the error/success.
-				'Msg' => '',
-				// An array of element names which are affected by the error.
-				// Typically the list of elements which need to be corrected.
-				// The keys are the element name, while the values are the
-				//  error messages for those keys.
-				'ElementList' => array()
-			);
-			$this->user['DropdownDefault']->err = (object)$err;
-			$this->err = $this->user['DropdownDefault']->err;
+			// Persist error for the lifetime.
+			// This is called for every client page load,
+			//  so we'll take care of error lifetime here.
+			if (isset($this->session->userdata['err'])) {
+				$this->err = $this->session->userdata['err'];
+				if ($this->err->Live) {
+					if ($this->err->Lifetime > 0)
+						$this->err->Lifetime--;
+					if ($this->err->Lifetime == 0)
+						ClearError();
+				}
+			} else {
+				// This is for communicating errors (both error and successes) around pages.
+				// Used with data adds, updates and removal.
+				// Pages can react to successes/errors from other pages, such as data input models.
+				$err_array = array(
+					// How many pages the error should persist across.
+					// -1 is unlimited lifetime.
+					'Lifetime' => 0,
+					'Live' => FALSE,
+					// The name of the file that the error was created in.
+					'File' => '',
+					// Different levels of error.
+					// Standard: -1 = error from last page, 0 = normal redirect, 1 = success from last page.
+					'Level' => 0,
+					// Message being sent about the error/success.
+					'Msg' => '',
+					// An array of element names which are affected by the error.
+					// Typically the list of elements which need to be corrected.
+					// The keys are the element name, while the values are the
+					//  error messages for those keys.
+					'ElementList' => array()
+				);
+				
+				$err = array('err' => (object)$err_array);
+				$this->session->set_userdata($err);
+				$this->err = $this->session->userdata['err'];
+			}
 			
 			$this->session->sess_write();
 			
@@ -855,7 +876,7 @@ class DOM_Controller extends CI_Controller {
 						}
 						
 						// Redirect with Err info back to DPR.
-						//SetErr($err_level, $err_msg, $err_elements);
+						ThrowError(-1, $err_level, $err_msg, $err_elements);
 						if($err_level = 1) {
 							redirect('dpr/success','refresh');
 						}else{
