@@ -7,8 +7,8 @@
         
     function createRandomString($length = 8, $type = "") {
         $alphabets = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-        $numbers = "23456789";
-        $symbols = "!@#$%^*()+?";
+        $numbers = "1234567890";
+        $symbols = "!@#$%*()+?";
  
         switch(strtoupper($type)) {
             case 'ALPHANUMSYM': $charString         = $alphabets . strtolower($alphabets) . $numbers . $symbols;  break;
@@ -42,3 +42,27 @@
  
         return $randomString;
     }
+	
+	function checkPasswordCharacters($candidate) {
+		/*
+			It validates only if the string:
+			
+			   * contain at least (1) upper case letter
+			   * contain at least (1) lower case letter
+			   * contain at least (1) number or special character
+   			   * contain at least (8) characters in length		
+		*/
+		
+		$r1='/[A-Z]/';  //Uppercase
+   		$r2='/[a-z]/';  //lowercase
+   		$r3='/[!@#$%^&*()\-_=+{};:,<.>?]/';  // whatever you mean by 'special char'
+   		$r4='/[0-9]/';  //numbers
+
+   		if(preg_match_all($r1,$candidate, $o) < 1) return FALSE;
+   		if(preg_match_all($r2,$candidate, $o) < 2) return FALSE;
+   		if(preg_match_all($r3,$candidate, $o) < 1) return FALSE;
+   		if(preg_match_all($r4,$candidate, $o) < 1) return FALSE;
+   		if(strlen($candidate) < 8) return FALSE;
+
+   		return TRUE;		
+	}

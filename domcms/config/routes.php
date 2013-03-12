@@ -41,10 +41,20 @@
 $route['login'] 						= 'auth/login';
 $route['authenticate'] 					= 'auth/login/authenticate';
 $route['logout']						= 'auth/logout';
+$route['reset_password']				= 'auth/password/processResetPass';
+$route['signin']						= 'auth/login/login_user';
+$route['log']							= 'auth/login/log_failed_attempt';
+$route['check_pass']					= 'auth/password/checkIfPasswordIsGenerated';
+$route['change_pass']					= 'auth/password/processChangePassword';
+$route['change']						= 'auth/password/change';
+$route['change_password_form']			= 'auth/password/loadChangePasswordForm';
+$route['reset_password_form']			= 'auth/password/loadResetPasswordForm';
+$route['lock_user']						= 'auth/login/breach_warning';
 
 //admin redirects
 $route['groups']						= 'admin/groups';
 $route['groups/(:any)']					= 'admin/groups/$1';
+$route['masterlist']					= 'admin/masterlist';
 
 $route['clients']						= 'admin/clients';
 $route['clients/(:any)']				= 'admin/clients/$1';
@@ -64,8 +74,14 @@ $route['dpr/(:any)']					= 'reports/dpr/$1';
 //redirects
 $route['reputation']					= 'reputations/dashboard';
 $route['bing']							= 'reputations/bing/dashboard';
-
-$route['converter']						= 'converter';
+$route['beta']							= 'updates';
+$route['beta/changes']					= 'updates/load_table';
+$route['beta/check']					= 'updates/check_db_for_new_updates';
+$route['beta/count']					= 'updates/get_count';
+$route['beta/remove']					= 'updates/remove_change';
+$route['beta/edit']						= 'updates/load_change_form';
+$route['beta/update']					= 'updates/update_change';
+$route['add_release_change']			= 'updates/add';
 
 $route['default_controller']            = "admin/dashboard";
 $route['404_override'] 					= 'errors/file_not_found';

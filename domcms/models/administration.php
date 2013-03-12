@@ -339,11 +339,16 @@ class Administration extends CI_Model {
         //first we get the groups in the agency
         $groups = $this->getAllActiveGroupsInAgency($agency_id);
         
-        $clients = array();
+        $list = array();
         foreach($groups as $group) {
-            array_push($clients,$this->getAllClientsInGroup($group->GroupID));
+			
+			$clients = $this->getAllClientsInGroup($group->GroupID);
+			foreach($clients as $client) {
+				array_push($list,$client);
+			}
+            //array_push($clients,$this->getAllClientsInGroup($group->GroupID));
         }
-        return $clients;
+        return $list;
     }
     
     public function getAllActiveGroupsInAgency($id) { //get all groups in a agency
@@ -405,7 +410,7 @@ class Administration extends CI_Model {
                 g.GROUP_ID as GroupID,
                 g.AGENCY_ID as AgencyID,
                 g.GROUP_Name as Name,
-                g.GROUP_Notes as Description,
+                g.GROUP_Notes as Notes,
                 g.GROUP_Active as Status,
                 g.GROUP_Created as DateCreated,
                 a.AGENCY_Name as AgencyName,
@@ -420,6 +425,7 @@ class Administration extends CI_Model {
     
     public function getAllClientsInGroup($group_id) {
         $sql = 'SELECT
+				c.GROUP_ID as GroupID,
                 g.GROUP_Name as GroupName,
                 c.CLIENT_ID as ClientID,
                 c.CLIENT_Name as Name,
@@ -435,6 +441,36 @@ class Administration extends CI_Model {
 		$query = $this->db->query($sql);
 		return ($query) ? $query->result() : FALSE;
     }
+	
+	public function getClientWebsitesByCID($cid) {
+		$sql = 'SELECT url as URL,special_label	as SpecialLabel FROM ClientWebsites WHERE client_id = "' . $cid . '";';
+		$query = $this->db->query($sql);
+		return ($query) ? $query->result() : FALSE;
+	}
+	
+	public function getClientCMSByCID($cid) {
+		$sql = 'SELECT label as Label, url as URL, special_label as SpecialLabel FROM ClientCMS WHERE client_id = "' . $cid . '"';
+		$query = $this->db->query($sql);
+		return ($query) ? $query->result() : FALSE;	
+	}
+	
+	public function getClientCRMByCID($cid) {
+		$sql = 'SELECT label as Label, url as URL FROM ClientCRM WHERE client_id = "' . $cid . '";';
+		$query = $this->db->query($sql);
+		return ($query) ? $query->result() : FALSE;
+	}
+	
+	public function getClientDocsByCID($cid) {
+		$sql = 'SELECT url as URL FROM ClientDocs WHERE client_id = "' . $cid . '";';
+		$query = $this->db->query($sql);
+		return ($query) ? $query->result() : FALSE;	
+	}
+	
+	public function getClientCrazyEggByCID($cid) {
+		$sql = 'SELECT url as URL, special_label as SpecialLabel, label as Label FROM ClientCrazyEgg WHERE client_id = "' . $cid . '";';
+		$query = $this->db->query($sql);
+		return ($query) ? $query->result() : FALSE;
+	}
 
     /* End Admin/Group Queries */
 
@@ -532,6 +568,32 @@ class Administration extends CI_Model {
 	
 	public function addReview($data) {
 		return ($this->db->insert('Reputations',$data)) ? TRUE : FALSE;	
+	}
+	
+	/*Masterlist*/
+	public function getMasterlist() {
+		$agency = $this->session->userdata['valid_user']['DropdownDefault']->SelectedAgency;
+		$sql = 'SELECT 
+				w.special_label as Dealership,
+				w.url as DealershipURL,
+				w.doc as Doc,
+				w.xls as Xls,
+				w.egg as NewEgg,
+				cms.service as CMSLabel,
+				cms.url as CMSUrl,
+				crm.service as CRMLabel,
+				crm.url as CRMUrl,
+				c.CLIENT_Code as Code,
+				c.CLIENT_Active as Status,
+				t.TAG_ClassName as Class
+				FROM ClientWebsites w
+				INNER JOIN MasterlistBank cms ON w.cms = cms.id
+				INNER JOIN MasterlistBank crm ON w.crm = crm.id
+				INNER JOIN Clients c ON w.client_id = c.CLIENT_ID
+				INNER JOIN xTags t ON c.CLIENT_Tag = t.TAG_ID
+				ORDER BY w.special_label ASC';
+		$query = $this->db->query($sql);
+		return ($query) ? $query->result() : FALSE;
 	}
 
 }

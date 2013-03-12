@@ -9,7 +9,17 @@
 		
 		//Main query
 		private function get_nav($parent,$user_lvl,$group) {
-			$sql = "SELECT NAV_ID as Id, NAV_Name as Label, NAV_Parent as Parent, NAV_Ref as Href, NAV_Level as Level, NAV_Active as Status, NAV_Class as Class FROM xSystemNav WHERE NAV_Level <= " . (float)$user_lvl . " AND NAV_Parent = '" . $parent . "' AND NAV_Group = '" . $group . "' AND NAV_Active = '1' ORDER BY NAV_Order;";
+			$sql = "SELECT 
+					NAV_ID as Id, 
+					NAV_Name as Label, 
+					NAV_Parent as Parent, 
+					NAV_Ref as Href, 
+					NAV_Level as Level, 
+					NAV_Active as Status, 
+					NAV_Class as Class,
+					NAV_ViewLevel as ViewLevel
+					FROM xSystemNav
+					WHERE NAV_Level <= " . (float)$user_lvl . " AND NAV_Parent = '" . $parent . "' AND NAV_Group = '" . $group . "' AND NAV_Active = '1' ORDER BY NAV_Order;";
 			return $this->db->query($sql)->result();
 		}
 		
@@ -22,7 +32,8 @@
 						'Label' => $icon->Label,
 						'Href'  => $icon->Href,
 						'Class' => $icon->Class,
-						'Subnav' => (($this->get_nav($icon->Id,$user_lvl,'1')) ? $this->get_nav($icon->Id,$user_lvl,'1') : NULL)
+						'Subnav' => (($this->get_nav($icon->Id,$user_lvl,'1')) ? $this->get_nav($icon->Id,$user_lvl,'1') : NULL),
+						'ViewLevel' => $icon->ViewLevel
 					);
 				}
 			}

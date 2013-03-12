@@ -1,6 +1,6 @@
 html { height: 100%; }
 * html body { height: 100%; }
-body { margin: 0; padding: 0; background: url('../imgs/patterns/pat3.png') repeat; font-size: 12px; color: #424242; font-family: Arial, Helvetica, sans-serif; line-height: 20px; min-height: 100%; position: relative; }
+body { margin: 0; padding: 0; background: url('../imgs/bodyBg.jpg') repeat; font-size: 12px; color: #424242; font-family: Arial, Helvetica, sans-serif; line-height: 20px; min-height: 100%; position: relative; }
 /* =================================
    =====  New styles for v2.0  =====
    ================================= */
@@ -179,14 +179,16 @@ div.dealerDropdowns div.rowElem {padding:5px 0 0 0;border-top:none;}
 .middleNav ul li.iStat a span { background: url(../imgs/icons/middlenav/graph.png) no-repeat 50% 10px; }
 .middleNav ul li.iUser a span { background: url(../imgs/icons/middlenav/users.png) no-repeat 50% 10px; }
 .middleNav ul li.iOrders a span { background: url(../imgs/icons/middlenav/money.png) no-repeat 50% 10px; }
+.middleNav ul li.iLocked2 a span {background:url(../imgs/icons/middlenav/locked2.png) no-repeat 50% 10px;}
+.middleNav ul li.iFolder a span {background:url(../imgs/icons/middlenav/folder.png) no-repeat 50% 10px;}
+.middleNav ul li.iList a span{background:url(../imgs/icons/middlenav/clipboard.png) no-repeat 50% 10px;}
 .middleNav ul li a:hover { background: #f6f6f6; }
 .middleNav ul li a:active { background: #f1f1f1; }
-#system_tags {width:55%;float:left;position:relative;}
+#system_tags {width:40%;float:left;position:relative;}
 #system_tags.chzn-container ul.chzn-choices {padding:2px;}
 #AddTags{width:14px;height:14px;margin-left:5px;display:block;position:absolute;top:15px;right:-28px;background:url(/assets/icons/dark/add.png) no-repeat top left;}
 #AddTags:hover{background:url(/assets/icons/color/add.png) no-repeat top left;}
 #AddTags img {display:none;}
-
 /* ===== Left navigation ===== */
 .leftNav { width: 212px; max-width: 36%; margin-top: -1px; float: left; margin-bottom: 80px; margin-right: 41px; }	
 /*.leftNav { width: 212px; max-width: 36%; margin-top: -1px; float: left; margin-bottom: 80px; margin-right: 41px; }*/
@@ -514,6 +516,13 @@ div.jGrowl div.jGrowl-notification, div.jGrowl div.jGrowl-closer { margin: 10px;
 div.jGrowl div.jGrowl-notification div.jGrowl-header { font-weight: bold; font-size: .85em; }
 div.jGrowl div.jGrowl-notification div.jGrowl-close { z-index: 99; float: right; font-weight: bold; font-size: 1em; cursor: pointer; }
 div.jGrowl div.jGrowl-closer { padding-top: 4px; padding-bottom: 4px; cursor: pointer; font-size: .9em; font-weight: bold; text-align: center; }
+
+/*login screen loading technique */
+#whiteout{background-color:white;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;opacity:0.8;z-index:1999;}
+#loader{position:absolute;width:100%;top:50%;margin-top:-8px;text-align:center;z-index:2000;}
+div.actionsBar{float:right;width:30px;position:relative;z-index:2000;margin-top:-96px;margin-right:105px;color:#fff;}
+div.actionsBar input#addNewChange {}
+div.actionsBar a {color:#fff;}
 /** Hide jGrowl when printing **/
 @media print { div.jGrowl { display: none; } }
 /* ===== Page scrolling ===== */
@@ -834,7 +843,6 @@ table.display td:first-child{width:30px;text-align:center;}
 
 ul.thirdparty li{display:inline;}
 ul.thirdparty li a {float:left;margin-right:8px;}
-div.ui-dialog-buttonset{display:none !important;}
 /* =====  Media queries  ===== */
 /* Devices and browsers with max of 799px */
 @media only screen and (max-width: 799px) {

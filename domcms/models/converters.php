@@ -21,14 +21,8 @@
 			require_once 'domcms/libraries/PHPExcel/IOFactory.php';
 			
 			// Set up PDF library
-			$library = 'tcpdf';
-			if ($library == 'tcpdf') {
-				$rendererName = PHPExcel_Settings::PDF_RENDERER_TCPDF;
-				$rendererLibrary = 'tcpdf';
-			} else if ($library == 'dompdf') {
-				$rendererName = PHPExcel_Settings::PDF_RENDERER_DOMPDF;
-				$rendererLibrary = 'domPDF0.6.0beta3';
-			}
+			$rendererName = PHPExcel_Settings::PDF_RENDERER_TCPDF;
+			$rendererLibrary = 'tcpdf';
 			$rendererLibraryPath = 'domcms/libraries/' . $rendererLibrary;
 			if (!PHPExcel_Settings::setPdfRenderer(
 					$rendererName,
@@ -58,7 +52,7 @@
 			$file_name = 'domcms/cache/dprReport_' . $user_id . '_' . date('m-d-Y') . '.pdf';
 			$html = '<head><body>' . $table . '</body></head>';
 			$objPHPExcel = HTMLToobjPHPExcel($user_id, $html, 0, TRUE);
-			CreatePDF($file_name, $objPHPExcel);
+			CreatePDF($file_name, $objPHPExcel, TRUE);
 			
 			echo $file_name;
 		}

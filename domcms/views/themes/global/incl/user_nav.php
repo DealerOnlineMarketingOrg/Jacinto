@@ -36,3 +36,10 @@
     </div>
 </div>
 
+<!-- if the user is idle for an hour, log them out -->
+<script type="text/javascript">
+	setInterval(function() {
+		window.location.href="<?= base_url(); ?>logout";		
+	},3600000);
+</script>
+

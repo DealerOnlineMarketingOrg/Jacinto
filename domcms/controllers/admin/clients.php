@@ -23,16 +23,48 @@ class Clients extends DOM_Controller {
 
     public function index($msg=false) {
 		$permissions = $this->CheckModule('Client_List');
-		$tmpl['table_open'] = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
+		
+		$table = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
 		
 		if (!$permissions) {
 			$this->AccessDenied();
 		} else {
 			$level = $this->user['DropdownDefault']->LevelType;
-			$clients = (($level != 'c') ? $this->administration->getAllClientsInGroup($this->group_id) : $this->administration->getClientByID($this->user['DropdownDefault']->SelectedClient));
-			//print_object($clients);
-			//create html table with codeigniter library. This is awesome btw.
-			$this->table->set_heading('Tag', 'Code' , 'Name', 'Group Name', 'Status', 'Actions');
+			$permission_level = $this->user['DropdownDefault']->PermLevel;
+
+			switch($level) {
+				case 1:
+					$clients = $this->administration->getAllClientsInAgency($this->agency_id);
+				break;
+				case 2:
+					$clients = $this->administration->getAllClientsInGroup($this->group_id);
+				break;
+				case 3:
+					$clients = $this->administration->getClientByID($this->user['DropdownDefault']->SelectedClient);
+				break;
+				case 'a':
+					$clients = $this->administration->getAllClientsInAgency($this->agency_id);
+				break;
+				case 'g':
+					$clients = $this->administration->getAllClientsInGroup($this->group_id);
+				break;
+				case 'c':
+					$clients = $this->administration->getClientByID($this->user['DropdownDefault']->SelectedClient);
+				break;	
+			}
+			
+			
+				$table .= "<thead>" . "\n" . 
+							"\t" . '<tr>' . "\n" . 
+							"\t\t" . "<th>Tag</th>" . "\n" . 
+							"\t\t" . "<th>Code</th>" . "\n" . 
+							"\t\t" . "<th>Dealership</th>" . "\n" .
+							"\t\t" . "<th>Group</th>" . "\n" .
+							"\t\t" . "<th>Status</th>" . "\n" .
+							"\t\t" . "<th>Actions</th>" . "\n" .
+							"\t" . "</tr>" . "\n" .
+						  "</thead>" . "\n";
+				$table .= '<tbody>' . "\n";
 	
 			$html = '';
 	
@@ -46,69 +78,49 @@ class Clients extends DOM_Controller {
 			}
 			
 			//LOOP THROUGH EACH AGENCY AND CREATE A FORM BUTTON "EDIT" AND ROW FOR IT.
-			foreach ($clients as $group) :
-				if(count($group) > 1) {
-					foreach($group as $client) {
-						
-						//EACH FORM IS NAMED BY THE EDIT_{AGENCY_ID}, SAME CONCEPT WITH THE ID
-						$form_attr = array(
-							'name' => 'edit_' . $client->ClientID,
-							'id' => 'edit_form_' . $client->ClientID,
-						);
-						
-						//EACH FORM HAS THE SAME NAME BUT DIFFERENT ID
-						$button = array(
-							'name' => 'submit',
-							'id' => 'client_id_' . $client->ClientID,
-							'class' => 'basicBtn',
-							'value' => 'Edit'
-						);
-						
-						$client->ClassName = explode(',',$client->ClassName);
-						$client_class = '';
-						foreach($client->ClassName as $class) {
-							$client_class .= '<div class="' . $class . '">&nbsp;</div>';
-						}
-						
-						//BUILD THE FORM ROW IN THE TABLE WITH NAME,DESCRIPTION,STATUS, and EDIT BUTTON, THE FORM ALSO HAS A HIDDEN ELEMENT WITH THE AGENCY ID, THIS IS WHAT WE
-						//USE TO POST TO THE EDIT PAGE TO GRAB THE CORRECT AGENCY FROM THE DB.
-						$this->table->add_row($client_class,$client->ClientCode,
-								$client->Name, $client->GroupName, (($client->Status) ? 'Active' : 'Disabled'),
-								//IF THE USER HAS TO HAVE THE CORRECT PERMISSIONS TO VIEW A FEATURE
-								(($this->CheckModule('Client_Edit')) ? form_open('clients/edit', $form_attr) . form_hidden('client_id', $client->ClientID) . form_submit($button) . form_close() : ''));
-		
-					}
-				}else {
-						//EACH FORM IS NAMED BY THE EDIT_{AGENCY_ID}, SAME CONCEPT WITH THE ID
-						$form_attr = array(
-							'name' => 'edit_' . $group->ClientID,
-							'id' => 'edit_form_' . $group->ClientID,
-						);
-						
-						//EACH FORM HAS THE SAME NAME BUT DIFFERENT ID
-						$button = array(
-							'name' => 'submit',
-							'id' => 'client_id_' . $group->ClientID,
-							'class' => 'basicBtn',
-							'value' => 'Edit'
-						);
-						
-						$group->ClassName = explode(',',$group->ClassName);
-						$client_class = '';
-						foreach($group->ClassName as $class) {
-							$client_class .= '<div class="' . $class . '">&nbsp;</div>';
-						}
-						
-						//BUILD THE FORM ROW IN THE TABLE WITH NAME,DESCRIPTION,STATUS, and EDIT BUTTON, THE FORM ALSO HAS A HIDDEN ELEMENT WITH THE AGENCY ID, THIS IS WHAT WE
-						//USE TO POST TO THE EDIT PAGE TO GRAB THE CORRECT AGENCY FROM THE DB.
-						$this->table->add_row($client_class,$group->ClientCode,
-								$group->Name, $group->GroupName, (($group->Status) ? 'Active' : 'Disabled'),
-								//IF THE USER HAS TO HAVE THE CORRECT PERMISSIONS TO VIEW A FEATURE
-								(($this->CheckModule('Client_Edit')) ? form_open('/clients/edit', $form_attr) . form_hidden('client_id', $group->ClientID) . form_submit($button) . form_close() : ''));
+			foreach ($clients as $client) :
 					
-				}
-				
+					//EACH FORM IS NAMED BY THE EDIT_{AGENCY_ID}, SAME CONCEPT WITH THE ID
+					$form_attr = array(
+						'name' => 'edit_' . $client->ClientID,
+						'id' => 'edit_form_' . $client->ClientID,
+						'class' => 'actions'
+					);
+					
+					//EACH FORM HAS THE SAME NAME BUT DIFFERENT ID
+					$button = array(
+						'name' => 'submit',
+						'id' => 'client_id_' . $client->ClientID,
+						'class' => 'basicBtn',
+						'value' => 'Edit'
+					);
+					
+					$warning = '<img src="' . base_url() . 'assets/themes/global/imgs/icons/notifications/error.png"  title="Disabled" alt="Disabled" />';
+					$active  = '<img src="' . base_url() . 'assets/themes/global/imgs/icons/notifications/accept.png" title="Active"   alt="Active"   />';
+					
+					$edit_button = '<input data-client="' . $client->ClientID . '" title="Edit Client Information" type="image" src="' . base_url() . 'assets/themes/global/imgs/icons/color/pencil.png" name="edit_' . $client->ClientID . '" id="client_id_' . $client->ClientID . '" class="imageBtn editBtn" />';
+					
+					$view_button = '<input data-client="' . $client->ClientID . '" style="margin-left:10px;" title="View Client Information" type="image" src="' . base_url() . 'assets/themes/global/imgs/icons/color/application.png" name="view_' . $client->ClientID . '" id="viewClient_id_' . $client->ClientID . '" class="imageBtn viewBtn" />';
+					
+					$delete_button = '<input data-client="' . $client->ClientID . '" style="margin-left:10px;" title="Disable Client" type="image" src="' . base_url() . 'assets/themes/global/imgs/icons/color/cross.png" name="disable_' . $client->ClientID . '" id="disableClient_id_' . $client->ClientID . '" class="imageBtn disableBtn" />';
+					
+					
+					//BUILD THE FORM ROW IN THE TABLE WITH NAME,DESCRIPTION,STATUS, and EDIT BUTTON, THE FORM ALSO HAS A HIDDEN ELEMENT WITH THE AGENCY ID, THIS IS WHAT WE
+					//USE TO POST TO THE EDIT PAGE TO GRAB THE CORRECT AGENCY FROM THE DB.
+					
+					
+						$table .= '<tr class="tagElement ' . $client->ClassName . '">' . "\n";
+						$table .= "\t" . '<td class="tags"><div class="' . $client->ClassName . '">&nbsp;</div></td>' . "\n";
+						$table .= "\t" . '<td>' . $client->ClientCode . '</td>' . "\n";
+						$table .= "\t" . '<td>' . $client->Name . '</td>' . "\n";
+						$table .= "\t" . '<td>' . $client->GroupName . '</td>' . "\n";
+						$table .= "\t" . '<td>' . (($client->Status) ? $active : $warning) . '</td>' . "\n";
+						$table .= (($this->CheckModule('Client_Edit')) ? "\t" . '<td>' . form_open('clients/edit', $form_attr) . form_hidden('client_id', $client->ClientID) . $edit_button  . form_close() .'</td>' : '') . "\n";
+						$table .= '</tr>' . "\n";	
 			endforeach;
+			
+			$table .= '</tbody></table>' . "\n";
+			$html .= $table;
 			
 			//THE ADD AGENCY BUTTON
 			$add_button = array(
@@ -117,12 +129,10 @@ class Clients extends DOM_Controller {
 				'href' => 'javascript:void(0)',
 			);
 	
-			$this->table->set_template($tmpl);
 	
 			//This builds the pages html out. We do this here so all our listing pages can have the same template view.
-			$html .= $this->table->generate() . "\n";
 			$html .= '<div class="fix"></div>';
-	
+			
 			//If the user has permission to add a new group, then show a button to do so.
 			if ($this->CheckModule('Group_Add')) {
 				$html .= anchor(base_url() . 'clients/add', 'Add Client', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_client_btn"');

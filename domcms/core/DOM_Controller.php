@@ -110,7 +110,7 @@ class DOM_Controller extends CI_Controller {
 			
 			$this->session->sess_write();
 			
-			$this->load->model('nav');
+			$this->load->model('nav');			
 			$this->main_nav = $this->nav->main($this->user['AccessLevel']);
 			$this->user_nav = $this->nav->user($this->user['AccessLevel']);
 		endif;
@@ -118,9 +118,10 @@ class DOM_Controller extends CI_Controller {
     }
 
     public function LoadTemplate($filepath, $data = false, $header_data = false, $nav_data = false, $footer_data = false) {
-		
 		//Get what page we are currently on, we need this to load the pieces we need.
 		$page = $this->router->fetch_class();		
+
+		// Define what level were on so we can filter the naviation and take away the items that arn't available on certain levels
 		
         $this->load->view($this->theme_settings['GlobalDir'] . '/incl/header', $this->theme_settings);
 		//if were not on the login screen, show the user nav
@@ -143,9 +144,26 @@ class DOM_Controller extends CI_Controller {
 		
 		//if were not on the login screen, show the nav
         if($page != 'login' && $page != 'sign_in') { 
+			$level = $this->user['DropdownDefault']->LevelType;
+			
+			switch($level) {
+				case 'a':
+					$selectedLevel = 1;
+				break;	
+				case 'g':
+					$selectedLevel = 2;
+				break;
+				case 'c':
+					$selectedLevel = 3;
+				break;
+				default :
+					$selectedLevel = 1;
+				break;
+			}
 			$nav = array(
 				'nav' => $this->main_nav,
-				'active_button' => $this->activeNav
+				'active_button' => $this->activeNav,
+				'activeLevel' => $selectedLevel
 			);
 			$this->load->view($this->theme_settings['GlobalDir'] . '/incl/nav', $nav);
 		}
@@ -618,25 +636,16 @@ class DOM_Controller extends CI_Controller {
             case "users":
                 switch ($which) :
                     case "add":
-						$email                  = 'home:' . $this->input->post('PersonalEmailAddress') . 
-												  (($this->input->post('WorkEmailAddress')) ? 
-												  	',work:' . $this->input->post('WorkEmailAddress') : 
-												  '');
-												  
-						$first_name             = $this->input->post('FirstName');
-						$last_name              = $this->input->post('LastName');
-						$address                = 'street:' . $this->input->post('Street') . ',city:' . $this->input->post('City') . ',state:' . $this->input->post('State') . ",zipcode:" . $this->input->post('ZipCode');
-						$username               = $this->input->post('PersonalEmailAddress');
-						
-						$phone                  = 'main:' . $this->input->post('DirectPhone') . 
-												  (($this->input->post('MobilePhone')) ? 
-												  	',mobile:' . $this->input->post('MobilePhone') : '') . 
-												  (($this->input->post('FaxPhone')) ? 
-												  	',fax:' . $this->input->post('FaxPhone') : '');
-						
-						$accessID               = $this->input->post('AccessLevel');
-						$status                 = $this->input->post('Status');
-						$generated_password     = 'dom123456';
+						$email = 'home:' . $this->input->post('PersonalEmailAddress') . (($this->input->post('WorkEmailAddress')) ? ',work:' . $this->input->post('WorkEmailAddress') : '');
+						$first_name = $this->input->post('FirstName');
+						$last_name = $this->input->post('LastName');
+						$address = 'street:' . $this->input->post('Street') . ',city:' . $this->input->post('City') . ',state:' . $this->input->post('State') . ",zipcode:" . $this->input->post('ZipCode');
+						$username = $this->input->post('PersonalEmailAddress');
+						$phone = 'main:' . $this->input->post('DirectPhone') . (($this->input->post('MobilePhone')) ? ',mobile:' . $this->input->post('MobilePhone') : '') . (($this->input->post('FaxPhone')) ? ',fax:' . $this->input->post('FaxPhone') : '');
+						$accessID = $this->input->post('AccessLevel');
+						$status = $this->input->post('Status');
+						$generated_password = 'dom123456';
+						$version = NULL;
 				
                         //add users
                         $user_generated = 0;
@@ -678,7 +687,6 @@ class DOM_Controller extends CI_Controller {
                             if($addDirectory) {
                                // print_object($addUser);
                                 $userInfoTable = array(
-                                    
                                     'USER_ID'               => $addUser->ID,
                                     'DIRECTORY_ID'          => $addDirectory->ID,
                                     'CLIENT_ID'             => $selected_id,
@@ -689,16 +697,17 @@ class DOM_Controller extends CI_Controller {
                                     'USER_Active'           => 1,
                                     'USER_ActiveTS'         => date(FULL_MILITARY_DATETIME),
                                     'USER_Generated'        => 0,
-                                    'USER_Created'           => date(FULL_MILITARY_DATETIME)
+                                    'USER_Created'           => date(FULL_MILITARY_DATETIME),
+									'USER_Release'			=> NULL
                                 );
-                                
-                                $addUserInfo = $this->members->addUserInfo($userInfoTable);
+								
+                               $addUserInfo = $this->members->addUserInfo($userInfoTable);
                                 
                                 if($addUserInfo) {
                                     $msg   = 'Dear ' . $first_name . ' ' . $last_name . ', <br> You have been added to the DOM CMS. Your password is ' . $generated_password . ' and your username is ' . $username . '. Go here and login <a href="http://content.dealeronlinemarketing.com">Go To Dashboard</a>';
                                     $email = $this->members->email_results($username, 'You\'ve been added to the DOM CMS!', $msg);
                                     redirect('/admin/users/add/success','refresh');
-                                }                               
+                                }                          
                            }else {
                                redirect('/admin/users/error','refresh');
                            }

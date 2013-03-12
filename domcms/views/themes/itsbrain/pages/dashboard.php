@@ -1,5 +1,5 @@
 <!-- Content -->
-    <div class="content">
+    <div class="content hideTagFilter">
     	<div class="title"><h5>Dashboard</h5></div>
         
         <!-- Statistics -->

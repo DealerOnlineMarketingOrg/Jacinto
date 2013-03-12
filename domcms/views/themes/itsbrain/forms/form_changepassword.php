@@ -4,7 +4,7 @@
         <div class="uiForm">
             <?php 
                 echo form_open(base_url().'change', array('id' => 'changePassword','class'=>'valid')); 
-                echo form_password(array('id' => 'oldPass','name'=>'oldPass','placeHolder'=>'Your Old Password','class'=>'validate[required]','style'=>'margin-top:5px;')); 
+                echo form_password(array('id' => 'oldPass','name'=>'oldPass','placeHolder'=>'Your Temporary Password','class'=>'validate[required]','style'=>'margin-top:5px;')); 
                 echo form_password(array('id' => 'newPass','name'=>'newPass','placeHolder'=>'Your New Password','class'=>'validate[required]','style'=>'margin-top:5px;'));
                 echo form_password(array('id' => 'newPassMatch','name'=>'matchPass','placeHolder'=>'Confirm Your New Password','class'=>'validate[required,equels[newPass]]','style'=>'margin-top:5px;'));
 				echo form_hidden('email',$email);

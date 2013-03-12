@@ -36,9 +36,30 @@ class Login_attempts extends CI_Model {
 	 * @return	Bool
 	 */
 	function add($ip_address, $email) {
+		$this->load->model('members');
 		$sql = "INSERT INTO LoginFail (LFAIL_IP,LFAIL_Email) VALUES('" . $ip_address . "','" . $email . "');";
 		$query = $this->db->query($sql);
-		return (($query) ? TRUE : FALSE);
+		
+		if($query) :
+		
+			$sql = 'SELECT LFAIL_IP as IP, LFAIL_Email as Email from LoginFail WHERE LFAIL_Email = "' . $email . '" AND LFAIL_IP = "' . $ip_address . '";';
+			$queryCount = $this->db->query($sql)->result();
+			
+			if($queryCount) {
+				$count = count($queryCount);
+				if($count >= 3) {
+					$reset_pass = $this->members->reset_password($email);
+					$this->clear($ip_address,$email);
+					return $count;
+				}else {
+					return $count;
+				}
+			}else {
+				return FALSE;	
+			}
+		else :
+			return FALSE;
+		endif;
 	}
 
 	/**
@@ -56,5 +77,7 @@ class Login_attempts extends CI_Model {
 		$this->db->or_where('UNIX_TIMESTAMP(LFAIL_TS) <', time() - $expire_period);
 		$this->db->delete('LoginFail');
 	}
+	
+	
 
 }

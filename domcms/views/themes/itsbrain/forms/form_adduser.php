@@ -7,7 +7,7 @@
     <div class="title"><h5>Admin</h5></div>
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
-    <?php echo  form_open('/admin/form_processor/users/add',array('id'=>'valid','class'=>'mainForm','name'=>'AddUser')); ?>
+    <?php echo  form_open('/admin/users/form_processor/users/add',array('id'=>'valid','class'=>'mainForm','name'=>'AddUser')); ?>
 
         <!-- Input text fields -->
         <fieldset>
