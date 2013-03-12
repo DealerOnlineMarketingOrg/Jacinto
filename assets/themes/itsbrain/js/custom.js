@@ -249,7 +249,7 @@ $(function() {
 	
 	//===== UI dialog =====//
 	
-	$( "#dialog-message" ).dialog({
+	$( "#dialog-message,.dialog-message" ).dialog({
 		autoOpen: false,
 		modal: true,
 		buttons: {
@@ -633,7 +633,7 @@ $(function() {
 		"bJQueryUI": true,
 		"sPaginationType": "full_numbers",
 		"sDom": '<""f>t<"F"lp>',
-		'iDisplayLength':100
+		'iDisplayLength':1000
 	});
 	
 	
