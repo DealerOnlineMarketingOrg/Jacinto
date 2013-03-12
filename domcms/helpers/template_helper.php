@@ -11,6 +11,17 @@ function strip_chars_from_phone($phone) {
 	return preg_replace("/[^0-9]/", "", $phone);
 }
 
+function getLiveChangesCount() {
+	$ci =& get_instance();
+	$ci->load->model('release_model','beta');
+	$c = $ci->beta->get_changes_count();
+	if($c) : 
+		return count($c);
+	else : 
+		return FALSE;
+	endif;
+}
+
 function breadcrumb($replacement = false) {
 	//create a empty var to hold the breakcrumb html
 	$link = '';

@@ -14,12 +14,8 @@
 | path to your installation.
 |
 */
-$urlParts = explode('.',$_SERVER['HTTP_HOST']);
-if(ENVIRONMENT == 'development') {
-	$config['base_url'] = 'http://' . $urlParts[0] . '.com';	
-}else {
-	$config['base_url']	= (($urlParts[0] != 'content') ? 'http://' : 'https://') . $urlParts[0] . '.dealeronlinemarketing.com';
-}
+
+$config['base_url']	= 'http://testing.dealeronlinemarketing.com';
 
 
 /*

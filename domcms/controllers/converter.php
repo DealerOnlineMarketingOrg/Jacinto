@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-	class Converter extends CI_Controller {
+	class Converter extends DOM_Controller {
 	
 		public function __construct() {
 		parent::__construct();	
