@@ -369,8 +369,8 @@ class DOM_Controller extends CI_Controller {
 												  : -1;
 						$msg = ($addClient) ? 'The Client was added successfully!'
 											: 'Something went wrong. Please try again or contact your admin.';
-						throwError(newError($Page, $err_level, $msg, $err_elements, 0, ''));
-						redirect('/admin/clients/add','refresh');	
+						throwError(newError($Page, $err_level, $msg, array(), 0, ''));
+						redirect('/admin/clients/add','refresh');
 					break;
 					case "edit":
 						$form = $this->input->post();
@@ -455,9 +455,9 @@ class DOM_Controller extends CI_Controller {
 						$Page = 'Clients Edit';
 						$err_level = ($addClient) ? 1
 												  : -1;
-						$msg = ($addClient) ? 'The Client was added edited!'
+						$msg = ($addClient) ? 'The Client was edited successfully!'
 											: 'Something went wrong. Please try again or contact your admin.';
-						throwError(newError($Page, $err_level, $msg, $err_elements, 0, ''));
+						throwError(newError($Page, $err_level, $msg, array(), 0, ''));
 						if($form['Status'] == '0')
 							$this->reset_dd_session('/admin/clients/edit');
 						else
@@ -485,11 +485,13 @@ class DOM_Controller extends CI_Controller {
 						//print_object($data);
 						$add = $this->administration->addGroup($data);
 						
-						if($add) {
-							redirect('/admin/groups/add/success','refresh');	
-						}else {
-							redirect('/admin/groups/add/error','refresh');	
-						}
+						$Page = 'Groups Add';
+						$err_level = ($add) ? 1
+											: -1;
+						$msg = ($add) ? 'Your Group was added successfully!'
+									  : 'Something went wrong. Please try again or contact your admin.';
+						throwError(newError($Page, $err_level, $msg, array(), 0, ''));
+						redirect('/admin/groups/add','refresh');
 					break;
 					case "edit":
 						$form = $this->input->post();
@@ -511,15 +513,16 @@ class DOM_Controller extends CI_Controller {
 						//print_object($data);
 						$edit = $this->administration->editGroup($data);
 						
-						if($edit) {
-							if($group_status == '0') {
-								$this->reset_dd_session('/admin/groups/success');
-							}else {
-								redirect('/admin/groups/success','refresh');
-							}
-						}else {
-							redirect('/admin/groups/error','refresh');	
-						}
+						$Page = 'Clients Add';
+						$err_level = ($edit) ? 1
+											 : -1;
+						$msg = ($edit) ? 'Your Group was edited successfully!'
+									   : 'Something went wrong. Please try again or contact your admin.';
+						throwError(newError($Page, $err_level, $msg, array(), 0, ''));
+						if($group_status == '0')
+							$this->reset_dd_session('/admin/groups/edit');
+						else
+							redirect('/admin/groups/edit','refresh');
 					break;
 				endswitch;
 			break;

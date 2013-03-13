@@ -21,7 +21,7 @@ class Groups extends DOM_Controller {
 		$this->activeNav = 'admin';
     }
 
-    public function index($msg=false) {
+    public function index() {
 		//This is the listings page.
 		//Check the permissions for this page, if the user has permission to view it, this will be 1, else 0;
 		$permissions = $this->CheckModule('Group_List');
@@ -88,15 +88,6 @@ class Groups extends DOM_Controller {
 			$tmpl .= '</table>';
 			//Starts the html for the page
 			$html = '';
-	
-			//If there is a message to the user, present it as it should be.
-			if ($msg AND $msg != 'error') {
-				//The success message after a group was added or edited.
-				$html .= success_msg('The Group was added/edited successfully!');
-			} elseif($msg AND $msg != 'success') {
-				//The error message after a group was added, or edited.
-				$html .= error_msg();
-			}
 			
 			//This builds the pages html out. We do this here so all our listing pages can have the same template view.
 			$html .= $tmpl . "\n";
@@ -116,14 +107,8 @@ class Groups extends DOM_Controller {
 		}
     }
 	
-	public function Add($msg=false) {
+	public function Add() {
 		$html = '';
-		
-		if($msg AND $msg != 'error') {
-			$html .= success_msg('Your group was successfully added!');
-		}elseif($msg AND $msg == 'error') {
-			$html .= error_msg();
-		}
 		
 		$data = array(
 			'html' => $html
@@ -132,7 +117,7 @@ class Groups extends DOM_Controller {
 		$this->LoadTemplate('forms/form_addgroups',$data);
 	}
 	
-	public function Edit($msg=false) {
+	public function Edit() {
 		
 		if($this->level == 'c') {
 			redirect('/clients/edit','refresh');	
@@ -140,13 +125,6 @@ class Groups extends DOM_Controller {
 		
 		if($this->level == 'a') {
 			redirect('/agencies/edit','refresh');	
-		}
-
-		$html = '';
-		if($msg AND $msg != 'error') {
-			$html .= success_msg('Your group was successfully edited!');
-		}elseif($msg AND $msg == 'error') {
-			$html .= error_msg();
 		}
 		
 		 //WE POST WHAT Group WERE EDITING, THIS IS THE ID IN THE DB.

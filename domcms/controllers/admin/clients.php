@@ -21,7 +21,7 @@ class Clients extends DOM_Controller {
 		$this->activeNav = 'admin';
     }
 
-    public function index($msg=false) {
+    public function index() {
 		$permissions = $this->CheckModule('Client_List');
 		
 		$table = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
@@ -67,15 +67,6 @@ class Clients extends DOM_Controller {
 				$table .= '<tbody>' . "\n";
 	
 			$html = '';
-	
-			//If there is a message to the user, present it as it should be.
-			if ($msg AND $msg != 'error') {
-				//The success message after a group was added or edited.
-				$html .= success_msg('The Client was edited successfully!');
-			} elseif($msg AND $msg != 'success') {
-				//The error message after a group was added, or edited.
-				$html .= error_msg();
-			}
 			
 			//LOOP THROUGH EACH AGENCY AND CREATE A FORM BUTTON "EDIT" AND ROW FOR IT.
 			foreach ($clients as $client) :
