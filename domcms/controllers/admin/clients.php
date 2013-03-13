@@ -147,14 +147,9 @@ class Clients extends DOM_Controller {
 		}
     }
 	
-	public function Add($msg=false) {
+	public function Add() {
 		$html = '';
-		$tags = $this->administration->getAllTags();    
-		if($msg AND $msg != 'error') {
-			$html .= success_msg('Your client was successfully edited!');
-		}elseif($msg AND $msg == 'error') {
-			$html .= error_msg();
-		}
+		$tags = $this->administration->getAllTags();  
 		
 		$data = array(
 			'html' => $html,
@@ -164,7 +159,7 @@ class Clients extends DOM_Controller {
 		$this->LoadTemplate('forms/form_addclients',$data);
 	}
 	
-	public function Edit($msg=false) {
+	public function Edit() {
 		$level = $this->user['DropdownDefault']->LevelType;
 		
 		if($level == 'g') {
@@ -176,12 +171,6 @@ class Clients extends DOM_Controller {
 		}
 	
 		$html = '';
-		
-		if($msg AND $msg != 'error') {
-			$html .= success_msg('Your client was successfully edited!');
-		}elseif($msg AND $msg == 'error') {
-			$html .= error_msg();
-		}
 	
 		 //WE POST WHAT AGENCY WERE EDITING, THIS IS THE ID IN THE DB.
 		$client_id = ($this->input->post('client_id'))?$this->input->post('client_id'):$this->user['DropdownDefault']->SelectedClient;
@@ -207,7 +196,8 @@ class Clients extends DOM_Controller {
 		//PREPARE THE VIEW FOR THE FORM
 		$data = array(
 			'client' => $client,
-			'html' => $html,'tags'=>$tags
+			'html' => $html,
+			'tags'=>$tags
 		);
 		//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
 	

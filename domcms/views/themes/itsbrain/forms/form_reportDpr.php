@@ -1,6 +1,7 @@
 <!-- Content -->
 <div class="content hideTagFilter" id="container">
-    <div class="title"><h5>Reports</h5><?php NotifyError(); ?></div>
+    <div class="title"><h5>Reports</h5></div>
+    <?php notifyError(); ?>
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
     <?php

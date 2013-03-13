@@ -34,6 +34,10 @@ class DOM_Controller extends CI_Controller {
 		$this->load->helper('securecontent');
 		$protocol = get_protocol();
 		
+		//load custom error handling
+		$this->load->helper('err_helper');
+		
+		
 		if((ENVIRONMENT == 'production') AND ($protocol != 'https')) {
 			redirect('https://content.dealeronlinemarketing.com','refresh');
 		}
@@ -90,43 +94,18 @@ class DOM_Controller extends CI_Controller {
 			$this->user['DropdownDefault']->SelectedGroup  = (($this->user['DropdownDefault']->SelectedGroup)  ? $this->user['DropdownDefault']->SelectedGroup  : $this->user['GroupID']);
 			$this->user['DropdownDefault']->SelectedClient = (($this->user['DropdownDefault']->SelectedClient) ? $this->user['DropdownDefault']->SelectedClient : $this->user['ClientID']);
 	
-			// Persist error for the lifetime.
-			// This is called for every client page load,
-			//  so we'll take care of error lifetime here.
-			if (isset($this->session->userdata['err'])) {
-				$this->err = $this->session->userdata['err'];
-				if ($this->err->Live) {
-					if ($this->err->Lifetime > 0)
-						$this->err->Lifetime--;
-					if ($this->err->Lifetime == 0)
-						ClearError();
-				}
-			} else {
-				// This is for communicating errors (both error and successes) around pages.
-				// Used with data adds, updates and removal.
-				// Pages can react to successes/errors from other pages, such as data input models.
-				$err_array = array(
-					// How many pages the error should persist across.
-					// -1 is unlimited lifetime.
-					'Lifetime' => 0,
-					'Live' => FALSE,
-					// The name of the file that the error was created in.
-					'File' => '',
-					// Different levels of error.
-					// Standard: -1 = error from last page, 0 = normal redirect, 1 = success from last page.
-					'Level' => 0,
-					// Message being sent about the error/success.
-					'Msg' => '',
-					// An array of element names which are affected by the error.
-					// Typically the list of elements which need to be corrected.
-					// The keys are the element name, while the values are the
-					//  error messages for those keys.
-					'ElementList' => array()
-				);
-				
-				$err = array('err' => (object)$err_array);
+			if (!isset($this->session->userdata['err'])) {
+				// Create err object as empty array and store in session.
+				$err = array('err' => array());
 				$this->session->set_userdata($err);
 				$this->err = $this->session->userdata['err'];
+			} else {
+				$this->err = $this->session->userdata['err'];
+				
+				// Reduce lifetime of errors and clear out any
+				//  that have gone past end-of-life.
+				ageError();
+				clearError();
 			}
 			
 			$this->session->sess_write();
@@ -383,15 +362,15 @@ class DOM_Controller extends CI_Controller {
 							$addGoogleReview = $this->administration->addReview($review[0]);
 							$addYelpReview = $this->administration->addReview($review[1]);
 							$addYahooReview = $this->administration->addReview($review[2]);
-							
-							if($addClient) {
-								redirect('/admin/clients/add/success','refresh');
-							}else {
-								redirect('/admin/clients/add/error','refresh');	
-							}
-						}else {
-							redirect('/admin/clients/add/error','refresh');	
 						}
+						
+						$Page = 'Clients Add';
+						$err_level = ($addClient) ? 1
+												  : -1;
+						$msg = ($addClient) ? 'The Client was added successfully!'
+											: 'Something went wrong. Please try again or contact your admin.';
+						throwError(newError($Page, $err_level, $msg, $err_elements, 0, ''));
+						redirect('/admin/clients/add','refresh');	
 					break;
 					case "edit":
 						$form = $this->input->post();
@@ -473,17 +452,16 @@ class DOM_Controller extends CI_Controller {
 						
 						$updateClient = $this->administration->editClient($data, $this->input->post('ClientID'));
 						
-						if($updateClient) {
-							if($form['Status'] == '0') {
-								$this->reset_dd_session('/admin/clients/success');
-							}else {
-								redirect('/admin/clients/success','refresh');	
-							}
-						}else {
-							redirect('/admin/clients/error','refresh');	
-						}
-						
-						
+						$Page = 'Clients Edit';
+						$err_level = ($addClient) ? 1
+												  : -1;
+						$msg = ($addClient) ? 'The Client was added edited!'
+											: 'Something went wrong. Please try again or contact your admin.';
+						throwError(newError($Page, $err_level, $msg, $err_elements, 0, ''));
+						if($form['Status'] == '0')
+							$this->reset_dd_session('/admin/clients/edit');
+						else
+							redirect('/admin/clients/edit','refresh');
 					break;
 				endswitch;
 			break;
@@ -837,10 +815,11 @@ class DOM_Controller extends CI_Controller {
 							$total == '') {
 								$err_msg = 'All fields are required.';
 						} else if (!(preg_match('/^[0-9]+|([0-9]+)?\.[0-9]+$/', $total))) {
-								$err_msg = 'Total field must be numeric.';
+								$err_msg = 'Total field must be a number.';
 						}
 						if ($err_msg != '') {
 							$err_level = -1;
+							$err_msg .= ' Lead was not saved.';
 							
 						} else {
 							// If provider does not exist.
@@ -872,16 +851,12 @@ class DOM_Controller extends CI_Controller {
 							$this->rep->addLeadTotal($lead_data);
 							
 							$err_level = 1;
-							$err_msg = 'Total lead successfully saved.';
+							$err_msg = 'Lead successfully saved.';
 						}
 						
-						// Redirect with Err info back to DPR.
-						ThrowError(-1, $err_level, $err_msg, $err_elements);
-						if($err_level = 1) {
-							redirect('dpr/success','refresh');
-						}else{
-							redirect('dpr/failure','refresh');
-						}
+						// Throw error and redirect back to DPR.
+						throwError(newError("DPR Report Entry", $err_level, $err_msg, $err_elements, 0, ''));
+						redirect('dpr','refresh');
 					break;
 				endswitch;
 				

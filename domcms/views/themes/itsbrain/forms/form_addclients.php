@@ -2,6 +2,7 @@
 <!-- Content -->
 <div class="content hideTagFilter" id="container">
     <div class="title"><h5>Admin</h5></div>
+    <?php notifyError(); ?>
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
     <?php

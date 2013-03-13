@@ -86,7 +86,7 @@
 		//   javascript snippet needed. Script is functionless. It can be
 		//   placed in an anonymous function, or under a function name.
 		private function generatePieChart($report, $report_id, &$report_element_start, &$javascript) {
-			$report_html = '<div id="pieChart" class="pieWidget" style="width:210px; height:210px"></div>';
+			$report_html = '<div id="pieChart" class="pieWidget" style="width:100%; height:230px"></div>';
 			
 			// Create series arrays.
 			$data = '[';
@@ -114,7 +114,7 @@
 	                    				'threshold: 0.1' .
 									'}' .
 						'}},' .
-						'legend:{position:"nw"}' .
+						'legend:{position:"SW"}' .
 						'}';
 					   
 			$plot = '$.plot($("#pieChart"),' . $data . ',' . $options . ');';
@@ -193,7 +193,7 @@
 			return $report_html;
 		}
 		
-		public function Load($page, $err = FALSE) {
+		public function Load($page) {
 			
 			// Processing for dpr entry page.
 			if ($page == 'add') {
@@ -204,9 +204,6 @@
 				
 				$data = array(
 					'html' => '',
-					// Success level: -1 for error, 0 for none, 1 for success.
-					'err_level' => ($err) ? $err['level'] : 0,
-					'err_msg' => ($err) ? $err['msg'] : '',
 					'providers' => $prov_options,
 					'agencies' => $agency_options,
 					'report_leads' => '',
@@ -234,9 +231,6 @@
 				
 				$data = array(
 					'html' => '',
-					// Success level: -1 for error, 0 for none, 1 for success.
-					'err_level' => ($err) ? $err['level'] : 0,
-					'err_msg' => ($err) ? $err['msg'] : '',
 					'providers' => '',
 					'agencies' => '',
 					'report_leads' => $report_leads,
@@ -252,22 +246,6 @@
 				case 'reports': $this->LoadTemplate('forms/form_reportDpr',$data); break;
 			}	
 			
-		}
-		
-		public function Success() {
-			$err = array(
-				'level' => 1,
-				'msg' => 'Data saved!'
-				);
-			$this->Load('add', $err);
-		}
-		
-		public function Failure() {
-			$err = array(
-				'level' => -1,
-				'msg' => 'Something went wrong!'
-				);
-			$this->Load('add', $err);
 		}
 	
 	}

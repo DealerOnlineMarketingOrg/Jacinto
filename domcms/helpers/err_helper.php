@@ -1,61 +1,154 @@
 <?php
 
-	// Creates a standard error and saves it to the current session.
-    // Requires Error Level, Error Message, and an element list.
-	// The element list will need to be structed as follows:
-	//   'ELEMENT_NAME1' => 'ELEMENT_NAME1_error_message',
-	//   'ELEMENT_NAME2' => 'ELEMENT_NAME2_error_message',
-	//   'ELEMENT_NAME3' => 'ELEMENT_NAME3_error_message',
-	// Error message may be blank if no specific error message is
-	// associated  with it.
-	function ThrowError($Lifetime, $Error_Level, $Error_Message, $Element_List) {
+	// Top-level exceptions handler. Catches all uncaught exceptions
+	//  for purpose of processing with error routines below.
+	function topExceptionHandler($exception) {
+		throwError(newError(
+			$exception->getFile(),
+			-2,
+			$exception->getMessage(),
+			array(),
+			$exception->getLine(),
+			$exception->getTraceAsString()));
+	}
+	
+	// Created a custom error and returns it. Can be used with throwError.
+	// Page: the name of the page or file that produced/catches the error
+	//       (not the processing page).
+	// Error_Level is the level value of the error (positive:success, negative:failure).
+	//   1=Success (data)
+	//  -1=Failure (data)
+	//  -2=Failure (system)
+	// Element_List: stores a list of elements that require change:
+	//   {'name' => 'element_error_msg', ..}
+	// Exception_Line and Exemption_Trace are used by system errors.
+	function newError($Page, $Error_Level, $Error_Message, $Element_List, $Exemption_Line, $Exemption_Trace) {
+		// This is for communicating errors (both error and successes) around pages.
+		// Used with data adds, updates and removal.
+		// Pages can react to successes/errors from other pages, such as data input models.
+		// This is stored as an array of errors on session object 'err' for error stacking.
+		// Individual errors will be removed from the err array when lifetime ends.
+		$err = array(
+			// Used internally to determine how many pages the error should persist across.
+			//  Usually only persists by 1 page, unless rethrowError() is used.
+			'Lifetime' => 1,
+			// The name of the page that the error was created for.
+			'Page' => $Page,
+			// Error_Level is the level value of the error:
+			//   1=Success (data)
+			//  -1=Failure (data)
+			//  -2=Failure (system)
+			'Level' => $Error_Level,
+			// Message being sent about the error/success.
+			'Message' => $Error_Message,
+			// An array of element names which are affected by the error.
+			// Typically the list of elements which need to be corrected.
+			// The keys are the element name, while the values are the
+			//  error messages for those keys.
+			'ElementList' => $Element_List,
+			// Exemptions:
+			// This holds the line number in file $Page where the exemption occured.
+			'ExemptionLine' => $Exemption_Line,
+			// This holds the stack trace of the exemption.
+			'ExemptionTrace' => $Exemption_Trace
+		);
+		
+		return (object)$err;
+	}
+				
+	// Throws the custom error.
+	function throwError($error) {
 		$ci =& get_instance();
 		
-		// We add 1 to lifetime since the page load after the error
-		//  is considered the lifetime starting point.
-		$ci->err->Lifetime = $Lifetime + 1;
-		$ci->err->Live = TRUE;
-		$ci->err->Level = $Error_Level;
-		$ci->err->Msg = $Error_Message;
-		$ci->err->ElementList = $Element_List;
-		
-		$ci->session->set_userdata($ci->err);
+		// Add error to error array.
+		$ci->err[] = $error;
+
+		$err = array('err' => $ci->err);
+		$ci->session->set_userdata($err);
 		$ci->session->sess_write();
 	}
 	
-	// Notifies the user of the error.
+	// ReThrows the current error(s) to the next page.
+	function rethrowError() {
+		$ci =& get_instance();
+		
+		if (!empty($ci->err))
+			foreach ($ci->err as &$err)
+				$err->Lifetime++;
+		
+		$ci->session->sess_write();
+	}
+	
+	// Notifies the user of the error(s).
 	// Function is inline. Uses itsbrain success and failure elements.
 	// Outputs nothing if no error or success.
 	// Failure and successes are taken care of here.
 	// Error still lives after notification.
-	function NotifyError() {
+	function notifyError() {
 		$ci =& get_instance();
 		
-		if ($ci->err->Live) {
-			if ($ci->err->Level < 0) {
-				// Notify failure.
-				echo '<div class="nNote nFailure" style="display:inline"><p><strong>FAILURE: </strong>' . $ci->err->Msg . '</p></div>';
-			} else if ($ci->err->Level > 0) {
-				// Notify success.
-				echo '<div class="nNote nSuccess" style="display:inline"><p><strong>SUCCESS: </strong>' . $ci->err->Msg . '</p></div>';
+		if (!empty($ci->err))
+			foreach ($ci->err as $err) {
+				if ($err->Level == 1)
+					// Notify success.
+					echo '<div class="nNote nSuccess" style="margin:0; ' . $sysErr . '"><p><strong>SUCCESS: </strong>' . $err->Message . '</p></div>';
+				if ($err->Level == -1)
+					// Notify failure.
+					echo '<div class="nNote nFailure" style="margin:0"><p><strong>FAILURE: </strong>' . $err->Message . '</p></div>';
+				if ($err->Level == -2) {
+					// Notify system error.
+					echo '<div class="nNote nFailure" style="margin:0"><p><strong>SYSTEM ERROR: </strong>' . $err->Message . '</p></div>';
+				}
+				
+				// Log error.
+				logError();
 			}
+	}
+	
+	// Logs the error(s) in the database.
+	// Gets ran automatically everytime a user gets notified of an error.
+	function logError() {
+		$ci =& get_instance();
+		
+		// Log only failure errors.
+		if (!empty($ci->err))
+			foreach ($ci->err as $err) {
+				if ($err->Level < 0) {
+					$data = array(
+						'ERROR_UserID' => $ci->user['UserID'],
+						'ERROR_DateTime' => date("Y-m-d H:i:s"),
+						'ERROR_ErrObj' => serialize($err),
+						'ERROR_DropdownObj' => serialize($ci->user['DropdownDefault'])
+					);
+					
+					$ci->db->insert('ErrorLog', $data);
+				}
+			}
+	}
+	
+	// Called on each page load (by DOM_Controller) to
+	//  reduce the lifetime of each error.
+	function ageError() {
+		$ci =& get_instance();
+		
+		if (!empty($ci->err)) {
+			foreach ($ci->err as &$err)
+				$err->Lifetime--;
+			
+			$ci->session->sess_write();
 		}
 	}
 	
-	// Logs the error in the specified database table.
-	function LogError($table) {
-		
-	}
-	
-	// Should be called at the end of the page to clear out the page errors.
-	function ClearError() {
+	// Called automatically to clear out
+	//  errors which have gone past end-of-life.
+	function clearError() {
 		$ci =& get_instance();
 		
-		$ci->err->Lifetime = 0;
-		$ci->err->Live = FALSE;
-		$ci->err->Level = 0;
-		$ci->err->Msg = '';
-		$ci->err->ElementList = array();
+		if (!empty($ci->err)) {
+			foreach ($ci->err as $key => $err)
+				if ($err->Lifetime < 0)
+					unset($ci->err[$key]);
 		
-		$ci->session->sess_write();
+			$ci->session->sess_write();
+		}
 	}
