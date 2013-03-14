@@ -118,6 +118,7 @@ class Groups extends DOM_Controller {
 	}
 	
 	public function Edit() {
+		$html = '';
 		
 		if($this->level == 'c') {
 			redirect('/clients/edit','refresh');	

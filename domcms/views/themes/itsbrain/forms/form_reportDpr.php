@@ -114,7 +114,7 @@
 		
 		$(window).resize(function() {
 			$offset = $('h5#update').offset();
-			$('h5#update').html('Offset = ' + Math.round($offset['left']) + ',' + Math.round($offset['top']));
+			//$('h5#update').html('Offset = ' + Math.round($offset['left']) + ',' + Math.round($offset['top']));
 		});
 		
 		$('input#excel').click(function() {

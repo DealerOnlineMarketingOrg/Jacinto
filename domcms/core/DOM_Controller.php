@@ -35,7 +35,7 @@ class DOM_Controller extends CI_Controller {
 		
 		//load custom error handling
 		$this->load->helper('err_helper');
-		
+		set_exception_handler('topExceptionHandler');
 		
 		if((ENVIRONMENT == 'production') AND ($protocol != 'https')) {
 			redirect('https://content.dealeronlinemarketing.com','refresh');
