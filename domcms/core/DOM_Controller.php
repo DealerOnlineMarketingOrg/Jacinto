@@ -29,7 +29,6 @@ class DOM_Controller extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-		
 		//force secure content
 		$this->load->helper('securecontent');
 		$protocol = get_protocol();
@@ -81,9 +80,8 @@ class DOM_Controller extends CI_Controller {
 			define('SUBNAV_BUTTON', '/' . $active_button . '/' . $current_subnav_button);
 	
 			$this->user = $this->session->userdata('valid_user');
-			$this->avatar = $this->gravatar->get_gravatar((($this->user['Gravatar']) ? $this->user['Gravatar'] : $this->user['Username']));
+			$this->avatar = $this->members->get_user_avatar($this->user['UserID']);
 	
-			
 			//This checks the user validation
 			$this->validUser = ($this->session->userdata('valid_user')) ? TRUE : FALSE;
 			if (!$this->validUser) {
@@ -116,6 +114,18 @@ class DOM_Controller extends CI_Controller {
 		endif;
 		
     }
+	
+	public function GoogleCSRFToken() {
+		$state = md5(rand());
+		$app['session']->set('state', $state);
+		// Set the client ID, token state, and application name in the HTML while
+		// serving it.
+		return $app['twig']->render(base_url(), array(
+			'CLIENT_ID' => '170027429160.apps.googleusercontent.com',
+			'STATE' => $state,
+			'APPLICATION_NAME' => 'DomCMS'
+		  ));	
+	}
 
     public function LoadTemplate($filepath, $data = false, $header_data = false, $nav_data = false, $footer_data = false) {
 		//Get what page we are currently on, we need this to load the pieces we need.

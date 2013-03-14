@@ -273,9 +273,9 @@ $config['sess_time_to_update']  = 300;
 |
 */
 $config['cookie_prefix']	= "DOM_";
-$config['cookie_domain']	= ENVIRONMENT != 'production' && ENVIRONMENT != 'content' ? $urlParts[0] . '.com' : $urlParts[0] . 'dealeronlinemarketing.com';
+$config['cookie_domain']	= ENVIRONMENT != 'production' && ENVIRONMENT != 'testing' ? $urlParts[0] . '.com' : $urlParts[0] . 'dealeronlinemarketing.com';
 $config['cookie_path']		= "/";
-$config['cookie_secure']	= FALSE;
+$config['cookie_secure']	= ENVIRONMENT != 'production' && ENVIRONMENT != 'testing' ? FALSE : TRUE;
 
 /*
 |--------------------------------------------------------------------------

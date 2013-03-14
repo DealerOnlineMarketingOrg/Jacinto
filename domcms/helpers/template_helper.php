@@ -11,6 +11,41 @@ function strip_chars_from_phone($phone) {
 	return preg_replace("/[^0-9]/", "", $phone);
 }
 
+function ArrayWithTextIndexToString($array, $type = false) {
+	$myString = '';
+	foreach($array as $key => $value) {
+		$label = ((!$type) ? '<span class="inline_title">' . $key . ':</span>' : '');
+		$val = ((!ValidateEmailAddress($value)) ? $value : '<a style="padding-left:30px;" class="iMail" href="mailto:' . $value . '"><span>' . $value . '</span></a>');
+		$myString .= $label . ' ' . $val;
+	}
+	return $myString;
+}
+
+function ValidateEmailAddress($str) {
+	if(filter_var($str, FILTER_VALIDATE_EMAIL)) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+function LinkPhoneNumber($num) {
+	return '<a href="tel:' . $num . '">' . $num . '</a>';
+}
+
+function ValidatePhoneNumber($num) {
+	if (preg_match('/^\(\d{3}\) \d{3}-\d{4}\$/', $num)) {	
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
+function ParseModulesInReadableArray($modString) {
+	$ci =& get_instance();
+	$ci->load->model('members');
+	return $ci->members->UserModules(mod_parser($modString));
+}
+
 function getLiveChangesCount() {
 	$ci =& get_instance();
 	$ci->load->model('release_model','beta');

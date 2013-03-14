@@ -42,7 +42,7 @@ class Release_model extends CI_Model {
 	public function compair_read() {
 		$u_query = $this->get_user_release_date();
 		if($u_query) {
-			$usersRelease = strtotime($u_query->row()->LastRelease);
+			$usersRelease = strtotime($u_query->LastRelease);
 			//Get latest change from system
 			$this->db->select_max('release_date');
 			$sys_query = $this->db->get('ReleaseUpdates');

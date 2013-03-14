@@ -33,16 +33,6 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
 	}
 	
-	public function getUsersInformation($user_id) {
-		$sql = 'SELECT 
-				u.USER_ID as ID, 
-				u.USER_Name as UserName,
-				ui.USER_Modules as Modules,
-				ui.USER_ActiveTS as LastUpdated,
-				ui.USER_Created as DateJoined,
-				';	
-	}
-	
 	public function getAllContactsInAgency($id) {
 		$all_contacts = array();
 		$asql = 'SELECT 
@@ -86,6 +76,8 @@ class Administration extends CI_Model {
                 ui.USER_Created as JoinDate,
                 ui.USER_ActiveTS as LastUpdate,
                 ui.USER_Modules as Modules,
+				ui.USER_Avatar as Avatar,
+				ui.USER_GravatarEmail as Gravatar,
 				d.DIRECTORY_ID as DirectoryID,
                 d.DIRECTORY_Type as UserType,
                 d.DIRECTORY_FirstName as FirstName,
@@ -97,12 +89,19 @@ class Administration extends CI_Model {
                 d.TITLE_ID as TitleID,
                 a.ACCESS_NAME as AccessName,
                 a.ACCESS_Level as AccessLevel,
-                a.ACCESS_ID as AccessID
+                a.ACCESS_ID as AccessID,
+				c.CLIENT_Name as Dealership,
+				c.CLIENT_Address as CompanyAddress
                 FROM Users u
                 INNER JOIN Users_Info ui ON ui.USER_ID = u.USER_ID
                 INNER JOIN xSystemAccess a ON ui.ACCESS_ID = a.ACCESS_ID
-                INNER JOIN Directories d ON ui.DIRECTORY_ID = d.DIRECTORY_ID " . (($id) ? "WHERE u.USER_ID = '" . $id . "' " : "") . "
-                ORDER BY d.DIRECTORY_LastName ASC";
+                INNER JOIN Directories d ON ui.DIRECTORY_ID = d.DIRECTORY_ID
+				INNER JOIN Clients c ON c.CLIENT_ID = ui.CLIENT_ID";
+				if($id) { 
+					$sql .= " WHERE u.USER_ID = '" . $id . "'"; 
+				}else {
+        			$sql .= " ORDER BY d.DIRECTORY_LastName ASC";
+				}
 		
         $users = $this->db->query($sql);
 

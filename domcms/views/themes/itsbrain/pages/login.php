@@ -17,8 +17,7 @@
             'name' => 'email',
             'id' => 'req1',
             'class' => 'validate[required, custom[email]]',
-            'value' => '',
-            'autocomplete' => 'off'
+            'value' => (($email != '') ? $email : ''),
 		);
 		
 		$password = array(
@@ -48,7 +47,7 @@
                 </div>
                 
                 <div class="loginRow" style="padding-bottom:0;">
-                    <div class="rememberMe"><input type="checkbox" id="check2" name="chbox" /><label for="check2">Remember me</label></div>
+                    <div class="rememberMe"><input type="checkbox" <?= (($checkBox) ? 'checked="checked"' : ''); ?> id="remember_me" name="remember_me" /><label for="check2">Remember me</label></div>
                     <?php echo  form_submit($submit); ?>
                     <div class="fix"></div>
                 </div>
@@ -56,50 +55,56 @@
                 	<div class="rememberMe"><input id="resetPass" type="button" value="Reset Password" class="greyishBtn" style="margin:0 auto;" /></div>
                     <div class="fix"></div>
                 </div>
-                
             </fieldset>
         <?php echo  form_close(); ?>
-
+        <div id="result"></div>
     </div>
 	
     <div id="loadedContent"></div>
     
     <script type="text/javascript">
-	
 		$('#resetPass').click(function(e) {
 			e.preventDefault();
 			$('#loadedContent').load('<?= base_url(); ?>reset_password_form');
 		});
 	
-		
 		$('#valid').submit(function(e) {
+			var remember_me = (($('#remember_me').is(':checked')) ? 1 : 0);
 			e.preventDefault();
-			var email = $('#req1').val();
-			var password = $('#req2').val();
+			var emailAddy = $('#req1').val();
+			var pass = $('#req2').val();
+			
 			// Always make sure the error message is hidden after login submits, and empty out the error message.
 			$('#errorMessage').fadeOut('slow').empty();
 			
 			// If the username or email is left blank, we need to let the validation do its thing
-			if(email != '' && password != '') {
+			if(emailAddy != '' && pass != '') {
+				
 				// If the username and pass is set we show the loader
 				$('#whiteout').fadeIn('slow',function() {
 					$('#loader').fadeIn('slow',function() {
+						
 						// Check credentials with ajax
 						$.ajax({
 							type:'POST',
 							url:'<?= base_url(); ?>signin',
+							
 							// Pass the input values to the controller
-							data:{email:$('#req1').val(),password:$('#req2').val()},
+							data:{email:emailAddy,password:pass,remember:remember_me},
+							
+							
 							// The success function is what handles the return.
 							success:function(data) {
 								// If the return is not 1, this means the login failed.
 								if(data != '1') {
+									
 									// Let php log the errors.
 									$.ajax({
 										type:'POST',
 										url:'<?= base_url(); ?>log',
 										data:{email:$('#req1').val()},
 										success:function(data) {
+											
 											// If we have less than 3 failed attempts, just show a login error
 											if(data <= 2) {
 												$('#loader').fadeOut('slow',function() {
@@ -107,6 +112,7 @@
 														jAlert('The username and password are incorrect. Please try again.','Password Error');
 													});
 												});
+												
 											// If we have more than 3 failed attempts, we need to lock the user out.
 											}else if(data >= 3) {
 												$('#loader').fadeOut('slow',function() {
@@ -144,6 +150,7 @@
 										}
 									});
 								}else {
+									
 									//check password
 									//check password to see if it is a generated password. if it is, we need to change the password before we login.
 									$.ajax({

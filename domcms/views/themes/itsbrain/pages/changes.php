@@ -117,8 +117,8 @@
 			type:'GET',
 			url:'<?= base_url(); ?>beta/check',
 			success:function(data) {
-				if(data == '1') {
-					refreshChanges();	
+				if(data == 1) {
+					//refreshChanges();	
 				}
 			}
 		});

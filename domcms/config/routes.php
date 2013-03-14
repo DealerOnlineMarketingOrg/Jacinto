@@ -51,6 +51,11 @@ $route['change_password_form']			= 'auth/password/loadChangePasswordForm';
 $route['reset_password_form']			= 'auth/password/loadResetPasswordForm';
 $route['lock_user']						= 'auth/login/breach_warning';
 
+$route['mysettings']					= 'user/settings';
+$route['profile/avatar/upload']			= 'user/profile/upload_avatar';
+$route['profile/(:any)']				= 'user/profile/view';
+$route['profile/(:any)/(:any)']			= 'user/profile/view/$2';
+
 //admin redirects
 $route['groups']						= 'admin/groups';
 $route['groups/(:any)']					= 'admin/groups/$1';

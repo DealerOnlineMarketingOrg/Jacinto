@@ -523,6 +523,13 @@ div.jGrowl div.jGrowl-closer { padding-top: 4px; padding-bottom: 4px; cursor: po
 div.actionsBar{float:right;width:30px;position:relative;z-index:2000;margin-top:-96px;margin-right:105px;color:#fff;}
 div.actionsBar input#addNewChange {}
 div.actionsBar a {color:#fff;}
+/* PROFILE PAGES */
+div.avatar {width:100px;padding:5px;border:1px solid #d5d5d5;float:left;}
+div.avatar img {width:100px;}
+div.avatar span {display:block;text-align:center;}
+div.info {margin-left:120px;}
+ul.modList li {width:25%;float:left;}
+span.inline_title{text-transform:capitalize;font-weight:bold;}
 /** Hide jGrowl when printing **/
 @media print { div.jGrowl { display: none; } }
 /* ===== Page scrolling ===== */
