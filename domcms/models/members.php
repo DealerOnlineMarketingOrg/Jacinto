@@ -8,6 +8,34 @@ class Members extends CI_Model {
 		$this->load->helper('string_parser');
         $this->load->helper('query');
     }
+	
+	public function avatar_update($user_id,$filename) {
+		$data = array(
+			'USER_Avatar' => $filename
+		);
+		$this->db->where('USER_ID',$user_id);
+		return ($this->db->update('Users_Info',$data)) ? TRUE : FALSE;
+	}
+	
+	public function get_user_avatar($user_id) {
+		$this->load->helper('url');
+		$this->load->library('gravatar');
+		$a_sql = 'SELECT USER_Avatar as Avatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
+		$a_query = $this->db->query($a_sql);
+		if($a_query == 'NULL') {
+			$g_sql = 'SELECT USER_Gravatar as Avatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
+			$g_query = $this->db->query($g_sql);
+			if($g_query) {
+				$user = $g_query->row();	
+				return $this->gravatar->get_gravatar($user->Avatar);
+			}else {
+				return base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png';
+			}
+		}else {
+			$user = $a_query->row();
+			return base_url() . 'assets/uploads/avatars/' . $user->Avatar;
+		}
+	}
     
 	public function validate($email,$password) {
 		$email 		= $this->security->xss_clean($email);
@@ -117,6 +145,7 @@ class Members extends CI_Model {
 			   'LastName' 		 => (string)$row->DIRECTORY_LastName,
 			   'Emails' 		 => (object)mod_parser($row->DIRECTORY_Email),
 			   'Gravatar'		 => (string)$row->USER_GravatarEmail,
+			   'Avatar'			 => (string)$row->USER_Avatar,
 			   'UserID' 		 => (int)$row->USER_ID,
 			   'DirectoryID' 	 => (int)$row->DIRECTORY_ID,
 			   'ClientID' 	     => (int)$row->CLIENT_ID,

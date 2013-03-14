@@ -52,12 +52,10 @@ class Users extends DOM_Controller {
 
 				$tmpl = array('table_open' => '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">');
 				$this->table->set_template($tmpl);
-				
 				//edit button
 				$edit_form = (($this->CheckModule('User_Edit')) ? form_open('users/edit', $form_cred) . form_hidden('user_id', $user->USER_ID) . form_submit($button) . form_close() : '');
-				$view_form = form_open('users/view',array('name'=>'view_user')) . form_hidden('user_id',$user->USER_ID) . form_submit($view_button) . form_close();
-				
-				$this->table->add_row('<div align="center"><img style="width:25px;" src="' . $this->gravatar->get_gravatar($user->USER_GravatarEmail) . '" /></div>',$user->USER_Name, $user->DIRECTORY_LastName . ', ' . $user->DIRECTORY_FirstName, (($user->USER_Active == 1) ? 'Active' : 'Disabled'), date('n-j-Y', strtotime($user->USER_Created)),'<div align="center">' . $edit_form . '</div>','<div align="center">' . $view_form . '</div>');
+				$view_form = form_open('profile/'.strtolower($user->DIRECTORY_FirstName . $user->DIRECTORY_LastName),array('name'=>'view_user')) . form_hidden('user_id',$user->USER_ID) . form_submit($view_button) . form_close();
+				$this->table->add_row('<div align="center"><img style="width:25px;" src="' . (($user->USER_ID != 5) ? $this->gravatar->get_gravatar($user->USER_GravatarEmail) : 'https://lh6.googleusercontent.com/-zI6ICNng1yA/AAAAAAAAAAI/AAAAAAAAAKA/DrJiF6DykVI/s48-c-k/photo.jpg') . '" /></div>',$user->USER_Name, $user->DIRECTORY_LastName . ', ' . $user->DIRECTORY_FirstName, (($user->USER_Active == 1) ? 'Active' : 'Disabled'), date('n-j-Y', strtotime($user->USER_Created)),'<div align="center">' . $edit_form . '</div>','<div align="center">' . $view_form . '</div>');
 				
 			}
 		}elseif($users AND count($users) == 1) {
@@ -85,7 +83,7 @@ class Users extends DOM_Controller {
 				
 				//edit button
 				$edit_form = (($this->CheckModule('User_Edit')) ? form_open('users/edit', $form_cred) . form_hidden('user_id', $users->USER_ID) . form_submit($button) . form_close() : '');
-				$view_form = form_open('users/view',array('name'=>'view_user')) . form_hidden('user_id',$users->USER_ID) . form_submit($view_button) . form_close();
+				$view_form = form_open('profile/'.strtolower($users->USER_FirstName . $users->USER_LastName),array('name'=>'view_user')) . form_hidden('user_id',$users->USER_ID) . form_submit($view_button) . form_close();
 				$this->table->add_row('<div align="center"><img style="width:25px;" src="' . $this->gravatar->get_gravatar($users->USER_GravatarEmail) . '" /></div>',$users->USER_Name, $users->DIRECTORY_LastName . ', ' . $users->DIRECTORY_FirstName, (($users->USER_Active == 1) ? 'Active' : 'Disabled'), date('n-j-Y', strtotime($users->USER_Created)),$edit_form,$view_form);
 		}else {
 			$error_msg = '<p style="text-align:center">No users are associated for this client. Please use the Dealer Dropdown to select another client, or add users by clicking the "Add New User" button below.</p>';	
@@ -136,20 +134,23 @@ class Users extends DOM_Controller {
 	}
 	
 	public function View() {
-		
 		//the user posted to the view.
 		$user_id = $this->input->post('user_id');
-		
-		//get the users information
-		$user = $this->administration->getUsers($this->input->post('user_id'));
-		
-		
+		$user = $this->administration->getUsers($user_id);
+		//print_object($user);
 		$user->Name = $user->FirstName . ' ' . $user->LastName;
-		$user->Address = (isset($user->Address)) ? mod_parser($user->Address) : false;
-		$user->Phone = (isset($user->Phone)) ? mod_parser($user->Phone) : false;
-		$user->Email = mod_parser($contact->Email);
+		$users_address = '';
+		if($user->Address['street'] != '') {
+			foreach($user->Address as $address) {
+				$users_address .= $address . ' ';
+			}
+		}else {
+			$users_address = FALSE;	
+		}
+		$user->Address = $users_address;		
+		$user->Notes = (($user->Notes) ? $user->Notes : FALSE);
 		$data = array(
-			'display'=>$user
+			'display' => $user
 		);
 		$this->LoadTemplate('pages/details_user',$data);
 	}

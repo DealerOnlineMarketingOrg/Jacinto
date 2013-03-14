@@ -5,7 +5,7 @@
         return $salt;	
     }         
         
-    function createRandomString($length = 8, $type = "") {
+    function createRandomString($length = 8, $type = "ALPHANUMSYM") {
         $alphabets = "ABCDEFGHJKLMNPQRSTUVWXYZ";
         $numbers = "1234567890";
         $symbols = "!@#$%*()+?";

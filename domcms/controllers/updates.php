@@ -37,10 +37,12 @@ class Updates extends DOM_Controller {
                 <tr>
                 	<th>Release Date</th>
                 	<th style="width:150px;">Area</th>
-                    <th>Description</th>
-                    <th class="edit">Edit</th>
-                    <th class="delete">Delete</th>
-                </tr>
+                    <th>Description</th>';
+					if($this->user['AccessLevel'] >= 600000) {
+                    	$table .= '<th class="edit">Edit</th>
+                    			   <th class="delete">Delete</th>';
+					}
+        $table .= '</tr>
             </thead>
 			<tbody>';
 		
@@ -48,14 +50,16 @@ class Updates extends DOM_Controller {
 			$table .= '<tr id="update_' . $change->id . '">
 						<td>' . date('m/d/Y', strtotime($change->release_date)) . '</td>
 						<td style="text-align:center">' . $change->area . '</td>
-						<td><p>' . $change->desc . '</p></td>
-                    	<td class="edit">
+						<td><p>' . $change->desc . '</p></td>';
+						if($this->user['AccessLevel'] >= 600000) {
+                    		$table .= '<td class="edit">
 							<a href="javascript:editChange(' . $change->id . ');" class="edit_' . $change->id . ' edit"><img src="' . base_url() . 'assets/themes/itsbrain/imgs/icons/color/pencil.png" alt="Edit Change" /></a>
 						</td>
                     	<td class="delete">
 							<a href="javascript:deleteChange(' . $change->id . ');" class="delete_' . $change->id . ' delete"><img src="' . base_url() . 'assets/themes/itsbrain/imgs/icons/color/cross.png" alt="Delete Change" /></a>
-						</td>
-					   </tr>';
+						</td>'; 
+						}
+			$table .='</tr>';
 		}
 		$table .= '</table>';
 		
@@ -64,10 +68,10 @@ class Updates extends DOM_Controller {
 	
 	public function check_db_for_new_updates() {
 		$isNew = $this->beta->compair_read();
-		if($isNew) {
-			echo '1';	
+		if(!$isNew) {
+			echo FALSE;	
 		}else {
-			echo '2';	
+			echo TRUE;	
 		}
 	}
 	
