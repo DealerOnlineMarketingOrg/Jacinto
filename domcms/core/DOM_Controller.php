@@ -295,7 +295,7 @@ class DOM_Controller extends CI_Controller {
 
     //custom 404 page
     public function Page_Not_Found() {
-        $this->LoadTemplate('pages/404');
+        $this->LoadTemplate('pages/errors/404');
     }
 
     //Access Denied
@@ -767,6 +767,7 @@ class DOM_Controller extends CI_Controller {
                         $update = array(
 							'Users' => array(
                             	'USER_Name' => $form['username'],
+								'Team' => $form['team']
 							),
 							'Directories' => array(
 								'DIRECTORY_ID'			=> $form['directory_id'],

@@ -1,0 +1,32 @@
+[02-Mar-2013 22:44:44 UTC] PHP Fatal error:  Call to undefined method Dashboard::Dashboard() in /home/lbs9000/public_html/domcms/jeremy.com/domcms/controllers/reports/dashboard.php on line 12
+[13-Mar-2013 21:19:35 UTC] PHP Fatal error:  Call to undefined method stdClass::row() in /home/lbs9000/public_html/domcms/phil.com/domcms/models/release_model.php on line 45
+[13-Mar-2013 21:19:38 UTC] PHP Fatal error:  Call to undefined method stdClass::row() in /home/lbs9000/public_html/domcms/phil.com/domcms/models/release_model.php on line 45
+[13-Mar-2013 21:19:41 UTC] PHP Fatal error:  Call to undefined method stdClass::row() in /home/lbs9000/public_html/domcms/phil.com/domcms/models/release_model.php on line 45
+[13-Mar-2013 21:19:44 UTC] PHP Fatal error:  Call to undefined method stdClass::row() in /home/lbs9000/public_html/domcms/phil.com/domcms/models/release_model.php on line 45
+[13-Mar-2013 21:19:47 UTC] PHP Fatal error:  Call to undefined method stdClass::row() in /home/lbs9000/public_html/domcms/phil.com/domcms/models/release_model.php on line 45
+[13-Mar-2013 21:19:50 UTC] PHP Fatal error:  Call to undefined method stdClass::row() in /home/lbs9000/public_html/domcms/phil.com/domcms/models/release_model.php on line 45
+[13-Mar-2013 21:19:53 UTC] PHP Fatal error:  Call to undefined method stdClass::row() in /home/lbs9000/public_html/domcms/phil.com/domcms/models/release_model.php on line 45
+[13-Mar-2013 21:19:56 UTC] PHP Fatal error:  Call to undefined method stdClass::row() in /home/lbs9000/public_html/domcms/phil.com/domcms/models/release_model.php on line 45
+[13-Mar-2013 21:19:59 UTC] PHP Fatal error:  Call to undefined method stdClass::row() in /home/lbs9000/public_html/domcms/phil.com/domcms/models/release_model.php on line 45
+[13-Mar-2013 21:20:02 UTC] PHP Fatal error:  Call to undefined method stdClass::row() in /home/lbs9000/public_html/domcms/phil.com/domcms/models/release_model.php on line 45
+[14-Mar-2013 13:15:45 UTC] PHP Fatal error:  Call to a member function getAgencies() on a non-object in /home/lbs9000/public_html/domcms/phil.com/domcms/controllers/admin/agency.php on line 64
+[14-Mar-2013 13:34:19 UTC] PHP Fatal error:  Call to undefined function CreateExcelWorkbook() in /home/lbs9000/public_html/domcms/phil.com/domcms/models/rep.php on line 147
+[14-Mar-2013 14:13:12 UTC] PHP Fatal error:  Call to undefined method Dpr::generateTableChart() in /home/lbs9000/public_html/domcms/phil.com/domcms/controllers/reports/dpr.php on line 44
+[14-Mar-2013 14:13:40 UTC] PHP Fatal error:  Using $this when not in object context in /home/lbs9000/public_html/domcms/phil.com/domcms/helpers/charts_helper.php on line 135
+[14-Mar-2013 14:14:20 UTC] PHP Fatal error:  Using $this when not in object context in /home/lbs9000/public_html/domcms/phil.com/domcms/helpers/charts_helper.php on line 160
+[14-Mar-2013 14:15:15 UTC] PHP Fatal error:  Using $this when not in object context in /home/lbs9000/public_html/domcms/phil.com/domcms/helpers/charts_helper.php on line 164
+[14-Mar-2013 20:00:17 UTC] PHP Fatal error:  Call to undefined function getTags() in /home/lbs9000/public_html/domcms/phil.com/domcms/views/themes/itsbrain/forms/form_edituser.php on line 135
+[14-Mar-2013 20:00:45 UTC] PHP Fatal error:  Call to undefined function getTags() in /home/lbs9000/public_html/domcms/phil.com/domcms/views/themes/itsbrain/forms/form_edituser.php on line 135
+[14-Mar-2013 20:01:21 UTC] PHP Fatal error:  Cannot use object of type stdClass as array in /home/lbs9000/public_html/domcms/phil.com/domcms/views/themes/itsbrain/forms/form_edituser.php on line 138
+[14-Mar-2013 20:01:31 UTC] PHP Fatal error:  Cannot use object of type stdClass as array in /home/lbs9000/public_html/domcms/phil.com/domcms/views/themes/itsbrain/forms/form_edituser.php on line 138
+[14-Mar-2013 20:02:12 UTC] PHP Fatal error:  Cannot use object of type stdClass as array in /home/lbs9000/public_html/domcms/phil.com/domcms/views/themes/itsbrain/forms/form_edituser.php on line 138
+[14-Mar-2013 20:02:19 UTC] PHP Fatal error:  Cannot use object of type stdClass as array in /home/lbs9000/public_html/domcms/phil.com/domcms/views/themes/itsbrain/forms/form_edituser.php on line 138
+[14-Mar-2013 20:03:00 UTC] PHP Fatal error:  Cannot use object of type stdClass as array in /home/lbs9000/public_html/domcms/phil.com/domcms/views/themes/itsbrain/forms/form_edituser.php on line 139
+[14-Mar-2013 20:07:36 UTC] PHP Parse error:  syntax error, unexpected ')', expecting ',' or ';' in /home/lbs9000/public_html/domcms/phil.com/domcms/views/themes/itsbrain/forms/form_edituser.php on line 139
+[14-Mar-2013 20:22:38 UTC] PHP Fatal error:  Call to undefined method Members::get_user_avatar() in /home/lbs9000/public_html/domcms/phil.com/domcms/core/DOM_Controller.php on line 83
+[14-Mar-2013 20:24:06 UTC] PHP Fatal error:  Call to undefined method Members::get_user_avatar() in /home/lbs9000/public_html/domcms/phil.com/domcms/core/DOM_Controller.php on line 83
+[14-Mar-2013 20:30:45 UTC] PHP Fatal error:  Call to undefined method Members::get_user_avatar() in /home/lbs9000/public_html/domcms/phil.com/domcms/core/DOM_Controller.php on line 84
+[14-Mar-2013 20:30:51 UTC] PHP Fatal error:  Call to undefined method Members::get_user_avatar() in /home/lbs9000/public_html/domcms/phil.com/domcms/core/DOM_Controller.php on line 84
+[14-Mar-2013 20:31:03 UTC] PHP Fatal error:  Call to undefined method Members::get_user_avatar() in /home/lbs9000/public_html/domcms/phil.com/domcms/core/DOM_Controller.php on line 84
+[14-Mar-2013 20:33:33 UTC] PHP Fatal error:  Call to undefined method Members::get_user_avatar() in /home/lbs9000/public_html/domcms/phil.com/domcms/core/DOM_Controller.php on line 84
+[14-Mar-2013 20:52:45 UTC] PHP Fatal error:  Call to undefined method Members::get_user_avatar() in /home/lbs9000/public_html/domcms/phil.com/domcms/core/DOM_Controller.php on line 84

@@ -6,7 +6,7 @@
 		}
 		
 		public function File_not_found() {
-			$this->LoadTemplate('pages/404');
+			$this->LoadTemplate('pages/errors/404');
 		}
 		
 		public function Access_denied() {

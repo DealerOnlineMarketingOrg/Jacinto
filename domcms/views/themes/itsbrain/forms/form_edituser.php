@@ -118,10 +118,24 @@
                             <option value="">Choose a level...</option>
                             <option value="1" <?=  (($user->AccessID == '1') ? 'selected="selected"' : ''); ?>>Super-Admin</option>
                             <option value="2" <?=  (($user->AccessID == '2') ? 'selected="selected"' : ''); ?>>Admin</option>
-                            <option value="3" <?=  (($user->AccessID == '3') ? 'selected="selected"' : ''); ?>>Group Admin/option>
+                            <option value="3" <?=  (($user->AccessID == '3') ? 'selected="selected"' : ''); ?>>Group Admin</option>
                             <option value="4" <?=  (($user->AccessID == '4') ? 'selected="selected"' : ''); ?>>Client Admin</option>
                             <option value="5" <?=  (($user->AccessID == '5') ? 'selected="selected"' : ''); ?>>Manager</option>
                             <option value="6" <?=  (($user->AccessID == '6') ? 'selected="selected"' : ''); ?>>User</option>
+                        </select>
+                    </div>
+                    <div class="fix"></div>
+                </div>
+                <div class="rowElem noborder">
+                    <label>Team<span class="req">*</span></label>
+                    <div class="formRight">
+                        <select id="team" class="validate[required]" name="team">
+                            <option value="">Choose a team...</option>
+                            <?php
+								$results = $this->utilities->getTags();
+								foreach ($results as $row)
+									echo '<option value="' . $row->TagID . '" ' . (($user->TagID == $row->TagID) ? 'selected="selected"' : '') . '>' . $row->TagName . '</option>';
+							?>
                         </select>
                     </div>
                     <div class="fix"></div>

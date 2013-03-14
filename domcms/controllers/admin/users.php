@@ -28,7 +28,7 @@ class Users extends DOM_Controller {
 		//echo $client_id;
 		$users = $this->administration->getUsersByUserInfo($client_id);
 		//Creating the table headings (th)
-		$this->table->set_heading('Avatar', 'Email Address', 'Name', 'Status', 'Member Since','Edit Details','View Info');
+		$this->table->set_heading('Avatar', 'Email Address', 'Name', 'Status', 'Team', 'Member Since','Edit Details','View Info');
 		if($users AND count($users) > 1) {
 			foreach ($users as $user) {
 				$form_cred = array(
@@ -55,7 +55,7 @@ class Users extends DOM_Controller {
 				//edit button
 				$edit_form = (($this->CheckModule('User_Edit')) ? form_open('users/edit', $form_cred) . form_hidden('user_id', $user->USER_ID) . form_submit($button) . form_close() : '');
 				$view_form = form_open('profile/'.strtolower($user->DIRECTORY_FirstName . $user->DIRECTORY_LastName),array('name'=>'view_user')) . form_hidden('user_id',$user->USER_ID) . form_submit($view_button) . form_close();
-				$this->table->add_row('<div align="center"><img style="width:25px;" src="' . (($user->USER_ID != 5) ? $this->gravatar->get_gravatar($user->USER_GravatarEmail) : 'https://lh6.googleusercontent.com/-zI6ICNng1yA/AAAAAAAAAAI/AAAAAAAAAKA/DrJiF6DykVI/s48-c-k/photo.jpg') . '" /></div>',$user->USER_Name, $user->DIRECTORY_LastName . ', ' . $user->DIRECTORY_FirstName, (($user->USER_Active == 1) ? 'Active' : 'Disabled'), date('n-j-Y', strtotime($user->USER_Created)),'<div align="center">' . $edit_form . '</div>','<div align="center">' . $view_form . '</div>');
+				$this->table->add_row('<div align="center"><img style="width:25px;" src="' . (($user->USER_ID != 5) ? $this->gravatar->get_gravatar($user->USER_GravatarEmail) : 'https://lh6.googleusercontent.com/-zI6ICNng1yA/AAAAAAAAAAI/AAAAAAAAAKA/DrJiF6DykVI/s48-c-k/photo.jpg') . '" /></div>',$user->USER_Name, $user->DIRECTORY_LastName . ', ' . $user->DIRECTORY_FirstName, (($user->USER_Active == 1) ? 'Active' : 'Disabled'), $user->TAG_Name, date('n-j-Y', strtotime($user->USER_Created)),'<div align="center">' . $edit_form . '</div>','<div align="center">' . $view_form . '</div>');
 				
 			}
 		}elseif($users AND count($users) == 1) {

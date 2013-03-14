@@ -91,6 +91,7 @@ class Administration extends CI_Model {
                 a.ACCESS_ID as AccessID,
 				c.CLIENT_Name as Dealership,
 				c.CLIENT_Address as CompanyAddress,
+				t.TAG_ID as TagID,
 				t.TAG_Name as TeamName,
 				t.TAG_ClassName as ClassName,
 				t.TAG_Color as Color

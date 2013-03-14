@@ -152,7 +152,7 @@
 		}
 		
 		public function getTags() {
-			$sql = "SELECT TAG_Color as Color, TAG_Name as TagName,TAG_Notes as TagNotes, TAG_Active as Status, TAG_ClassName as ClassName FROM xTags ORDER BY TAG_Name;";
+			$sql = "SELECT TAG_ID as TagID, TAG_Color as Color, TAG_Name as TagName, TAG_Notes as TagNotes, TAG_Active as Status, TAG_ClassName as ClassName FROM xTags ORDER BY TAG_Name;";
 			return query_results($this,$sql);	
 		}
 		
