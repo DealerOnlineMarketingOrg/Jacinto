@@ -602,7 +602,7 @@
 					$lineChart_row = $empty_row;
 					// This belongs to the lineChart report.
 					$lineChart_row['ReportID'] = 'lineChart';
-					$lineChart_row['Hidden'] = TRUE;
+					$lineChart_row['Hidden'] = FALSE;
 					// Name the label for this row. Use the first row (Name in this report).
 					$keys = array_keys($lineChart_row['Cells']);
 					$lineChart_row['Cells'][$keys[0]]['data'] = $year;
@@ -627,7 +627,7 @@
 			// Add line chart to main $report.
 			$report = array_merge_($report, $lineChart_body);
 			
-			// Create report rows for pie graph. Data will be based off of above table report.
+			// Create report rows for pie chart. Data will be based off of above table report.
 			// Pie graph will have each web-site provider, and the YTD value will be based off
 			//   of the YTD of the Total Leads for that provider.
 			if ($row_count > 0) {
@@ -646,21 +646,21 @@
 						
 						// If we haven't already calculated this provider..
 						if (array_search($current['provider'], $processed_providers) === FALSE) {
-							$pieGraph_row = $empty_row;
+							$pieChart_row = $empty_row;
 							// This belongs to the pieChart report.
-							$pieGraph_row['ReportID'] = 'pieChart';
-							$pieGraph_row['Hidden'] = TRUE;
+							$pieChart_row['ReportID'] = 'pieChart';
+							$pieChart_row['Hidden'] = TRUE;
 							// Name the label for this row. Use the first row (Name in this report).
-							$keys = array_keys($pieGraph_row['Cells']);
-							$pieGraph_row['Cells'][$keys[0]]['data'] = $current['provider'];
+							$keys = array_keys($pieChart_row['Cells']);
+							$pieChart_row['Cells'][$keys[0]]['data'] = $current['provider'];
 							// This year's Total Leads formula ID.
 							$totalLeadsID = $current['year'] . '.' . $current['provider'] . '.totalLeads.';
 							// Set the formula for the pie data.
 							// Only one column is required. Use the second column (Jan in this report).
-							$pieGraph_row['Cells'][$keys[1]]['formula'] = '=SUM({' . $totalLeadsID . 'YTD' . '})';
+							$pieChart_row['Cells'][$keys[1]]['formula'] = '=SUM({' . $totalLeadsID . 'YTD' . '})';
 							
 							// Add line chart row to $report.
-							$pieChart_body[] = $pieGraph_row;
+							$pieChart_body[] = $pieChart_row;
 							
 							$processed_providers[] = $current['provider'];
 						}

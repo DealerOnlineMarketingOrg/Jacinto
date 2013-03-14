@@ -5,6 +5,13 @@
 
   Released under MIT License
  */
+
+/*
+  Modified: Phillip Kazda, 3/14/2013
+            Set proxy to "" due to problems.
+			Changed proxy:"http://html2canvas.appspot.com/" line in .min.js file to proxy:""
+*/
+
 (function(window, document, undefined){
 
 /*
@@ -2559,7 +2566,8 @@ html2canvas = function( elements, opts ) {
         elements: elements,
 
         // preload options
-        proxy: "http://html2canvas.appspot.com/",
+        //proxy: "http://html2canvas.appspot.com/",
+		proxy: "",
         timeout: 0,    // no timeout
         useCORS: false, // try to load images as CORS (where available), before falling back to proxy
         allowTaint: false, // whether to allow images to taint the canvas, won't need proxy if set to true

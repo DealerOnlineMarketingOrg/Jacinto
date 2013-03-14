@@ -66,15 +66,13 @@
 		function plotLineChart() {<? echo $report_lineChart_script; ?>}
 		function plotPieChart() {<? echo $report_pieChart_script; ?>}
 		function elementToDataURL() {
-			$('#reportID_1').html2canvas({
-				//onrendered: function (canvas) {
-					//alert(canvas.toDataURL("image/png"));
+			$('#reportBlock_lineChart').html2canvas({
+				onrendered: function (canvas) {
 					//Set hidden field's value to image data (base-64 string)
 					//window.open(canvas.toDataURL("image/png"));
-					//$('#img_val').val(canvas.toDataURL("image/png"));
 					//Submit the form manually
-					//document.getElementById("reportDpr").submit();
-				//}
+					document.getElementById("reportDpr").submit();
+				}
 			});
 			
 			//dataURL = canvasRecord.toDataURL("image/png");

@@ -91,7 +91,7 @@
 			foreach ($ci->err as $err) {
 				if ($err->Level == 1)
 					// Notify success.
-					echo '<div class="nNote nSuccess" style="margin:0; ' . $sysErr . '"><p><strong>SUCCESS: </strong>' . $err->Message . '</p></div>';
+					echo '<div class="nNote nSuccess" style="margin:0"><p><strong>SUCCESS: </strong>' . $err->Message . '</p></div>';
 				if ($err->Level == -1)
 					// Notify failure.
 					echo '<div class="nNote nFailure" style="margin:0"><p><strong>FAILURE: </strong>' . $err->Message . '</p></div>';
