@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 	// Top-level exceptions handler. Catches all uncaught exceptions
 	//  for purpose of processing with error routines below.
@@ -28,6 +28,7 @@
 		// Pages can react to successes/errors from other pages, such as data input models.
 		// This is stored as an array of errors on session object 'err' for error stacking.
 		// Individual errors will be removed from the err array when lifetime ends.
+		$Element_List = array();
 		$err = array(
 			// Used internally to determine how many pages the error should persist across.
 			//  Usually only persists by 1 page, unless rethrowError() is used.
