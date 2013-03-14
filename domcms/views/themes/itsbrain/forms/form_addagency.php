@@ -1,6 +1,7 @@
 <!-- Content -->
 <div class="content" id="container">
     <div class="title"><h5>Admin</h5></div>
+    <?php notifyError(); ?>
     <?php echo  $html; ?>
     <!-- Form begins -->
     <?php echo  form_open('/admin/form_processor/agency/add',array('name'=>'add','class'=>'mainForm','id'=>'usualValidate')); ?>

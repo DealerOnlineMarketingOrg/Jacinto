@@ -5,6 +5,7 @@
         });
     </script>
     <div class="title"><h5>Admin</h5></div>
+    <?php notifyError(); ?>
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
     <?php echo  form_open('/admin/users/form_processor/users/add',array('id'=>'valid','class'=>'mainForm','name'=>'AddUser')); ?>

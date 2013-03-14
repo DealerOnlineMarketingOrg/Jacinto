@@ -364,12 +364,12 @@ class DOM_Controller extends CI_Controller {
 							$addYahooReview = $this->administration->addReview($review[2]);
 						}
 						
-						$Page = 'Clients Add';
-						$err_level = ($addClient) ? 1
-												  : -1;
-						$msg = ($addClient) ? 'The Client was added successfully!'
-											: 'Something went wrong. Please try again or contact your admin.';
-						throwError(newError($Page, $err_level, $msg, array(), 0, ''));
+						
+						throwError(newError('Clients Add',
+											($addClient) ? 1 : -1,
+											($addClient) ? 'The Client was added successfully!'
+														 : 'Something went wrong. Please try again or contact your admin.',
+											0, ''));
 						redirect('/admin/clients/add','refresh');
 					break;
 					case "edit":
@@ -452,12 +452,11 @@ class DOM_Controller extends CI_Controller {
 						
 						$updateClient = $this->administration->editClient($data, $this->input->post('ClientID'));
 						
-						$Page = 'Clients Edit';
-						$err_level = ($addClient) ? 1
-												  : -1;
-						$msg = ($addClient) ? 'The Client was edited successfully!'
-											: 'Something went wrong. Please try again or contact your admin.';
-						throwError(newError($Page, $err_level, $msg, array(), 0, ''));
+						throwError(newError('Clients Edit',
+											($updateClient) ? 1 : -1,
+											($updateClient) ? 'The Client was edited successfully!'
+															: 'Something went wrong. Please try again or contact your admin.',
+											0, ''));
 						if($form['Status'] == '0')
 							$this->reset_dd_session('/admin/clients/edit');
 						else
@@ -485,12 +484,11 @@ class DOM_Controller extends CI_Controller {
 						//print_object($data);
 						$add = $this->administration->addGroup($data);
 						
-						$Page = 'Groups Add';
-						$err_level = ($add) ? 1
-											: -1;
-						$msg = ($add) ? 'Your Group was added successfully!'
-									  : 'Something went wrong. Please try again or contact your admin.';
-						throwError(newError($Page, $err_level, $msg, array(), 0, ''));
+						throwError(newError('Groups Add',
+											($add) ? 1 : -1,
+											($add) ? 'Your Group was added successfully!'
+												   : 'Something went wrong. Please try again or contact your admin.',
+											0, ''));
 						redirect('/admin/groups/add','refresh');
 					break;
 					case "edit":
@@ -513,12 +511,11 @@ class DOM_Controller extends CI_Controller {
 						//print_object($data);
 						$edit = $this->administration->editGroup($data);
 						
-						$Page = 'Clients Add';
-						$err_level = ($edit) ? 1
-											 : -1;
-						$msg = ($edit) ? 'Your Group was edited successfully!'
-									   : 'Something went wrong. Please try again or contact your admin.';
-						throwError(newError($Page, $err_level, $msg, array(), 0, ''));
+						throwError(newError('Groups Edit',
+											($edit) ? 1 : -1,
+											($edit) ? 'Your Group was edited successfully!'
+													: 'Something went wrong. Please try again or contact your admin.',
+											0, ''));
 						if($group_status == '0')
 							$this->reset_dd_session('/admin/groups/edit');
 						else
@@ -560,13 +557,12 @@ class DOM_Controller extends CI_Controller {
                         
                         $addContact = $this->administration->addContact($data);
                         
-                        if($addContact) {
-                            redirect('/admin/contacts/success','refresh');
-                        }else {
-                            redirect('/admin/contacts/error','refresh');
-                        }
-
-                         
+						throwError(newError('Contacts Add',
+											($addContact) ? 1 : -1,
+											($addContact) ? 'Your Contact was added successfully!'
+														  : 'Something went wrong. Please try again or contact your admin.',
+											0, ''));
+						redirect('/admin/contacts/add','refresh');                         
                     break;
 					case "edit":
                         $form = $this->input->post();
@@ -595,15 +591,15 @@ class DOM_Controller extends CI_Controller {
                         
                         //print_object($data);
                         
-                        $addContact = $this->administration->updateContact($data, $this->input->post('contact_id'));
+                        $editContact = $this->administration->updateContact($data, $this->input->post('contact_id'));
                         
-                        if($addContact) {
-                            redirect('/admin/contacts/success','refresh');
-                        }else {
-                            redirect('/admin/contacts/error','refresh');
-                        }
-
-                         
+						throwError(newError('Contacts Edit',
+											($editContact) ? 1 : -1,
+											($editContact) ? 'Your Contact was edited successfully!'
+														   : 'Something went wrong. Please try again or contact your admin.',
+											0, ''));
+                        redirect('/admin/contacts/edit','refresh');
+                        
 					break;
                 endswitch;
             break;
@@ -613,6 +609,15 @@ class DOM_Controller extends CI_Controller {
                         //create array from port post elements
                         $form = $this->input->post();
                         $add = $this->administration->addAgencies($form);
+						
+						/*
+						throwError(newError('Agency Add',
+											($add) ? 1 : -1,
+											($add) ? 'Your Agency was added successfully!'
+													: 'Something went wrong. Please try again or contact your admin.',
+											0, ''));
+						redirect('/admin/agency/add', 'location');
+						*/
                     break;
                     case "edit":
                         $form = $this->input->post();
@@ -627,11 +632,12 @@ class DOM_Controller extends CI_Controller {
 
                         $edit = $this->administration->updateAgencyInformation($id, $data);
 
-                        if (!$edit) {
-                            redirect('/admin/agency/listing/success', 'location');
-                        } else {
-                            redirect('/admin/agency/edit/error', 'location');
-                        }
+						throwError(newError('Agency Edit',
+											($edit) ? 1 : -1,
+											($edit) ? 'Your Agency was edited successfully!'
+													: 'Something went wrong. Please try again or contact your admin.',
+											0, ''));
+						redirect('/admin/agency/edit', 'location');
                     break;
                 endswitch;
                 break;
@@ -659,6 +665,8 @@ class DOM_Controller extends CI_Controller {
                         
                         $addUser = $this->members->addUsers($usersTable);
                         
+						$addUserInfo = FALSE;
+						$msg = '';
                         if($addUser) {
                             
                             if($this->user['DropdownDefault']->LevelType == 'a') {
@@ -703,19 +711,21 @@ class DOM_Controller extends CI_Controller {
 									'USER_Release'			=> NULL
                                 );
 								
-                               $addUserInfo = $this->members->addUserInfo($userInfoTable);
-                                
+								$addUserInfo = $this->members->addUserInfo($userInfoTable);
+								
                                 if($addUserInfo) {
                                     $msg   = 'Dear ' . $first_name . ' ' . $last_name . ', <br> You have been added to the DOM CMS. Your password is ' . $generated_password . ' and your username is ' . $username . '. Go here and login <a href="http://content.dealeronlinemarketing.com">Go To Dashboard</a>';
                                     $email = $this->members->email_results($username, 'You\'ve been added to the DOM CMS!', $msg);
-                                    redirect('/admin/users/add/success','refresh');
-                                }                          
-                           }else {
-                               redirect('/admin/users/error','refresh');
+                                }
                            }
-                        }else {
-                            redirect('/admin/users/error','refresh');
                         }
+						
+						throwError(newError('Users Add',
+											($addUserInfo) ? 1 : -1,
+											($addUserInfo) ? $msg
+														   : 'Something went wrong. Please try again or contact your admin.',
+											0, ''));
+						redirect('/admin/users/add','refresh');
 
                     break;
                     case "edit":
@@ -779,11 +789,12 @@ class DOM_Controller extends CI_Controller {
 						
 						$update = $this->administration->updateUser($update);
 						
-						if($update) {
-							redirect('/admin/users/success','refresh');
-						}else{
-							redirect('/admin/users/edit/error','refresh');
-						}
+						throwError(newError('Users Edit',
+											($update) ? 1 : -1,
+											($update) ? 'Your User was edited successfully!'
+													  : 'Something went wrong. Please try again or contact your admin.',
+											0, ''));
+						redirect('/admin/users/edit','refresh');
                         
                     break;
                 endswitch;
@@ -858,7 +869,7 @@ class DOM_Controller extends CI_Controller {
 						}
 						
 						// Throw error and redirect back to DPR.
-						throwError(newError("DPR Report Entry", $err_level, $err_msg, $err_elements, 0, ''));
+						throwError(newError("DPR Report Add", $err_level, $err_msg, 0, ''));
 						redirect('dpr','refresh');
 					break;
 				endswitch;

@@ -140,11 +140,11 @@ class Groups extends DOM_Controller {
 		$this->LoadTemplate('forms/form_editgroups',$data);
 	}
 	
-	public function Delete($msg=false) {
+	public function Delete() {
 		
 	}
 	
-	public function View($msg=false) {
+	public function View() {
 		
 	}
 

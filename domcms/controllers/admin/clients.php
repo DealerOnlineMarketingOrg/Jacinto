@@ -195,7 +195,7 @@ class Clients extends DOM_Controller {
 		$this->LoadTemplate('forms/form_editclients',$data);
 	}
 	
-	public function Delete($msg=false) {
+	public function Delete() {
 		
 	}
 

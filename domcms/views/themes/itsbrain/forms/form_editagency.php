@@ -1,6 +1,7 @@
 <!-- Content -->
 <div class="content" id="container">
     <div class="title"><h5>Admin</h5></div>
+    <?php notifyError(); ?>
     <!-- Form begins -->
     <?php
     $form = array(

@@ -2,6 +2,7 @@
 <!-- Content -->
 <div class="content" id="container">
     <div class="title"><h5>Admin</h5></div>
+    <?php notifyError(); ?>
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
     <?php echo  form_open('/admin/form_processor/groups/add',array('name'=>'addGroups','id'=>'valid','class'=>'mainForm')); ?>

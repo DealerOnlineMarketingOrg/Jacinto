@@ -11,7 +11,7 @@ class Agency extends DOM_Controller {
 		$this->activeNav = 'admin';
     }
 	
-	public function Edit($msg=false) {
+	public function Edit() {
 		$permissions = $this->CheckModule('Agency_Edit');
 		if (!$permissions) {
 			$this->AccessDenied();
@@ -23,14 +23,14 @@ class Agency extends DOM_Controller {
 			//PREPARE THE VIEW FOR THE FORM
 			$data = array(
 				'agency' => $agency,
-				'msg' => (($msg) ? 'There was an error editing your agencies information. Please try again' : '')
+				'html' => ''
 			);
 			//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
 			$this->LoadTemplate('forms/form_editagency', $data);
 		}
 	}
 	
-	public function Add($msg=false) {
+	public function Add() {
 		//MODULE PERMISSIONS
 		$permissions = $this->CheckModule('Agency_Add');
 		if (!$permissions) {
@@ -41,12 +41,6 @@ class Agency extends DOM_Controller {
 
 			$html = '';
 
-			if($msg AND $msg == 'error') {
-			   $html .= error_msg();
-			}elseif($msg AND $msg == 'success') {
-			   $html .= success_msg('You have successfully added a new Agency! <a href="' . base_url() . 'admin/agency">Agency dashboard</a>');
-			}
-
 			$data = array(
 				'html' => $html
 			);
@@ -55,7 +49,7 @@ class Agency extends DOM_Controller {
 		}
 	}
 
-    public function index($msg=false) {
+    public function index() {
 		$permissions = $this->CheckModule('Agency_List');
 		if (!$permissions) {
 			$this->AccessDenied();
@@ -101,16 +95,6 @@ class Agency extends DOM_Controller {
 				endforeach;
 			}else {
 			}
-
-			//If there is a message to the user, present it as it should be.
-			if ($msg AND $msg != 'error') {
-				//The success message after a group was added or edited.
-				$html .= success_msg('The Agency was added successfully!');
-			} elseif($msg AND $msg != 'success') {
-				//The error message after a group was added, or edited.
-				$html .= error_msg();
-			}
-
 
 			//BUILD THE HTML FOR THE PAGE HERE IN A STRING. THE VIEW JUST ECHOS THIS OUT.
 			$html .= $this->table->generate();

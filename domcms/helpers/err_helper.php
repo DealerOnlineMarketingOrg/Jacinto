@@ -19,10 +19,10 @@
 	//   1=Success (data)
 	//  -1=Failure (data)
 	//  -2=Failure (system)
-	// Element_List: stores a list of elements that require change:
+	// Element_List: stores a list of elements that require change (not currently used):
 	//   {'name' => 'element_error_msg', ..}
 	// Exception_Line and Exemption_Trace are used by system errors.
-	function newError($Page, $Error_Level, $Error_Message, $Element_List, $Exemption_Line, $Exemption_Trace) {
+	function newError($Page, $Error_Level, $Error_Message, $Exemption_Line, $Exemption_Trace) {
 		// This is for communicating errors (both error and successes) around pages.
 		// Used with data adds, updates and removal.
 		// Pages can react to successes/errors from other pages, such as data input models.

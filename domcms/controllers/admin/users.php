@@ -16,7 +16,7 @@ class Users extends DOM_Controller {
 		$this->activeNav = 'admin';
     }
 
-    public function index($msg=false) {
+    public function index() {
 		$html = '';
 		if($this->level == 1 OR $this->level == 'a') {
 			$client_id = $this->user['DropdownDefault']->SelectedAgency;	
@@ -91,16 +91,6 @@ class Users extends DOM_Controller {
 			$error_msg = '<p style="text-align:center">No users are associated for this client. Please use the Dealer Dropdown to select another client, or add users by clicking the "Add New User" button below.</p>';	
 		}
 
-		
-		//If there is a message to the user, present it as it should be.
-		if ($msg AND $msg != 'error') {
-			//The success message after a group was added or edited.
-			$html .= success_msg('The User was added/edited successfully!');
-		} elseif($msg AND $msg != 'success') {
-			//The error message after a group was added, or edited.
-			$html .= error_msg();
-		}
-
 
 		//BUILD THE HTML FOR THE PAGE HERE IN A STRING. THE VIEW JUST ECHOS THIS OUT.
 		$html .=  ((count($users) > 0) ? $this->table->generate() : $error_msg);
@@ -119,28 +109,17 @@ class Users extends DOM_Controller {
 		$this->LoadTemplate('pages/listings', $data);
     }
 	
-	public function Add($msg=false) {
+	public function Add() {
 		$html = '';
-		if($msg AND $msg == 'success') {
-			$html .= success_msg('Added user successfully!');
-		}elseif($msg AND $msg == 'error') {
-			$html .= error_msg();
-		}
 		$data = array(
 		  'html' => $html  
 		);
 		$this->LoadTemplate('forms/form_adduser',$data);
 	}
 	
-	public function Edit($msg=false) {
+	public function Edit() {
 		
 		$html = '';
-
-		if($msg AND $msg == 'error') {
-		   $html .= error_msg();
-		}elseif($msg AND $msg == 'success') {
-		   $html .= success_msg('You have successfully added a new Agency! <a href="' . base_url() . 'admin/agency">Agency dashboard</a>');
-		}
 
 		$user_id = $this->input->post('user_id');
 		$user = $this->administration->getUsers($user_id);
@@ -152,7 +131,7 @@ class Users extends DOM_Controller {
 		$this->LoadTemplate('forms/form_edituser', $data);
 	}
 	
-	public function Delete($msg=false) {
+	public function Delete() {
 		
 	}
 	

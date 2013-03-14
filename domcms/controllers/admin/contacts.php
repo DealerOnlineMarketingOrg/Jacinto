@@ -14,7 +14,7 @@ class Contacts extends DOM_Controller {
 		$this->activeNav = 'admin';
     }
 
-    public function index($msg=false) {
+    public function index() {
 			
 		$table = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
 	
@@ -41,15 +41,6 @@ class Contacts extends DOM_Controller {
 		
 		//table heading
 		$html = '';
-
-		//If there is a message to the user, present it as it should be.
-		if ($msg AND $msg != 'error') {
-			//The success message after a group was added or edited.
-			$html .= success_msg('The Client was edited successfully!');
-		} elseif($msg AND $msg != 'success') {
-			//The error message after a group was added, or edited.
-			$html .= error_msg();
-		}
 		
 		if($contacts) :
 			$table .= '<thead><tr>' . '<th>Team</th>' . (($level == 'g' OR $level == 'a') ? '<th style="text-align:left;">Dealership</th>' : '' ) . '<th style="width:10%;">Title</th><th>Name</th><th>Email</th><th>Phone</th><th style="text-align:center">Edit</th><th style="text-align:center">View</tr></thead>';
@@ -110,31 +101,18 @@ class Contacts extends DOM_Controller {
 		$this->LoadTemplate('pages/listings', $data);
     }
 	
-	public function Add($msg=false) {
+	public function Add() {
 		$html = '';
 		$titles = '';
-		//If there is a message to the user, present it as it should be.
-		if ($msg AND $msg != 'error') {
-			//The success message after a group was added or edited.
-			$html .= success_msg('The Client was added successfully!');
-		} elseif($msg AND $msg != 'success') {
-			//The error message after a group was added, or edited.
-			$html .= error_msg();
-		}
+		
 		$data = array(
 			'html' => $html
 		);
 		$this->LoadTemplate('forms/form_addcontacts',$data);
 	}
 	
-	public function Edit($msg=false) {
+	public function Edit() {
 		$html = '';
-		
-		if($msg AND $msg != 'error') {
-			$html .= success_msg('Your client was successfully edited!');
-		}elseif($msg AND $msg == 'error') {
-			$html .= error_msg();
-		}
 	
 		 //WE POST WHAT AGENCY WERE EDITING, THIS IS THE ID IN THE DB.
 		$contact_id = $this->input->post('contact_id');
@@ -158,11 +136,11 @@ class Contacts extends DOM_Controller {
 		$this->LoadTemplate('forms/form_editcontacts',$data);
 	}
 	
-	public function Delete($msg=false) {
+	public function Delete() {
 		
 	}
 	
-	public function View($msg=false) {
+	public function View() {
 		$contact = $this->administration->getContact($this->input->post('view_id'));
 		$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
 		$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
