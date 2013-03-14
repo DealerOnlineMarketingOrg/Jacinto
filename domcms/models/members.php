@@ -17,23 +17,27 @@ class Members extends CI_Model {
 		return ($this->db->update('Users_Info',$data)) ? TRUE : FALSE;
 	}
 	
-	public function get_user_avatar($user_id) {
+	public function get_user_avatar($user_id = false) {
 		$this->load->helper('url');
 		$this->load->library('gravatar');
-		$a_sql = 'SELECT USER_Avatar as Avatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
-		$a_query = $this->db->query($a_sql);
-		if($a_query == 'NULL') {
-			$g_sql = 'SELECT USER_Gravatar as Avatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
-			$g_query = $this->db->query($g_sql);
-			if($g_query) {
-				$user = $g_query->row();	
-				return $this->gravatar->get_gravatar($user->Avatar);
+		if($user_id) {
+			$a_sql = 'SELECT USER_Avatar as Avatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
+			$a_query = $this->db->query($a_sql);
+			$customAvatar = $a_query->row();
+			if($customAvatar->Avatar != NULL) {
+				return ((file_exists(base_url() . 'assets/uploads/avatars/' . $customAvatar->Avatar)) ? base_url() . 'assets/uploads/avatars/' . $customAvatar->Avatar : base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png');
 			}else {
-				return base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png';
+				$g_sql = 'SELECT USER_GravatarEmail as Gravatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
+				$g_query = $this->db->query($g_sql);
+				$gravatar = $g_query->row();
+				if($gravatar->Gravatar) {
+					return $this->gravatar->get_gravatar($gravatar->Gravatar);
+				}else {
+					return base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png';
+				}
 			}
 		}else {
-			$user = $a_query->row();
-			return base_url() . 'assets/uploads/avatars/' . $user->Avatar;
+			return base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png';
 		}
 	}
     

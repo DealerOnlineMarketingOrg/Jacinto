@@ -34,10 +34,10 @@ class Login extends DOM_Controller {
 		$this->load->helper('cookie');
 		$remember_me = (float)$this->input->post('remember');
 		if($remember_me == 1) {
-			setcookie('dom_email',$this->input->post('email'),time()+3600,'/','');
+			setcookie('dom_email',$this->input->post('email'),time()+360000,'/','');
 		}else {
 			if(isset($_COOKIE['dom_email'])) {
-				setcookie('dom_email','',time()-3600,'/','');
+				setcookie('dom_email','',time()-360000,'/','');
 			}
 		}
 		$this->load->helper('pass');
