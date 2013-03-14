@@ -520,14 +520,21 @@ div.jGrowl div.jGrowl-closer { padding-top: 4px; padding-bottom: 4px; cursor: po
 /*login screen loading technique */
 #whiteout{background-color:white;position:fixed;top:0;left:0;bottom:0;right:0;width:100%;height:100%;opacity:0.8;z-index:1999;}
 #loader{position:absolute;width:100%;top:50%;margin-top:-8px;text-align:center;z-index:2000;}
-div.actionsBar{float:right;width:30px;position:relative;z-index:2000;margin-top:-96px;margin-right:105px;color:#fff;}
-div.actionsBar input#addNewChange {}
+div.actionsBar{float:right;margin-top:-33px;margin-right:5px;position:relative;z-index:100;}
 div.actionsBar a {color:#fff;}
 /* PROFILE PAGES */
-div.avatar {width:100px;padding:5px;border:1px solid #d5d5d5;float:left;}
+div.editButton{float:right;width:14px;position:relative;z-index:100;height:14px;display:block;border:none;background:transparent;margin:12px 11px 11px;}
+div.editButton a,div.avatar div.editBar a {display:block;background:url(../imgs/icons/dark/pencil.png) no-repeat top left;height:14px;width:14px;}
+div.editButton a span {display:none;}
+div.avatar {width:100px;padding:2px;border:1px solid #d5d5d5;float:left;position:relative;}
 div.avatar img {width:100px;}
-div.avatar span {display:block;text-align:center;}
-div.info {margin-left:120px;}
+div.avatar div.editButton {margin:0;background:#eee;opacity:0.8;position:absolute;bottom:0;left:0;width:100%;height:18px;border-top:1px solid #d5d5d5;display:none;}
+div.avatar div.editButton a {float:right;margin-right:5px;margin-top:2px;}
+div.profileInfo{margin-left:120px;margin-top:5px;}
+div.profileInfo ul li {font-weight:550;color:#333;}
+div.profileInfo ul li span {font-weight:700;color:#ED1C24;}
+div.headRightSide{float:right;padding:10px 10px 8px 10px;}
+div.headRightSide span {font-weight:700;color:#333;}
 ul.modList li {width:25%;float:left;}
 span.inline_title{text-transform:capitalize;font-weight:bold;}
 /** Hide jGrowl when printing **/

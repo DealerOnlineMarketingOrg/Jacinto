@@ -65,7 +65,6 @@ class Administration extends CI_Model {
 		return $all_contacts;
 	}
 
-
     public function getUsers($id = false) {
         //query to show users info on listing and edit pages.
         $sql = "SELECT 
@@ -91,25 +90,27 @@ class Administration extends CI_Model {
                 a.ACCESS_Level as AccessLevel,
                 a.ACCESS_ID as AccessID,
 				c.CLIENT_Name as Dealership,
-				c.CLIENT_Address as CompanyAddress
+				c.CLIENT_Address as CompanyAddress,
+				t.TAG_Name as TeamName,
+				t.TAG_ClassName as ClassName,
+				t.TAG_Color as Color
                 FROM Users u
                 INNER JOIN Users_Info ui ON ui.USER_ID = u.USER_ID
                 INNER JOIN xSystemAccess a ON ui.ACCESS_ID = a.ACCESS_ID
                 INNER JOIN Directories d ON ui.DIRECTORY_ID = d.DIRECTORY_ID
-				INNER JOIN Clients c ON c.CLIENT_ID = ui.CLIENT_ID";
+				INNER JOIN Clients c ON c.CLIENT_ID = ui.CLIENT_ID
+				INNER JOIN xTags t ON t.TAG_ID = u.Team";
 				if($id) { 
 					$sql .= " WHERE u.USER_ID = '" . $id . "'"; 
 				}else {
         			$sql .= " ORDER BY d.DIRECTORY_LastName ASC";
 				}
-		
         $users = $this->db->query($sql);
-
         if ($id) {
 			$users = $users->row();
-            $users->Address = (isset($users->Address) ? mod_parser($users->Address) : '');
-            $users->Email   = (isset($users->Emails)  ? mod_parser($users->Emails)  : '');
-            $users->Phone   = (isset($users->Phones)  ? mod_parser($users->Phones)  : '');
+            $users->Address = isset($users->Address) ? mod_parser($users->Address) : '';
+            $users->Email   = isset($users->Emails)  ? mod_parser($users->Emails)  : '';
+            $users->Phone   = isset($users->Phones)  ? mod_parser($users->Phones)  : '';
         }else {
 			$users = $users->result();	
 		}

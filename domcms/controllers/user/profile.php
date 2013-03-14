@@ -22,7 +22,7 @@ class Profile extends DOM_Controller {
 		
 		$user                   = $this->administration->getUsers($user_id);
 		$user->UserID           = $user->ID;
-		$user->EditAvatar       = ($this->user['UserID'] == $user->UserID) ? TRUE : FALSE;
+		$user->Edit       = ($this->user['UserID'] == $user->UserID) ? TRUE : FALSE;
 		
 		//Grab avatar
 		if($user->Avatar) {
@@ -53,7 +53,8 @@ class Profile extends DOM_Controller {
 		$msg = (($msg) ? $msg : FALSE);
 		$data = array(
 			'user' => $user,
-			'msg' => $msg
+			'msg' => $msg,
+			'admin' => $this->user
 		);
 			
 		$this->LoadTemplate('pages/profile',$data);
