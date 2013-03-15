@@ -6,12 +6,8 @@ class Users extends DOM_Controller {
 	
     public function __construct() {
         parent::__construct();
-        $this->load->model('administration');
-        $this->load->helper('html');
-        $this->load->helper('template');
-        $this->load->library('table');
-        $this->load->model('utilities');
-        $this->load->helper('msg');
+        $this->load->model(array('members','administration','utilities'));
+        $this->load->helper(array('template','msg','html'));
         $this->level = $this->user['DropdownDefault']->LevelType;
 		$this->activeNav = 'admin';
     }
@@ -19,79 +15,86 @@ class Users extends DOM_Controller {
     public function index() {
 		$html = '';
 		if($this->level == 1 OR $this->level == 'a') {
-			$client_id = $this->user['DropdownDefault']->SelectedAgency;	
+			$agency_id = $this->user['DropdownDefault']->SelectedAgency;	
+			$groups = $this->administration->getAllGroupsInAgencyResults($agency_id);
+			$users = array();
+			foreach($groups as $group) {
+				//print_object($group);
+				$clients = $this->administration->getAllClientsInGroup($group->GroupID);	
+				//print_object($clients);
+				foreach($clients as $client) {
+					$userGrouped = $this->administration->getUsers(false,$client->ClientID);
+					if($userGrouped) {
+						foreach($userGrouped as $usersGroup) {
+							array_push($users,$usersGroup);	
+						}
+					}
+					
+				}
+			}
 		}elseif($this->level == 2 OR $this->level == 'g') {
-			$client_id = $this->user['DropdownDefault']->SelectedGroup;	
+			$group_id = $this->user['DropdownDefault']->SelectedGroup;	
+			$clients = $this->administration->getAllClientsInGroup($group_id);
+			$users = array();
+			foreach($clients as $client) {
+				$userGrouped = $this->administration->getUsers(false,$client->ClientID);
+				foreach($userGrouped as $usersGroup) {
+					array_push($users,$usersGroup);	
+				}
+			}
 		}elseif($this->level == 3 OR $this->level == 'c') {
 			$client_id = $this->user['DropdownDefault']->SelectedClient;	
+			$users = $this->administration->getUsers(false,$client_id);
 		}
-		//echo $client_id;
-		$users = $this->administration->getUsersByUserInfo($client_id);
-		//Creating the table headings (th)
-		$this->table->set_heading('Avatar', 'Email Address', 'Name', 'Status', 'Team', 'Member Since','Edit Details','View Info');
-		if($users AND count($users) > 1) {
+		
+		if($users) {
+			
+			$table ='<table style="width:100%" cellpadding="0" cellspacing="0" class="tableStatic">';
+			$table .= '<thead><tr><td>Team</td><td>Avatar</td><td>Email Address</td><td>Name</td><td>Status</td><td>Member Since</td><td>Actions</td></tr></thead>';
+			$table .= '<tbody>';
 			foreach ($users as $user) {
+				$table .= '<tr class="tagElement ' . $user->ClassName . '">';
 				$form_cred = array(
 					'name' => 'edit_user',
-					'id' => 'user_' . $user->USER_ID
+					'id' => 'user_' . $user->ID
 				);
+				
 				//EACH FORM HAS THE SAME NAME BUT DIFFERENT ID
 				$button = array(
 					'name' => 'submit',
-					'id' => 'user_id_' . $user->USER_ID,
+					'id' => 'user_id_' . $user->ID,
 					'class' => 'redBtn',
 					'value' => 'Edit'
 				);
 				
 				$view_button = array(
 					'name'=>'view',
-					'id'=>'view_user_'.$user->USER_ID,
+					'id'=>'view_user_'.$user->ID,
 					'class'=>'blueBtn',
 					'value'=>'View'
 				);
 
-				$tmpl = array('table_open' => '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">');
-				$this->table->set_template($tmpl);
-				//edit button
-				$edit_form = (($this->CheckModule('User_Edit')) ? form_open('users/edit', $form_cred) . form_hidden('user_id', $user->USER_ID) . form_submit($button) . form_close() : '');
-				$view_form = form_open('profile/'.strtolower($user->DIRECTORY_FirstName . $user->DIRECTORY_LastName),array('name'=>'view_user')) . form_hidden('user_id',$user->USER_ID) . form_submit($view_button) . form_close();
-				$this->table->add_row('<div align="center"><img style="width:25px;" src="' . (($user->USER_ID != 5) ? $this->gravatar->get_gravatar($user->USER_GravatarEmail) : 'https://lh6.googleusercontent.com/-zI6ICNng1yA/AAAAAAAAAAI/AAAAAAAAAKA/DrJiF6DykVI/s48-c-k/photo.jpg') . '" /></div>',$user->USER_Name, $user->DIRECTORY_LastName . ', ' . $user->DIRECTORY_FirstName, (($user->USER_Active == 1) ? 'Active' : 'Disabled'), $user->TAG_Name, date('n-j-Y', strtotime($user->USER_Created)),'<div align="center">' . $edit_form . '</div>','<div align="center">' . $view_form . '</div>');
 				
+				$view_form = form_open('profile/'.strtolower($user->FirstName . $user->LastName),array('name'=>'view_user','id'=>'form_' . $user->ID)) . form_hidden('user_id',$user->ID) . '<img class="viewBtn" id="view_user_' . $user->ID . '" src="' . base_url() . 'assets/themes/global/imgs/icons/dark/user.png" alt="View Profile" />' . form_close();
+				
+				$table .= '<td class="tags"><div class="' . $user->ClassName . '">&nbsp;</div></td>';
+				//grab users avatar
+				$table .= '<td><div align="center"><img style="width:25px;" src="' . (($user->ID != 5) ? $this->members->get_user_avatar($user->ID) : 'https://lh6.googleusercontent.com/-zI6ICNng1yA/AAAAAAAAAAI/AAAAAAAAAKA/DrJiF6DykVI/s48-c-k/photo.jpg') . '" /></div></td>';
+				
+				$table .= '<td>' . $user->Username . '</td>';
+				$table .= '<td>' . $user->FirstName . ' ' . $user->LastName . '</td>';
+				$table .= '<td>' . (($user->Status != 1) ? 'Disabled' : 'Active') . '</td>';
+				$table .= '<td>' . date('n-j-Y',strtotime($user->JoinDate)) . '</td>';
+				$table .= '<td><div align="center">' . $view_form . '</div></td>';
+				$table .= '</tr>';				
 			}
-		}elseif($users AND count($users) == 1) {
-				$form_cred = array(
-					'name' => 'edit_user',
-					'id' => 'user_' . $users->USER_ID
-				);
-				//EACH FORM HAS THE SAME NAME BUT DIFFERENT ID
-				$button = array(
-					'name' => 'submit',
-					'id' => 'user_id_' . $users->USER_ID,
-					'class' => 'basicBtn',
-					'value' => 'Edit'
-				);
-				
-				$view_button = array(
-					'name'=>'view',
-					'id'=>'view_user_'.$users->USER_ID,
-					'class'=>'greenBtn',
-					'value'=>'View'
-				);
-
-				$tmpl = array('table_open' => '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">');
-				$this->table->set_template($tmpl);
-				
-				//edit button
-				$edit_form = (($this->CheckModule('User_Edit')) ? form_open('users/edit', $form_cred) . form_hidden('user_id', $users->USER_ID) . form_submit($button) . form_close() : '');
-				$view_form = form_open('profile/'.strtolower($users->USER_FirstName . $users->USER_LastName),array('name'=>'view_user')) . form_hidden('user_id',$users->USER_ID) . form_submit($view_button) . form_close();
-				$this->table->add_row('<div align="center"><img style="width:25px;" src="' . $this->gravatar->get_gravatar($users->USER_GravatarEmail) . '" /></div>',$users->USER_Name, $users->DIRECTORY_LastName . ', ' . $users->DIRECTORY_FirstName, (($users->USER_Active == 1) ? 'Active' : 'Disabled'), date('n-j-Y', strtotime($users->USER_Created)),$edit_form,$view_form);
+			$table .= '</tbody></table><script type="text/javascript">jQuery(".viewBtn").click(function() { jQuery(this).parent().submit(); });</script>';
 		}else {
 			$error_msg = '<p style="text-align:center">No users are associated for this client. Please use the Dealer Dropdown to select another client, or add users by clicking the "Add New User" button below.</p>';	
 		}
-
-
+		
 		//BUILD THE HTML FOR THE PAGE HERE IN A STRING. THE VIEW JUST ECHOS THIS OUT.
-		$html .=  ((count($users) > 0) ? $this->table->generate() : $error_msg);
+		$html .=  ((count($users) > 0) ? $table : $error_msg);
 
 		if ($this->CheckModule('User_Add')) {
 			$html .= anchor(base_url() . 'users/add', 'Add New User', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_user_btn"');

@@ -4,7 +4,7 @@
         <div class="wrapper">
         	<?php if(isset($avatar)): ?>
         	<div class="welcome">
-            	<a href="#"><img style="width:22px;" src="<?= $avatar; ?>" alt="<?= $user['FirstName'] . ' ' . $user['LastName']; ?>" /><span>Welcome, <?= $user['FirstName']; ?></span></a>
+            	<a href="<?= base_url(); ?>profile/<?= strtolower($user['FirstName'] . $user['LastName']); ?>"><img style="width:22px;" src="<?= $avatar; ?>" alt="<?= $user['FirstName'] . ' ' . $user['LastName']; ?>" /><span>Welcome, <?= $user['FirstName']; ?></span></a>
             </div>
             <div class="clientInfo" id="clientInformation">
             	<span class="title"><?= get_client_type(); ?></span><span><?= get_client_name(); ?></span>

@@ -65,7 +65,7 @@ class Administration extends CI_Model {
 		return $all_contacts;
 	}
 
-    public function getUsers($id = false) {
+    public function getUsers($id = false,$client_id = false) {
         //query to show users info on listing and edit pages.
         $sql = "SELECT 
                 u.USER_ID as ID, 
@@ -104,7 +104,11 @@ class Administration extends CI_Model {
 				if($id) { 
 					$sql .= " WHERE u.USER_ID = '" . $id . "'"; 
 				}else {
-        			$sql .= " ORDER BY d.DIRECTORY_LastName ASC";
+					if($client_id) {
+						$sql .= " WHERE ui.CLIENT_ID = '" . $client_id . "'";
+					}else {
+        				$sql .= " ORDER BY d.DIRECTORY_LastName ASC";
+					}
 				}
         $users = $this->db->query($sql);
         if ($id) {
