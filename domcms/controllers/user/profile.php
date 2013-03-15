@@ -37,9 +37,9 @@ class Profile extends DOM_Controller {
 			  
 		$user->Company 			= $user->Dealership;
 		$user->CompanyAddress   = ArrayWithTextIndexToString(mod_parser($user->CompanyAddress), true);
-		$user->Emails 		    = ArrayWithTextIndexToString(mod_parser($user->Emails));
-		$user->Phone 			= ArrayWithTextIndexToString(mod_parser($user->Phones));
-		$user->UserModules		= ParseModulesInReadableArray($user->Modules);
+		$user->Emails 		    = OrderArrayForTableDisplay(mod_parser($user->Emails));
+		$user->Phone 			= OrderArrayForTableDisplay(mod_parser($user->Phones));
+		$user->UserModules 		= ParseModulesInReadableArray($user->Modules);
 		
 		$modules = array();
 		

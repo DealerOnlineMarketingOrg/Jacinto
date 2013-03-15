@@ -14,13 +14,22 @@
 | path to your installation.
 |
 */
-$urlParts = explode('.',$_SERVER['HTTP_HOST']);
-if(ENVIRONMENT == 'development') {
-	$config['base_url'] = 'http://' . $urlParts[0] . '.com';	
-}else {
-	$config['base_url']	= (($urlParts[0] != 'content') ? 'http://' : 'https://') . $urlParts[0] . '.dealeronlinemarketing.com';
-}
 
+
+$urlParts = explode('.',$_SERVER['HTTP_HOST']);
+
+
+switch(ENVIRONMENT) {
+	case 'production':
+		$config['base_url'] = 'https://content.dealeronlinemarketing.com';
+	break;
+	case 'testing':
+		$config['base_url'] = 'http://testing.dealeronlinemarketing.com';
+	break;
+	default:
+		$config['base_url'] = 'http://' . $urlParts[0] . '.com';
+	break;	
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -197,7 +206,8 @@ $config['log_threshold'] = 0;
 | application/logs/ folder. Use a full server path with trailing slash.
 |
 */
-$config['log_path'] = 'domcms/logs/';
+
+$config['log_path'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -273,9 +283,24 @@ $config['sess_time_to_update']  = 300;
 |
 */
 $config['cookie_prefix']	= "DOM_";
-$config['cookie_domain']	= ENVIRONMENT != 'production' && ENVIRONMENT != 'testing' ? $urlParts[0] . '.com' : $urlParts[0] . 'dealeronlinemarketing.com';
 $config['cookie_path']		= "/";
-$config['cookie_secure']	= ENVIRONMENT != 'production' && ENVIRONMENT != 'testing' ? FALSE : TRUE;
+
+switch(ENVIRONMENT) {
+	case 'production' :
+		$config['cookie_domain'] = 'content.dealeronlinemarketing.com';
+		$config['cookie_secure']	= TRUE;
+	break;
+	
+	case 'testing':
+		$config['cookie_domain'] = 'testing.dealeronlinemarketing.com';
+		$config['cookie_secure']	= FALSE;
+	break;
+	default:
+		$config['cookie_domain']	= $urlParts[0] . '.com';
+		$config['cookie_secure']	= FALSE;
+	break;	
+}
+
 
 /*
 |--------------------------------------------------------------------------

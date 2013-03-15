@@ -10,7 +10,7 @@
 					<?php } ?>
                 </div>
                 <div class="body alignleft">
-                	<div class="avatar <?= $user->ClassName; ?>">
+                	<div class="avatar" style="border:2px solid <?= $user->Color; ?>;">
                     	<img src="<?= $user->avatar; ?>" alt="<?= $user->FirstName . ' ' . $user->LastName; ?>" />
                         <?php if($user->Edit) { ?>
                         	<div class="editButton inAvatar"><a href="javascript:editAvatar('<?= $user->UserID; ?>');"><span>Edit</span></a></div>
@@ -23,6 +23,7 @@
                             <li><span>Company:</span> <?= $user->Company; ?></li>
                             <li><span>Address:</span> <?= $user->CompanyAddress; ?></li>
                             <li><span>Security:</span> <?= $user->AccessName; ?></li>
+                            <li><span>Member Since:</span> <?= date('m/d/Y',strtotime($user->JoinDate)); ?></li>
                         </ul>
                     </div>
                     <div class="fix"></div>
@@ -30,13 +31,15 @@
                 <div class="head contactInfo">
                     <h5 class="iPhone">Contact Information</h5>
                     <?php if($user->Edit) { ?>
-                        <div class="editButton contactInfo"><a href="javascript:editContactInfo('<?= $user->UserID; ?>');"><span>Edit</span></a></div>
+                        <div class="editButton"><a href="javascript:editContactInfo('<?= $user->UserID; ?>');"><span>Edit</span></a></div>
                     <?php } ?>
                 </div>
-                <div class="body alignleft">
+                <div class="body alignleft contactInfo">
                     <ul>
-                        <li><strong>Email:</strong> <?= $user->Emails; ?></li>
-                        <li><strong>Phone:</strong> <?= $user->Phone; ?></li>
+                        <li class="parentLabel"><span>Email:</span></li>
+                        <li class="userContent"><?= $user->Emails; ?></li>
+                        <li class="parentLabel"><span>Phone:</span></li>
+                        <li class="userContent"><?= $user->Phone; ?></li>
                     </ul>
                     <div class="fix"></div>
                 </div>

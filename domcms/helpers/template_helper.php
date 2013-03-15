@@ -15,10 +15,67 @@ function ArrayWithTextIndexToString($array, $type = false) {
 	$myString = '';
 	foreach($array as $key => $value) {
 		$label = ((!$type) ? '<span class="inline_title">' . $key . ':</span>' : '');
-		$val = ((!ValidateEmailAddress($value)) ? $value : '<a style="padding-left:30px;" class="iMail" href="mailto:' . $value . '"><span>' . $value . '</span></a>');
+		$val = ((!ValidateEmailAddress($value)) ? $value : '<a href="mailto:' . $value . '"><span>' . $value . '</span></a>');
 		$myString .= $label . ' ' . $val;
 	}
 	return $myString;
+}
+
+function OrderArrayForTableDisplay($array) {
+		/* 
+		|  We need to reorder our content so we can lay it out in order to view it in a table correctly 
+		|  Create three emty arrays to hold data. 
+			@param => $headers = table headers
+			@param => $contents = table cells
+			@param => $tableorder = both the above arrays rejoined back into one array.
+		*/
+		
+		// Create some empty arrays to hold our data in order.
+		$headers = array();
+		$contents = array();
+		//this array collects the data in order
+		$tableorder = array();
+		
+		//looped through the array passed and push the keys and values into seperate arrays.
+		foreach($array as $key => $value) {
+			array_push($headers,$key);
+			array_push($contents,$value);	
+		}
+		
+		//push the headers to the order bank.
+		foreach($headers as $header) {
+			array_push($tableorder,$header);
+		}
+		
+		//push the contents to the order bank.
+		foreach($contents as $content) {
+			array_push($tableorder,$content);	
+		}
+		
+		/* Create a table out of the array returned from the parser */
+		$table = FALSE;
+		$table .= '<table class="tableStatic" cellspacing="0" cellpadding="0">';
+		$table .= '<thead>';
+		$table .= '	<tr>';
+		
+		foreach($headers as $header) {
+			$table .= '<td style="text-transform:capitalize;width:22%">' . $header . '</td>';	
+		}
+		$table .= '<td>&nbsp;</td>';
+		$table .= '	</tr>';
+		$table .= '</thead>';
+		$table .= '<tbody>';
+		$table .= '<tr>';
+		
+		foreach($contents as $content) {
+			$table .= '<td style="width:22%;">' . $content . '</td>';
+		}
+		$table .= '<td>&nbsp;</td>';
+		$table .= '</tr>';
+		$table .= '</tbody>';
+		$table .= '</table>';
+		
+		return $table;
 }
 
 function ValidateEmailAddress($str) {
