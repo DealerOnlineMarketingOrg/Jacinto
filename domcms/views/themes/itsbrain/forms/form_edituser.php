@@ -2,7 +2,7 @@
     <div class="title"><h5>Admin</h5></div>
     <?php notifyError(); ?>
     <!-- Form begins -->
-    <?=  form_open('/admin/form_processor/users/edit',array('id'=>'usualValidate','class'=>'mainForm','name'=>'edit')); ?>
+    <?=  form_open('/users/form_processor/users/edit',array('id'=>'usualValidate','class'=>'mainForm','name'=>'edit')); ?>
 
         <!-- Input text fields -->
         <fieldset>
@@ -33,7 +33,7 @@
                     <div class="formRight"><?=  form_input(array('class'=>'required validate[required,custom[email]]','name'=>'PersonalEmailAddress','id'=>'email','value'=>((isset($user->Email['home'])) ? $user->Email['home'] : ''))); ?></div><div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
-                    <label>Work Email</label>
+                    <label><span class="req">*</span> Work Email</label>
                     <div class="formRight">
 						<?= form_input(array('class'=>'required validate[custom[email]]','name'=>'WorkEmailAddress','id'=>'email','value'=>((isset($user->Email['work'])) ? $user->Email['work'] : ''))); ?>
                     </div>

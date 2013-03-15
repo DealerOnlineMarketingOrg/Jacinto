@@ -8,7 +8,7 @@
     <?php notifyError(); ?>
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
-    <?php echo  form_open('/admin/users/form_processor/users/add',array('id'=>'valid','class'=>'mainForm','name'=>'AddUser')); ?>
+    <?php echo  form_open('/users/form_processor/users/add',array('id'=>'valid','class'=>'mainForm','name'=>'AddUser')); ?>
 
         <!-- Input text fields -->
         <fieldset>
@@ -35,14 +35,14 @@
                 </div>
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Username</label>
-                    <div class="formRight"><?php echo  form_input(array('class'=>'required validate[required,custom[email]]','name'=>'Username','id'=>'username')); ?></div><div class="fix"></div>
+                    <div class="formRight"><?php echo  form_input(array('class'=>'required validate[required]','name'=>'Username','id'=>'username')); ?></div><div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Personal Email</label>
                     <div class="formRight"><?php echo  form_input(array('class'=>'required validate[required,custom[email]]','name'=>'PersonalEmailAddress','id'=>'personalEmail')); ?></div><div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
-                    <label>Work Email</label>
+                    <label><span class="req">*</span> Work Email</label>
                     <div class="formRight"><?php echo  form_input(array('class'=>'required validate[custom[email]]','name'=>'WorkEmailAddress','id'=>'workEmail')); ?></div><div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
@@ -89,6 +89,20 @@
                             <option value="4">Client Admin</option>
                             <option value="5">Manager</option>
                             <option value="6">User</option>
+                        </select>
+                    </div>
+                    <div class="fix"></div>
+                </div>
+                <div class="rowElem noborder">
+                    <label>Team<span class="req">*</span></label>
+                    <div class="formRight">
+                        <select id="team" class="validate[required]" name="team">
+                            <option value="">Choose a team...</option>
+                            <?php
+								$results = $this->utilities->getTags();
+								foreach ($results as $row)
+									echo '<option value="' . $row->TagID . '" ' . (($user->TagID == $row->TagID) ? 'selected="selected"' : '') . '>' . $row->TagName . '</option>';
+							?>
                         </select>
                     </div>
                     <div class="fix"></div>

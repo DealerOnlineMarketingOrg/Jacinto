@@ -1,16 +1,4 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-	// Top-level exceptions handler. Catches all uncaught exceptions
-	//  for purpose of processing with error routines below.
-	function topExceptionHandler($exception) {
-		throwError(newError(
-			$exception->getFile(),
-			-2,
-			$exception->getMessage(),
-			array(),
-			$exception->getLine(),
-			$exception->getTraceAsString()));
-	}
 	
 	// Created a custom error and returns it. Can be used with throwError.
 	// Page: the name of the page or file that produced/catches the error

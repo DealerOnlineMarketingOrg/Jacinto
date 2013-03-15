@@ -29,13 +29,12 @@ class DOM_Controller extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
+		//load custom error handling
+		//set_exception_handler('topExceptionHandler');
+
 		//force secure content
 		$this->load->helper('securecontent');
 		$protocol = get_protocol();
-		
-		//load custom error handling
-		$this->load->helper('err_helper');
-		set_exception_handler('topExceptionHandler');
 		
 		if((ENVIRONMENT == 'production') AND ($protocol != 'https')) {
 			redirect('https://content.dealeronlinemarketing.com','refresh');
@@ -670,7 +669,8 @@ class DOM_Controller extends CI_Controller {
                         $created = date(FULL_MILITARY_DATETIME);
                         
                         $usersTable = array(
-                          'USER_Name'               => $this->input->post('Username')  
+                          'USER_Name' => $this->input->post('Username'),
+						  'Team' => $this->input->post('team')
                         );
                         
                         $addUser = $this->members->addUsers($usersTable);
@@ -724,7 +724,7 @@ class DOM_Controller extends CI_Controller {
 								$addUserInfo = $this->members->addUserInfo($userInfoTable);
 								
                                 if($addUserInfo) {
-                                    $msg   = 'Dear ' . $first_name . ' ' . $last_name . ', <br> You have been added to the DOM CMS. Your password is ' . $generated_password . ' and your username is ' . $username . '. Go here and login <a href="http://content.dealeronlinemarketing.com">Go To Dashboard</a>';
+                                    $msg   = 'Dear ' . $first_name . ' ' . $last_name . ', <br>You have been added to the DOM CMS.<br>Your password is ' . $generated_password . ' and your username is ' . $username . '.<br>Go here and login <a href="http://content.dealeronlinemarketing.com">Go To Dashboard</a>';
                                     $email = $this->members->email_results($username, 'You\'ve been added to the DOM CMS!', $msg);
                                 }
                            }

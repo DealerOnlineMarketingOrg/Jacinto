@@ -89,6 +89,6 @@ $route['beta/update']					= 'updates/update_change';
 $route['add_release_change']			= 'updates/add';
 
 $route['default_controller']            = "admin/dashboard";
-$route['404_override'] 					= 'errors/file_not_found';
+//$route['404_override'] 					= 'errors/file_not_found';
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
