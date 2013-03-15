@@ -19,7 +19,7 @@
                 	<div style="width:1;float:right;vertical-align:middle">
                         <input ID="excel" class="greyishBtn" type="button" value="Excel" />
                         <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
-                        <input ID="test" class="greyishBtn" type="button" value="Test" />
+                        <!-- <input ID="test" class="greyishBtn" type="button" value="Test" /> -->
                     </div>
                 </div>
                 <div class="rowElem noborder">
