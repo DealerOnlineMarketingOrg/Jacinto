@@ -78,7 +78,7 @@
 			});
 		}
 		function saveDataURL(dataURL) {
-			var fileName = "assets/download/img.png";
+			var fileName = "domcms/cache/img.png";
 			var imgData = { data: dataURL, destPath: fileName }
 			$.ajax({
 				type: 'POST',
