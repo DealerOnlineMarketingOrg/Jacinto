@@ -46,7 +46,7 @@
                 <div class="head">
                 	<h5 class="iRobot">Module Access</h5>
                     <?php if($admin['AccessLevel'] >= 600000) { ?>
-                        <div class="editButton contactInfo"><a href="javascript:editContactInfo('<?= $user->UserID; ?>');"><span>Edit</span></a></div>
+                        <div class="editButton contactInfo"><a href="javascript:editUserModules('<?= $user->UserID; ?>');"><span>Edit</span></a></div>
                     <?php } ?>
                 </div>
                 <div class="body alignleft modList">
@@ -68,7 +68,11 @@
         </div>
     </div>
 </div>
+<div id="editInfo"></div>
+<div id="editContactInfo"></div>
+<div id="editUserModules"></div>
 <script type="text/javascript">
+
 	function editAvatar(id) {
 		jQuery(".dialog-message").dialog({
 			autoOpen: true,
@@ -80,6 +84,18 @@
 			}
 		});
 	}
+	
+	function editInfo(id) {
+		alert('edit users information');
+	}
+	function editContactInfo(id) {
+		alert('edit users contact info');
+	}
+	function editUserModules(id) {
+		alert('edit users module access');
+	}
+	
+	
 	jQuery('div.avatar').hover(function() {
 		jQuery(this).find('.editButton').slideDown('fast');
 	},function() {

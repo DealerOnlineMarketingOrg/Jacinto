@@ -79,9 +79,10 @@ function OrderArrayForTableDisplay($array) {
 }
 
 function ModulesToEvenlyDesignedTable($mods) {
-	$table = '<table class="tableStatic" cellpadding="0" cellspacing="0" width="100%">';
+	$table = '<table class="tableStatic" cellpadding="0" cellspacing="0" width="100%" style="margin-top:-1px;">';
 			$cols = 7;
 			$i = 1;
+			$count = 0;
 			foreach($mods as $module) {
 				// start the table row;
 				if($i == 1) {$table .= '<tr>';}
@@ -91,12 +92,22 @@ function ModulesToEvenlyDesignedTable($mods) {
 					$table .= '<td>' . $module->MODULE_Title . '</td>';
 					// increment the count so we know when to start a new row
 					$i++;
+					$count++;
+					if($count == count($mods)) {
+						if($i < $cols) {
+							$cellAdd = $cols - $i;
+							for($c = 0; $c < $cellAdd; $c++) {
+								$table .= '<td>&nbsp;</td>';	
+							}
+						}
+					}
 				}
 				//end the row and start the count over to start a new row
 				if($i == $cols) {
 					$table .= '</tr>';
 					$i = 1;
 				}
+				
 			} 
 	$table .= '</table>';
 	echo $table;
@@ -176,7 +187,11 @@ function breadcrumb($replacement = false) {
 			if($i >= count($uri)) {
 				$link .= '<li class="lastB" style="text-transform:capitalize">'. $section . '</li>';
 			}else {
-				$link .= '<li style="text-transform:capitalize"><a href="' . $prep_link . '">' . $section . '</a></li>';
+				if($section != 'profile') {
+					$link .= '<li style="text-transform:capitalize"><a href="' . $prep_link . '">' . $section . '</a></li>';
+				}else {
+					$link .= '<li style="text-transform:capitalize"><a href="' . base_url() . 'users">Users</a></li>';	
+				}
 			}
 		}
 		$i++;
