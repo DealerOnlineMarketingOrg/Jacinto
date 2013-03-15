@@ -41,15 +41,7 @@ class Profile extends DOM_Controller {
 		$user->Phone 			= OrderArrayForTableDisplay(mod_parser($user->Phones));
 		$user->UserModules 		= ParseModulesInReadableArray($user->Modules);
 		
-		$modules = array();
 		
-		foreach($user->UserModules as $module) {
-			if($module->MODULE_Active) {
-				array_push($modules,$module);	
-			}
-		}
-		
-		$user->UserModules = $modules;		
 		$msg = (($msg) ? $msg : FALSE);
 		$data = array(
 			'user' => $user,

@@ -59,7 +59,7 @@ function OrderArrayForTableDisplay($array) {
 		$table .= '	<tr>';
 		
 		foreach($headers as $header) {
-			$table .= '<td style="text-transform:capitalize;width:22%">' . $header . '</td>';	
+			$table .= '<td style="text-transform:capitalize;width:22%;text-align:left;padding-left:10px;font-weight:bold;color:#b55d5c">' . $header . '</td>';	
 		}
 		$table .= '<td>&nbsp;</td>';
 		$table .= '	</tr>';
@@ -76,6 +76,30 @@ function OrderArrayForTableDisplay($array) {
 		$table .= '</table>';
 		
 		return $table;
+}
+
+function ModulesToEvenlyDesignedTable($mods) {
+	$table = '<table class="tableStatic" cellpadding="0" cellspacing="0" width="100%">';
+			$cols = 7;
+			$i = 1;
+			foreach($mods as $module) {
+				// start the table row;
+				if($i == 1) {$table .= '<tr>';}
+				//if the module is active show it, if not dont
+				if($module->MODULE_Active == 1 AND strtotime($module->MODULE_Created) <= strtotime(date('Y-m-d H:i:s'))) {
+					// the table will always have 7 columns, even if the modules only have one value
+					$table .= '<td>' . $module->MODULE_Title . '</td>';
+					// increment the count so we know when to start a new row
+					$i++;
+				}
+				//end the row and start the count over to start a new row
+				if($i == $cols) {
+					$table .= '</tr>';
+					$i = 1;
+				}
+			} 
+	$table .= '</table>';
+	echo $table;
 }
 
 function ValidateEmailAddress($str) {
@@ -100,7 +124,18 @@ function ValidatePhoneNumber($num) {
 function ParseModulesInReadableArray($modString) {
 	$ci =& get_instance();
 	$ci->load->model('members');
-	return $ci->members->UserModules(mod_parser($modString));
+	$mods = $ci->members->UserModules(mod_parser($modString));
+	
+	$modules = array();
+		
+	foreach($mods as $module) {
+		if($module->MODULE_Active) {
+			array_push($modules,$module);	
+		}
+	}
+		
+	return $modules;		
+
 }
 
 function getLiveChangesCount() {

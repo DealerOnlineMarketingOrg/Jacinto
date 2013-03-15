@@ -49,12 +49,8 @@
                         <div class="editButton contactInfo"><a href="javascript:editContactInfo('<?= $user->UserID; ?>');"><span>Edit</span></a></div>
                     <?php } ?>
                 </div>
-                <div class="body alignleft">
-                	<ul class="modList">
-                    	<? foreach($user->UserModules as $module) {?>
-							<li><?= $module->MODULE_Title; ?></li>
-						<? } ?>
-                    </ul>
+                <div class="body alignleft modList">
+                	<?php ModulesToEvenlyDesignedTable($user->UserModules); ?>
                     <div class="fix"></div>
                 </div>
             </div>

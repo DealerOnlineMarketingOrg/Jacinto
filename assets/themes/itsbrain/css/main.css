@@ -543,6 +543,7 @@ div.contactInfo ul li.parentLabel {float:left;width:175px;height:52px;text-align
 div.contactInfo ul li.userContent {margin-left:175px;}
 div.contactInfo ul li.userContent table.tableStatic {border-top:1px solid #d5d5d5;width:99.95%;}
 div.contactInfo ul li.userContent table .head{color:#b55f5c;}
+div.contactInfo ul li:nth-child(2) table.tableStatic {margin-top:-1px;}
 /** Hide jGrowl when printing **/
 @media print { div.jGrowl { display: none; } }
 /* ===== Page scrolling ===== */
