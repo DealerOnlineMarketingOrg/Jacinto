@@ -45,7 +45,18 @@
 | the active record class
 */
 
-$active_group = ENVIRONMENT != 'production' ? ENVIRONMENT != 'testing' ? 'dev' : 'test' : 'prod';
+switch(ENVIRONMENT) {
+	case 'production' :
+		$active_group = 'prod';
+	break;
+	case 'testing':
+		$active_group = 'test';
+	break;	
+	default:
+		$active_group = 'dev';
+	break;
+}
+
 $active_record = TRUE;
 
 $db['prod']['hostname'] = 'mysql51-021.wc1.ord1.stabletransit.com';

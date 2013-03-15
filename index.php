@@ -69,7 +69,18 @@ if (defined('ENVIRONMENT')) {
  * as this file.
  *
  */
-	$system_path = ENVIRONMENT != 'testing' && ENVIRONMENT != 'production' ? '/home/lbs9000/public_html/lib/CI/2.1.3/system' : '/mnt/stor08-wc1-ord1/718973/DOMsystem';
+ 	
+switch(ENVIRONMENT) {
+	case 'production' :
+		$system_path = '/mnt/stor08-wc1-ord1/718973/DOMsystem';
+	break;
+	case 'testing' :
+		$system_path = '/mnt/stor08-wc1-ord1/718973/DOMsystem';
+	break;
+	default:
+		$system_path = '/home/lbs9000/public_html/lib/CI/2.1.3/system';
+	break;	
+}
 
 /*
  *---------------------------------------------------------------
