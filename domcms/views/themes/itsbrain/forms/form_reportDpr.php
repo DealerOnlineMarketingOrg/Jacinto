@@ -100,13 +100,13 @@
 				url: "<?= base_url(); ?>converter", 
 				data: form_vars,
 				success:function(data) {
-					//alert(data);
+					alert(data);
 					//e.preventDefault();  //stop the browser from following
 					//window.location.href = filePath;
 				},
-				//error:function(XMLHttpRequest, textStatus, errorThrown) {
-				//	alert(errorThrown);	
-				//}
+				error:function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(errorThrown);	
+				}
 			});
 			/*.done(function(data) { alert("success: " + data); })
 			.fail(function(xhr, textStatus) { alert("error " + xhr.responseText); })
