@@ -15,67 +15,65 @@
         <!-- Input text fields -->
         <fieldset>
             <div class="widget first">
-                <div class="head"><h5 class="iList">Add DPR Report
-                    </h5></div>
-                <div class="rowElem noborder">
-                <!-- For production code, this should be if ($this->user['DropdownDefault']->SelectedClient == 1) -->
-                <?php if ($this->user['DropdownDefault']->SelectedClient < 0)
-                echo <<<EOA
-                <div "display:inline"><label>No valid customer is selected. Please select a customer to input DPR leads.</label></div>
-                EOA;
-                else echo <<<EOB
-                <label><span class="req">*</span>Provider</label>
-                <div class="formRight noSearch">
-                <select id="providers" name="providers" class="msSelect chzn-select required validate[required]" placeholder="Select A Lead Provider...">
-                <option value="">Select A Lead Provider</option>
-                {$providers}
-                <option value="AddCustom">Other</option>
-                </select><br />
-                <div>
-                <label data-binding="providers" style="display:none">New provider:</label>
-                <input id="customProvider" name="customProvider" data-binding="providers" placeholder="Enter new provider" type="text" style="width:200px;display:none" />
-                </div><br />
-                <div>
-                <label data-binding="providers" style="display:none">New provider URL:</label>
-                <input id="customProviderURL" name="customProviderURL" data-binding="providers" placeholder="Enter new provider URL" type="text" style="width:200px;display:none" />
-                </div>
-                </div>
-                <div class="fix"></div>
-                </div>
-                <div class="rowElem noborder">
-                <label>Agency Description</label>
-                <div class="formRight noSearch">
-                <select id="agencies" name="agencies" class="msSelect chzn-select required validate[required]" placeholder="Select A Lead Type...">
-                <option value="">Select A Lead Type</option>
-                {$agencies}
-                <option value="AddCustom">Other</option>
-                </select><br />
-                <div>
-                <label data-binding="agencies" style="display:none">New agency:</label>
-                <input id="customAgency" name="customAgency" data-binding="agencies" placeholder="Enter new agency" type="text" style="width:200px;display:none" />
-                </div>
-                </div>
-                <div class="fix"></div>
-                </div>
-                <div class="rowElem noborder">
-                <label>Date</label>
-                <div class="formRight onlyAlpha">
-                <input type="text" class="required validate[required] datepicker" id="date" name="date" placeholder="" max-length="12" />
-                </div>
-                <div class="fix"></div>
-                </div>
-                <div class="rowElem noborder">
-                <label>Total</label>
-                <div class="formRight">
-                <input type="text" class="required validate[required]" id="total" name="total" placeholder="The total lead count" max-length="10" />
-                </div>
-                <div class="fix"></div>
-                </div>
-                <div class="submitForm">
-                <input type="reset" value="Reset" class="basicBtn" />
-                <input type="submit" value="submit" class="redBtn" />
-                </div>
-                EOB;
+                <?php if ($this->user['DropdownDefault']->SelectedClient == 1)
+					echo <<<EOA
+							<div class="head"><h5 class="iList">Add DPR Lead: <span style="color:red">No dealer is selected. Please select a dealer to input DPR leads.</span></h5></div>
+EOA;
+					else echo <<<EOB
+			                <div class="head"><h5 class="iList">Add DPR Lead</h5></div>
+                			<div class="rowElem noborder">
+								<label><span class="req">*</span>Provider</label>
+								<div class="formRight noSearch">
+									<select id="providers" name="providers" class="msSelect chzn-select required validate[required]" placeholder="Select A Lead Provider...">
+										<option value="">Select A Lead Provider</option>
+										{$providers}
+										<option value="AddCustom">Other</option>
+									</select><br />
+									<div>
+										<label data-binding="providers" style="display:none">New provider:</label>
+										<input id="customProvider" name="customProvider" data-binding="providers" placeholder="Enter new provider" type="text" style="width:200px;display:none" />
+									</div><br />
+									<div>
+										<label data-binding="providers" style="display:none">New provider URL:</label>
+										<input id="customProviderURL" name="customProviderURL" data-binding="providers" placeholder="Enter new provider URL" type="text" style="width:200px;display:none" />
+									</div>
+								</div>
+								<div class="fix"></div>
+							</div>
+							<div class="rowElem noborder">
+								<label>Agency Description</label>
+								<div class="formRight noSearch">
+									<select id="agencies" name="agencies" class="msSelect chzn-select required validate[required]" placeholder="Select A Lead Type...">
+										<option value="">Select A Lead Type</option>
+										{$agencies}
+										<option value="AddCustom">Other</option>
+									</select><br />
+									<div>
+										<label data-binding="agencies" style="display:none">New agency:</label>
+										<input id="customAgency" name="customAgency" data-binding="agencies" placeholder="Enter new agency" type="text" style="width:200px;display:none" />
+									</div>
+								</div>
+								<div class="fix"></div>
+							</div>
+							<div class="rowElem noborder">
+								<label>Date</label>
+								<div class="formRight onlyAlpha">
+									<input type="text" class="required validate[required] datepicker" id="date" name="date" placeholder="" max-length="12" />
+								</div>
+								<div class="fix"></div>
+							</div>
+							<div class="rowElem noborder">
+								<label>Total</label>
+								<div class="formRight">
+									<input type="text" class="required validate[required]" id="total" name="total" placeholder="The total lead count" max-length="10" />
+								</div>
+								<div class="fix"></div>
+							</div>
+							<div class="submitForm">
+								<input type="reset" value="Reset" class="basicBtn" />
+								<input type="submit" value="submit" class="redBtn" />
+							</div>
+EOB;
                 ?>
                 <div class="fix"></div>
             </div>

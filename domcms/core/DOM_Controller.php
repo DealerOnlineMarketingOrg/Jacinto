@@ -735,7 +735,7 @@ class DOM_Controller extends CI_Controller {
 											($addUserInfo) ? $msg
 														   : 'Something went wrong. Please try again or contact your admin.',
 											0, ''));
-						redirect('/admin/users/add','refresh');
+						redirect('/admin/users','refresh');
 
                     break;
                     case "edit":
@@ -805,7 +805,7 @@ class DOM_Controller extends CI_Controller {
 											($update) ? 'Your User was edited successfully!'
 													  : 'Something went wrong. Please try again or contact your admin.',
 											0, ''));
-						redirect('/admin/users/edit','refresh');
+						redirect('/admin/users','refresh');
                         
                     break;
                 endswitch;

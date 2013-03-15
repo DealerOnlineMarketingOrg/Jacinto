@@ -163,11 +163,11 @@
 			}
 			
 			// For testing
-			/*
+			
 			$file_name = 'domcms/cache/dprTest_' . date('m-d-Y') . '.xlsx';
 			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 			$objWriter->save($file_name);
-			*/
+			
 			
 			// Retrieve data back from worksheet, in calculated form,
 			//  and merge data back into report. Data will have the

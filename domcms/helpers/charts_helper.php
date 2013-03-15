@@ -70,7 +70,7 @@
 		//   javascript snippet needed. Script is functionless. It can be
 		//   placed in an anonymous function, or under a function name.
 		function generatePieChart($report, $report_id, &$report_element_start, &$javascript) {
-			$report_html = '<div id="pieChart" class="pieWidget" style="height:240px"></div><div id="pieLegend" style="width:150px"></div>';
+			$report_html = '<div id="pieChart" class="pieWidget" style="height:220px"></div><div id="pieLegend" style="width:150px"></div>';
 			
 			// Create series arrays.
 			$data = '[';
