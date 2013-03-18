@@ -9,6 +9,10 @@ class Members extends CI_Model {
         $this->load->helper('query');
     }
 	
+	public function logGoogleToken($token) {
+		$sql = 'SELECT ';
+	}
+	
 	public function avatar_update($user_id,$filename) {
 		$data = array(
 			'USER_Avatar' => $filename
