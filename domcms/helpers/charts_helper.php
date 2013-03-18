@@ -171,9 +171,9 @@
 								$data = numberToString($data, 2, TRUE);
 							$report_html .= "<td id='" . $id . "' style='" . $style . "'>" . $data . "</td>";
 						}
+						$report_html .= "</tr>";
 					}
 				}
-				$report_html .= "</tr>";
 			}
 			$report_html .= "</table>";
 			

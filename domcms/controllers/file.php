@@ -11,19 +11,18 @@ if (!defined('BASEPATH'))
 		
 		// $data is in the form:
 		// data [ data, destPath ]
+		// Returns: true if successful, false if not.
 		public function saveDataURL() {
 			$this->load->helper('err_helper');
 			$form = $this->input->post();
-			
-			echo 'we got this far';
 			
 			$fwriter = fopen($form['destPath'], 'w');
 			$img = str_replace('image/png;base64,', '', $form['data']);
 			$img = urldecode($img);
 			if (!fwrite($fwriter, base64_decode($img)))
-				echo 'Something went wrong with file save.';
+				echo false;
 			else
-				echo 'Save was good.';
+				echo true;
 			fclose($fwriter);
 		}
 		

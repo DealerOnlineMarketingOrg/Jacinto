@@ -149,7 +149,9 @@
 	// This is done in the table markup, since the worksheet represents the table.
 	// 
 	function SetMarkup(&$worksheet, $globals, $col, $row, $nodeName, $attrName, $attrValue) {
-		$this->load->helper('phpext_helper');
+		$ci =& get_instance();
+		
+		$ci->load->helper('phpext_helper');
 		
 		// Get style markups.
 		$defaultStyleArray = array();
@@ -252,11 +254,34 @@
 		
 		// Set style markup.
 		if (count($defaultStyleArray) > 0) {
-			print_object($defaultStyleArray);
 			$worksheet->getDefaultStyle()->applyFromArray($defaultStyleArray);
 		}
 		if (count($styleArray) > 0)
 			$worksheet->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
+	}
+	
+	function setImage() {
+		$gdImage = imagecreatefromjpeg('images/officelogo.jpg');
+		// Add a drawing to the worksheetecho date('H:i:s') . " Add a drawing to the worksheet\n";
+		$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+		$objDrawing->setName('Sample image');$objDrawing->setDescription('Sample image');
+		$objDrawing->setImageResource($gdImage);
+		$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
+		$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+		$objDrawing->setHeight(150);
+		
+		or
+		
+		$objDrawing = new PHPExcel_Worksheet_Drawing();
+		$objDrawing->setName('Paid');
+		$objDrawing->setDescription('Paid');
+		$objDrawing->setPath('./images/paid.png');
+		$objDrawing->setCoordinates('B15');
+		$objDrawing->setOffsetX(110);
+		$objDrawing->setRotation(25);
+		$objDrawing->getShadow()->setVisible(true);
+		$objDrawing->getShadow()->setDirection(45);
+		$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
 	}
 	
 	// Creates a new worksheet for a table.
@@ -309,6 +334,10 @@
 					// Data node.
 					$worksheet->setCellValueByColumnAndRow($col, $row, $node->nodeValue);
 				}
+				break;
+			case 'img':
+				// This is an image. src will contain the path.
+				setImage();
 				break;
 			default:
 				// Other node. Ignore.

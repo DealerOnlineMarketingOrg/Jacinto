@@ -40,7 +40,7 @@
 			$user_id = 'DPR Report';
 			$file_name = 'domcms/cache/dprReport_' . $user_id . '_' . date('m-d-Y') . '.xlsx';
 			$html = '<head><body>' . $table . '</body></head>';
-			$objPHPExcel = HTMLToobjPHPExcel($user_id, $html, 0, TRUE);
+			$objPHPExcel = HTMLToobjPHPExcel($user_id, $html);
 			CreateExcel($file_name, $objPHPExcel, TRUE);
 			
 			echo $file_name;
@@ -50,8 +50,8 @@
 			$user_id = 'DPR Report';
 			$file_name = 'domcms/cache/dprReport_' . $user_id . '_' . date('m-d-Y') . '.pdf';
 			$html = '<head><body>' . $table . '</body></head>';
-			$objPHPExcel = HTMLToobjPHPExcel($user_id, $html, 0, TRUE);
-			CreatePDF($file_name, $objPHPExcel, TRUE);
+			$objPHPExcel = HTMLToobjPHPExcel($user_id, $html);
+			CreatePDF($file_name, $objPHPExcel);
 			
 			echo $file_name;
 		}
