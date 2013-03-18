@@ -257,31 +257,19 @@
 			$worksheet->getDefaultStyle()->applyFromArray($defaultStyleArray);
 		}
 		if (count($styleArray) > 0)
-			$worksheet->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
+			$worksheet->getStyle($col.$row)->applyFromArray($styleArray);
 	}
 	
-	function setImage() {
-		$gdImage = imagecreatefromjpeg('images/officelogo.jpg');
-		// Add a drawing to the worksheetecho date('H:i:s') . " Add a drawing to the worksheet\n";
-		$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
-		$objDrawing->setName('Sample image');$objDrawing->setDescription('Sample image');
-		$objDrawing->setImageResource($gdImage);
-		$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
-		$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
-		$objDrawing->setHeight(150);
-		
-		or
-		
+	function setImage($worksheet, $source, $col, $row, $offset, $width, $height) {
 		$objDrawing = new PHPExcel_Worksheet_Drawing();
-		$objDrawing->setName('Paid');
-		$objDrawing->setDescription('Paid');
-		$objDrawing->setPath('./images/paid.png');
-		$objDrawing->setCoordinates('B15');
-		$objDrawing->setOffsetX(110);
-		$objDrawing->setRotation(25);
-		$objDrawing->getShadow()->setVisible(true);
-		$objDrawing->getShadow()->setDirection(45);
-		$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+		$objDrawing->setName('Report');
+		$objDrawing->setDescription('Report');
+		$objDrawing->setPath($source);
+		$objDrawing->setWidth($width);
+		$objDrawing->setHeight($height);
+		$objDrawing->setCoordinates($col.$row);
+		$objDrawing->setOffsetX($offset);
+		$objDrawing->setWorksheet($worksheet);
 	}
 	
 	// Creates a new worksheet for a table.
@@ -303,8 +291,11 @@
 	
 	// isMarkup = true, only cell/data markup is applied.
 	// isMarkup = false, data is set.
-	function ProcessTable(&$objPHPExcel, &$worksheet, &$col, &$row, $node, $isMarkup) {
+	function ProcessTable(&$objPHPExcel, &$worksheet, &$col, &$row, $node, &$dataLayout, $isMarkup) {
 		// Process the different table tags.
+		// Change cols and rows after processing this cell.
+		$newCol = $col;
+		$newRow = $row;
 		switch (strtolower($node->nodeName)) {
 			case 'table':
 				// New table. Create new worksheet from it.
@@ -321,23 +312,54 @@
 			case 'tr':
 				// New row.
 				$row++;
-				$col = -1;
+				$col = '';
 				break;
 			case 'th':
 			case 'td':
 				// New column.
-				$col++;
+				if ($col == '')
+					$col = 'A';
+				else
+					$col++;
 				break;
 			case '#text':
 				if (!$isMarkup) {
 					// Apply only if not markup.
 					// Data node.
-					$worksheet->setCellValueByColumnAndRow($col, $row, $node->nodeValue);
+					$worksheet->setCellValue($col.$row, $node->nodeValue);
+					// Get text width and set dataLayout for this cell.
+					// Retrieve the value back in case excel modified it for any reason.
+					// Width calculation from http://phpexcel.codeplex.com/workitem/10375
+					$val = $worksheet->getCell($col.$row)->getValue();
+					$fontSize = $worksheet->getStyle($col.$row)->getFont()->getSize();
+					$width = ((strlen($val) * $fontSize + 5) / $fontSize * 256 ) / 256;
+					// Height is set automatically.
+					$dataLayout[$col][$row]['width'] = (int)$width;
+					$dataLayout[$col][$row]['height'] = -1;
+					// Set offset for possible floating image in the cell right after the width.
+					$dataLayout[$col][$row]['offset'] = ((int)$width)+1;
 				}
 				break;
 			case 'img':
 				// This is an image. src will contain the path.
-				setImage();
+				if (!$isMarkup) {
+					$path = $node->getAttribute('src');
+					// Set image with offset.
+					if (isset($dataLayout[$col][$row]))
+						$offset = $dataLayout[$col][$row]['offset'];
+					else
+						$offset = 0;
+					// Get image width and height and use for the layout.
+					list($width, $height) = getimagesize($path);
+					setImage($worksheet, $path, $col, $row, $offset, $width, $height);
+					// The width should be auto-sized (for now).
+					// Width and height are in pixels. Excel stores them in points though.
+					//  Conversion needed.
+					$dataLayout[$col][$row]['width'] = -1;
+					$dataLayout[$col][$row]['height'] = $height * 72 / 96;
+					// Determine next offset to float next image to the right.
+					$dataLayout[$col][$row]['offset'] = $offset + $width;
+				}
 				break;
 			default:
 				// Other node. Ignore.
@@ -366,7 +388,54 @@
 		if ($node->hasChildNodes()) {
 			$children = $node->childNodes;
 			foreach ($children as $child)
-				ProcessTable($objPHPExcel, $worksheet, $col, $row, $child, $isMarkup);
+				ProcessTable($objPHPExcel, $worksheet, $col, $row, $child, $dataLayout, $isMarkup);
+		}
+	}
+	
+	// Sets the column widths and row heights from the data layout.
+	function SetCellSizes(&$worksheet, $dataLayout) {
+		// The worksheet cols and rows.
+		$wsCols = array();
+		$wsRows = array();
+		
+		// Go through the layout and determine column and row sizes.
+		// A specified width or height size will override the auto-size for the respective
+		//  column and row.
+		foreach ($dataLayout as $col => $rows) {
+			foreach ($rows as $row => $cell) {
+				// Store cell width.
+				if (!isset($wsCols[$col])) {
+					// We don't have a width yet for this column.
+					$wsCols[$col] = $cell['width'];
+				} else {
+					// We already have a width. See which is bigger.
+					if ($cell['width'] > $wsCols[$col]) {
+						$wsCols[$col] = $cell['width'];
+					}
+				}
+				// Store cell height.
+				if (!isset($wsRows[$row])) {
+					// We don't have a height yet for this row.
+					$wsRows[$row] = $cell['height'];
+				} else {
+					// We already have a height. See which is bigger.
+					if ($cell['height'] > $wsRows[$row]) {
+						$wsRows[$row] = $cell['height'];
+					}
+				}
+			}
+		}
+		
+		// Set the width of each column if not auto.
+		foreach ($wsCols as $col => $width) {
+			if ($width != -1)
+				// Pad width a bit for font compensation.
+				$worksheet->getColumnDimension($col)->setWidth((int)($width * 1.25));
+		}
+		// Set the height of each row if not auto.
+		foreach ($wsRows as $row => $height) {
+			if ($height != -1)
+				$worksheet->getRowDimension($row)->setRowHeight($height);
 		}
 	}
 	
@@ -374,36 +443,37 @@
 	function ProcessHTML(&$objPHPExcel, $dom) {
 		$tables = $dom->getElementsByTagName('table');
 		foreach ($tables as $table) {
+			// dataLayout is a 2-D array representing the
+			//  size layout of the rows and columns.
+			// Structure is = [colA] {row1{width:,height:,offset:},row2{width:,height:,offset:},..}
+			// Rows without data are left out of the layout.
+			// dataLayout is filled in by ProcessTable on data input (it's skipped
+			//  on markup input).
+			// Since markup is always done first, we can trust text-measurements in
+			//  the layout.
+			// A width or height of -1 indicates that it will be set automatically.
+			// Offset is the current starting point of an image when set in the cell.
+			// Multiple images can be placed side-by-side using this, as the offset
+			//  is set at the end of each prior image.
+			$dataLayout = array();
 			// Go through all elements in the tables to
 			//  produce cells in the worksheets.
-			// Columns start at 0. Rows start at 1.
-			// Start off the page so the first new cell
-			//  will land on the first worksheet cell.
-			$col = -1;
+			// Columns start at A. Rows start at 1.
+			// We're starting off the page so the first new data cell will
+			//  start on A1.
+			$col = '';
 			$row = 0;
 			// We'll traverse the table twice.
 			// First we'll do the markup, then we'll do the data.
 			// We do this because when markup is changed in PHPExcel,
 			//  all data is rechecked. This can slow large worksheets down.
-			ProcessTable($objPHPExcel, $worksheet, $col, $row, $table, true);
+			ProcessTable($objPHPExcel, $worksheet, $col, $row, $table, $dataLayout, true);
 			// Reset column and row for data input.
-			$col = -1;
+			$col = '';
 			$row = 0;
-			ProcessTable($objPHPExcel, $worksheet, $col, $row, $table, false);
-			// Calculate and adjust column widths.
-			// Width calculation from http://phpexcel.codeplex.com/workitem/10375
-			$highCol = $worksheet->getHighestColumn();
-			$highRow = $worksheet->getHighestRow();
-			for ($col = 'A'; $col != $highCol; $col++) {
-				$largestWidth = 0;
-				for ($row = '1'; $row != $highRow; $row++) {
-					$val = $worksheet->getCell($col.$row)->getValue();
-					$fontSize = $worksheet->getStyleByColumnAndRow($col, $row)->getFont()->getSize();
-					$width = ((strlen($val) * $fontSize + 5) / $fontSize * 256 ) / 256;
-					if ($width > $largestWidth) $largestWidth = $width;
-				}
-				$worksheet->getColumnDimension($col)->setWidth((int)($largestWidth * 1.20));
-			}
+			ProcessTable($objPHPExcel, $worksheet, $col, $row, $table, $dataLayout, false);
+			// Set all the sizes for the columns and rows.
+			SetCellSizes($worksheet, $dataLayout);
 		}
 	}
 	
@@ -438,7 +508,7 @@
 		}
 		
 		// Prepare bare html for use with loadHTML.
-		$htmltable = strip_tags($htmltable, "<table><tr><th><thead><tbody><tfoot><td><br><b><span>");
+		$htmltable = strip_tags($htmltable, "<table><tr><th><thead><tbody><tfoot><td><br><b><span><img><div>");
 		$htmltable = str_replace("<br />", "\n", $htmltable);
 		$htmltable = str_replace("<br/>", "\n", $htmltable);
 		$htmltable = str_replace("<br>", "\n", $htmltable);

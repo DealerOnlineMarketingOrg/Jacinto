@@ -14,19 +14,18 @@
     ?>
 	        <!-- Input text fields -->
         <fieldset>
-            <div class="widget first">
+            <div id="fullReportID" class="widget first">
                 <div class="head"><h5 class="iList">DPR Report</h5>
                 	<div style="width:1;float:right;vertical-align:middle">
                         <input ID="excel" class="greyishBtn" type="button" value="Excel" />
                         <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
-                        <input ID="test" class="greyishBtn" type="button" value="Test" />
                     </div>
                 </div>
                 <div class="rowElem noborder">
                     <!-- Line graph of year -->
                     <div class="widgets">
-                        <div id="lineID" class="left">
-                            <div class="widget"><!-- Pie chart 1 -->
+                        <div class="left">
+                            <div id="lineID" class="widget">
                                 <div class="head"><h5 id="update" class="iGraph">Leads Per Month</h5></div>
                                 <div class="body">
                                 	<? echo $report_lineChart; ?>
@@ -34,8 +33,9 @@
                             </div>
                         </div>
                         
+                        <!-- Pie total overall -->
                         <div class="right">
-                            <div class="widget"><!-- Pie chart 2 -->
+                            <div id="pieID" class="widget">
                                 <div class="head"><h5 class="iChart8">Total Leads</h5></div>
                                 <div class="body">
                                     <? echo $report_pieChart; ?>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="rowElem noborder">
                 	<!-- Provider data lists -->
-                    <div>
+                    <div id="tableID">
                     	<?php echo $report_leads; ?>
                     </div>
                     <div class="fix"></div>
@@ -56,73 +56,99 @@
             </div>
         </fieldset>
     <?php echo  form_close(); ?>
-    <script type="text/javascript">		
+    
+    <script type="text/javascript">
 		$(window).load (function() {
 			plotLineChart();
 			plotPieChart();
 		});
+		
 		function plotLineChart() {<? echo $report_lineChart_script; ?>}
 		function plotPieChart() {<? echo $report_pieChart_script; ?>}
-		$('input#test').click(function() {
-			elementToDataURL('#lineID');
-		});
-		function elementToDataURL(element) {
-			$(element).html2canvas({
-				onrendered: function (canvas) {
-					//Set hidden field's value to image data (base-64 string)
-					dataURL = canvas.toDataURL("image/png");
-					saveDataURL(dataURL);				}
-			});
-			function saveDataURL(dataURL) {
-				var fileName = "assets/downloads/img.png";
-				var imgData = { data: dataURL, destPath: fileName }
-				$.ajax({
-					type: 'POST',
-					url: "<?= base_url(); ?>file/saveDataURL",
-					data: imgData,
-					success:function(ret) {
-						alert(ret);
-					}
-				});
-			}
-			
-			//dataURL = canvasRecord.toDataURL("image/png");
-			//dataURL = dataURL.replace("image/png", "image/octet-stream");
-     		//window.open(dataURL);
-		}
-		
+	
+		// Use base64 encoding if XSS filtering is active, since
+		//  XSS will strip certain tags, like style.
+
 		$('input#excel').click(function() {
-			// base64 encode html since XSS filtering will strip certain
-			//  tags, like style.
+			// Convert charts to images and prepend to report.
+			var report_leads = "<?php echo str_replace('"','\\"',$report_leads); ?>";
+			var lineName = "assets/uploads/lineChart.png";
+			saveHtmlImage("#lineID", lineName);
+			var pieName = "assets/uploads/pieChart.png";
+			saveHtmlImage("#pieID", pieName);
+			// Prepend images into report.
+			// We'll float the images together.
+			var report = report_leads.replace(/(<table[^>]*?>)/i, "$1" +
+				"<tr>" +
+					"<td>" +
+						"<img src=\"" + lineName + "\" />" +
+					"</td>" +
+					"<td></td><td></td><td></td><td></td>" +
+					"<td>" +
+						"<img src=\"" + pieName + "\" />" +
+					"</td>" +
+				"</tr>");
 			var form_vars = {
 				type: "excel",
-				html: "<?php echo str_replace('"','\\"',$report_leads); ?>"
+				file: "assets/uploads/dprReport.xlsx",
+				html: report
 			}
 			$.ajax({
 				type: "post",
 				url: "<?= base_url(); ?>converter",
 				data: form_vars,
 				success:function(ret) {
+					// Do any extra success stuff here.
+					$.fileDownload("<?= base_url(); ?>" + form_vars['file']);
 					alert(ret);
-					//e.preventDefault();  //stop the browser from following
-					//window.location.href = filePath;
 				}
-				//error:function(XMLHttpRequest, textStatus, errorThrown) {
-					//alert(errorThrown);	
-				//}
 			})
-			/*.done(function(data) { alert("success: " + data); })
-			.fail(function(xhr, textStatus) { alert("error " + xhr.responseText); })
-			.always(function() { alert("finished"); });*/
 		});
 		
 		$('input#pdf').click(function() {
+			fullReportName = "assets/uploads/fullReport.png";
+			saveHtmlImage("#fullReportID", fullReportName);
+			// For PDF, we'll be sending the full report as an image.
+			// report only needs one cell for the image.
+			var report = "<div><table><tr><td><img src=\"" + fullReportName + "\" /></td></tr></table></div>";
 			var form_vars = {
 				type: "pdf",
-				html: "<?php echo str_replace('"', '\\"',$report_leads); ?>"
+				file: "assets/uploads/dprReport.pdf",
+				html: report
 			}
-			$.post('/converter', form_vars, function(data) {alert(data);}, "text");
+			$.ajax({
+				type: "post",
+				url: "<?= base_url(); ?>converter",
+				data: form_vars,
+				success:function(ret) {
+					// Do any extra success stuff here.
+					$.fileDownload("<?= base_url(); ?>" + form_vars['file']);
+					alert(ret);
+				}
+			})
 		});
+		
+		function saveDataURL(dataURL, fileName) {
+			var imgData = { data: dataURL, destPath: fileName }
+			$.ajax({
+				type: 'POST',
+				url: "<?= base_url(); ?>file/saveDataURL",
+				data: imgData,
+				success:function(ret) {
+					// Do any extra success stuff here.
+				}
+			});
+		}
+
+		function saveHtmlImage(element, fileName) {		
+			$(element).html2canvas({
+				onrendered: function (canvas) {
+					//Set hidden field's value to image data (base-64 string)
+					dataURL = canvas.toDataURL("image/png");
+					saveDataURL(dataURL, fileName);
+				}
+			});
+		}
 
 	</script>
 </div>

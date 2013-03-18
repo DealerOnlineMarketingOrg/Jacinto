@@ -16,14 +16,13 @@ if (!defined('BASEPATH'))
 			$this->load->helper('err_helper');
 			$form = $this->input->post();
 			
-			$fwriter = fopen($form['destPath'], 'w');
-			$img = str_replace('image/png;base64,', '', $form['data']);
-			$img = urldecode($img);
-			if (!fwrite($fwriter, base64_decode($img)))
-				echo false;
-			else
+			$img = str_replace('data:image/png;base64,', '', $form['data']);
+			$img = str_replace(' ', '+', $img);
+			$img = base64_decode($img);
+			if (file_put_contents($form['destPath'], $img))
 				echo true;
-			fclose($fwriter);
+			else
+				echo false;
 		}
 		
 	}

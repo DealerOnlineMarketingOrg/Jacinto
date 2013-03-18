@@ -11,19 +11,19 @@
 		public function Index() {
 			$form = $this->input->post();
 			if ($form['type'] == 'excel')
-				$this->excel($form['html']);
+				$this->excel($form['html'], $form['file']);
 			if ($form['type'] == 'pdf')
-				$this->pdf($form['html']);
+				$this->pdf($form['html'], $form['file']);
 		}
 		
 		// Excel conversion.
-		private function excel($html) {
-			$this->converters->html_to_excel($html);
+		private function excel($html, $file_name) {
+			$this->converters->html_to_excel($html, $file_name);
 		}
 		
 		// PDF conversion.
-		private function pdf($html) {
-			$this->converters->html_to_pdf($html);
+		private function pdf($html, $file_name) {
+			$this->converters->html_to_pdf($html, $file_name);
 		}
 		
 	}

@@ -67,6 +67,7 @@
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/charts/pie.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/html2canvas/html2canvas.min.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/html2canvas/jquery.plugin.html2canvas.js"></script>
+    <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/jquery.fileDownload.js"></script>
     <?php if(isset($TagCss)) { echo $TagCss; }; ?>  
 </head>
 <body>
