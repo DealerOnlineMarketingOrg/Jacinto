@@ -13,6 +13,7 @@ class Login extends DOM_Controller {
     }
 
     public function index() {
+		require('domcms/libraries/openid.php');
 		$this->load->helper('cookie');
 		$cookie = ((isset($_COOKIE['dom_email'])) ? $_COOKIE['dom_email'] : FALSE);
 		
@@ -27,6 +28,7 @@ class Login extends DOM_Controller {
 				'checkBox' => FALSE
 			);	
 		}
+		
 		$this->LoadTemplate('pages/login',$data);
     }	
 	
