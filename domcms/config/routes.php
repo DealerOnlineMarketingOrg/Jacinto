@@ -36,7 +36,7 @@
 | This route will tell the Router what URI segments to use if those provided
 | in the URL cannot be matched to a valid route.
 |
-*/
+
 /*auth redirects*/
 $route['login'] 						= 'auth/login';
 $route['authenticate'] 					= 'auth/login/authenticate';
@@ -50,6 +50,9 @@ $route['change']						= 'auth/password/change';
 $route['change_password_form']			= 'auth/password/loadChangePasswordForm';
 $route['reset_password_form']			= 'auth/password/loadResetPasswordForm';
 $route['lock_user']						= 'auth/login/breach_warning';
+$route['google_connect']				= 'auth/google/connect';
+$route['google_authenticate']			= 'auth/google/auth';
+$route['example']						= 'auth/google/example';
 
 $route['mysettings']					= 'user/settings';
 $route['profile/avatar/upload']			= 'user/profile/upload_avatar';

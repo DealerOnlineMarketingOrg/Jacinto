@@ -545,6 +545,7 @@ div.contactInfo ul li.userContent table.tableStatic {border-top:1px solid #d5d5d
 div.contactInfo ul li.userContent table .head{color:#b55f5c;}
 div.contactInfo ul li:nth-child(2) table.tableStatic {margin-top:-1px;}
 img.viewBtn{cursor:pointer}
+div#thirdPartyConnect ul li {float:left;margin-top:10px;border:1px solid #d5d5d5;width:150px;height:35px;margin-left:90px;}
 /** Hide jGrowl when printing **/
 @media print { div.jGrowl { display: none; } }
 /* ===== Page scrolling ===== */

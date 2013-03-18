@@ -21,6 +21,12 @@ $config['GapiEmail'] 	= '';
 $config['GapiPass'] 	= '';
 $config['GoogleFonts'] 	= array('Cuprum','Open+Sans+Condensed:300','Open+Sans');
 $config['CityGridPublisher'] = '10000004725';
+/**
+ * Google keys available in the api dashboard. 
+ */
+$config['GoogleClientID'] = '170027429160.apps.googleusercontent.com';
+$config['GoogleClientSecret'] = 'kMAavg_InUyakJwcHolLQsFn';
+$config['GoogleAPIKey'] = 'AIzaSyCPrBMaamOoxDEuwb0Y65mIKdjDQuZX9CY';
 
 /* Enabled features */
 $config['Breadcrumbs'] = true;
