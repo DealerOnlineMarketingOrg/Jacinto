@@ -108,13 +108,11 @@
 		$('input#pdf').click(function() {
 			fullReportName = "assets/uploads/fullReport.png";
 			saveHtmlImage("#fullReportID", fullReportName);
-			// For PDF, we'll be sending the full report as an image.
-			// report only needs one cell for the image.
-			var report = "<div><table><tr><td><img src=\"" + fullReportName + "\" /></td></tr></table></div>";
 			var form_vars = {
 				type: "pdf",
 				file: "assets/uploads/dprReport.pdf",
-				html: report
+				img: fullReportName,
+				scale: .25
 			}
 			$.ajax({
 				type: "post",

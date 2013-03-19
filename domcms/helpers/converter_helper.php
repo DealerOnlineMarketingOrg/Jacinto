@@ -16,6 +16,8 @@
 	}
 	
 	/*	$file_name : The path and name of the PDF file being created.
+		Creates a PDF from a PHPExcel object.
+		Used for converting html code to pdf.
 	*/
 	function CreatePDF($file_name, &$objPHPExcel) {
 		require_once 'domcms/libraries/PHPExcel.php';
@@ -25,6 +27,35 @@
 		$objWriter->setPreCalculateFormulas(false);
 		$objWriter->writeAllSheets();
 		$objWriter->save($file_name);
+	}
+	
+	/*	$file_name : The path and name of the PDF file being created.
+		Creates a PDF from a single image.
+	*/
+	function CreatePDFFromImage($file_name, $img_name, $scale) {
+		require_once('domcms/libraries/tcpdf/tcpdf.php');
+
+		// create new PDF document
+		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+		//set margins
+		$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+		//set image scale factor
+		$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+		// add a page
+		$pdf->AddPage();
+
+		list($width, $height) = getimagesize($img_name);
+		$scaledWidth = (int)($width * $scale);
+		$scaledHeight = (int)($height * $scale);
+		$pdf->Image($img_name, 0, 0, $scaledWidth, $scaledHeight, 'PNG', '', '', true, 96, 'C', false, false, 0, false, false, false, false);
+		
+		//Close and output PDF document
+		$pdf->Output($file_name, 'f');
 	}
 	
 	// Returns the style markup for the specified cell.

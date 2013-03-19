@@ -36,14 +36,19 @@
 
 		}
 		
-		public function html_to_excel($table, $file_name) {
+		public function html_to_excel($file_name, $table) {
 			$user_id = 'DPR Report';
 			$html = '<head><body>' . $table . '</body></head>';
 			$objPHPExcel = HTMLToobjPHPExcel($user_id, $html);
 			CreateExcel($file_name, $objPHPExcel, TRUE);
 		}
 		
-		public function html_to_pdf($table, $file_name) {
+		public function image_to_pdf($file_name, $img_name, $scale) {
+			$user_id = 'DPR Report';
+			CreatePDFFromImage($file_name, $img_name, $scale);
+		}
+		
+		public function html_to_pdf($file_name, $table) {
 			$user_id = 'DPR Report';
 			$html = '<head><body>' . $table . '</body></head>';
 			$objPHPExcel = HTMLToobjPHPExcel($user_id, $html);
