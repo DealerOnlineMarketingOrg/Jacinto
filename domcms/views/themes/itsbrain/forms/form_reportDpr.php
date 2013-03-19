@@ -69,85 +69,98 @@
 		// Use base64 encoding if XSS filtering is active, since
 		//  XSS will strip certain tags, like style.
 
+
+		// All function calls defined here (for deferreds).
+		
+		// Gets a dataURL from the element's html (includes children),
+		//  and saves that to the server as an image.
+		function HTMLToImage(imgFile,element)
+			{$(element).html2canvas({onrendered:function(canvas){
+					 dataURL = canvas.toDataURL("image/png");
+					 return $.ajax({type:"POST",
+									url:"<?= base_url(); ?>file/saveDataURL",
+									data:{data:dataURL, destPath:imgFile}});
+			}});}
+							
+		// Converts a html piece into an excel file, saving it to
+		//  destFile (on the server).
+		function convertToExcel(destFile,reportHtml)
+			{return $.ajax({type:"POST",
+							url:"<?= base_url(); ?>converter",
+							data:{type:"excel", file:destFile, html:reportHtml}});
+			}
+							
+		// Converts a html piece into an PDF file, saving it to
+		//  destFile (on the server).
+		function convertToPDF(destFile,image,imageScale)
+			{return $.ajax({type:"POST",
+							url:"<?= base_url(); ?>converter",
+							data:{type:"PDF", file:destFile, img:image, scale:imageScale}});
+			}
+							
+		// Zips up the files in fileList and saves as zipFile (on the server).
+		function saveZip(zipFile,fileList)
+			{return $.ajax({type:"POST",
+							url:"<?= base_url(); ?>file/zipFiles",
+							data:{file_list:fileList, zip_file:zipFile}});
+			}
+		
+		// Retrieves the zip file (as a download-file option).
+		function getZip(zipFile)
+			{$.fileDownload("<?= base_url(); ?>" + zipFile);
+			}
+		
+		
 		$('input#excel').click(function() {
-			// Convert charts to images and prepend to report.
+			// Compile the report.
+			var lineChartFile = "assets/uploads/lineChart.png";
+			var pieChartFile = "assets/uploads/pieChart.png";
 			var report_leads = "<?php echo str_replace('"','\\"',$report_leads); ?>";
-			var lineName = "assets/uploads/lineChart.png";
-			saveHtmlImage("#lineID", lineName);
-			var pieName = "assets/uploads/pieChart.png";
-			saveHtmlImage("#pieID", pieName);
-			// Prepend images into report.
-			// We'll float the images together.
 			var report = report_leads.replace(/(<table[^>]*?>)/i, "$1" +
 				"<tr>" +
-					"<td>" +
-						"<img src=\"" + lineName + "\" />" +
-					"</td>" +
-					"<td></td><td></td><td></td><td></td>" +
-					"<td>" +
-						"<img src=\"" + pieName + "\" />" +
-					"</td>" +
-				"</tr>");
-			var form_vars = {
-				type: "excel",
-				file: "assets/uploads/dprReport.xlsx",
-				html: report
-			}
-			$.ajax({
-				type: "post",
-				url: "<?= base_url(); ?>converter",
-				data: form_vars,
-				success:function(ret) {
-					// Do any extra success stuff here.
-					$.fileDownload("<?= base_url(); ?>" + form_vars['file']);
-					alert(ret);
-				}
-			})
+					"<td><img src=\"" + lineChartFile + "\" /></td>" +
+					"<td></td><td></td><td></td><td></td><td></td>" +
+					"<td><img src=\"" + pieChartFile + "\" /></td>" +
+				"</tr>");			
+			
+			// Convert the line and pie charts into images and save (to server).
+			$.when(HTMLToImage(lineChartFile,"#lineID"), HTMLToImage(pieChartFile,"#pieID"))
+				.then(function(ret) {});
+
+			// Convert the report into excel and save (uses chart images from above).
+			$.when(convertToExcel("assets/uploads/dprReport.xlsx", report))
+				.then(function(ret) {});
+				
+			// Create the zip file which will contain the excel report.
+			$.when(saveZip("assets/uploads/dprReport.zip", [ "assets/uploads/dprReport.xlsx" ]))
+				.then(function(ret) {});
+				
+			// Give the user the chance to save the zip file.
+			$.when(getZip("assets/uploads/dprReport.zip"))
+				.then(function(ret) {});
 		});
+		
 		
 		$('input#pdf').click(function() {
-			fullReportName = "assets/uploads/fullReport.png";
-			saveHtmlImage("#fullReportID", fullReportName);
-			var form_vars = {
-				type: "pdf",
-				file: "assets/uploads/dprReport.pdf",
-				img: fullReportName,
-				scale: .25
-			}
-			$.ajax({
-				type: "post",
-				url: "<?= base_url(); ?>converter",
-				data: form_vars,
-				success:function(ret) {
-					// Do any extra success stuff here.
-					$.fileDownload("<?= base_url(); ?>" + form_vars['file']);
-					alert(ret);
-				}
-			})
+			fullReportFile = "assets/uploads/fullReport.png";
+			
+			// Convert the whole report into an image and save (to server).
+			$.when(HTMLToImage(fullReportFile,"#fullReportID"))
+				.then(function(ret) {});
+
+			// Convert the report into pdf and save (uses chart images from above).
+			$.when(convertToPDF("assets/uploads/dprReport.pdf", fullReportFile, 1))
+				.then(function(ret) {});
+				
+			// Create the zip file which will contain the pdf report.
+			$.when(saveZip("assets/uploads/dprReport.zip", [ "assets/uploads/dprReport.pdf" ]))
+				.then(function(ret) {});
+				
+			// Give the user the chance to save the zip file.
+			$.when(getZip("assets/uploads/dprReport.zip"))
+				.then(function(ret) {});
 		});
 		
-		function saveDataURL(dataURL, fileName) {
-			var imgData = { data: dataURL, destPath: fileName }
-			$.ajax({
-				type: 'POST',
-				url: "<?= base_url(); ?>file/saveDataURL",
-				data: imgData,
-				success:function(ret) {
-					// Do any extra success stuff here.
-				}
-			});
-		}
-
-		function saveHtmlImage(element, fileName) {		
-			$(element).html2canvas({
-				onrendered: function (canvas) {
-					//Set hidden field's value to image data (base-64 string)
-					dataURL = canvas.toDataURL("image/png");
-					saveDataURL(dataURL, fileName);
-				}
-			});
-		}
-
 	</script>
 </div>
 <div class="fix"></div>

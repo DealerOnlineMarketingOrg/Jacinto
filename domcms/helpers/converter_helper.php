@@ -50,9 +50,9 @@
 		$pdf->AddPage();
 
 		list($width, $height) = getimagesize($img_name);
-		$scaledWidth = (int)($width * $scale);
-		$scaledHeight = (int)($height * $scale);
-		$pdf->Image($img_name, 0, 0, $scaledWidth, $scaledHeight, 'PNG', '', '', true, 96, 'C', false, false, 0, false, false, false, false);
+		$scaledWidth = (float)($width * $scale);
+		$scaledHeight = (float)($height * $scale);
+		$pdf->Image($img_name, '', (float)15, (float)$scaledWidth, (float)$scaledHeight, 'PNG', '', '', 2, 200, 'C', false, false, 0, false, false, true, false);
 		
 		//Close and output PDF document
 		$pdf->Output($file_name, 'f');
