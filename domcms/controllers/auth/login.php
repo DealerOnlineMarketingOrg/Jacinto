@@ -10,50 +10,33 @@ class Login extends DOM_Controller {
 		$this->load->helper('pass');
 		$this->load->helper('msg');
 		$this->load->library('form_validation');
-		$this->token = (isset($_SESSION['token'])) ? $_SESSION['token'] : FALSE;
+		$this->google_token = (isset($_SESSION['google'])) ? $_SESSION['google'] : FALSE;
     }
 
     public function index($msg = false) {
-		$oAuthEmail = ((isset($_COOKIE['google_email'])) ? $_COOKIE['google_email'] : FALSE);
-		$oAuthToken = ($this->token) ? $this->token : FALSE;
 		
-		print_object($oAuthToken);
-		print_object($oAuthEmail);
-		
-		
-		if($oAuthEmail AND $oAuthToken) {
-			$usr = $this->members->validate($oAuthEmail,false,$oAuthToken);	
+		/*if(isset($_SESSION['google'])) {
+			//print_object($_SESSION['google']);
+			$usr = $this->members->validate($_SESSION['google']['email'],false,$_SESSION['google']['token']);
+			//print_r($usr);
 			if($usr) {
-				redirect('/','refresh');	
+				$this->user = $this->session->userdata('valid_user');	
 			}
+		}*/
+		
+		if(isset($_COOKIE['dom_email'])) {
+			$data = array(
+				'email' => $_COOKIE['dom_email'],
+				'checkBox' => TRUE
+			);	
+		}else {
+			$data = array(
+				'email' => '',
+				'checkBox' => FALSE
+			);	
 		}
 		
 		if(!$this->user) {
-			
-			//$this->load->helper('cookie');
-			$cookie = ((isset($_COOKIE['google_email'])) ? $_COOKIE['google_email'] : FALSE);
-			
-			if($msg) {
-				if($msg == 'ouc') {
-					$msg = 'User has canceled authentication!';	
-				}elseif($msg == 'le') {
-					$msg = 'The username or password is incorrect!';
-				}
-			}
-			
-			if($cookie) {
-				$data = array(
-					'email' => $cookie,
-					'checkBox' => TRUE,
-					'msg' => ($msg) ? $msg : FALSE
-				);	
-			}else {
-				$data = array(
-					'email' => '',
-					'checkBox' => FALSE
-				);	
-			}
-			
 			$this->LoadTemplate('pages/login',$data);
 		}else {
 			redirect('/','refresh');	

@@ -35,7 +35,8 @@ class Members extends CI_Model {
 		
 		if($email) {
 			$data = array(
-				'USER_Avatar' => $url
+				'USER_Avatar' => $url,
+				'Google_Avatar' => 1
 			);
 		
 			$row = $email->row();
@@ -212,10 +213,12 @@ class Members extends CI_Model {
 			   'isGenerated' 	 => (int)$row->USER_Generated,
 			   'CreatedOn' 		 => date(FULL_MILITARY_DATETIME, strtotime($row->USER_Created)),
 			   'validated' 		 => (bool)TRUE,
-			   'DropdownDefault' => (object)$dropdown_defaults
+			   'DropdownDefault' => (object)$dropdown_defaults,
+			   'google_token' => (($oAuth_token) ? $oAuth_token : FALSE)
 		   );
 		   		   
 		   $this->session->set_userdata('valid_user', $data);
+		   $this->session->sess_write();
 		   return (object)$data;
 
 	   }
