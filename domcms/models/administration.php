@@ -76,6 +76,7 @@ class Administration extends CI_Model {
                 ui.USER_ActiveTS as LastUpdate,
                 ui.USER_Modules as Modules,
 				ui.USER_Avatar as Avatar,
+				ui.Google_Avatar,
 				ui.USER_GravatarEmail as Gravatar,
 				d.DIRECTORY_ID as DirectoryID,
                 d.DIRECTORY_Type as UserType,

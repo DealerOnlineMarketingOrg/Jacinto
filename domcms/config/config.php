@@ -420,8 +420,8 @@ $config['tweet_consumer_secret'] = '';
 |--------------------------------------------------------------------------
 | Google Friend Connect App ID
 |
-| If you want to integrate with Twitter oAuth authentication, put your
-| Twitter app details below.
+| If you want to integrate with Google oAuth authentication, put your
+| Google app details below.
 |--------------------------------------------------------------------------
 */
 $config['google_app_id'] = '977092452878.apps.googleusercontent.com';

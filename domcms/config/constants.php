@@ -59,6 +59,10 @@ define('VERSION','Beta 0.2');
 define('GAPIEMAIL','');
 define('GAPIPASS','');
 define('GOOGLEFONTS','Abel|Open+Sans+Condensed:300');
+define('GoogleClientID','170027429160.apps.googleusercontent.com');
+define('GoogleClientSecret','kMAavg_InUyakJwcHolLQsFn');
+define('GoogleAPIKey','AIzaSyCPrBMaamOoxDEuwb0Y65mIKdjDQuZX9CY');
+
 
 /*
 |----------------------------------------------------------------------

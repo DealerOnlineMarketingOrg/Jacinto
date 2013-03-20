@@ -1,7 +1,7 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Login extends DOM_Controller {
-
+	public $token;
     public function __construct() {
         parent::__construct();
 		$this->load->model('members');
@@ -10,26 +10,54 @@ class Login extends DOM_Controller {
 		$this->load->helper('pass');
 		$this->load->helper('msg');
 		$this->load->library('form_validation');
+		$this->token = (isset($_SESSION['token'])) ? $_SESSION['token'] : FALSE;
     }
 
-    public function index() {
-		require('domcms/libraries/openid.php');
-		$this->load->helper('cookie');
-		$cookie = ((isset($_COOKIE['dom_email'])) ? $_COOKIE['dom_email'] : FALSE);
+    public function index($msg = false) {
+		$oAuthEmail = ((isset($_COOKIE['google_email'])) ? $_COOKIE['google_email'] : FALSE);
+		$oAuthToken = ($this->token) ? $this->token : FALSE;
 		
-		if($cookie) {
-			$data = array(
-				'email' => $cookie,
-				'checkBox' => TRUE
-			);	
-		}else {
-			$data = array(
-				'email' => '',
-				'checkBox' => FALSE
-			);	
+		print_object($oAuthToken);
+		print_object($oAuthEmail);
+		
+		
+		if($oAuthEmail AND $oAuthToken) {
+			$usr = $this->members->validate($oAuthEmail,false,$oAuthToken);	
+			if($usr) {
+				redirect('/','refresh');	
+			}
 		}
 		
-		$this->LoadTemplate('pages/login',$data);
+		if(!$this->user) {
+			
+			//$this->load->helper('cookie');
+			$cookie = ((isset($_COOKIE['google_email'])) ? $_COOKIE['google_email'] : FALSE);
+			
+			if($msg) {
+				if($msg == 'ouc') {
+					$msg = 'User has canceled authentication!';	
+				}elseif($msg == 'le') {
+					$msg = 'The username or password is incorrect!';
+				}
+			}
+			
+			if($cookie) {
+				$data = array(
+					'email' => $cookie,
+					'checkBox' => TRUE,
+					'msg' => ($msg) ? $msg : FALSE
+				);	
+			}else {
+				$data = array(
+					'email' => '',
+					'checkBox' => FALSE
+				);	
+			}
+			
+			$this->LoadTemplate('pages/login',$data);
+		}else {
+			redirect('/','refresh');	
+		}
     }	
 	
 	public function login_user() {
