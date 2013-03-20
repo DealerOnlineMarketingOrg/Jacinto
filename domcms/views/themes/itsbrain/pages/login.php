@@ -59,27 +59,12 @@
         <?php echo  form_close(); ?>
         <div id="result"></div>
     </div>
-    <div id="thirdPartyConnect">
-        <ul>
-            <li><a id="googleConnectButton" href="javascript:void(0)"><img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/google.png" /></a></li>
-        </ul>
-    </div>
+    <div id="thirdPartyConnect"></div>
     <div id="loadedContent"></div>
     
     <script type="text/javascript">
 	
-		$('#googleConnectButton').click(function() {
-			$.ajax({
-				type:'POST',
-				url:'<?= base_url(); ?>google_connect',
-				data:{email:$('#req1').val()},
-				success:function(html) {
-					//alert(html);
-					$('#loadedContent').html(html);
-				}
-			});
-			//$('#loadedContent').load('<?= base_url(); ?>google_connect');
-		});
+			$('#thirdPartyConnect').load('<?= base_url(); ?>auth/google/connect');
 	
 		$('#resetPass').click(function(e) {
 			e.preventDefault();

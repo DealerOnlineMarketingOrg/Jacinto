@@ -9,8 +9,12 @@ class Members extends CI_Model {
         $this->load->helper('query');
     }
 	
-	public function logGoogleToken($token) {
-		$sql = 'SELECT ';
+	public function logGoogleToken($email,$token) {
+		$data = array(
+			'oAuth_token' => $token
+		);
+		$this->db->where('USER_Name',$email);
+		return ($this->db->update('Users',$data)) ? TRUE : FALSE;
 	}
 	
 	public function avatar_update($user_id,$filename) {
@@ -21,44 +25,78 @@ class Members extends CI_Model {
 		return ($this->db->update('Users_Info',$data)) ? TRUE : FALSE;
 	}
 	
+	public function plus_avatar($email,$url) {
+		
+		$this->db->select('USER_ID as ID');
+		$this->db->from('Users');
+		$this->db->where('USER_Name', $email);
+		
+		$email = $this->db->get();
+		
+		if($email) {
+			$data = array(
+				'USER_Avatar' => $url
+			);
+		
+			$row = $email->row();
+		
+			$this->db->where('USER_ID',$row->ID);
+			return ($this->db->update('Users_Info',$data)) ? TRUE : FALSE;
+		}else {
+			return FALSE;
+		}
+	}
+	
 	public function get_user_avatar($user_id = false) {
 		$this->load->helper('url');
 		$this->load->library('gravatar');
 		if($user_id) {
-			$a_sql = 'SELECT USER_Avatar as Avatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
+			$a_sql = 'SELECT Google_Avatar, USER_Avatar as Avatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
 			$a_query = $this->db->query($a_sql);
 			$customAvatar = $a_query->row();
-			if($customAvatar->Avatar != NULL) {
-				return ((file_exists(base_url() . 'assets/uploads/avatars/' . $customAvatar->Avatar)) ? base_url() . 'assets/uploads/avatars/' . $customAvatar->Avatar : base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png');
-			}else {
-				$g_sql = 'SELECT USER_GravatarEmail as Gravatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
-				$g_query = $this->db->query($g_sql);
-				$gravatar = $g_query->row();
-				if($gravatar->Gravatar) {
-					return $this->gravatar->get_gravatar($gravatar->Gravatar);
+			if($customAvatar->Google_Avatar != 1) {
+				if($customAvatar->Avatar != NULL) {
+					return ((file_exists(base_url() . 'assets/uploads/avatars/' . $customAvatar->Avatar)) ? base_url() . 'assets/uploads/avatars/' . $customAvatar->Avatar : base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png');
 				}else {
-					return base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png';
+					$g_sql = 'SELECT USER_GravatarEmail as Gravatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
+					$g_query = $this->db->query($g_sql);
+					$gravatar = $g_query->row();
+					if($gravatar->Gravatar) {
+						return $this->gravatar->get_gravatar($gravatar->Gravatar);
+					}else {
+						return base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png';
+					}
 				}
+			}else {
+				return $customAvatar->Avatar;	
 			}
 		}else {
 			return base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png';
 		}
 	}
     
-	public function validate($email,$password) {
+	public function validate($email,$password = false,$oAuth_token = false) {
 		$email 		= $this->security->xss_clean($email);
-		$password 	= encrypt_password($this->security->xss_clean($password));
 		
-		$sql = "SELECT u.*,ui.*,d.*,sa.*,c.*,g.*,a.* FROM Users u
-				INNER JOIN Users_Info ui ON u.USER_ID = ui.USER_ID
-				INNER JOIN Directories d ON d.DIRECTORY_ID = ui.DIRECTORY_ID
-				INNER JOIN xSystemAccess sa ON sa.ACCESS_ID = ui.Access_ID
-				INNER JOIN Clients c ON c.CLIENT_ID = ui.CLIENT_ID
-				INNER JOIN Groups g ON g.GROUP_ID = c.GROUP_ID
-				INNER JOIN Agencies a ON a.AGENCY_ID = g.AGENCY_ID
-				WHERE u.USER_Name = '" . $email . "' AND ui.USER_Password = '" . $password . "';"; 
-				
-		$query = $this->db->query($sql);
+		if($password) {
+			$password 	= encrypt_password($this->security->xss_clean($password));
+		}
+		
+		$this->db->select('*');
+		$this->db->from('Users');
+		$this->db->join('Users_Info','Users.USER_ID = Users_Info.USER_ID');
+		$this->db->join('Directories','Directories.DIRECTORY_ID = Users_Info.DIRECTORY_ID');
+		$this->db->join('xSystemAccess','xSystemAccess.ACCESS_ID = Users_Info.Access_ID');
+		$this->db->join('Clients','Clients.CLIENT_ID = Users_Info.CLIENT_ID');
+		$this->db->join('Groups','Groups.GROUP_ID = Clients.GROUP_ID');
+		$this->db->join('Agencies','Agencies.AGENCY_ID = Groups.AGENCY_ID');
+		$this->db->where('Users.USER_Name',$email);
+		if($password) {
+			$this->db->where('Users_Info.USER_Password',$password);
+		}elseif(!$password AND $oAuth_token) {
+			$this->db->where('Users.oAuth_token',$oAuth_token);	
+		}
+		$query = $this->db->get();
 			
 	    if($query->num_rows() == 1) {
 		   $row = $query->row();
