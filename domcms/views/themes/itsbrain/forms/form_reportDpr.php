@@ -16,10 +16,6 @@
         <fieldset>
             <div id="fullReportID" class="widget first">
                 <div class="head"><h5 class="iList">DPR Report</h5>
-                	<div style="width:1;float:right;vertical-align:middle">
-                        <input ID="excel" class="greyishBtn" type="button" value="Excel" />
-                        <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
-                    </div>
                 </div>
                 <div class="rowElem noborder">
                     <!-- Line graph of year -->
@@ -54,6 +50,11 @@
                 </div>
                 <div class="fix"></div>
             </div>
+            <div style="width:1;float:right;vertical-align:middle">
+                <input ID="excel" class="greyishBtn" type="button" value="Excel" />
+                <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
+            </div>
+
         </fieldset>
     <?php echo  form_close(); ?>
     
@@ -123,42 +124,74 @@
 					"<td><img src=\"" + pieChartFile + "\" /></td>" +
 				"</tr>");			
 			
-			// Convert the line and pie charts into images and save (to server).
-			$.when(HTMLToImage(lineChartFile,"#lineID"), HTMLToImage(pieChartFile,"#pieID"))
-				.then(function(ret) {});
-
-			// Convert the report into excel and save (uses chart images from above).
-			$.when(convertToExcel("assets/uploads/dprReport.xlsx", report))
-				.then(function(ret) {});
-				
-			// Create the zip file which will contain the excel report.
-			$.when(saveZip("assets/uploads/dprReport.zip", [ "assets/uploads/dprReport.xlsx" ]))
-				.then(function(ret) {});
-				
-			// Give the user the chance to save the zip file.
-			$.when(getZip("assets/uploads/dprReport.zip"))
-				.then(function(ret) {});
+			// HTMLToImage (lineChartFile)
+			$("#lineID").html2canvas({onrendered:function(canvas){
+					 dataURL = canvas.toDataURL("image/png");
+					 $.ajax({type:"POST",
+							url:"<?= base_url(); ?>file/saveDataURL",
+							data:{data:dataURL, destPath:lineChartFile},
+							success:(function() {
+								// HTMLToImage (pieChartFile)
+								$("#pieID").html2canvas({onrendered:function(canvas){
+										 dataURL = canvas.toDataURL("image/png");
+										 $.ajax({type:"POST",
+												url:"<?= base_url(); ?>file/saveDataURL",
+												data:{data:dataURL, destPath:pieChartFile},
+												success:(function() {
+													// convertToExcel
+													$.ajax({type:"POST",
+															url:"<?= base_url(); ?>converter",
+															data:{type:"excel", file:"assets/uploads/dprReport.xlsx", html:report},
+															success:(function() {
+																// saveZip
+																$.ajax({type:"POST",
+																		url:"<?= base_url(); ?>file/zipFiles",
+																		data:{file_list:[ "assets/uploads/dprReport.xlsx" ], zip_file:"assets/uploads/dprReportExcel.zip"},
+																		success:(function() {
+																			// getZip
+																			$.fileDownload("<?= base_url(); ?>" + "assets/uploads/dprReportExcel.zip");
+																		})
+																});
+															})
+													});
+												})
+										 });
+								}});
+							})
+					});
+			}});
 		});
 		
 		
 		$('input#pdf').click(function() {
 			fullReportFile = "assets/uploads/fullReport.png";
 			
-			// Convert the whole report into an image and save (to server).
-			$.when(HTMLToImage(fullReportFile,"#fullReportID"))
-				.then(function(ret) {});
-
-			// Convert the report into pdf and save (uses chart images from above).
-			$.when(convertToPDF("assets/uploads/dprReport.pdf", fullReportFile, 1))
-				.then(function(ret) {});
-				
-			// Create the zip file which will contain the pdf report.
-			$.when(saveZip("assets/uploads/dprReport.zip", [ "assets/uploads/dprReport.pdf" ]))
-				.then(function(ret) {});
-				
-			// Give the user the chance to save the zip file.
-			$.when(getZip("assets/uploads/dprReport.zip"))
-				.then(function(ret) {});
+			// HTMLToImage
+			$("#fullReportID").html2canvas({onrendered:function(canvas){
+					 dataURL = canvas.toDataURL("image/png");
+					 $.ajax({type:"POST",
+							url:"<?= base_url(); ?>file/saveDataURL",
+							data:{data:dataURL, destPath:fullReportFile},
+							success:(function() {
+								// convertToPDF
+								$.ajax({type:"POST",
+										url:"<?= base_url(); ?>converter",
+										data:{type:"pdf", file:"assets/uploads/dprReport.pdf", img:fullReportFile, scale:1},
+										success:(function(data, textStatus) {
+											// saveZip
+											$.ajax({type:"POST",
+													url:"<?= base_url(); ?>file/zipFiles",
+													data:{file_list:[ "assets/uploads/dprReport.pdf" ], zip_file:"assets/uploads/dprReportPDF.zip"},
+													success:(function() {
+														// getZip
+														$.fileDownload("<?= base_url(); ?>" + "assets/uploads/dprReportPDF.zip");
+													})
+											});
+										})
+								});
+							})
+					});
+			}});
 		});
 		
 	</script>

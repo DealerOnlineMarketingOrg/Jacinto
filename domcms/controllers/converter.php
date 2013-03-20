@@ -10,9 +10,9 @@
 		
 		public function Index() {
 			$form = $this->input->post();
-			if ($form['type'] == 'excel')
+			if (strtolower($form['type']) == 'excel')
 				$this->excel($form['file'], $form['html']);
-			if ($form['type'] == 'pdf')
+			if (strtolower($form['type']) == 'pdf')
 				$this->pdf($form['file'], $form['img'], $form['scale']);
 		}
 		
