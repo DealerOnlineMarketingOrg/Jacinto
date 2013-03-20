@@ -66,17 +66,16 @@
 			// Successfully authorized
 			// Hide the sign-in button now that the user is authorized, for example:
 			// document.getElementById('signinButton').setAttribute('style', 'display: none');
-			alert(authResult['access_token']);
+			//alert(authResult['access_token']);
 			
-			$.ajax({
+			jQuery.ajax({
 				type:'POST',
-				url:'<?= base_url(); ?>google_connect',
-				data:{id:authResult['access_token']},
+				url:'<?= base_url(); ?>auth/google/do_token_tasks',
+				data:{token:authResult},
 				success:function(data) {
 					alert(data);
 				}
 			});
-			
 			
 		  } else if (authResult['error']) {
 			// There was an error.
