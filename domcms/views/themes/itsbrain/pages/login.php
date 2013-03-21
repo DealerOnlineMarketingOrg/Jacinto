@@ -68,10 +68,12 @@
 			// document.getElementById('signinButton').setAttribute('style', 'display: none');
 			//alert(authResult['access_token']);
 			
+      
+      
+      
 			jQuery.ajax({
-				type:'POST',
-				url:'<?= base_url(); ?>auth/google/do_token_tasks',
-				data:{token:authResult},
+				type:'GET',
+				url:'https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + authResult['access_token'],
 				success:function(data) {
 					alert(data);
 				}
@@ -87,14 +89,14 @@
 		}
 	</script>
     <span id="signinButton">
-      <span class="g-signin" data-callback="signinCallback" data-clientid="<?= GoogleClientID; ?>" data-cookiepolicy="single_host_origin" data-requestvisibleactions="http://schemas.google.com/AddActivity"ndata-scope="https://www.googleapis.com/auth/plus.login"></span>
+      <span class="g-signin" data-callback="signinCallback" data-clientid="<?= GoogleClientID; ?>" data-cookiepolicy="single_host_origin" data-requestvisibleactions="http://schemas.google.com/AddActivity" ndata-scope="https://www.googleapis.com/auth/userinfo.email"></span>
     </span>
     </div>
     <div id="loadedContent"></div>
     
     <script type="text/javascript">
 	
-		
+                  $('#req1').focus();
 			//$('#thirdPartyConnect').load('<?= base_url(); ?>auth/google/connect');
 	
 		$('#resetPass').click(function(e) {
