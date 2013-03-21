@@ -681,6 +681,7 @@
 		// Gets a list of all the calculation tags in the report.
 		public function getCalcList($report) {
 			$row = 1;
+			$calcIDs = array();
 			foreach ($report as $report_row) {
 				$col = 'A';
 				foreach ($report_row['Cells'] as $item) {
