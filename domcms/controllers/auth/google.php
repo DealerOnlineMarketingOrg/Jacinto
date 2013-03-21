@@ -29,7 +29,7 @@ class Google extends CI_Controller {
 			$client->authenticate($_GET['code']);
 			$_SESSION['google'] = array('token' => $client->getAccessToken(), 'email' => '', 'image' => '');
 			$redirect = base_url();
-			header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+			header('Location: ' . base_url());
 			return;
 		}        
 		

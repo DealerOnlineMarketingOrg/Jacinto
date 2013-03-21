@@ -77,10 +77,10 @@ class Members extends CI_Model {
 	}
     
 	public function validate($email,$password = false,$oAuth_token = false) {
-		$email 		= $this->security->xss_clean($email);
+		$email = $this->security->xss_clean($email);
 		
 		if($password) {
-			$password 	= encrypt_password($this->security->xss_clean($password));
+			$password = encrypt_password($this->security->xss_clean($password));
 		}
 		
 		$this->db->select('*');
@@ -92,11 +92,13 @@ class Members extends CI_Model {
 		$this->db->join('Groups','Groups.GROUP_ID = Clients.GROUP_ID');
 		$this->db->join('Agencies','Agencies.AGENCY_ID = Groups.AGENCY_ID');
 		$this->db->where('Users.USER_Name',$email);
+		
 		if($password) {
 			$this->db->where('Users_Info.USER_Password',$password);
 		}elseif(!$password AND $oAuth_token) {
 			$this->db->where('Users.oAuth_token',$oAuth_token);	
 		}
+
 		$query = $this->db->get();
 			
 	    if($query->num_rows() == 1) {
@@ -218,7 +220,7 @@ class Members extends CI_Model {
 		   );
 		   		   
 		   $this->session->set_userdata('valid_user', $data);
-		   $this->session->sess_write();
+		   //$this->session->sess_write();
 		   return (object)$data;
 
 	   }

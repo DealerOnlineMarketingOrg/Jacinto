@@ -39,7 +39,7 @@
 
 /*auth redirects*/
 $route['login'] 						= 'auth/login';
-$route['authenticate'] 					= 'auth/login/authenticate';
+$route['authenticate'] 					= 'auth/login/login_user';
 $route['logout']						= 'auth/logout';
 $route['reset_password']				= 'auth/password/processResetPass';
 $route['signin']						= 'auth/login/login_user';
@@ -50,7 +50,7 @@ $route['change']						= 'auth/password/change';
 $route['change_password_form']			= 'auth/password/loadChangePasswordForm';
 $route['reset_password_form']			= 'auth/password/loadResetPasswordForm';
 $route['lock_user']						= 'auth/login/breach_warning';
-$route['google_connect']				= 'auth/google/connect';
+$route['google_connect']				= 'auth/login/google_connect';
 $route['google_authenticate']			= 'auth/google/auth';
 $route['example']						= 'auth/google/example';
 
