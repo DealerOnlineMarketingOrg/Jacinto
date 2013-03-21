@@ -2,10 +2,11 @@
 
 /**
  * simple string of elements passed from the database in var:int,var:int format
- *
+ * $required is a comma-delimited list of required keys. If key is not found,
+ *   creates one with an empty string.
  * @param	string
  */
-function mod_parser($str) {
+function mod_parser($str, $required = FALSE) {
     //expload string into array and split on comma
     $str = explode(',', $str);
 
@@ -17,6 +18,18 @@ function mod_parser($str) {
         $mod = explode(':', $item);
         $simple[trim($mod[0])] = (isset($mod[1])) ? trim($mod[1]) : '';
     }
+	
+	//iterate through the required list and check to make sure all required items exist.
+	if ($required) {
+		$str = explode(',', $required);
+		foreach ($str as $sitem) {
+			$s = trim($sitem);
+			// If item doesn't exist yet..
+			if (!array_key_exists($s, $simple))
+				// ..create it.
+				$simple[$s] = '';
+		}
+	}
 
     return $simple;
 }

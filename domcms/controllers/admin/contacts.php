@@ -58,8 +58,8 @@ class Contacts extends DOM_Controller {
 				$view_button .= form_close();
 				$contact->Name 		= $contact->FirstName . ' ' . $contact->LastName;
 				$contact->Address 	= mod_parser($contact->Address);
-				$contact->Email 	= mod_parser($contact->Email);
-				$contact->Phone 	= mod_parser($contact->Phone);
+				$contact->Email 	= mod_parser($contact->Email, 'home,work');
+				$contact->Phone 	= mod_parser($contact->Phone, 'main,mobile,fax');
 				$contact->Title 	= $this->administration->getContactTitle($contact->Title);
 				$table .= '<tr class="tagElement ' . $contact->Tag . '">';
 				$table .= '<td class="tags"><div class="' . $contact->Tag . '">&nbsp;</div></td>';

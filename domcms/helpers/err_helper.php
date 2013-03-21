@@ -73,10 +73,13 @@
 	// Outputs nothing if no error or success.
 	// Failure and successes are taken care of here.
 	// Error still lives after notification.
+	// All messages are placed in a div of global class 'messageService',
+	//  even if there's no messages to notify (guaranteeing the div).
 	function notifyError() {
 		$ci =& get_instance();
 		
-		if (!empty($ci->err))
+		echo '<div class="messageService">';
+		if (!empty($ci->err)) {
 			foreach ($ci->err as $err) {
 				if ($err->Level == 1)
 					// Notify success.
@@ -92,6 +95,8 @@
 				// Log error.
 				logError();
 			}
+		}
+		echo '</div>';
 	}
 	
 	// Logs the error(s) in the database.

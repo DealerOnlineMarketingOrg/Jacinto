@@ -58,6 +58,8 @@ $route['mysettings']					= 'user/settings';
 $route['profile/avatar/upload']			= 'user/profile/upload_avatar';
 $route['profile/(:any)']				= 'user/profile/view';
 $route['profile/(:any)/(:any)']			= 'user/profile/view/$2';
+$route['profile/update/userInfo']		= 'user/profile/update_UserInfo';
+$route['profile/update/userContactInfo']= 'user/profile/update_UserContactInfo';
 
 //admin redirects
 $route['groups']						= 'admin/groups';

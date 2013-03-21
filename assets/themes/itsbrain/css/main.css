@@ -866,6 +866,9 @@ table.display td:first-child{width:30px;text-align:center;}
 
 ul.thirdparty li{display:inline;}
 ul.thirdparty li a {float:left;margin-right:8px;}
+/* Global Messaging Service Styles */
+.messageService{margin:0;padding:0;border:0;}
+
 /* =====  Media queries  ===== */
 /* Devices and browsers with max of 799px */
 @media only screen and (max-width: 799px) {

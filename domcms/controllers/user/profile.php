@@ -13,16 +13,11 @@ class Profile extends DOM_Controller {
     }
 
 	public function View($msg = false) {
-		
-		if($this->input->post()) {
+		if($this->input->post('user_id')) {
 			$user_id = $this->input->post('user_id');
 		}else {
-			$user_id = $this->user['UserID'];	
+			$user_id = $this->user['UserID'];
 		}
-		
-		print_object($this->input->post());
-		if (!isset($user))
-			$user = $this->administration->getUsers($user_id);
 		
 		$user                   = $this->administration->getUsers($user_id);
 		$user->UserID           = $user->ID;
@@ -42,13 +37,15 @@ class Profile extends DOM_Controller {
 				}
 			}
 		}
-			  
-		$user->Company 			= $user->Dealership;
-		$user->CompanyAddress   = ArrayWithTextIndexToString(mod_parser($user->CompanyAddress), true);
-		$user->Emails 		    = OrderArrayForTableDisplay(mod_parser($user->Emails));
-		$user->Phone 			= OrderArrayForTableDisplay(mod_parser($user->Phones));
-		$user->UserModules 		= ParseModulesInReadableArray($user->Modules);
 		
+		$user->viewCompany 			= $user->Dealership;
+		$user->CompanyAddress		= mod_parser($user->CompanyAddress);
+		$user->viewCompanyAddress   = ArrayWithTextIndexToString($user->CompanyAddress, true);
+		$user->Emails				= mod_parser($user->Emails, 'home,work');
+		$user->viewEmails 		    = OrderArrayForTableDisplay($user->Emails);
+		$user->Phones				= mod_parser($user->Phones, 'main,mobile,fax');
+		$user->viewPhones 			= OrderArrayForTableDisplay($user->Phones);
+		$user->viewUserModules 		= ParseModulesInReadableArray($user->Modules);
 		
 		$msg = (($msg) ? $msg : FALSE);
 		$data = array(
@@ -93,12 +90,28 @@ class Profile extends DOM_Controller {
 		}
 	}
 	
-	public function UpdateUserInfo() {
+	private function initialize(&$form, &$user, &$profile_url) {
+		$form = $this->input->post();
+		
+		if($this->input->post('user_id')) {
+			$user_id = $this->input->post('user_id');
+		}else {
+			$user_id = $this->user['UserID'];
+		}
+		
+		$user                   = $this->administration->getUsers($user_id);
+		$user->UserID           = $user->ID;
+		$user->Edit       		= ($this->user['UserID'] == $user->UserID) ? TRUE : FALSE;
+		
 		$profile_url = base_url() . 'profile/' . strtolower($this->user['FirstName'] . $this->user['LastName']);
+	}
+	
+	public function update_UserInfo() {
+		$this->initialize($form, $user, $profile_url);
 		
 		$update = array(
 			'Users' => array(
-				'USER_Name' => $form['username'],
+				'USER_Name' 			=> $form['username'],
 			),
 			'Directories' => array(
 				'DIRECTORY_ID'			=> $user->DirectoryID,
@@ -115,8 +128,45 @@ class Profile extends DOM_Controller {
 		$update = $this->administration->updateUser($update);
 		
 		throwError(newError('User Info Edit',
-				($update) ? 0 : -1,
-				($update) ? ''
+				($update) ? 1 : -1,
+				($update) ? 'Your User Info has been successfully updated!'
+						  : 'Something went wrong. Please try again or contact your admin.',
+				0, ''));
+		redirect($profile_url,'refresh');
+	}
+	
+	public function update_UserContactInfo() {
+		$this->initialize($form, $user, $profile_url);
+		
+		$emails = array();
+		if ($form['home_email']) $emails['home'] = 'home:'.$form['home_email'];
+		if ($form['work_email']) $emails['work'] = 'work:'.$form['work_email'];
+		$phones = array();
+		if ($form['main_phone']) $phones['main'] = 'main:'.$form['main_phone'];
+		if ($form['mobile_phone']) $phones['mobile'] = 'mobile:'.$form['mobile_phone'];
+		if ($form['fax_phone']) $phones['fax'] = 'fax:'.$form['fax_phone'];
+			
+		$update = array(
+			'Users' => array(
+				'USER_Name' 			=> $user->Username,
+			),
+			'Directories' => array(
+				'DIRECTORY_ID'			=> $user->DirectoryID,
+										   
+				'DIRECTORY_Email'       => implode(',', $emails),
+				'DIRECTORY_Phone'       => implode(',', $phones),
+			),
+			'Users_Info' => array(
+				'USER_ID'               => $user->UserID,
+				'DIRECTORY_ID'          => $user->DirectoryID,
+			)
+		);
+		
+		$update = $this->administration->updateUser($update);
+		
+		throwError(newError('User Contact Info Edit',
+				($update) ? 1 : -1,
+				($update) ? 'Your User Contact Info has been successfully updated!'
 						  : 'Something went wrong. Please try again or contact your admin.',
 				0, ''));
 		redirect($profile_url,'refresh');

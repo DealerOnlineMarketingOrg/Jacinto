@@ -21,7 +21,8 @@ function ArrayWithTextIndexToString($array, $type = false) {
 	return $myString;
 }
 
-function OrderArrayForTableDisplay($array) {
+/* removeEmpty removes any empty-string key=>value from array */
+function OrderArrayForTableDisplay($array, $removeEmpty = FALSE) {
 		/* 
 		|  We need to reorder our content so we can lay it out in order to view it in a table correctly 
 		|  Create three emty arrays to hold data. 
@@ -38,8 +39,10 @@ function OrderArrayForTableDisplay($array) {
 		
 		//looped through the array passed and push the keys and values into seperate arrays.
 		foreach($array as $key => $value) {
-			array_push($headers,$key);
-			array_push($contents,$value);	
+			if (!($removeEmpty && $value == '')) {
+				array_push($headers,$key);
+				array_push($contents,$value);
+			}
 		}
 		
 		//push the headers to the order bank.

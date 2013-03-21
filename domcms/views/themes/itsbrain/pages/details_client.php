@@ -9,27 +9,9 @@
             </div>
             <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
             	<tbody>
-                	<tr class="noborder">
-                    	<td width="10%">Title:</td>
-                        <td><?php echo  $display->JobTitle; ?></td>
-                    </tr>
-                    <tr>
-                    	<td width="10%">
-                    </tr>
-                    <tr>
-                    	<td width="10%">Parent Client:</td>
-                        <td><?php echo  $display->Dealership; ?></td>
-                    </td>
                     <tr>
                     	<td width="10%">Name:</td>
                         <td><?php echo  $display->Name; ?></td>
-                    </tr>
-                    <tr>
-                      	<td width="10%" style="vertical-align:top;">Emails:</td>
-                        <td>
-                        	<span class="red"><strong>Personal:</strong></span><br /><a href="mailto:<?php echo  $display->Email['home']; ?>"><?php echo  $display->Email['home']; ?></a><br />
-                        	<?php if(isset($display->Email['work'])) { ?><span class="red"><strong>Work:</strong></span><br /><a href="mailto:<?php echo  $display->Email['work']; ?>"><?php echo  $display->Email['work']; ?></a><?php } ?>
-                        </td>
                     </tr>
                     <?php if(isset($display->Address)) { ?>
                     <tr>

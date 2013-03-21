@@ -616,9 +616,10 @@
 					// Add line chart row to $report.
 					$lineChart_body[] = $lineChart_row;
 				}
+
+				// Add line chart to main $report.
+				$report = array_merge_($report, $lineChart_body);
 			}
-			// Add line chart to main $report.
-			$report = array_merge_($report, $lineChart_body);
 			
 			// Create report rows for pie chart. Data will be based off of above table report.
 			// Pie graph will have each web-site provider, and the YTD value will be based off
@@ -659,9 +660,10 @@
 						}
 					}
 				}
+			
+				// Add pie chart to main $report.
+				$report = array_merge_($report, $pieChart_body);
 			}
-			// Add pie chart to main $report.
-			$report = array_merge_($report, $pieChart_body);
 			
 			// Replace all formula IDs with their respective cells.
 			// Build up a list of IDs and their cells.

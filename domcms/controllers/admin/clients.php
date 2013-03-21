@@ -61,7 +61,7 @@ class Clients extends DOM_Controller {
 							"\t\t" . "<th>Dealership</th>" . "\n" .
 							"\t\t" . "<th>Group</th>" . "\n" .
 							"\t\t" . "<th>Status</th>" . "\n" .
-							"\t\t" . "<th>Actions</th>" . "\n" .
+							"\t\t" . "<th colspan=\"2\">Actions</th>" . "\n" .
 							"\t" . "</tr>" . "\n" .
 						  "</thead>" . "\n";
 				$table .= '<tbody>' . "\n";
@@ -95,19 +95,18 @@ class Clients extends DOM_Controller {
 					
 					$delete_button = '<input data-client="' . $client->ClientID . '" style="margin-left:10px;" title="Disable Client" type="image" src="' . base_url() . 'assets/themes/global/imgs/icons/color/cross.png" name="disable_' . $client->ClientID . '" id="disableClient_id_' . $client->ClientID . '" class="imageBtn disableBtn" />';
 					
-					
 					//BUILD THE FORM ROW IN THE TABLE WITH NAME,DESCRIPTION,STATUS, and EDIT BUTTON, THE FORM ALSO HAS A HIDDEN ELEMENT WITH THE AGENCY ID, THIS IS WHAT WE
 					//USE TO POST TO THE EDIT PAGE TO GRAB THE CORRECT AGENCY FROM THE DB.
-					
-					
+						
 						$table .= '<tr class="tagElement ' . $client->ClassName . '">' . "\n";
 						$table .= "\t" . '<td class="tags"><div class="' . $client->ClassName . '">&nbsp;</div></td>' . "\n";
 						$table .= "\t" . '<td>' . $client->ClientCode . '</td>' . "\n";
 						$table .= "\t" . '<td>' . $client->Name . '</td>' . "\n";
 						$table .= "\t" . '<td>' . $client->GroupName . '</td>' . "\n";
 						$table .= "\t" . '<td>' . (($client->Status) ? $active : $warning) . '</td>' . "\n";
-						$table .= (($this->CheckModule('Client_Edit')) ? "\t" . '<td>' . form_open('clients/edit', $form_attr) . form_hidden('client_id', $client->ClientID) . $edit_button  . form_close() .'</td>' : '') . "\n";
-						$table .= '</tr>' . "\n";	
+						$table .= (($this->CheckModule('Client_Edit')) ? '<td>' . form_open('clients/edit', $form_attr) . form_hidden('client_id', $client->ClientID) . $edit_button  . form_close() . '</td>' : '');
+						$table .= '<td>' . form_open('clients/view', $form_attr) . form_hidden('view_id', $client->ClientID) . $view_button . form_close() . '</td>';
+						$table .= '</tr>' . "\n";
 			endforeach;
 			
 			$table .= '</tbody></table>' . "\n";
@@ -197,6 +196,19 @@ class Clients extends DOM_Controller {
 	
 	public function Delete() {
 		
+	}
+	
+	public function View() {
+		$client = $this->administration->getClient($this->input->post('view_id'));
+		
+		$client->Name = $client->Name;
+		$client->Address = (isset($client->Address)) ? mod_parser($client->Address) : false;
+		$client->Phone = (isset($client->Phone)) ? mod_parser($client->Phone) : false;
+		$client->Notes = $client->Notes;
+		$data = array(
+			'display'=>$client
+		);
+		$this->LoadTemplate('pages/details_client',$data);
 	}
 
 }

@@ -166,7 +166,7 @@ class Administration extends CI_Model {
     }
 
     public function getClient($id) {
-        $sql = "SELECT CLIENT_ID as ID, CLIENT_Name as Name, GROUP_ID as GroupdID FROM Clients WHERE CLIENT_ID = '" . $id . "';";
+        $sql = "SELECT CLIENT_ID as ID, CLIENT_Name as Name, CLIENT_Address as Address, CLIENT_Phone as Phone, CLIENT_Notes as Notes, GROUP_ID as GroupdID FROM Clients WHERE CLIENT_ID = '" . $id . "';";
 		$query = $this->db->query($sql);
 		return ($query) ? $query->row() : FALSE;
     }
@@ -597,6 +597,8 @@ class Administration extends CI_Model {
 				INNER JOIN MasterlistBank crm ON w.crm = crm.id
 				INNER JOIN Clients c ON w.client_id = c.CLIENT_ID
 				INNER JOIN xTags t ON c.CLIENT_Tag = t.TAG_ID
+				INNER JOIN Groups g ON c.GROUP_ID = g.GROUP_ID
+				WHERE g.AGENCY_ID = ' . $agency . '
 				ORDER BY w.special_label ASC';
 		$query = $this->db->query($sql);
 		return ($query) ? $query->result() : FALSE;
