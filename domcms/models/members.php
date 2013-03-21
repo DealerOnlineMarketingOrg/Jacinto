@@ -266,7 +266,7 @@ class Members extends CI_Model {
 	 $uid = $this->db->get();
 	 $uid = $uid->row()->USER_ID;
 	 
-	 if($uid && $avatar != NULL) {
+	 if($uid && $avatar) {
 	 	$data = array(
 			'USER_Avatar' => $avatar,
 			'Google_Avatar' => 1
