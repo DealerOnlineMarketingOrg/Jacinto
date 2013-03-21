@@ -38,6 +38,8 @@
 			
 			// Processing for dpr report page.
 			if ($page == 'reports') {
+				if ($this->user['DropdownDefault']->SelectedClient <= 1) {
+					
 				$report = $this->rep->getDPRReport($this->user['DropdownDefault']->SelectedClient, 2010, 2012);
 				// Wrap each chart in a div to keep them seperate.
 				$report_element_start = 1;
