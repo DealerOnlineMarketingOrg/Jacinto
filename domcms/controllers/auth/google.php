@@ -4,7 +4,7 @@ class Google extends CI_Controller {
 
     public $user;
     public $token;
-    
+    public $code;
     public function __construct() {
         parent::__construct();
         $this->load->model('members');
@@ -12,7 +12,6 @@ class Google extends CI_Controller {
 	
 	public function connect() {
 		require_once 'domcms/libraries/googleapi/Google_Client.php';
-		require_once 'domcms/libraries/googleapi/contrib/Google_PlusService.php';
 		require_once 'domcms/libraries/googleapi/contrib/Google_Oauth2Service.php';
 
 		 // session_start();
@@ -28,46 +27,34 @@ class Google extends CI_Controller {
 		
 		if (isset($_GET['code'])) {
 			$client->authenticate($_GET['code']);
-			$_SESSION['token'] = $client->getAccessToken();
-			$redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-			//header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+			$_SESSION['google'] = array('token' => $client->getAccessToken(), 'email' => '', 'image' => '');
+			$redirect = base_url();
+			header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
 			return;
 		}        
 		
-		if (isset($_SESSION['token'])) {
-			$client->setAccessToken($_SESSION['token']);
+		if (isset($_SESSION['google']['token'])) {
+			$client->setAccessToken($_SESSION['google']['token']);
 		}
 		
 		if (isset($_REQUEST['logout'])) {
-			unset($_SESSION['token']);
+			unset($_SESSION['google']);
 			$client->revokeToken();
 		}
 		
 		if ($client->getAccessToken()) {
 			$user = $oauth2->userinfo->get();
-		
+			
 			// These fields are currently filtered through the PHP sanitize filters.
 			// See http://www.php.net/manual/en/filter.filters.sanitize.php
 			$email = filter_var($user['email'], FILTER_SANITIZE_EMAIL);			
-			$img = filter_var($user['picture'], FILTER_VALIDATE_URL);
+			$img   = filter_var($user['picture'], FILTER_VALIDATE_URL);
 			
-			$token = $client->getAccessToken();
-			
-			//print_object($client->getAccessToken());
-			
-			$log = $this->members->logGoogleToken($email,$client->getAccessToken());
-			
-			if($log) {
-				$user = $this->members->validate($email,false,$client->getAccessToken());
-				if($user) {
-					$avatar = $this->members->plus_avatar($email,$img);
-				}
-			}
-			
-			$personMarkup = "$email<div><img src='$img?sz=200'></div>";
-			print $personMarkup;
 			// The access token may have been updated lazily.
-			$_SESSION['token'] = $client->getAccessToken();
+			$_SESSION['google']['token'] = $client->getAccessToken();
+			$_SESSION['google']['email'] = $email;
+			$_SESSION['google']['image'] = $img;
+			//redirect(base_url(),'refresh');
 		} else {
 			$authUrl = $client->createAuthUrl();
 		
@@ -75,7 +62,7 @@ class Google extends CI_Controller {
 	  ?>
 
 			<?php if(isset($personMarkup)): ?>
-            <?php print $personMarkup ?>
+            <?php 	print $personMarkup ?>
             <?php endif ?>
             <?php
             if(isset($authUrl)) {
@@ -89,6 +76,76 @@ class Google extends CI_Controller {
 	
 	public function gettoken() {
 			
+	}
+	
+	public function Do_token_tasks() {
+		
+		require_once 'domcms/libraries/googleapi/Google_Client.php';
+		require_once 'domcms/libraries/googleapi/contrib/Google_Oauth2Service.php';
+		
+		// Posted array from clientside.
+		$access_token = $this->input->post('token');
+		
+		//create client object to hold oAuth2 information
+		$client = new Google_Client();
+		$client->setApplicationName('DomCMS');
+		$client->setClientID(GoogleClientID);
+		$client->setClientSecret(GoogleClientSecret);
+		$client->setRedirectUri(base_url() . 'auth/google/connect');
+		$client->setDeveloperKey(GoogleAPIKey);
+		
+		$oauth2 = new Google_Oauth2Service($client);
+		
+		// Authenticate the user with the token returned
+		if (isset($_POST['token'])) {
+			//authenticate the user through the api and create an array of userdata
+			$client->authenticate($access_token['code']);
+			
+			$client->setAccessToken($_SESSION['google']['token']);
+			
+			$valid_user = $oauth2->userinfo->get();
+			print_object($valid_user);
+			
+			//array to be stored in session
+			$google_array = array(
+				'token' => $client->getAccessToken(),
+				'email' => '',
+				'pic' => ''
+			);
+			
+			//Create a session so this data is available everywhere
+			$_SESSION['google'] = $google_array();
+		}
+		     
+		/*
+		//pass the access token from the client side to the api
+		if(isset($_SESSION['google']['token'])) {
+			$client->setAccessToken($_SESSION['google']['token']);	
+		}
+		
+		//if we post a variable logout to this controller set to true, it will log out the google user.
+		if(isset($_REQUEST['logout'])) {
+			unset($_SESSION['google']);
+			$client->revokeToken();	
+		}
+		
+		// if the access token validates lets create session magic
+		if($client->getAccessToken()) {
+			$valid_user = $oauth2->userinfo->get();
+			
+			// These fields are currently filtered through the PHP sanitize filters.
+			// See http://www.php.net/manual/en/filter.filters.sanitize.php
+			$email = filter_var($valid_user['email'],FILTER_SANITIZE_EMAIL);
+			$img   = filter_var($valid_user['picture'],FILTER_VALIDATE_URL);
+			
+			$_SESSION['google']['token'] = $client->getAcessToken();
+			$_SESSION['google']['email'] = $email;
+			$_SESSION['google']['pic'] = $img;	
+			return $_SESSION['google'];
+		}else {
+			return FALSE;
+		}
+		*/
 	}
 	
 }

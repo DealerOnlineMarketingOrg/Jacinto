@@ -26,7 +26,7 @@ class Profile extends DOM_Controller {
 		
 		$user                   = $this->administration->getUsers($user_id);
 		$user->UserID           = $user->ID;
-		$user->Edit       = ($this->user['UserID'] == $user->UserID) ? TRUE : FALSE;
+		$user->Edit       		= ($this->user['UserID'] == $user->UserID) ? TRUE : FALSE;
 		
 		//Grab avatar
 		if($user->Avatar AND !$user->Google_Avatar) {
