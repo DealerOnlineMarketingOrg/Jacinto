@@ -76,10 +76,10 @@ class Members extends CI_Model {
 		}
 	}
     
-	public function validate($email,$password = false,$oAuth_token = false) {
+	public function validate($email,$password = false,$oAuth_token = false,$skip_encrypt = false) {
 		$email = $this->security->xss_clean($email);
 		
-		if($password) {
+		if($password AND !$skip_encrypt) {
 			$password = encrypt_password($this->security->xss_clean($password));
 		}
 		
@@ -225,6 +225,58 @@ class Members extends CI_Model {
 
 	   }
    }  
+
+   public function AuthenticateGoogleUser($email,$token) {
+   	$log = FALSE;
+	
+	//log token
+	if(isset($_SESSION['token'])) {
+		
+		$data = array(
+			'oAuth_token' => $token
+		);
+		
+		$this->db->where('USER_Name',$email);
+		$log = $this->db->update('Users',$data);
+	}
+	
+   	if($log) {
+   		$this->db->select('*');
+		$this->db->from('Users');
+		$this->db->join('Users_Info', 'Users.USER_ID = Users_Info.USER_ID');
+		$this->db->where('USER_Name',$email);
+		$query = $this->db->get();
+		
+		if($query) {
+			$user = $query->row();		
+			//print_object($user);
+			$valid_user = $this->validate($email,$user->USER_Password,false,true);
+			if($valid_user) {
+				return TRUE;
+			}
+		}
+		return FALSE;
+   	}
+   }
+
+   public function save_google_avatar($email,$avatar) {
+   	 $this->db->select('USER_ID');
+	 $this->db->from('Users');
+	 $this->db->where('USER_Name',$email);
+	 $uid = $this->db->get();
+	 $uid = $uid->row()->USER_ID;
+	 
+	 if($uid) {
+	 	$data = array(
+			'USER_Avatar' => $avatar,
+			'Google_Avatar' => 1
+		);
+		$this->db->where('USER_ID',$uid);
+		return ($this->db->update('Users_Info',$data) ? TRUE : FALSE);
+	 }
+
+	return FALSE;
+   }
    
    public function checkPasswordGeneration($email) {
 		$sql = 'SELECT u.USER_ID as ID, ui.USER_Generated as IsGenerated FROM Users u INNER JOIN Users_Info ui ON u.USER_ID = ui.USER_ID WHERE u.USER_Name = "' . $email . '"';

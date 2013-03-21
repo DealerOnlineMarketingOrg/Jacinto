@@ -1,11 +1,13 @@
 
 <!-- Content -->
-<div class="content" id="container">
+<div class="content hideTagFilter" id="container">
+	
     <div class="title"><h5>Admin</h5></div>
     <?php notifyError(); ?>
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
-    <?php echo  form_open('/admin/form_processor/groups/edit',array('name'=>'addGroups','id'=>'valid','class'=>'mainForm')); ?>
+    <?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
+    <?php echo  form_open('/admin/groups/form_processor/groups/edit',array('name'=>'addGroups','id'=>'valid','class'=>'mainForm')); ?>
         <!-- Input text fields -->
         <fieldset>
             <div class="widget first">
@@ -44,7 +46,7 @@
 
                 <div class="submitForm">
                 	<?php echo  form_hidden('GroupID',$group->GroupID); ?>
-                    <?php echo  form_submit(array('class'=>'redBtn','value'=>'Add Group')); ?>
+                    <?php echo  form_submit(array('class'=>'redBtn','value'=>'Edit Group')); ?>
                 </div>
                 <div class="fix"></div>
             </div>

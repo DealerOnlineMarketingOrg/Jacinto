@@ -50,7 +50,7 @@ $route['change']						= 'auth/password/change';
 $route['change_password_form']			= 'auth/password/loadChangePasswordForm';
 $route['reset_password_form']			= 'auth/password/loadResetPasswordForm';
 $route['lock_user']						= 'auth/login/breach_warning';
-$route['google_connect']				= 'auth/login/google_connect';
+$route['google_connect']				= 'auth/google/connect';
 $route['google_authenticate']			= 'auth/google/auth';
 $route['example']						= 'auth/google/example';
 
@@ -90,6 +90,8 @@ $route['beta/remove']					= 'updates/remove_change';
 $route['beta/edit']						= 'updates/load_change_form';
 $route['beta/update']					= 'updates/update_change';
 $route['add_release_change']			= 'updates/add';
+
+$route['dashboard'] = 'admin/dashboard';
 
 $route['default_controller']            = "admin/dashboard";
 //$route['404_override'] 					= 'errors/file_not_found';

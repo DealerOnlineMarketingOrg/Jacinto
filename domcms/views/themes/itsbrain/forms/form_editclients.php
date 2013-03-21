@@ -5,6 +5,7 @@
     <?php notifyError(); ?>
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
+    <?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
     <?php
         $form = array(
             'name' => 'addClient',
@@ -12,7 +13,7 @@
             'class' => 'mainForm'
         );
 
-        echo form_open('/admin/form_processor/clients/edit',$form);
+        echo form_open('/admin/clients/form_processor/clients/edit',$form);
     ?>
         <!-- Input text fields -->
         <fieldset>

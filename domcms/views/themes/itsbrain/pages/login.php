@@ -59,15 +59,18 @@
         <?php echo  form_close(); ?>
         <div id="result"></div>
     </div>
-    <div id="thirdPartyConnect" style="text-align:center;margin-top:10px;"></div>
+    <div id="thirdPartyConnect" style="text-align:center;margin-top:10px;">
+    	<a href="<?= base_url(); ?>auth/google/connect"><img id="googleConnect" src="<?= base_url() . THEMEIMGS; ?>google.png" alt="Connect With Google" style="border:1px solid #d5d5d5;cursor:pointer;" /></a>
+    </div>
     <div id="loadedContent"></div>
     
     <script type="text/javascript">
-	
+		
+		
+		
+		
         $('#req1').focus();
-        var p[];
-        p['ajax'] = true;
-		$('#thirdPartyConnect').load('<?= base_url(); ?>auth/login/google_connect',{js:true});
+		//$('#thirdPartyConnect').load('<?= base_url(); ?>google_connect');
 		
 	
 		$('#resetPass').click(function(e) {

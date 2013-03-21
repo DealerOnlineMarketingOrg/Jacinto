@@ -70,10 +70,6 @@ class DOM_Controller extends CI_Controller {
 			'Publisher'		=> $this->config->item('CityGridPublisher')
         );
 		
-		if(isset($_SESSION['google']['email'])) {
-			print_r('google user detected');
-		}
-
         //Active button sets the highlighted icon on the view
         $active_button = $this->router->fetch_class();
 		//if the page is on one of the authentication pages, we dont need the rest.
@@ -116,16 +112,6 @@ class DOM_Controller extends CI_Controller {
 			$this->load->model('nav');			
 			$this->main_nav = $this->nav->main($this->user['AccessLevel']);
 			$this->user_nav = $this->nav->user($this->user['AccessLevel']);
-		else :
-			$ajax = $this->input->get('js');
-			if(isset($ajax)) {
-				echo 'this is comin from ajax';
-							
-				$this->user = isset($_SESSION['valid_user']) ? $this->session->userdata('valid_user') : FALSE;
-				print_object($this->user);
-				
-			};
-			//exit();
 		endif;
 		
     }
