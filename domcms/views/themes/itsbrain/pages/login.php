@@ -60,42 +60,18 @@
         <div id="result"></div>
     </div>
     <div id="thirdPartyConnect" style="text-align:center;margin-top:10px;">
-    <script type="text/javascript">
-		function signinCallback(authResult) {
-		  if (authResult['access_token']) {
-			// Successfully authorized
-			// Hide the sign-in button now that the user is authorized, for example:
-			// document.getElementById('signinButton').setAttribute('style', 'display: none');
-			//alert(authResult['access_token']);
-			
-			jQuery.ajax({
-				type:'POST',
-				url:'<?= base_url(); ?>auth/google/do_token_tasks',
-				data:{token:authResult},
-				success:function(data) {
-					alert(data);
-				}
-			});
-			
-		  } else if (authResult['error']) {
-			// There was an error.
-			// Possible error codes:
-			//   "access_denied" - User denied access to your app
-			//   "immediate_failed" - Could not automatially log in the user
-			// console.log('There was an error: ' + authResult['error']);
-		  }
-		}
-	</script>
-    <span id="signinButton">
-      <span class="g-signin" data-callback="signinCallback" data-clientid="<?= GoogleClientID; ?>" data-cookiepolicy="single_host_origin" data-requestvisibleactions="http://schemas.google.com/AddActivity"ndata-scope="https://www.googleapis.com/auth/plus.login"></span>
-    </span>
+    	<a href="<?= base_url(); ?>auth/google/connect"><img id="googleConnect" src="<?= base_url() . THEMEIMGS; ?>google.png" alt="Connect With Google" style="border:1px solid #d5d5d5;cursor:pointer;" /></a>
     </div>
     <div id="loadedContent"></div>
     
     <script type="text/javascript">
-	
 		
-			//$('#thirdPartyConnect').load('<?= base_url(); ?>auth/google/connect');
+		
+		
+		
+        $('#req1').focus();
+		//$('#thirdPartyConnect').load('<?= base_url(); ?>google_connect');
+		
 	
 		$('#resetPass').click(function(e) {
 			e.preventDefault();

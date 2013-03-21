@@ -1,7 +1,9 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Login extends DOM_Controller {
-	public $token;
+	public $google_token;
+	public $google_email;
+	public $google_avatar;
     public function __construct() {
         parent::__construct();
 		$this->load->model('members');
@@ -10,19 +12,10 @@ class Login extends DOM_Controller {
 		$this->load->helper('pass');
 		$this->load->helper('msg');
 		$this->load->library('form_validation');
-		$this->google_token = (isset($_SESSION['google'])) ? $_SESSION['google'] : FALSE;
+				
     }
-
+	
     public function index($msg = false) {
-		
-		/*if(isset($_SESSION['google'])) {
-			//print_object($_SESSION['google']);
-			$usr = $this->members->validate($_SESSION['google']['email'],false,$_SESSION['google']['token']);
-			//print_r($usr);
-			if($usr) {
-				$this->user = $this->session->userdata('valid_user');	
-			}
-		}*/
 		
 		if(isset($_COOKIE['dom_email'])) {
 			$data = array(
@@ -45,7 +38,7 @@ class Login extends DOM_Controller {
 	
 	public function login_user() {
 		$this->load->helper('cookie');
-		$remember_me = (float)$this->input->post('remember');
+		$remember_me = (($this->input->post('remember')) ? 1 : FALSE);
 		if($remember_me == 1) {
 			setcookie('dom_email',$this->input->post('email'),time()+360000,'/','');
 		}else {
@@ -54,20 +47,20 @@ class Login extends DOM_Controller {
 			}
 		}
 		$this->load->helper('pass');
+		
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 		$ip_address = $this->input->ip_address();
-		
 		$valid_user = $this->members->validate($email,$password);
+
+		
 		if($valid_user) :
 			$count = $this->attempts->get_count($ip_address,$email);
-			
 			if($count) {
 				$this->attempts->clear($ip_address,$email);
-			}
-						
+			}			
 			echo '1';
-		else :
+		else :			
 			echo '0';
 		endif;
 	}

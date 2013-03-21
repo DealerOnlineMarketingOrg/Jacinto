@@ -69,11 +69,13 @@ class DOM_Controller extends CI_Controller {
 			'TagCss' 		=> $this->TagCss,
 			'Publisher'		=> $this->config->item('CityGridPublisher')
         );
-
+		
         //Active button sets the highlighted icon on the view
         $active_button = $this->router->fetch_class();
 		//if the page is on one of the authentication pages, we dont need the rest.
 		if($active_button != 'login' && $active_button != 'logout' && $active_button != 'authenticate') :
+		
+
 			$current_subnav_button = $this->uri->rsegment(2); // The Function 
 			define('ACTIVE_BUTTON', $active_button);
 			define('SUBNAV_BUTTON', '/' . $active_button . '/' . $current_subnav_button);

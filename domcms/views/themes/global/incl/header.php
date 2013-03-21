@@ -69,12 +69,15 @@
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/html2canvas/jquery.plugin.html2canvas.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/jquery.fileDownload.js"></script>
     <?php if(isset($TagCss)) { echo $TagCss; }; ?>  
-    <script type="text/javascript">
-      (function() {
-       var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-       po.src = 'https://apis.google.com/js/client:plusone.js';
-       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-     })();
-    </script>
+  <script type="text/javascript">
+  (function() {
+    var po = document.createElement('script');
+    po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://plus.google.com/js/client:plusone.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(po, s);
+  })();
+  </script>
+
 </head>
 <body>

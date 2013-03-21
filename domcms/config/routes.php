@@ -39,7 +39,7 @@
 
 /*auth redirects*/
 $route['login'] 						= 'auth/login';
-$route['authenticate'] 					= 'auth/login/authenticate';
+$route['authenticate'] 					= 'auth/login/login_user';
 $route['logout']						= 'auth/logout';
 $route['reset_password']				= 'auth/password/processResetPass';
 $route['signin']						= 'auth/login/login_user';
@@ -92,6 +92,8 @@ $route['beta/remove']					= 'updates/remove_change';
 $route['beta/edit']						= 'updates/load_change_form';
 $route['beta/update']					= 'updates/update_change';
 $route['add_release_change']			= 'updates/add';
+
+$route['dashboard'] = 'admin/dashboard';
 
 $route['default_controller']            = "admin/dashboard";
 //$route['404_override'] 					= 'errors/file_not_found';
