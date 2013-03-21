@@ -4,7 +4,7 @@ class Profile extends DOM_Controller {
 
     public function __construct() {
         parent::__construct();
-		$this->load->helper(array('form','url','pass','file'));
+		$this->load->helper(array('form','url','pass','file','template'));
 		$this->load->model(array('members','administration'));
     }
 
@@ -19,6 +19,10 @@ class Profile extends DOM_Controller {
 		}else {
 			$user_id = $this->user['UserID'];	
 		}
+		
+		print_object($this->input->post());
+		if (!isset($user))
+			$user = $this->administration->getUsers($user_id);
 		
 		$user                   = $this->administration->getUsers($user_id);
 		$user->UserID           = $user->ID;
@@ -87,5 +91,34 @@ class Profile extends DOM_Controller {
 			endif;
 			
 		}
+	}
+	
+	public function UpdateUserInfo() {
+		$profile_url = base_url() . 'profile/' . strtolower($this->user['FirstName'] . $this->user['LastName']);
+		
+		$update = array(
+			'Users' => array(
+				'USER_Name' => $form['username'],
+			),
+			'Directories' => array(
+				'DIRECTORY_ID'			=> $user->DirectoryID,
+				'DIRECTORY_FirstName'   => $form['firstname'],
+				'DIRECTORY_LastName'    => $form['lastname'],
+			),
+			'Users_Info' => array(
+				'USER_ID'               => $user->UserID,
+				'DIRECTORY_ID'          => $user->DirectoryID,
+				'ACCESS_ID'             => $form['permissionlevel'],
+			)
+		);
+			
+		$update = $this->administration->updateUser($update);
+		
+		throwError(newError('User Info Edit',
+				($update) ? 0 : -1,
+				($update) ? ''
+						  : 'Something went wrong. Please try again or contact your admin.',
+				0, ''));
+		redirect($profile_url,'refresh');
 	}
 }

@@ -1,5 +1,6 @@
 <div class="content">
     <div class="title"><h5>User Information</h5></div>
+    <? notifyError(); ?>
     	<?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
         <div id="profilePage">
         	<div class="widget first">
@@ -59,7 +60,7 @@
 </div>
 <div class="fix"></div>
 <div class="uDialog">
-    <div class="dialog-message" title="Edit Avatar">
+    <div class="dialog-message" id="editAvatar" title="Edit Avatar">
         <div class="uiForm">
             <p style="margin-left:15px !important;">Upload a custom Avatar to our system.</p>
             <?= form_open_multipart(base_url().'profile/avatar/upload', array('id' => 'uploadAvatar','class'=>'valid')); ?>
@@ -68,13 +69,38 @@
         </div>
     </div>
 </div>
-<div id="editInfo"></div>
+<div id="editInfo">
+    <div class="dialog-message" id="editUser" title="Edit User">
+        <div class="uiForm">
+                <?= form_open(base_url().'profile/UpdateUserInfo', array('id' => 'UpdateUserInfo','class'=>'valid'));
+	            echo '<p style="margin-left:15px !important;">First Name</p>';
+	            echo form_input(array('id' => 'firstname','name'=>'firstname','placeHolder'=>'Your First Name','value'=>$user->FirstName,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+    	        echo '<p style="margin-left:15px !important;">Last Name</p>';
+                echo form_input(array('id' => 'lastname','name'=>'lastname','placeHolder'=>'Your Last Name','value'=>$user->LastName,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+    	        echo '<p style="margin-left:15px !important;">Username</p>';
+				echo form_input(array('id' => 'username','name'=>'username','placeHolder'=>'Your Username','value'=>$user->Username,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+				if($admin['AccessLevel'] >= 600000) {
+					echo '<p style="margin-left:15px !important;">Security Level</p>';
+					$options = array(
+						'1' => 'Super-Admin',
+						'2' => 'Admin',
+						'3' => 'Group Admin',
+						'4' => 'Client Admin',
+						'5' => 'Manager',
+						'6' => 'User'
+					);
+					echo form_dropdown('permissionlevel', $options, $user->AccessID);        
+				}
+				echo '</form>'; ?>
+        </div>
+    </div>
+</div>
 <div id="editContactInfo"></div>
 <div id="editUserModules"></div>
 <script type="text/javascript">
 
 	function editAvatar(id) {
-		jQuery(".dialog-message").dialog({
+		jQuery("#editAvatar").dialog({
 			autoOpen: true,
 			modal: true,
 			buttons: {
@@ -86,15 +112,23 @@
 	}
 	
 	function editInfo(id) {
-		alert('edit users information');
+		jQuery("#editUser").dialog({
+			autoOpen: true,
+			modal: true,
+			buttons: {
+				Save: function() {
+					jQuery('#UpdateUserInfo').submit();
+        		}
+			}
+		});
 	}
+	
 	function editContactInfo(id) {
 		alert('edit users contact info');
 	}
 	function editUserModules(id) {
 		alert('edit users module access');
 	}
-	
 	
 	jQuery('div.avatar').hover(function() {
 		jQuery(this).find('.editButton').slideDown('fast');

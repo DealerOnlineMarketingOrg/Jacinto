@@ -323,7 +323,7 @@ class Members extends CI_Model {
 			
 			// If the update succeeds, create the session and return the object to the system.
 			if(!$this->db->update('Users_Info',$data)) {
-				return FALSE;	
+				return FALSE;
 			}else {
 				$user = $this->validate($email,$savedPass);
 				return $user;

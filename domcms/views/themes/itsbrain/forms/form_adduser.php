@@ -85,7 +85,7 @@
                         <select id="permissionLevels" class="required validate[required]" name="AccessLevel">
                             <option value="1">Super-Admin</option>
                             <option value="2">Admin</option>
-                            <option value="3">Group Admin/option>
+                            <option value="3">Group Admin</option>
                             <option value="4">Client Admin</option>
                             <option value="5">Manager</option>
                             <option value="6">User</option>

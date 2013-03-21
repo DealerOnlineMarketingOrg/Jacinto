@@ -739,7 +739,7 @@ class DOM_Controller extends CI_Controller {
 
                     break;
                     case "edit":
-                        //add users
+                        //edit users
                         $form = $this->input->post();
 						
 						if($this->user['DropdownDefault']->LevelType == 'a') {
