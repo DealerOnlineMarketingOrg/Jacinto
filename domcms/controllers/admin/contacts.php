@@ -105,8 +105,11 @@ class Contacts extends DOM_Controller {
 		$html = '';
 		$titles = '';
 		
+		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
+		
 		$data = array(
-			'html' => $html
+			'html' => $html,
+			'clients' => $clients
 		);
 		$this->LoadTemplate('forms/form_addcontacts',$data);
 	}
@@ -118,6 +121,7 @@ class Contacts extends DOM_Controller {
 		$contact_id = $this->input->post('contact_id');
 		$this->load->model('administration');
 		$contact = $this->administration->getContact($contact_id);
+		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
 		
 		if($contact) {
 			$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
@@ -129,7 +133,8 @@ class Contacts extends DOM_Controller {
 		//PREPARE THE VIEW FOR THE FORM
 		$data = array(
 			'contact' => $contact,
-			'html' => $html
+			'html' => $html,
+			'clients' => $clients
 		);
 		//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
 		

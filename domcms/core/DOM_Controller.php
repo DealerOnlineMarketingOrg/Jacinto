@@ -576,15 +576,15 @@ class DOM_Controller extends CI_Controller {
 						redirect('/admin/contacts/add','refresh');                         
                     break;
 					case "edit":
-                        $form = $this->input->post();
+                        $form      = $this->input->post();
 
-						$email = 'home:' . $this->input->post('PersonalEmailAddress') . (($this->input->post('WorkEmailAddress')) ? ',work:' . $this->input->post('WorkEmailAddress') : '');
-						$phone = 'main:' . $this->input->post('DirectPhone') . (($this->input->post('MobilePhone')) ? ',mobile:' . $this->input->post('MobilePhone') : '') . (($this->input->post('FaxPhone')) ? ',fax:' . $this->input->post('FaxPhone') : '');
-                        $type = $form['type'] .':' . $this->user['DropdownDefault']->SelectedClient;
+						$email     = 'home:' . $this->input->post('PersonalEmailAddress') . (($this->input->post('WorkEmailAddress')) ? ',work:' . $this->input->post('WorkEmailAddress') : '');
+						$phone     = 'main:' . $this->input->post('DirectPhone') . (($this->input->post('MobilePhone')) ? ',mobile:' . $this->input->post('MobilePhone') : '') . (($this->input->post('FaxPhone')) ? ',fax:' . $this->input->post('FaxPhone') : '');
+                        $type      = $form['type'] .':' . $this->user['DropdownDefault']->SelectedClient;
                         $firstname = $form['firstname'];
-                        $lastname =  $form['lastname'];
-                        $address = 'street:' . $form['street'] . ',city:' . $form['city'] . ',state:' . $form['state'] . ',zipcode:' . $form['zip'];
-                        $notes = $form['notes'];
+                        $lastname  =  $form['lastname'];
+                        $address   = 'street:' . $form['street'] . ',city:' . $form['city'] . ',state:' . $form['state'] . ',zipcode:' . $form['zip'];
+                        $notes     = $form['notes'];
                         
                         $data = array(
                             'TITLE_ID' => 12,
@@ -597,10 +597,8 @@ class DOM_Controller extends CI_Controller {
                             'DIRECTORY_Notes' => $notes,
                             'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME),
 							'JobTitle'=>$form['JobTitle'],
-							'CLIENT_Owner'=>$this->user['DropdownDefault']->SelectedClient
+							'CLIENT_Owner'=> $form['company']
                         );
-                        
-                        //print_object($data);
                         
                         $editContact = $this->administration->updateContact($data, $this->input->post('contact_id'));
                         

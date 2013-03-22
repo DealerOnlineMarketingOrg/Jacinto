@@ -81,6 +81,11 @@ $route['agency/(:any)']					= 'admin/agency/$1';
 $route['dpr']							= 'reports/dpr';
 $route['dpr/(:any)']					= 'reports/dpr/$1';
 
+$route['vendors']						= 'admin/vendors/index';
+$route['vendors/add']					= 'admin/vendors/add';
+$route['vendors/edit']					= 'admin/vendors/edit';
+$route['vendors/remove']				= 'admin/vendors/remove';
+
 //redirects
 $route['reputation']					= 'reputations/dashboard';
 $route['bing']							= 'reputations/bing/dashboard';

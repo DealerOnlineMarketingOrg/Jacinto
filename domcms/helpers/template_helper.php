@@ -228,6 +228,21 @@ function showStates($selected = false) {
 
     return $options;
 }
+function popUpStates($selected = false) {
+    $ci =& get_instance();
+    $ci->load->model('utilities');
+    $states = $ci->utilities->getStates();
+
+    $options = '<div style="text-align:left;" class="noSearch"><select data-placeholder="Choose a State..." class="chzn-select" style="text-align:left;float:left;" name="state">';
+	$options .= '<option value=""></option>';
+    foreach ($states as $state) {
+        $options .= '<option ' . (($selected AND $selected == $state->Abbrev) ? 'selected="selected"' : '') . ' value="' . $state->Abbrev . '">' . $state->Name . '</option>';
+    }
+    $options .= '</select></div>';
+
+    return $options;
+}
+
 
 function dealer_selector() {
 	$ci =& get_instance();
