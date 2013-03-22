@@ -547,6 +547,7 @@ class Administration extends CI_Model {
 				d.DIRECTORY_Notes as Notes,
 				c.CLIENT_Tag as TagID,
 				c.CLIENT_Name as Dealership,
+				c.CLIENT_ID as DealershipID,
 				t.TAG_Name as TagName,
 				t.TAG_Color as TagColor,
 				t.TAG_ClassName as Tag
@@ -602,6 +603,37 @@ class Administration extends CI_Model {
 				ORDER BY w.special_label ASC';
 		$query = $this->db->query($sql);
 		return ($query) ? $query->result() : FALSE;
+	}
+	
+	public function getVendors() {
+		$this->db->select('VENDOR_ID as ID,VENDOR_Name as Name,VENDOR_Address as Address,VENDOR_Notes as Notes,VENDOR_Active as Status,VENDOR_ActiveTS as LastUpdate,VENDOR_Created as Created');
+		$this->db->from('Vendors');
+		$query = $this->db->get();
+		
+		if($query) {
+			return $query->result();
+		}else {
+			return FALSE;
+		}
+		
+	}
+
+	public function getVendor($id) {
+		$this->db->select('VENDOR_ID as ID,VENDOR_Name as Name,VENDOR_Address as Address,VENDOR_Notes as Notes,VENDOR_Active as Status,VENDOR_ActiveTS as LastUpdate,VENDOR_Created as Created');
+		$this->db->from('Vendors');
+		$this->db->where('VENDOR_ID',$id);
+		
+		$query = $this->db->get();
+		return ($query) ? $query->row() : FALSE;
+		
+	}
+
+	public function disableVendor($id,$which) {
+		$data = array(
+			'VENDOR_Active' => (($which != 'enable') ? 0 : 1)
+		);
+		$this->db->where('VENDOR_ID',$id);
+		return ($this->db->update('Vendors',$data) ? TRUE : FALSE);
 	}
 
 }

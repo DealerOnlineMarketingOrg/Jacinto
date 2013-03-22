@@ -2,8 +2,7 @@
     <div class="title"><h5>Admin</h5></div>
     <?php notifyError(); ?>
     <!-- Form begins -->
-    <?php echo  form_open('/admin/form_processor/contacts/edit',array('id'=>'usualValidate','class'=>'mainForm','name'=>'edit')); ?>
-
+    <?php echo  form_open('/admin/contacts/form_processor/contacts/edit',array('id'=>'usualValidate','class'=>'mainForm','name'=>'edit')); ?>
         <!-- Input text fields -->
         <fieldset>
             <div class="widget first">
@@ -11,7 +10,7 @@
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Contact Type</label>
                     <div class="formRight">
-                        <select class="validate[required]" name="type">
+                        <select class="validate[required] styled" name="type">
                             <option value="CID" <?php echo  (($contact->Type == 'CID') ? 'selected="selected"' : ''); ?>>Client</option>
                             <option value="VID" <?php echo  (($contact->Type == 'VID') ? 'selected="selected"' : ''); ?>>Vendor</option>
                         </select>
@@ -19,9 +18,22 @@
                     <div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
+                	<label><span class="req">*</span> Company</label>
+                	<div class="formRight">
+                		<select class="validate['required'] styled" name="company">
+                			<option value=""></option>
+                			<?php 
+                				foreach($clients as $client) :
+									echo '<option ' . (($client->ClientID == $contact->DealershipID) ? ' selected="selected"' : '') . ' value="' . $client->ClientID . '">' . $client->Name . '</option>';
+								endforeach; 
+							?>
+                		</select>
+                	</div>
+                </div>
+                <div class="rowElem noborder">
                 	<label><span class="req">*</span> Job Title</label>
                     <div class="formRight">
-                    	<?php echo  form_input(array('class'=>'validate[required]','name'=>'JobTitle','id'=>'JobTitle','value'=>$contact->JobTitle)); ?>
+                    	<?= form_input(array('class'=>'validate[required]','name'=>'JobTitle','id'=>'JobTitle','value'=>$contact->JobTitle)); ?>
                         <p class="formNote">Contacts Job Title</p>
                     </div>
                     <div class="fix"></div>
