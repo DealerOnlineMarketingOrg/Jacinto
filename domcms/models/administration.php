@@ -628,7 +628,7 @@ class Administration extends CI_Model {
 		
 	}
 
-	public function disableVendor($id,$which) {
+	public function disableVendor($id,$which = 'disable') {
 		$data = array(
 			'VENDOR_Active' => (($which != 'enable') ? 0 : 1)
 		);

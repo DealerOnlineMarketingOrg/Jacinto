@@ -59,9 +59,11 @@ class Vendors extends DOM_Controller {
 				$table .= '</tbody>';
 				$table .= '</table>';
 				
-				$table .= '<div id="editVendorForm"></div>' .
 				
-				'<script type="text/javascript">
+				
+				$table = '<script type="text/javascript">
+				
+				
 					function disableVendor(id) {	
 						jConfirm("Can you confirm this?", "Confirmation", function(r) {
 							if(r) {
@@ -79,8 +81,9 @@ class Vendors extends DOM_Controller {
 							}
 						});
 					}
+
 					function enableVendor(id) {	
-						jConfirm("Can you confirm this?", "Confirmation", function(r) {
+						jConfirm("Are you sure you want to disable this vendor?", "Confirmation", function(r) {
 							if(r) {
 								//disable the vendor
 								jQuery.ajax({
@@ -104,7 +107,7 @@ class Vendors extends DOM_Controller {
 							data:{vid:id},
 							success:function(data) {
 								if(data) {
-									jQuery("editVendorForm").html(data);
+									jQuery("editaddVendorForm").html(data);
 								}
 							}
 						});
@@ -117,11 +120,23 @@ class Vendors extends DOM_Controller {
 		else :
 			$html = '<div class="nNote nFailure"><p><strong>Error:</strong> There are no vendors in the system.</p></div>';
 		endif;
-		
 		$html .= $table;
 		
-		if ($this->CheckModule('User_Add')) {
-			$html .= anchor(base_url() . 'users/add', 'Add New User', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_user_btn"');
+		if ($this->CheckModule('Vendor_Add')) {
+			$html .= '<a href="javascript:void(0);" class="greenBtn floatRight button" style="margin-top:10px;" id="add_new_vendor">Add New Vendor</a>';
+			$html .= '<script type="text/javascript">					
+						jQuery("#add_new_vendor").click(function() {
+							jQuery.ajax({
+								type:"POST",
+								url:"' . base_url() . 'admin/vendors/add",
+								success:function(data) {
+									if(data) {
+										jQuery(".table").append(\'<div id="editaddVendorForm"></div>\');
+										jQuery("#editaddVendorForm").html(data);
+									}
+								}
+							});						
+						});</script>';
 		}
 		
 		$data = array(
@@ -134,7 +149,7 @@ class Vendors extends DOM_Controller {
 	
 	public function add() {
 		//were loading this page on a popup
-		$this->load->view($this->theme_settings['ThemeDir'] . 'forms/form_addeditvendors');
+		$this->load->view('themes/itsbrain/forms/form_addeditvendors');
 	}
 	
 	public function edit() {
@@ -148,13 +163,40 @@ class Vendors extends DOM_Controller {
 	}
 	
 	public function remove($which) {
-		$vid = $this->input->get('vid');
+		$vid = $this->input->post('vid');
 		$disable = $this->administration->disableVendor($vid,$which);
 		if($disable) :
 			return TRUE;
 		else :
 			return FALSE;
 		endif;
+	}
+	
+	public function form() {
+		$form = $this->input->post();
+		
+		$address = 'street:'   . stripslashes(trim($form['address'])) . ',city:' . stripslashes(trim($form['city'])) . ',state:' . $form['state'] . ',zipcode:' . stripslashes(trim($form['zipcode']));
+		$phone   = 'primary:'  . stripslashes(trim($form['primary'])) . ((isset($form['secondary'])) ? ',secondary:' . $form['secondary'] : '');
+		 
+		$data = array(
+			'VENDOR_Name' 		=> $form['name'],
+			'VENDOR_Address' 	=> $address,
+			'VENDOR_Phone' 		=> $phone,
+			'VENDOR_Notes' 		=> $form['notes'],
+			'VENDOR_Active' 	=> $form['status'],
+			'VENDOR_ActiveTS' 	=> date('Y-m-d H:i:s'),
+			'VENDOR_Created' 	=> date('Y-m-d H:i:s')
+		);
+		
+		$vid = isset($form['id']) ? $form['id'] : FALSE;
+		
+		$process = $this->administration->vendorForm($vid);
+		
+		if($process) {
+			echo '1';
+		}else {
+			echo '0';
+		}
 	}
 	
 }
