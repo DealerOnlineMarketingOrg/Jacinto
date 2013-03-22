@@ -10,51 +10,54 @@
             'class' => 'mainForm valid'
         );
 		
-        echo form_open('/dpr/reports/',$form);
+        echo form_open('/dpr/reports',$form);
     ?>
 	        <!-- Input text fields -->
         <fieldset>
-            <div id="fullReportID" class="widget first">
-                <div class="head"><h5 class="iList">DPR Report</h5>
-                </div>
-                <div class="rowElem noborder">
-                    <!-- Line graph of year -->
-                    <div class="widgets">
-                        <div class="left">
-                            <div id="lineID" class="widget">
-                                <div class="head"><h5 id="update" class="iGraph">Leads Per Month</h5></div>
-                                <div class="body">
-                                	<? echo $report_lineChart; ?>
+        	<?php if ($runReport) { ?>
+                <div id="reportLive">
+                    <div id="fullReportID" class="widget first">
+                        <div class="head"><h5 class="iList">DPR Report</h5>
+                        </div>
+                        <div class="rowElem noborder">
+                            <!-- Line graph of year -->
+                            <div class="widgets">
+                                <div class="left">
+                                    <div id="lineID" class="widget">
+                                        <div class="head"><h5 id="update" class="iGraph">Leads Per Month</h5></div>
+                                        <div class="body">
+                                            <? echo $report_lineChart; ?>
+                                        </div>
+                                    </div>
                                 </div>
+                                
+                                <!-- Pie total overall -->
+                                <div class="right">
+                                    <div id="pieID" class="widget">
+                                        <div class="head"><h5 class="iChart8">Total Leads</h5></div>
+                                        <div class="body">
+                                            <? echo $report_pieChart; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="fix"></div>
                             </div>
                         </div>
-                        
-                        <!-- Pie total overall -->
-                        <div class="right">
-                            <div id="pieID" class="widget">
-                                <div class="head"><h5 class="iChart8">Total Leads</h5></div>
-                                <div class="body">
-                                    <? echo $report_pieChart; ?>
-                                </div>
+                        <div class="rowElem noborder">
+                            <!-- Provider data lists -->
+                            <div id="tableID">
+                                <?php echo $report_leads; ?>
                             </div>
+                            <div class="fix"></div>
                         </div>
                         <div class="fix"></div>
                     </div>
-                </div>
-                <div class="rowElem noborder">
-                	<!-- Provider data lists -->
-                    <div id="tableID">
-                    	<?php echo $report_leads; ?>
+                    <div style="width:1;float:right;vertical-align:middle">
+                        <input ID="excel" class="greyishBtn" type="button" value="Excel" />
+                        <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
                     </div>
-                    <div class="fix"></div>
-                </div>
-                <div class="fix"></div>
-            </div>
-            <div style="width:1;float:right;vertical-align:middle">
-                <input ID="excel" class="greyishBtn" type="button" value="Excel" />
-                <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
-            </div>
-
+				</div>
+			<?php } ?>
         </fieldset>
     <?php echo  form_close(); ?>
     
@@ -64,8 +67,8 @@
 			plotPieChart();
 		});
 		
-		function plotLineChart() {<? echo $report_lineChart_script; ?>}
-		function plotPieChart() {<? echo $report_pieChart_script; ?>}
+		function plotLineChart() {<?php echo $report_lineChart_script; ?>}
+		function plotPieChart() {<?php echo $report_pieChart_script; ?>}
 	
 		// Use base64 encoding if XSS filtering is active, since
 		//  XSS will strip certain tags, like style.

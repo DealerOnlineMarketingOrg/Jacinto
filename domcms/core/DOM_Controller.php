@@ -818,17 +818,20 @@ class DOM_Controller extends CI_Controller {
 		   			case "add":
 						$form = $this->input->post();
 						
-						$provider_id = $form['providers'];
+						$provider_id = $form['source'];
 						// Pull custom info (use if select value is AddCustom)
-						$customProvider = $form['customProvider'];
-						$customProviderURL = $form['customProviderURL'];
+						$customProvider = $form['customSource'];
+						$customProviderURL = $form['customSourceURL'];
 						
 						$agency_id = $form['agencies'];
 						// Pull custom info (use if select value is AddCustom)
 						$customAgency = $form['customAgency'];
 						
-						$date = $form['date'];
+						$month = $form['month'];
+						$year = $form['year'];
+						$date = $year . '/' . $month . '/01';
 						$total = $form['total'];
+						$cost = $form['cost'];
 						
 						$err_msg = '';
 						$err_level = 0;
@@ -839,10 +842,13 @@ class DOM_Controller extends CI_Controller {
 							$agency_id == '' ||
 							($agency_id == 'AddCustom' && $customAgency == '') ||
 							$date == '' ||
-							$total == '') {
+							$total == '' ||
+							$cost == '') {
 								$err_msg = 'All fields are required.';
 						} else if (!(preg_match('/^[0-9]+|([0-9]+)?\.[0-9]+$/', $total))) {
 								$err_msg = 'Total field must be a number.';
+						} else if (!(preg_match('/^[0-9]+|([0-9]+)?\.[0-9]+$/', $cost))) {
+								$err_msg = 'Cost field must be a number.';
 						}
 						if ($err_msg != '') {
 							$err_level = -1;
@@ -852,8 +858,8 @@ class DOM_Controller extends CI_Controller {
 							// If provider does not exist.
 							if ($provider_id == 'AddCustom') {
 								$provider_data = array(
-									'provider' => $customProvider,
-									'providerURL' => $customProviderURL
+									'source' => $customProvider,
+									'sourceURL' => $customProviderURL
 								);
 								// ..add to database.
 								$provider_id = $this->rep->addProvider($provider_data);
@@ -871,8 +877,11 @@ class DOM_Controller extends CI_Controller {
 							$lead_data = array(
 								'providerID' => $provider_id,
 								'serviceID' => $agency_id,
+								'month' => $month,
+								'year' => $year,
 								'date' => $date,
 								'total' => $total,
+								'cost' => $cost,
 								'clientID' => $this->user['DropdownDefault']->SelectedClient
 							);
 							$this->rep->addLeadTotal($lead_data);

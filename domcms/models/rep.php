@@ -62,14 +62,39 @@
 		
 		// Adds a lead total to the dpr report table.
 		public function addLeadTotal($lead_data) {
+			// Update DPRReports with the lead data.
 			$data = array(
 				'REPORT_Provider' => $lead_data['providerID'],
 				'REPORT_Service'  => $lead_data['serviceID'],
 				'REPORT_Date'     => $lead_data['date'],
 				'REPORT_Value'    => $lead_data['total'],
 				'CLIENT_ID'       => $lead_data['clientID'],
-				);
+			);
 			$this->db->insert('DPRReports', $data);
+			
+			// Update DPRProviderData with the cost data.
+			$where = array(
+				'PROVIDERDATA_ID' => $lead_data['providerID'],
+				'PROVIDERDATA_Month' => $lead_data['month'],
+				'PROVIDERDATA_Year' => $lead_data['year'],
+			);
+			$query = $this->db->get_where('DPRProviderData', $where);
+			if ($query->num_rows > 0) {
+				// Already exists. Update.
+				$data = array(
+					'PROVIDERDATA_Cost' => $lead_data['cost']
+				);
+				$this->db->where($where);
+				$this->db->update('DPRProviderData', $data);
+			} else {
+				// Doesn't exist yet. Insert.
+				$data = array(
+					'PROVIDERDATA_Month' => $lead_data['month'],
+					'PROVIDERDATA_Year' => $lead_data['year'],
+					'PROVIDERDATA_Cost' => $lead_data['cost']
+				);
+				$this->db->insert('DPRProviderData', $data);
+			}
 		}
 		
 		//
@@ -265,6 +290,7 @@
 				);
 				
 				$data_row = $empty_row;
+				$cost_row = $empty_row;
 				// Adjust for header rows. Affects formulas.
 				$current_row = 1 + count($headers);
 				$first_row = true;
@@ -327,6 +353,10 @@
 					$totalLeadsYearlyID = $current['year'] . '.totalLeads.';
 					// Total Conversion formula ID.
 					$conversionID = $current['year'] . '.' . $current['provider'] . '.conversion.';
+					// Cost formula ID.
+					$costID = $current['year'] . '.' . $current['provider'] . '.cost.';
+					// Cost per lead formula ID.
+					$costPerLeadID = $current['year'] . '.' . $current['provider'] . '.costPerLead.';
 					
 					if ($write_data) {
 						// Name data row.
@@ -483,18 +513,37 @@
 						$total_row = $empty_row;
 						// Costs.
 						$total_row['Cells']['Name']['data'] = $ending_year . ' Cost';
+						// Set class
 						foreach ($total_row['Cells'] as &$item)
 							$item['format']['class'] = 'Total';
-						$total_row['Cells']['YTD']['formula'] = '';
+						foreach ($months as $month) {
+							$total_row['Cells'][$month]['data'] = $cost_row['Cells'][$month]['data'];
+							$total_row['Cells'][$month]['formula'] = '';
+							// Tag each month as total cost for row and per month.
+							$total_row['Cells'][$month]['calcID'] = $costID;
+							$total_row['Cells'][$month]['calcID'] = $costID.$month;
+							$total_row['Cells'][$month]['format']['functions'] = '';
+						}
+						$total_row['Cells']['YTD']['formula'] = '=SUM({' . $costPerLeadID . '})';
 						$data_body[] = $total_row;
+						$cost_row = $empty_row;
 						
 						$current_row++;
 						$total_row = $empty_row;
 						// Costs per lead.
 						$total_row['Cells']['Name']['data'] = $ending_year . ' Cost per lead';
+						// Set class
 						foreach ($total_row['Cells'] as &$item)
 							$item['format']['class'] = 'Total';
-						$total_row['Cells']['YTD']['formula'] = '';
+						foreach ($months as $month) {
+							$total_row['Cells'][$month]['data'] = '';
+							$total_row['Cells'][$month]['formula'] = '={' . $costID.$month . '}/{' . $totalLeadsID.$month . '})';
+							// Tag each month as total cost per lead for row and per month.
+							$total_row['Cells'][$month]['calcID'] = $costPerLeadID;
+							$total_row['Cells'][$month]['calcID'] = $costPerLeadID.$month;
+							$total_row['Cells'][$month]['format']['functions'] = '';
+						}
+						$total_row['Cells']['YTD']['formula'] = '=SUM({' . $costPerLeadID . '})';
 						$data_body[] = $total_row;
 						
 						// Go to next row.
@@ -523,6 +572,8 @@
 						$data_row['Cells'][$months[($row->Month)-1]]['format']['class'] = $data_row['Cells']['Name']['format']['class'];
 						// Get this query row's monthly value.
 						$data_row['Cells'][$months[($row->Month)-1]]['data'] = $row->Value;
+						// Get this query row's monthly value.
+						$cost_row['Cells'][$months[($row->Month)-1]]['data'] = $row->Cost;
 					}
 
 					// Update $current.
@@ -728,23 +779,27 @@
 			return $report;
 		}
 		
-		public function getDPRReport($client_id, $beginning_year, $ending_year) {
+		public function getDPRReport($client_id, $beginning_month, $beginning_year, $ending_month, $ending_year) {
 			// The first element in each row array indicates the type of data the row represents.
 			// This will be used for formatting.
 			
 			$report_id = 'leads';
 			
 			// Get initial date to start report with.
-			$begin_date = (string)($beginning_year) . '-01-01';
-			$end_date = (string)($ending_year) . '-12-31';
+			$begin_date = (string)($beginning_year) . '-' . (string)($beginning_month) . '-01';
+			$end_date = (string)($ending_year) . '-' . (string)($ending_month) . '-31';
 			// Pull data from last n years.
-			$qu_report = "SELECT p.PROVIDER_Name AS PName, YEAR(r.REPORT_Date) as Year, s.SERVICE_Name AS SName, s.SERVICE_Type AS SType, MONTH(r.REPORT_Date) as Month, r.REPORT_Value AS Value, r.REPORT_Date as Date " .
-			             "FROM DPRReports AS r, DPRProviders AS p, DPRReportServices AS s " .
+			$qu_report = "SELECT p.PROVIDER_Name AS PName, YEAR(r.REPORT_Date) as Year, s.SERVICE_Name AS SName, s.SERVICE_Type AS SType, MONTH(r.REPORT_Date) as Month, r.REPORT_Value AS Value, dj1.PROVIDERDATA_Cost as Cost, r.REPORT_Date as Date " .
+			             "FROM DPRReports AS r " .
+						 "LEFT JOIN DPRProviderData dj1 ON (dj1.PROVIDERDATA_ID = r.REPORT_Provider) " .
+						 "LEFT JOIN DPRProviderData dj2 ON (dj2.PROVIDERDATA_Month = MONTH(r.REPORT_Date)) " .
+						 "LEFT JOIN DPRProviderData dj3 ON (dj3.PROVIDERDATA_Year = YEAR(r.REPORT_Date)), " .
+						 "  DPRProviders AS p, DPRReportServices AS s " .
 						 "WHERE r.CLIENT_ID = " . $client_id .
 						 "  AND r.REPORT_Date >= '" . $begin_date . "' AND r.REPORT_Date <= '" . $end_date . "'" .
 						 "  AND r.REPORT_Provider = p.PROVIDER_ID" .
 						 "  AND r.REPORT_Service = s.SERVICE_ID" .
-						 "  AND (s.SERVICE_Type = 1 OR s.SERVICE_Type = 2) " .
+						 "  AND (s.SERVICE_Type = 1 OR s.SERVICE_Type = 2)" .
 						 "ORDER BY p.PROVIDER_Name, Year, s.SERVICE_Type, s.SERVICE_Name ASC, Month";
 			$query = $this->db->query($qu_report);
 			

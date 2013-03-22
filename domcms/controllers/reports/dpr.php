@@ -16,9 +16,37 @@
 		public function reports() {
 			$this->Load('reports');
 		}
-				
-		public function Load($page) {
+		
+		public function entry() {
+			$this->Load('entry');	
+		}
+		
+		public function ajaxGetCost() {		
+			$form = $this->input->post();
 			
+			$where = array(
+				'PROVIDERDATA_ID' => $form['source'],
+				'PROVIDERDATA_Month' => $form['month'],
+				'PROVIDERDATA_Year' => $form['year'],
+			);
+			$query = $this->db->get_where('DPRProviderData', $where);
+			$results = $query->result();
+			
+			$cost = '';
+			if ($query->num_rows > 0) {
+				foreach ($results as $row) {
+					$cost = $row->PROVIDERDATA_Cost;
+					// We only want the first result.
+					break;
+				}
+			}
+			
+			echo $cost;
+		}
+		
+		public function Load($page) {
+			$form = $this->input->post();
+				
 			// Processing for dpr entry page.
 			if ($page == 'add') {
 				$report_data = $this->getdpr->get('Provider');
@@ -36,26 +64,45 @@
 				);
 			}
 			
-			// Processing for dpr report page.
-			if ($page == 'reports') {
-				if ($this->user['DropdownDefault']->SelectedClient <= 1) {
-					
-				$report = $this->rep->getDPRReport($this->user['DropdownDefault']->SelectedClient, 2010, 2012);
-				// Wrap each chart in a div to keep them seperate.
-				$report_element_start = 1;
-				
-				$report_lineChart_script = '';
-				$report_html = generateLineChart($report, 'lineChart', $report_element_start, $report_lineChart_script);
-				$report_lineChart = "<div id='reportBlock_lineChart' class='report'>" . $report_html . "</div>";
-				
-				$report_pieChart_script = '';
-				$report_html = generatePieChart($report, 'pieChart', $report_element_start, $report_pieChart_script);
-				$report_pieChart = "<div id='reportBlock_pieChart' class='report'>" . $report_html . "</div>";
-				
-				$report_html = generateTableChart($report, 'leads', $report_element_start);
-				$report_leads = "<div id='reportBlock_tableChart' class='report'>" . $report_html . "</div>";
-
+			// Processing for dpr report entry page.
+			if ($page == 'entry') {
 				$data = array(
+					'html' => ''
+				);
+			}
+			
+			// Processing for dpr report page.
+			if ($page == 'reports') {				
+				if ($this->user['DropdownDefault']->SelectedClient < 1) {
+					throwError(newError('Clients Add', -1, 'You must chose a dealership in order to view a DPR report.', 0, ''));
+					$runReport = false;
+					$report_leads = '';
+					$report_lineChart = '';
+					$report_lineChart_script = '';
+					$report_pieChart = '';
+					$report_pieChart_script = '';
+					
+				} else {
+					$report = $this->rep->getDPRReport($this->user['DropdownDefault']->SelectedClient, $form['startMonth'], $form['startYear'], $form['endingMonth'], $form['endingYear']);
+					// Wrap each chart in a div to keep them seperate.
+					$report_element_start = 1;
+					
+					$report_lineChart_script = '';
+					$report_html = generateLineChart($report, 'lineChart', $report_element_start, $report_lineChart_script);
+					$report_lineChart = "<div id='reportBlock_lineChart' class='report'>" . $report_html . "</div>";
+					
+					$report_pieChart_script = '';
+					$report_html = generatePieChart($report, 'pieChart', $report_element_start, $report_pieChart_script);
+					$report_pieChart = "<div id='reportBlock_pieChart' class='report'>" . $report_html . "</div>";
+					
+					$report_html = generateTableChart($report, 'leads', $report_element_start);
+					$report_leads = "<div id='reportBlock_tableChart' class='report'>" . $report_html . "</div>";
+					
+					$runReport = true;
+				}
+				
+				$data = array(
+					'runReport' => $runReport,
 					'html' => '',
 					'providers' => '',
 					'agencies' => '',
@@ -69,6 +116,7 @@
 
 			switch ($page) {
 				case 'add':		$this->LoadTemplate('forms/form_addDpr',$data); break;
+				case 'entry': $this->LoadTemplate('forms/form_reportDprEntry',$data); break;
 				case 'reports': $this->LoadTemplate('forms/form_reportDpr',$data); break;
 			}	
 			
