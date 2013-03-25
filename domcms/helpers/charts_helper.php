@@ -158,7 +158,8 @@
 								}
 							}
 							$format = '';
-							if ($item['data'] == '' || $item['data'] === 0 || $item['data'] == '#DIV/0!')
+							// Strip out all errors and 0's.
+							if ($item['data'] == '' || $item['data'] === 0 || $item['data'] == '#DIV/0!' || $item['data'] == '#VALUE!')
 								$data = '';
 							else
 								$data = $ci->rep->formatData($item['data'], $item['format']['functions']);
@@ -166,6 +167,8 @@
 							$id = "reportID_" . $report_element_i; $report_element_i++;
 							// Convert data to floating-point string to force output of needed precision.
 							if (substr($data, strlen($data)-1, 1) == '%')
+								$data = numberToString($data, 2);
+							else if (substr($data, 0, 1) == '$')
 								$data = numberToString($data, 2);
 							else
 								$data = numberToString($data, 2, TRUE);

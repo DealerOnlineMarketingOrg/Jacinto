@@ -816,14 +816,14 @@ class DOM_Controller extends CI_Controller {
 		   			case "add":
 						$form = $this->input->post();
 						
-						$provider_id = $form['source'];
+						$provider_id = $form['providers'];
 						// Pull custom info (use if select value is AddCustom)
-						$customProvider = $form['customSource'];
-						$customProviderURL = $form['customSourceURL'];
+						$customProvider = $form['customProvider'];
+						$customProviderURL = $form['customProviderURL'];
 						
-						$agency_id = $form['agencies'];
+						$service_id = $form['services'];
 						// Pull custom info (use if select value is AddCustom)
-						$customAgency = $form['customAgency'];
+						$customService = $form['customService'];
 						
 						$month = $form['month'];
 						$year = $form['year'];
@@ -837,8 +837,8 @@ class DOM_Controller extends CI_Controller {
 						// Validate data and alert user if error (if javascript validation isn't working).
 						if ($provider_id == '' ||
 						    ($provider_id == 'AddCustom' && ($customProvider == '' || $customProviderURL == '')) ||
-							$agency_id == '' ||
-							($agency_id == 'AddCustom' && $customAgency == '') ||
+							$service_id == '' ||
+							($service_id == 'AddCustom' && $customService == '') ||
 							$date == '' ||
 							$total == '' ||
 							$cost == '') {
@@ -856,25 +856,25 @@ class DOM_Controller extends CI_Controller {
 							// If provider does not exist.
 							if ($provider_id == 'AddCustom') {
 								$provider_data = array(
-									'source' => $customProvider,
-									'sourceURL' => $customProviderURL
+									'provider' => $customProvider,
+									'providerURL' => $customProviderURL
 								);
 								// ..add to database.
 								$provider_id = $this->rep->addProvider($provider_data);
 							}
 							// If service does not exist..
-							if ($agency_id == 'AddCustom') {
-								$agency_data = array(
-									'service' => $customAgency
+							if ($service_id == 'AddCustom') {
+								$service_data = array(
+									'service' => $customService
 								);
 								// ..add to database.
-								$agency_id = $this->rep->addService($agency_data);
+								$service_id = $this->rep->addService($service_data);
 							}
 							
 							// Add total to report table.
 							$lead_data = array(
 								'providerID' => $provider_id,
-								'serviceID' => $agency_id,
+								'serviceID' => $service_id,
 								'month' => $month,
 								'year' => $year,
 								'date' => $date,

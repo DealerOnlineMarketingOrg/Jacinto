@@ -19,7 +19,7 @@ class Getdpr extends CI_Model {
 		return $output;
 	}
 	
-	// Retrieves the Provider or Agency data from the DRP
+	// Retrieves the Provider or Service data from the DRP
 	//  db and returns the data
 	public function get($which) {
 		switch ($which)
@@ -27,7 +27,7 @@ class Getdpr extends CI_Model {
 			case ('Provider'):
 				$data = $this->rep->getProviders('PROVIDER_ID');
 				break;
-			case ('Agency'):
+			case ('Service'):
 				$data = $this->rep->getServices('SERVICE_ID');
 				break;
 		}

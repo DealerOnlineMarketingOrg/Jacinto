@@ -21,20 +21,20 @@
 				<?php } else { ?>
                     <div class="head"><h5 class="iList">Add DPR Lead</h5></div>
                     <div class="rowElem noborder">
-                        <label><span class="req">*</span>Source</label>
+                        <label><span class="req">*</span>Provider</label>
                         <div class="formRight noSearch">
-                            <select id="source" name="source" class="input msSelect chzn-select required validate[required]" placeholder="Select A Lead Source...">
-                                <option value="">Select A Lead Source</option>
+                            <select id="providers" name="providers" class="input msSelect chzn-select required validate[required]" placeholder="Select A Lead Provider...">
+                                <option value="">Select A Lead Provider</option>
                                 <?php echo $providers; ?>
                                 <option value="AddCustom">Other</option>
                             </select><br />
                             <div>
-                                <label data-binding="source" style="display:none">New provider:</label>
-                                <input id="customSource" name="customSource" class="input" data-binding="source" placeholder="Enter new source" type="text" style="width:200px;display:none" />
+                                <label data-binding="providers" style="display:none">New provider:</label>
+                                <input id="customProvider" name="customProvider" class="input" data-binding="providers" placeholder="Enter new provider" type="text" style="width:200px;display:none" />
                             </div><br />
                             <div>
-                                <label data-binding="source" style="display:none">New provider URL:</label>
-                                <input id="customSourceURL" name="customSourceURL" class="input" data-binding="source" placeholder="Enter new source URL" type="text" style="width:200px;display:none" />
+                                <label data-binding="providers" style="display:none">New provider URL:</label>
+                                <input id="customProviderURL" name="customProviderURL" class="input" data-binding="providers" placeholder="Enter new provider URL" type="text" style="width:200px;display:none" />
                             </div>
                         </div>
                         <div class="fix"></div>
@@ -47,16 +47,16 @@
                         <div class="fix"></div>
                     </div>
                     <div class="rowElem noborder">
-                        <label>Agency Description</label>
+                        <label>Service Description</label>
                         <div class="formRight noSearch">
-                            <select id="agencies" name="agencies" class="input msSelect chzn-select required validate[required]" placeholder="Select A Lead Type...">
-                                <option value="">Select A Lead Type</option>
-                                <?php echo $agencies; ?>
+                            <select id="services" name="services" class="input msSelect chzn-select required validate[required]" placeholder="Select A Lead Service...">
+                                <option value="">Select A Lead Service</option>
+                                <?php echo $services; ?>
                                 <option value="AddCustom">Other</option>
                             </select><br />
                             <div>
-                                <label data-binding="agencies" style="display:none">New agency:</label>
-                                <input id="customAgency" name="customAgency" class="input" data-binding="agencies" placeholder="Enter new agency" type="text" style="width:200px;display:none" />
+                                <label data-binding="services" style="display:none">New service:</label>
+                                <input id="customService" name="customService" class="input" data-binding="services" placeholder="Enter new service" type="text" style="width:200px;display:none" />
                             </div>
                         </div>
                         <div class="fix"></div>
@@ -87,11 +87,11 @@
                         <div class="formRight noSearch">
                         	<select id="year" name="year" class="input chzn-select required validate[required]" placeholder="Select a year...">
                             	<option value="">Select a Year</option>
-                                <option value="2009">2009</option>
-                                <option value="2010">2010</option>
-                                <option value="2011">2011</option>
-                                <option value="2012">2012</option>
                                 <option value="2013">2013</option>                                
+                                <option value="2012">2012</option>
+                                <option value="2011">2011</option>
+                                <option value="2010">2010</option>
+                                <option value="2009">2009</option>
                             </select>
                         </div>
                         <div class="fix"></div>
@@ -115,12 +115,12 @@
             //jQuery(window).load(function() {
 				function validateBlank()
 				{
-					if (jQuery('input#source').val() == '' ||
-                        (jQuery('input#source').val() == 'AddCustom' &&
-						 (jQuery('input#customSource').val() == '' || jQuery('input#customSourceURL').val() == '')) ||
-                        jQuery('input#agency').val() == '' ||
-                        (jQuery('input#agency').val() == 'AddCustom' &&
-						 jQuery('input#customAgency').val() == '') ||
+					if (jQuery('input#providers').val() == '' ||
+                        (jQuery('input#providers').val() == 'AddCustom' &&
+						 (jQuery('input#customProvider').val() == '' || jQuery('input#customProviderURL').val() == '')) ||
+                        jQuery('input#services').val() == '' ||
+                        (jQuery('input#services').val() == 'AddCustom' &&
+						 jQuery('input#customService').val() == '') ||
                         jQuery('input#month').val() == '' ||
                         jQuery('input#year').val() == '' ||
                         jQuery('input#total').val() == '')
@@ -138,13 +138,13 @@
 				}
 				
 				jQuery('.input').change(function() {
-					if (this.name == 'source' || this.name == 'agencies' || this.name == 'month' || this.name == 'year') {
-						if (jQuery("#source").val() != '' && jQuery("#agencies").val() != '' && jQuery("#month").val() != '' && jQuery("#year").val() != '') {
-							// Check values of source and agency and see if there's a cost associated with them.
+					if (this.name == 'providers' || this.name == 'services' || this.name == 'month' || this.name == 'year') {
+						if (jQuery("#providers").val() != '' && jQuery("#services").val() != '' && jQuery("#month").val() != '' && jQuery("#year").val() != '') {
+							// Check values of service and service and see if there's a cost associated with them.
 							$.ajax({type:"POST",
 									url:"<?= base_url(); ?>dpr/ajaxGetCost",
-									data:{source:jQuery("#source").val(),
-										  agency:jQuery("#agencies").val(),
+									data:{service:jQuery("#providers").val(),
+										  service:jQuery("#services").val(),
 										  month:jQuery("#month").val(),
  										  year:jQuery("#year").val()
 										  },
@@ -156,6 +156,15 @@
 						}
 					}
 				});
+				
+				jQuery('form.valid').reset(function(e) {
+					jQuery('#providers').selectedIndex = 0;
+					jQuery('#cost').val("");
+					jQuery('#services').selectedIndex = 0;
+					jQuery('#month').selectedIndex = 0;
+					jQuery('#year').selectedIndex = 0;
+					jQuery('#total').val("");					
+				}
 				
                 jQuery('form.valid').submit(function(e) {
                     if (validateBlank()) {

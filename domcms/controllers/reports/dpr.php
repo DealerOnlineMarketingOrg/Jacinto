@@ -51,13 +51,13 @@
 			if ($page == 'add') {
 				$report_data = $this->getdpr->get('Provider');
 				$prov_options = $this->getdpr->output_as_options($report_data);
-				$agency_list = $this->getdpr->get('Agency');
-				$agency_options = $this->getdpr->output_as_options($agency_list);
+				$service_list = $this->getdpr->get('Service');
+				$service_options = $this->getdpr->output_as_options($service_list);
 				
 				$data = array(
 					'html' => '',
 					'providers' => $prov_options,
-					'agencies' => $agency_options,
+					'services' => $service_options,
 					'report_leads' => '',
 					'report_lineChart' => '',
 					'report_lineChart_script' => '{}'
@@ -105,7 +105,7 @@
 					'runReport' => $runReport,
 					'html' => '',
 					'providers' => '',
-					'agencies' => '',
+					'services' => '',
 					'report_leads' => $report_leads,
 					'report_lineChart' => $report_lineChart,
 					'report_lineChart_script' => $report_lineChart_script,

@@ -49,7 +49,7 @@
 			return query_results($this,$sql);
 		}
 		
-		// Adds a Agency to the DPR db and returns the new ID.
+		// Adds a Service to the DPR db and returns the new ID.
 		public function addService($service_data) {
 			$data = array(
 				'SERVICE_Name' => $service_data['service']
@@ -159,7 +159,7 @@
 			return $fData;
 		}
 		
-		// Creates a PHPExcel worksheet that'll hold do the calculations on the report.
+		// Creates a PHPExcel worksheet that'll hold the calculations on the report.
 		// Returns the report with the calculations completed.
 		// Any current data in the formula fields will be updated.
 		// Returns the calculated report.
@@ -187,6 +187,10 @@
 				$row++;
 			}
 			
+			// Test routine. Writes to excel file for formula checking.
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+			$objWriter->save("assets/uploads/test.xlsx");
+		
 			// Retrieve data back from worksheet, in calculated form,
 			//  and merge data back into report. Data will have the
 			//  same structure 
@@ -521,10 +525,11 @@
 							$total_row['Cells'][$month]['formula'] = '';
 							// Tag each month as total cost for row and per month.
 							$total_row['Cells'][$month]['calcID'] = $costID;
-							$total_row['Cells'][$month]['calcID'] = $costID.$month;
-							$total_row['Cells'][$month]['format']['functions'] = '';
+							$total_row['Cells'][$month]['calcID'] .= ',' . $costID.$month;
+							$total_row['Cells'][$month]['format']['functions'] = 'prepend($)';
 						}
-						$total_row['Cells']['YTD']['formula'] = '=SUM({' . $costPerLeadID . '})';
+						$total_row['Cells']['YTD']['formula'] = '=SUM({' . $costID . '})';
+						$total_row['Cells']['YTD']['format']['functions'] = 'prepend($)';
 						$data_body[] = $total_row;
 						$cost_row = $empty_row;
 						
@@ -537,13 +542,13 @@
 							$item['format']['class'] = 'Total';
 						foreach ($months as $month) {
 							$total_row['Cells'][$month]['data'] = '';
-							$total_row['Cells'][$month]['formula'] = '={' . $costID.$month . '}/{' . $totalLeadsID.$month . '})';
+							$total_row['Cells'][$month]['formula'] = '={' . $costID.$month . '}/{' . $totalLeadsID.$month . '}';
 							// Tag each month as total cost per lead for row and per month.
 							$total_row['Cells'][$month]['calcID'] = $costPerLeadID;
-							$total_row['Cells'][$month]['calcID'] = $costPerLeadID.$month;
-							$total_row['Cells'][$month]['format']['functions'] = '';
+							$total_row['Cells'][$month]['format']['functions'] = 'prepend($)';
 						}
 						$total_row['Cells']['YTD']['formula'] = '=SUM({' . $costPerLeadID . '})';
+						$total_row['Cells']['YTD']['format']['functions'] = 'prepend($)';
 						$data_body[] = $total_row;
 						
 						// Go to next row.
@@ -728,7 +733,6 @@
 			return $report;
 		}
 		
-		
 		// Gets a list of all the calculation tags in the report.
 		public function getCalcList($report) {
 			$row = 1;
@@ -789,11 +793,11 @@
 			$begin_date = (string)($beginning_year) . '-' . (string)($beginning_month) . '-01';
 			$end_date = (string)($ending_year) . '-' . (string)($ending_month) . '-31';
 			// Pull data from last n years.
-			$qu_report = "SELECT p.PROVIDER_Name AS PName, YEAR(r.REPORT_Date) as Year, s.SERVICE_Name AS SName, s.SERVICE_Type AS SType, MONTH(r.REPORT_Date) as Month, r.REPORT_Value AS Value, dj1.PROVIDERDATA_Cost as Cost, r.REPORT_Date as Date " .
+			$qu_report = "SELECT p.PROVIDER_Name AS PName, YEAR(r.REPORT_Date) as Year, s.SERVICE_Name AS SName, s.SERVICE_Type AS SType, MONTH(r.REPORT_Date) as Month, r.REPORT_Value AS Value, d.PROVIDERDATA_Cost as Cost, r.REPORT_Date as Date " .
 			             "FROM DPRReports AS r " .
-						 "LEFT JOIN DPRProviderData dj1 ON (dj1.PROVIDERDATA_ID = r.REPORT_Provider) " .
-						 "LEFT JOIN DPRProviderData dj2 ON (dj2.PROVIDERDATA_Month = MONTH(r.REPORT_Date)) " .
-						 "LEFT JOIN DPRProviderData dj3 ON (dj3.PROVIDERDATA_Year = YEAR(r.REPORT_Date)), " .
+						 "LEFT JOIN DPRProviderData d ON (d.PROVIDERDATA_ID = r.REPORT_Provider AND " .
+						 "                                  d.PROVIDERDATA_Month = MONTH(r.REPORT_Date) AND " .
+						 "                                  d.PROVIDERDATA_Year = YEAR(r.REPORT_Date)), " .
 						 "  DPRProviders AS p, DPRReportServices AS s " .
 						 "WHERE r.CLIENT_ID = " . $client_id .
 						 "  AND r.REPORT_Date >= '" . $begin_date . "' AND r.REPORT_Date <= '" . $end_date . "'" .

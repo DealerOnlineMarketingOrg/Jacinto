@@ -4,14 +4,13 @@
 	
 	// Converts a number to a string, with a specified floating-point precision.
 	// Strips all trailing floating point 0's beyond precision.
-	// If $floatPrecision = TRUE, will trim all 0's, even if it makes for a smaller precision.	
+	// If $floatPrecision = TRUE, will trim all trailing decimal 0's.
 	// Allows conversions of the following:
 	//   All strings. Be careful what data the string has. It will convert it, even if it's not numeric.
 	//   All integers or floating numbers.
 	//   Strings ending with % are treated as percentage.
 	//   Strings starting with $ are treated as currency.
 	// For rounding purposes, function truncates.
-	//   It's up to the user to round their numbers before calling this function.
 	function numberToString($number, $precision, $floatPrecision = FALSE) {		
 		// Pre-processing: determine data-type if it's a general string, an integer, or a floating-point.
 		// As gettype does, we'll use double for floats.
@@ -67,7 +66,7 @@
 				$minLen = $precision;
 			while (strlen($float_part) > $minLen) {
 				$len = strlen($float_part);
-				if (substr($float_part, $len, 1) == '0')
+				if (substr($float_part, $len-1, 1) == '0')
 					$float_part = substr($float_part, 0, $len-1);
 				else
 					break;
