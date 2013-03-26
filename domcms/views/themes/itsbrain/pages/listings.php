@@ -12,3 +12,9 @@
     <style type="text/css">
 		div.dataTables_filter{top:-72px;}
 	</style>
+	<?php if (isset($page_scripts)) {
+		echo '<script type="text/javascript">';
+		echo $page_scripts;
+		echo '</script>';
+		}
+	?>

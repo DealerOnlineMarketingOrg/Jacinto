@@ -607,7 +607,8 @@ class Administration extends CI_Model {
 				crm.url as CRMUrl,
 				c.CLIENT_Code as Code,
 				c.CLIENT_Active as Status,
-				t.TAG_ClassName as Class
+				t.TAG_ClassName as Class,
+				g.AGENCY_ID as AgencyID
 				FROM ClientWebsites w
 				INNER JOIN MasterlistBank cms ON w.cms = cms.id
 				INNER JOIN MasterlistBank crm ON w.crm = crm.id

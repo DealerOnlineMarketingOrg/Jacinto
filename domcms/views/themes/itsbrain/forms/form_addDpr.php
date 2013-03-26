@@ -308,12 +308,16 @@
 				});
 				
 				jQuery('#reset').click(function(e) {
+					// Brute-force method: reload the page.
+					window.location.replace("<?= base_url(); ?>dpr/add")
+					/*
 					jQuery('#providers').selectedIndex = 0;
 					jQuery('#cost').val("");
 					jQuery('#sources').selectedIndex = 0;
 					jQuery('#month').selectedIndex = 0;
 					jQuery('#year').selectedIndex = 0;
 					jQuery('#total').val("");					
+					*/
 				});
 				
                 jQuery('form.valid').submit(function(e) {

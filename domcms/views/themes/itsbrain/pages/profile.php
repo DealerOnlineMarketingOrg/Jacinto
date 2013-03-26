@@ -151,6 +151,7 @@
 			}
 		});
 	}
+	
 	function editUserModules(id) {
 		alert('edit users module access');
 	}
