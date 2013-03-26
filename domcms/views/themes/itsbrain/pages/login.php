@@ -65,14 +65,8 @@
     <div id="loadedContent"></div>
     
     <script type="text/javascript">
-		
-		
-		
-		
         $('#req1').focus();
-		//$('#thirdPartyConnect').load('<?= base_url(); ?>google_connect');
-		
-	
+		//$('#thirdPartyConnect').load('<?= base_url(); ?>google_connect');	
 		$('#resetPass').click(function(e) {
 			e.preventDefault();
 			$('#loadedContent').load('<?= base_url(); ?>reset_password_form');
@@ -97,12 +91,9 @@
 						// Check credentials with ajax
 						$.ajax({
 							type:'POST',
-							url:'<?= base_url(); ?>signin',
-							
+							url:'<?= base_url(); ?>signin', 
 							// Pass the input values to the controller
 							data:{email:emailAddy,password:pass,remember:remember_me},
-							
-							
 							// The success function is what handles the return.
 							success:function(data) {
 								// If the return is not 1, this means the login failed.
