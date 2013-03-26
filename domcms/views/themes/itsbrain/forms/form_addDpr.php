@@ -97,12 +97,12 @@
                     <div class="fix"></div>
                     <div id="sourceCopy" style="margin:5px"><input type="button" id="addSource" value="+ Source" class="greenBtn" /></div>
                     <input id="sourceCount" name="sourceCount" type="hidden" value="1" />
-                    <div class="submitForm">
-                        <input type="reset" id="reset" value="Reset" class="basicBtn" />
-                        <input type="submit" value="submit" class="redBtn" />
-                    </div>
 				<?php } ?>
                 <div class="fix"></div>
+            </div>
+            <div class="submitForm">
+                <input type="reset" id="reset" value="Reset" class="basicBtn" />
+                <input type="submit" value="submit" class="redBtn" />
             </div>
 		<script type="text/javascript">
 			//$(document).ready(function() {
@@ -152,13 +152,15 @@
 					sourceNum++;
 					jQuery('#sourceCount').val(sourceNum);
 					
-					jQuery('#sourceBlock').css('display','');
-					setTimeout(function(){}, 2000);
 					var newBlock = cloneWithOuter('#sourceBlock',true, true);
 					newBlock = saltSegment(newBlock, [ 'id', 'name', 'data-binding' ], '_' + sourceNum);
 					// Turn new div visible.
-					var sourceBlock = '#sourceBlock_' + sourceNum;
-					jQuery(sourceBlock, newBlock).css('display','');
+					var sourceBlock = 'sourceBlock_' + sourceNum;
+					// Turn new source visible.
+					jQuery("#"+sourceBlock, newBlock).css('display','');
+					// We need to re-attach drop-down functionality to the new source.
+					// This function is loaded for drop-down boxes on DOM-load in custom.js
+					jQuery("#"+sourceBlock).chosen();
 					// Use .before for now. Replace with .replaceWith and .after(buttonCode) due to:
 					// Replace out add button/placeholder. If we prepend before it instead,
 					//   it could cause layout problems with some layouts or browsers.

@@ -78,6 +78,19 @@
 			<?php } ?>
     	</fieldset>
     <?php echo  form_close(); ?>
+    <?php
+        $form = array(
+            'id' => 'reportDprEdit',
+			'name' => 'reportDprEdit',
+            'class' => 'mainForm valid'
+        );
+	?>
+    <?php echo form_open('/dpr/editReport',$form); ?>
+    	<input ID="startMonth" name="startMonth" type="hidden" value="<?php echo $dateRange['startMonth']; ?>" />
+        <input ID="startYear" name="startYear" type="hidden" value="<?php echo $dateRange['startYear']; ?>" />
+        <input ID="endMonth" name="endMonth" type="hidden" value="<?php echo $dateRange['endMonth']; ?>" />
+        <input ID="endYear" name="endYear" type="hidden" value="<?php echo $dateRange['endYear']; ?>" />
+    <?php echo  form_close(); ?>
     
     <script type="text/javascript">
 		$(window).load (function() {
@@ -137,7 +150,7 @@
 		});
 		
 		$('input#editReport').click(function() {
-			window.location.href = "<?= base_url(); ?>dpr/editReport";
+			$("form#reportDprEdit").submit();
 		});
 		
 		$('input#excel').click(function() {

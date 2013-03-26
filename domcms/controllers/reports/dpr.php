@@ -127,7 +127,14 @@
 					'report_lineChart' => $report_lineChart,
 					'report_lineChart_script' => $report_lineChart_script,
 					'report_pieChart' => $report_pieChart,
-					'report_pieChart_script' => $report_pieChart_script
+					'report_pieChart_script' => $report_pieChart_script,
+					// Send date range data to report form.
+					'dateRange' => array (
+						'startMonth' => $rdata['startMonth'],
+						'startYear' => $rdata['startYear'],
+						'endMonth' => $rdata['endMonth'],
+						'endYear' => $rdata['endYear']
+					)
 				);
 			}
 
