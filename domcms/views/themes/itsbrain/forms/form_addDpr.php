@@ -76,10 +76,13 @@
 						<input type="text" class="input required validate[required]" style="width:150px;position:relative;float:left" id="cost" name="cost" placeholder="The monthly cost for leads" max-length="10" />
 					</div>
                     <div class="fix"></div>
-                    <div id="sourceBlock" class="noSearch" style="position:relative;border:1px dotted #d5d5d5;margin:5px;padding:5px">
+                    <!-- We were using noSearch for the class for the select that isn't working below. Needed for chzn-select. -->
+                    <div id="sourceBlock" class="" style="position:relative;border:1px dotted #d5d5d5;margin:5px;padding:5px">
                     	<div style="position:relative;float:left;margin:5px">
                             <label style="position:relative;float:left">Source</label>
-                            <select id="sources" name="sources" class="input msSelect chzn-select required validate[required]" style="position:relative;float:left" placeholder="Select A Lead Source...">
+                            <!-- This isn't working at the moment. Get it working eventually. -->
+                            <!-- <select id="sources" name="sources" class="input msSelect chzn-select required validate[required]" style="position:relative;float:left" placeholder="Select A Lead Source..."> -->
+                            <select id="sources" name="sources" style="position:relative;float:left" placeholder="Select A Lead Source...">
                                 <option value="">Select A Lead Source</option>
                                     <?php echo $services; ?>
                                 <option value="AddCustom">Other</option>
@@ -110,7 +113,7 @@
             	jQuery(window).load(function() {
 					// Don't turn off template sourceBlock before document is loaded, otherwise
 					//  drop down fields may not get populated.
-					jQuery('#sourceBlock').css('display','none');
+					//jQuery('#sourceBlock').css('display','none');
 					newSource();
 				});
 				
@@ -154,13 +157,11 @@
 					
 					var newBlock = cloneWithOuter('#sourceBlock',true, true);
 					newBlock = saltSegment(newBlock, [ 'id', 'name', 'data-binding' ], '_' + sourceNum);
-					// Turn new div visible.
-					var sourceBlock = 'sourceBlock_' + sourceNum;
 					// Turn new source visible.
-					jQuery("#"+sourceBlock, newBlock).css('display','');
+					jQuery("#sourceBlock_"+sourceNum, newBlock).css('display','');
 					// We need to re-attach drop-down functionality to the new source.
 					// This function is loaded for drop-down boxes on DOM-load in custom.js
-					jQuery("#"+sourceBlock).chosen();
+					//jQuery("#sources_"+sourceNum).chosen();
 					// Use .before for now. Replace with .replaceWith and .after(buttonCode) due to:
 					// Replace out add button/placeholder. If we prepend before it instead,
 					//   it could cause layout problems with some layouts or browsers.

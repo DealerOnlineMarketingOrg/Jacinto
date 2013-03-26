@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+	//
 	class Rep extends DOM_Model {
 		
 		function __construct() {
