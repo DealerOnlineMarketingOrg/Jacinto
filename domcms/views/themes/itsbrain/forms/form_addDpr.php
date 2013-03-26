@@ -76,29 +76,27 @@
 						<input type="text" class="input required validate[required]" style="width:150px;position:relative;float:left" id="cost" name="cost" placeholder="The monthly cost for leads" max-length="10" />
 					</div>
                     <div class="fix"></div>
-                    <!-- We were using noSearch for the class for the select that isn't working below. Needed for chzn-select. -->
-                    <div id="sourceBlock" class="" style="position:relative;border:1px dotted #d5d5d5;margin:5px;padding:5px">
+                    <div id="sourceBlock_1" class="" style="position:relative;border:1px dotted #d5d5d5;margin:5px;padding:5px">
                     	<div style="position:relative;float:left;margin:5px">
                             <label style="position:relative;float:left">Source</label>
-                            <!-- This isn't working at the moment. Get it working eventually. -->
-                            <!-- <select id="sources" name="sources" class="input msSelect chzn-select required validate[required]" style="position:relative;float:left" placeholder="Select A Lead Source..."> -->
-                            <select id="sources" name="sources" style="position:relative;float:left" placeholder="Select A Lead Source...">
+                            <!-- This should be a chosen (chzn-select) dropdown. Apply chosen after cloning. -->
+                            <select id="sources_1" name="sources_1" class="msSelect required validate[required]" style="position:relative;float:left" placeholder="Select A Lead Source...">
                                 <option value="">Select A Lead Source</option>
                                     <?php echo $services; ?>
                                 <option value="AddCustom">Other</option>
                             </select>
 		                    <div class="fix"></div>
                             <label data-binding="sources" style="display:none;position:relative;float:left">New source:</label>
-                            <input id="customSource" name="customSource" class="input" data-binding="sources" placeholder="Enter new source" type="text" style="width:200px;display:none;position:relative;float:left" />
+                            <input id="customSource_1" name="customSource_1" class="input" data-binding="sources" placeholder="Enter new source" type="text" style="width:200px;display:none;position:relative;float:left" />
                         </div>
                         <div style="position:relative;float:left;margin:5px">
 							<label style="position:relative;float:left">Total</label>
-							<input type="text" class="input required validate[required]" style="width:150px;position:relative;float:left" id="total" name="total" placeholder="The total lead count" max-length="8" />
+							<input type="text" class="input required validate[required]" style="width:150px;position:relative;float:left" id="total_1" name="total_1" placeholder="The total lead count" max-length="8" />
                       	</div>
 		                <div class="fix"></div>
                     </div>
                     <div class="fix"></div>
-                    <div id="sourceCopy" style="margin:5px"><input type="button" id="addSource" value="+ Source" class="greenBtn" /></div>
+                    <!-- <div id="sourceCopy" style="margin:5px"><input type="button" id="addSource" value="+ Source" class="greenBtn" /></div> -->
                     <input id="sourceCount" name="sourceCount" type="hidden" value="1" />
 				<?php } ?>
                 <div class="fix"></div>
@@ -109,23 +107,72 @@
             </div>
 		<script type="text/javascript">
 			//$(document).ready(function() {
-				var sourceNum = 0;
+				var sourceNum = 1;
             	jQuery(window).load(function() {
 					// Don't turn off template sourceBlock before document is loaded, otherwise
 					//  drop down fields may not get populated.
 					//jQuery('#sourceBlock').css('display','none');
-					newSource();
+					//newSource();
 				});
 				
 				jQuery('#addSource').click(function(e) {
-					newSource();
+					//newSource();
 				});
 				
 				// Clones with outer element (outer html).
 				// To get the html, use .html().
 				// Use of the clone will include the temp wrapper <div>.
 				function cloneWithOuter(selector, withDataAndEvents = false, deepWithDataAndEvents = false) {
-					return $('<div>').append($(selector).clone(withDataAndEvents, deepWithDataAndEvents));
+					cloneSeg = $('<div>').append($(selector).clone(withDataAndEvents, deepWithDataAndEvents));			
+					// Replace all dom-selects with a simplified html version for select-drop-down reloading.
+					jQuery('select', cloneSeg).each(function() {
+						selHtml = selectHtml($(this));
+						$(this).replaceWith(selHtml);
+					});
+					
+					return cloneSeg;
+				}
+				
+				// Returns false if jquery object doesn't have attr, else the value of the attr.
+				function getAttr(jQueryObj, attrName) {
+					attrVal = jQueryObj.attr(attrName);
+					// Check to make sure attr exists.
+					// Attr can be undefined or false, depending on browser.
+					if (typeof(attrVal) !== 'undefined' && attrVal !== false)
+						return attrVal;
+					else
+						return false;
+				}
+				
+				// Returns a simplified bare-bones version of a dom-based select input.
+				function selectHtml(jQueryObj) {
+					jqo = jQueryObj;
+					
+					// Fill in opening tag.
+					bbSel = '<select';
+					val = getAttr(jqo, 'id');
+					if (val) bbSel += ' id="' + val + '"';
+					val = getAttr(jqo, 'name');
+					if (val) bbSel += ' name="' + val + '"';
+					val = getAttr(jqo, 'class');
+					if (val) bbSel += ' class="' + val + '"';
+					val = getAttr(jqo, 'style');
+					if (val) bbSel += ' style="' + val + '"';
+					bbSel += '>';
+					
+					// Fill in options.
+					jQueryObj.find('option').each(function(e) {
+						bbOpt = '<option';
+						val = getAttr($(this), 'value');
+						bbOpt += ' value="' + ((val) ? val : '') + '"';
+						bbOpt += '>' + $(this).text() + '</option>';
+						bbSel += bbOpt;
+					});
+					
+					// Close select.
+					bbSel += '</select>';
+					
+					return bbSel;
 				}
 				
 				// Salts a full html tree segment by appending a salt value to the attributes
@@ -138,16 +185,24 @@
 					jQuery('*', segment).each(function(e) {
 						elementThis = $(this);
 						$.each(attrList, function(index, attrName) {
-							attrVal = elementThis.attr(attrName);
-							// Check to make sure attr exists.
-							// Attr can be undefined or false, depending on browser.
-							if (typeof(attrVal) !== 'undefined' && attrVal !== false) {
+							attrVal = getAttr(elementThis, attrName);
+							if (attrVal) {
 								newAttr = attrVal + salt;
 								elementThis.attr(attrName, newAttr);
 							}
 						});
 					});
 					return segment;
+				}
+				
+				function changeSelect(selectID, value) {
+					jQuery('#'+selectID + " option.*").each(function() {
+						if ($(this).value == value) {
+							alert('hit');
+							$(this).attr('selected','selected');
+						} else
+							$(this).attr('selected','');
+					});
 				}
 				
 				function newSource() {
@@ -157,15 +212,44 @@
 					
 					var newBlock = cloneWithOuter('#sourceBlock',true, true);
 					newBlock = saltSegment(newBlock, [ 'id', 'name', 'data-binding' ], '_' + sourceNum);
+					alert(newBlock.html());
 					// Turn new source visible.
 					jQuery("#sourceBlock_"+sourceNum, newBlock).css('display','');
-					// We need to re-attach drop-down functionality to the new source.
-					// This function is loaded for drop-down boxes on DOM-load in custom.js
-					//jQuery("#sources_"+sourceNum).chosen();
 					// Use .before for now. Replace with .replaceWith and .after(buttonCode) due to:
 					// Replace out add button/placeholder. If we prepend before it instead,
 					//   it could cause layout problems with some layouts or browsers.
+					//jQuery("#sourceBlock_"+sourceNum + " .chzn-search").addClass('noSearch');
+					//jQuery("#sourceBlock_"+sourceNum + " .selector").addClass('noSearch');
 					jQuery('#sourceCopy').before(newBlock.html());
+					/*jQuery('#sources_'+sourceNum).change(function() {
+							var sel = $(this).text();
+							jQuery('#sources_'+sourceNum).find("option").attr('selected','');
+							jQuery(this).find('option').each(function() {
+								if($(this).text() == sel) {
+									$(this).attr('selected','selected');
+									//alert($(this).text());
+								}else {
+									$(this).attr('selected','');
+									//alert('Deselect: ' + $(this).text());	
+								}
+								
+							});
+							
+							
+							$(this).find("option")attr('selected','selected');
+							
+							if ($(this).value == value) {
+								alert('hit');
+								$(this).attr('selected','selected');
+							} else
+								$(this).attr('selected','');
+							
+					});*/
+					// We need to re-attach drop-down functionality to the new source.
+					// This function is loaded for drop-down boxes on DOM-load in custom.js
+					//jQuery("#sources_"+sourceNum).chosen({disable_search_threshold: 20});
+					//jQuery("#sources_"+sourceNum).chosen({disable_search: true});
+					//jQuery("#sources_"+sourceNum).trigger("liszt:updated");
 					// Add a new add button/placeholder.
 					//jQuery(sourceBlock).after('<div id="sourceCopy"><input type="button" id="addSource" value="addSource" class="basicBtn" style="clear:all" /></div>');
 					// Replacing, then remaking, the button unbinds the click event. Rebind.
@@ -209,8 +293,8 @@
 							// Check values of provider and source and see if there's a cost associated with them.
 							$.ajax({type:"POST",
 									url:"<?= base_url(); ?>dpr/ajaxGetCost",
-									data:{source:jQuery("#providers").val(),
-										  source:jQuery("#sources").val(),
+									data:{provider:jQuery("#providers").val(),
+										  source:jQuery("#sources_1").val(),
 										  month:jQuery("#month").val(),
  										  year:jQuery("#year").val()
 										  },

@@ -39,7 +39,7 @@
 			$form = $this->input->post();
 			
 			$where = array(
-				'PROVIDERDATA_ID' => $form['source'],
+				'PROVIDER_ID' => $form['provider'],
 				'PROVIDERDATA_Month' => $form['month'],
 				'PROVIDERDATA_Year' => $form['year'],
 			);

@@ -817,30 +817,30 @@ class DOM_Controller extends CI_Controller {
 						$form = $this->input->post();
 						
 						// There may be more then one service posted. Loop through them.
-						for ($s = 1; $s <= $form['serviceCount']; $s++) {
-							$provider = $form['providers'];
+						for ($s = 1; $s <= $form['sourceCount']; $s++) {
+							$provider_id = $form['providers'];
 							// Pull custom info (use if select value is AddCustom)
 							$customProvider = $form['customProvider'];
 							$customProviderURL = $form['customProviderURL'];
 							
-							$service = $form['source'.$s];
+							$service_id = $form['sources_'.$s];
 							// Pull custom info (use if select value is AddCustom)
-							$customService = $form['customSource'.$s];
+							$customService = $form['customSource_'.$s];
 							
-							$month = $form['month'.$s];
-							$year = $form['year'.$s];
+							$month = $form['month'];
+							$year = $form['year'];
 							$date = $year . '/' . $month . '/01';
-							$total = $form['total'.$s];
-							$cost = $form['cost'.$s];
+							$total = $form['total_'.$s];
+							$cost = $form['cost'];
 							
 							$err_msg = '';
 							$err_level = 0;
 							$err_elements = array();
 							// Validate data and alert user if error (if javascript validation isn't working).
-							if ($provider == '' ||
-								($provider == 'AddCustom' && ($customProvider == '' || $customProviderURL == '')) ||
-								$service == '' ||
-								($service == 'AddCustom' && $customService == '') ||
+							if ($provider_id == '' ||
+								($provider_id == 'AddCustom' && ($customProvider == '' || $customProviderURL == '')) ||
+								$service_id == '' ||
+								($service_id == 'AddCustom' && $customService == '') ||
 								$date == '' ||
 								$total == '' ||
 								$cost == '') {
@@ -858,7 +858,7 @@ class DOM_Controller extends CI_Controller {
 								
 							} else {
 								// If provider is new..
-								if ($provider == 'AddCustom') {
+								if ($provider_id == 'AddCustom') {
 									// ..check if exists in database.
 									$provider_id = $this->rep->providerID($customProvider);
 									// If it doesn't..
@@ -872,7 +872,7 @@ class DOM_Controller extends CI_Controller {
 									}
 								}
 								// If service is new..
-								if ($service == 'AddCustom') {
+								if ($service_id == 'AddCustom') {
 									// ..check if exists in database.
 									$service_id = $this->rep->serviceID($customService);
 									// If it doesn't..

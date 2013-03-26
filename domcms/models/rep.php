@@ -81,7 +81,7 @@
 			} else {
 				// Doesn't exist yet. Insert.
 				$data = array(
-					'REPORT_Created'  => time(),
+					'REPORT_Created'  => date(FULL_MILITARY_DATETIME),
 					'REPORT_Provider' => $lead_data['providerID'],
 					'REPORT_Service'  => $lead_data['serviceID'],
 					'REPORT_Date'     => $lead_data['date'],
