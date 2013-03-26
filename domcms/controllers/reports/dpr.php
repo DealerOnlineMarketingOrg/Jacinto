@@ -10,15 +10,29 @@
 		}
 		
 		public function Index() {
-			$this->Load('add');
+			$endMonth = date('m');
+			$endYear = date('Y');
+			$startMonth = '1';
+			$startYear = (string)($endYear - 1);
+			$data = array(
+				'startMonth' => $startMonth,
+				'startYear' => $startYear,
+				'endMonth' => $endMonth,
+				'endYear' => $endYear
+			);
+			$this->Load('reports', $data);
+		}
+		
+		public function add() {
+			$this->Load('add');	
 		}
 		
 		public function reports() {
 			$this->Load('reports');
 		}
 		
-		public function entry() {
-			$this->Load('entry');	
+		public function editReport() {
+			$this->Load('editReport');	
 		}
 		
 		public function ajaxGetCost() {		
@@ -44,7 +58,7 @@
 			echo $cost;
 		}
 		
-		public function Load($page) {
+		public function Load($page, $rdata = FALSE) {
 			$form = $this->input->post();
 				
 			// Processing for dpr entry page.
@@ -65,14 +79,17 @@
 			}
 			
 			// Processing for dpr report entry page.
-			if ($page == 'entry') {
+			if ($page == 'editReport') {
 				$data = array(
 					'html' => ''
 				);
 			}
 			
 			// Processing for dpr report page.
-			if ($page == 'reports') {				
+			if ($page == 'reports') {
+				// If function was called posted instead of called, get posted data.
+				if (!$rdata) $rdata = $form;
+				
 				if ($this->user['DropdownDefault']->SelectedClient < 1) {
 					throwError(newError('Clients Add', -1, 'You must chose a dealership in order to view a DPR report.', 0, ''));
 					$runReport = false;
@@ -83,7 +100,7 @@
 					$report_pieChart_script = '';
 					
 				} else {
-					$report = $this->rep->getDPRReport($this->user['DropdownDefault']->SelectedClient, $form['startMonth'], $form['startYear'], $form['endingMonth'], $form['endingYear']);
+					$report = $this->rep->getDPRReport($this->user['DropdownDefault']->SelectedClient, $rdata['startMonth'], $rdata['startYear'], $rdata['endMonth'], $rdata['endYear']);
 					// Wrap each chart in a div to keep them seperate.
 					$report_element_start = 1;
 					
@@ -116,8 +133,8 @@
 
 			switch ($page) {
 				case 'add':		$this->LoadTemplate('forms/form_addDpr',$data); break;
-				case 'entry': $this->LoadTemplate('forms/form_reportDprEntry',$data); break;
 				case 'reports': $this->LoadTemplate('forms/form_reportDpr',$data); break;
+				case 'editReport': $this->LoadTemplate('forms/form_reportDprEdit',$data); break;
 			}	
 			
 		}

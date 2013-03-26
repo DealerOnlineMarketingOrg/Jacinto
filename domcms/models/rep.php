@@ -24,6 +24,7 @@
 		}
 		
 		// Adds a Provider to the DPR db and returns the new ID.
+		// If already exists, returns the current ID.
 		public function addProvider($provider_data) {
 			$data = array(
 				'PROVIDER_Name' => $provider_data['provider'],
@@ -63,18 +64,37 @@
 		// Adds a lead total to the dpr report table.
 		public function addLeadTotal($lead_data) {
 			// Update DPRReports with the lead data.
-			$data = array(
+			$where = array(
 				'REPORT_Provider' => $lead_data['providerID'],
 				'REPORT_Service'  => $lead_data['serviceID'],
 				'REPORT_Date'     => $lead_data['date'],
-				'REPORT_Value'    => $lead_data['total'],
 				'CLIENT_ID'       => $lead_data['clientID'],
 			);
-			$this->db->insert('DPRReports', $data);
+			$query = $this->db->get_where('DPRReports', $where);
+			if ($query->num_rows > 0) {
+				// Already exists. Update.
+				$data = array(
+					'REPORT_Value' => $lead_data['total']
+				);
+				$this->db->where($where);
+				$this->db->update('DPRReports', $data);
+			} else {
+				// Doesn't exist yet. Insert.
+				$data = array(
+					'REPORT_Created'  => time(),
+					'REPORT_Provider' => $lead_data['providerID'],
+					'REPORT_Service'  => $lead_data['serviceID'],
+					'REPORT_Date'     => $lead_data['date'],
+					'REPORT_Value'    => $lead_data['total'],
+					'CLIENT_ID'       => $lead_data['clientID'],
+				);
+				$this->db->insert('DPRReports', $data);
+			}
+			
 			
 			// Update DPRProviderData with the cost data.
 			$where = array(
-				'PROVIDERDATA_ID' => $lead_data['providerID'],
+				'PROVIDER_ID' => $lead_data['providerID'],
 				'PROVIDERDATA_Month' => $lead_data['month'],
 				'PROVIDERDATA_Year' => $lead_data['year'],
 			);
@@ -89,6 +109,7 @@
 			} else {
 				// Doesn't exist yet. Insert.
 				$data = array(
+					'PROVIDER_ID' => $lead_data['providerID'],
 					'PROVIDERDATA_Month' => $lead_data['month'],
 					'PROVIDERDATA_Year' => $lead_data['year'],
 					'PROVIDERDATA_Cost' => $lead_data['cost']
@@ -795,9 +816,9 @@
 			// Pull data from last n years.
 			$qu_report = "SELECT p.PROVIDER_Name AS PName, YEAR(r.REPORT_Date) as Year, s.SERVICE_Name AS SName, s.SERVICE_Type AS SType, MONTH(r.REPORT_Date) as Month, r.REPORT_Value AS Value, d.PROVIDERDATA_Cost as Cost, r.REPORT_Date as Date " .
 			             "FROM DPRReports AS r " .
-						 "LEFT JOIN DPRProviderData d ON (d.PROVIDERDATA_ID = r.REPORT_Provider AND " .
-						 "                                  d.PROVIDERDATA_Month = MONTH(r.REPORT_Date) AND " .
-						 "                                  d.PROVIDERDATA_Year = YEAR(r.REPORT_Date)), " .
+						 "LEFT JOIN DPRProviderData d ON (d.PROVIDER_ID = r.REPORT_Provider AND " .
+						 "                                d.PROVIDERDATA_Month = MONTH(r.REPORT_Date) AND " .
+						 "                                d.PROVIDERDATA_Year = YEAR(r.REPORT_Date)), " .
 						 "  DPRProviders AS p, DPRReportServices AS s " .
 						 "WHERE r.CLIENT_ID = " . $client_id .
 						 "  AND r.REPORT_Date >= '" . $begin_date . "' AND r.REPORT_Date <= '" . $end_date . "'" .

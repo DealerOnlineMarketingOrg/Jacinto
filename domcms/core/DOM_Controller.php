@@ -816,76 +816,91 @@ class DOM_Controller extends CI_Controller {
 		   			case "add":
 						$form = $this->input->post();
 						
-						$provider_id = $form['providers'];
-						// Pull custom info (use if select value is AddCustom)
-						$customProvider = $form['customProvider'];
-						$customProviderURL = $form['customProviderURL'];
-						
-						$service_id = $form['services'];
-						// Pull custom info (use if select value is AddCustom)
-						$customService = $form['customService'];
-						
-						$month = $form['month'];
-						$year = $form['year'];
-						$date = $year . '/' . $month . '/01';
-						$total = $form['total'];
-						$cost = $form['cost'];
-						
-						$err_msg = '';
-						$err_level = 0;
-						$err_elements = array();
-						// Validate data and alert user if error (if javascript validation isn't working).
-						if ($provider_id == '' ||
-						    ($provider_id == 'AddCustom' && ($customProvider == '' || $customProviderURL == '')) ||
-							$service_id == '' ||
-							($service_id == 'AddCustom' && $customService == '') ||
-							$date == '' ||
-							$total == '' ||
-							$cost == '') {
-								$err_msg = 'All fields are required.';
-						} else if (!(preg_match('/^[0-9]+|([0-9]+)?\.[0-9]+$/', $total))) {
-								$err_msg = 'Total field must be a number.';
-						} else if (!(preg_match('/^[0-9]+|([0-9]+)?\.[0-9]+$/', $cost))) {
-								$err_msg = 'Cost field must be a number.';
-						}
-						if ($err_msg != '') {
-							$err_level = -1;
-							$err_msg .= ' Lead was not saved.';
+						// There may be more then one service posted. Loop through them.
+						for ($s = 1; $s <= $form['serviceCount']; $s++) {
+							$provider = $form['providers'];
+							// Pull custom info (use if select value is AddCustom)
+							$customProvider = $form['customProvider'];
+							$customProviderURL = $form['customProviderURL'];
 							
-						} else {
-							// If provider does not exist.
-							if ($provider_id == 'AddCustom') {
-								$provider_data = array(
-									'provider' => $customProvider,
-									'providerURL' => $customProviderURL
-								);
-								// ..add to database.
-								$provider_id = $this->rep->addProvider($provider_data);
+							$service = $form['source'.$s];
+							// Pull custom info (use if select value is AddCustom)
+							$customService = $form['customSource'.$s];
+							
+							$month = $form['month'.$s];
+							$year = $form['year'.$s];
+							$date = $year . '/' . $month . '/01';
+							$total = $form['total'.$s];
+							$cost = $form['cost'.$s];
+							
+							$err_msg = '';
+							$err_level = 0;
+							$err_elements = array();
+							// Validate data and alert user if error (if javascript validation isn't working).
+							if ($provider == '' ||
+								($provider == 'AddCustom' && ($customProvider == '' || $customProviderURL == '')) ||
+								$service == '' ||
+								($service == 'AddCustom' && $customService == '') ||
+								$date == '' ||
+								$total == '' ||
+								$cost == '') {
+									$err_msg = 'All fields are required.';
+							} else if (!(preg_match('/^[0-9]+|([0-9]+)?\.[0-9]+$/', $total))) {
+									$err_msg = 'Total field must be a number.';
+							} else if (!(preg_match('/^[0-9]+|([0-9]+)?\.[0-9]+$/', $cost))) {
+									$err_msg = 'Cost field must be a number.';
 							}
-							// If service does not exist..
-							if ($service_id == 'AddCustom') {
-								$service_data = array(
-									'service' => $customService
+							if ($err_msg != '') {
+								$err_level = -1;
+								$err_msg .= ' Lead was not saved.';
+								// Break out at the first sign of trouble.
+								break;
+								
+							} else {
+								// If provider is new..
+								if ($provider == 'AddCustom') {
+									// ..check if exists in database.
+									$provider_id = $this->rep->providerID($customProvider);
+									// If it doesn't..
+									if (!$provider_id) {
+										// ..add to database.
+										$provider_data = array(
+											'provider' => $customProvider,
+											'providerURL' => $customProviderURL
+										);
+										$provider_id = $this->rep->addProvider($provider_data);
+									}
+								}
+								// If service is new..
+								if ($service == 'AddCustom') {
+									// ..check if exists in database.
+									$service_id = $this->rep->serviceID($customService);
+									// If it doesn't..
+									if (!$service_id) {
+										// ..add to database.
+										$service_data = array(
+											'service' => $customService
+										);
+										$service_id = $this->rep->addService($service_data);
+									}
+								}
+								
+								// Add total to report table.
+								$lead_data = array(
+									'providerID' => $provider_id,
+									'serviceID' => $service_id,
+									'month' => $month,
+									'year' => $year,
+									'date' => $date,
+									'total' => $total,
+									'cost' => $cost,
+									'clientID' => $this->user['DropdownDefault']->SelectedClient
 								);
-								// ..add to database.
-								$service_id = $this->rep->addService($service_data);
+								$this->rep->addLeadTotal($lead_data);
+								
+								$err_level = 1;
+								$err_msg = 'Lead successfully saved.';
 							}
-							
-							// Add total to report table.
-							$lead_data = array(
-								'providerID' => $provider_id,
-								'serviceID' => $service_id,
-								'month' => $month,
-								'year' => $year,
-								'date' => $date,
-								'total' => $total,
-								'cost' => $cost,
-								'clientID' => $this->user['DropdownDefault']->SelectedClient
-							);
-							$this->rep->addLeadTotal($lead_data);
-							
-							$err_level = 1;
-							$err_msg = 'Lead successfully saved.';
 						}
 						
 						// Throw error and redirect back to DPR.

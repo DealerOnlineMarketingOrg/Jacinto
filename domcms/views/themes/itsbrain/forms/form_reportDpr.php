@@ -9,21 +9,39 @@
             'name' => 'reportDpr',
             'class' => 'mainForm valid'
         );
-		
-        echo form_open('/dpr/reports',$form);
-    ?>
-	        <!-- Input text fields -->
-        <fieldset>
-        	<?php if ($runReport) { ?>
+	?>
+		<?php echo form_open('/dpr/reports',$form); ?>
+            <!-- Input text fields -->
+            <fieldset>
+			<?php if ($this->user['DropdownDefault']->SelectedClient == 0) { ?>
+	            <div>
+                    <div style="width:1;float:left;vertical-align:middle">
+                        <input ID="add" class="greenBtn" type="button" value="Add Leads" />
+                    </div>
+                </div>
+   	            <div class="widget" style="margin-top:0px">
+                	<div class="head"><h5 class="iList">DPR Leads Report: <span style="color:red">No dealer is selected. Please select a dealer to view the DPR reports.</span></h5></div>
+				</div>
+            <?php } else { ?>
+            	<div>
+                    <div style="width:1;float:left;vertical-align:middle">
+                        <input ID="add" class="greenBtn" type="button" value="Add Leads" />
+                        <input ID="editReport" class="seaBtn" type="button" value="Edit Report" />
+                    </div>
+                    <div style="width:1;float:right;vertical-align:middle">
+                        <input ID="excel" class="greyishBtn" type="button" value="Excel" />
+                        <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
+                    </div>
+                </div>
                 <div id="reportLive">
-                    <div id="fullReportID" class="widget first">
-                        <div class="head"><h5 class="iList">DPR Report</h5>
+                    <div id="fullReportID" class="widget first" style="margin-top:0px !important">
+                        <div class="head"><h5 class="iList">DPR Leads Report</h5>
                         </div>
                         <div class="rowElem noborder">
                             <!-- Line graph of year -->
                             <div class="widgets">
                                 <div class="left">
-                                    <div id="lineID" class="widget">
+                                    <div id="lineID" class="widget" style="margin-top:0px !important">
                                         <div class="head"><h5 id="update" class="iGraph">Leads Per Month</h5></div>
                                         <div class="body">
                                             <? echo $report_lineChart; ?>
@@ -33,7 +51,7 @@
                                 
                                 <!-- Pie total overall -->
                                 <div class="right">
-                                    <div id="pieID" class="widget">
+                                    <div id="pieID" class="widget" style="margin-top:0px !important">
                                         <div class="head"><h5 class="iChart8">Total Leads</h5></div>
                                         <div class="body">
                                             <? echo $report_pieChart; ?>
@@ -58,7 +76,7 @@
                     </div>
 				</div>
 			<?php } ?>
-        </fieldset>
+    	</fieldset>
     <?php echo  form_close(); ?>
     
     <script type="text/javascript">
@@ -114,6 +132,13 @@
 			{$.fileDownload("<?= base_url(); ?>" + zipFile);
 			}
 		
+		$('input#add').click(function() {
+			window.location.href = "<?= base_url(); ?>dpr/add";
+		});
+		
+		$('input#editReport').click(function() {
+			window.location.href = "<?= base_url(); ?>dpr/editReport";
+		});
 		
 		$('input#excel').click(function() {
 			// Compile the report.
