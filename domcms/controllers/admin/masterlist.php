@@ -30,28 +30,6 @@ class Masterlist extends DOM_Controller {
 				$table = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
 				$table .= '<thead><tr><th>Team</th><th>Code</th><th>Dealership</th><th>Website</th><th>CMS</th><th>CRM</th><th>DOC</th><th>XLS</th><th>Crazy Egg</th></tr></thead>';
 				$table .= '<tbody>';
-				/*
-				$sql = 'SELECT 
-				w.special_label as Dealership,
-				w.url as DealershipURL,
-				w.doc as Doc,
-				w.xls as Xls,
-				w.egg as NewEgg,
-				cms.service as CMSLabel,
-				cms.url as CMSUrl,
-				crm.service as CRMLabel,
-				crm.url as CRMUrl,
-				c.CLIENT_Code as Code,
-				c.CLIENT_Active as Status,
-				t.TAG_ClassName as Class
-				FROM ClientWebsites w
-				INNER JOIN MasterlistBank cms ON w.cms = cms.id
-				INNER JOIN MasterlistBank crm ON w.crm = crm.id,
-				INNER JOIN Clients c ON w.client_id = c.CLIENT_ID,
-				INNER JOIN xTags t ON c.CLIENT_Tag = t.TAG_ID
-				ORDER BY w.special_label ASC';
-
-				*/
 				foreach($masterlist as $client) :
 					$table .= '<tr class="tagElement ' . $client->Class . '">';
 					$table .= '<td class="' . $client->Class . '"><div class="' . $client->Class . '">&nbsp;</div></td>';
@@ -65,8 +43,6 @@ class Masterlist extends DOM_Controller {
 					$table .= '<td style="text-align:center"><a href="http://www.crazyegg.com/login" target="_blank">' . $client->NewEgg . '</a></td>';
 					$table .= '</tr>';
 				endforeach;
-				
-				
 				$table .= '</tbody>';
 				$table .= '</table>';
 				$html .= $table;

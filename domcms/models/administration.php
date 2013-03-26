@@ -66,8 +66,27 @@ class Administration extends CI_Model {
 	}
 
     public function getUsers($id = false,$client_id = false) {
+    	$selects = "u.USER_ID as ID,u.USER_Name as Username,u.USER_Name as EmailAddress,ui.USER_Active as Status,ui.USER_Created as JoinDate,ui.USER_ActiveTS as LastUpdate,ui.USER_Modules as Modules,ui.USER_Avatar as Avatar,ui.Google_Avatar,ui.USER_GravatarEmail as Gravatar,d.DIRECTORY_ID as DirectoryID,d.DIRECTORY_Type as UserType,d.DIRECTORY_FirstName as FirstName,d.DIRECTORY_LastName as LastName,d.DIRECTORY_Address as Address,d.DIRECTORY_EMAIL as Emails,d.DIRECTORY_Phone as Phones,d.DIRECTORY_Notes as Notes,d.TITLE_ID as TitleID,a.ACCESS_NAME as AccessName,a.ACCESS_Level as AccessLevel,a.ACCESS_ID as AccessID,c.CLIENT_Name as Dealership,c.CLIENT_Address as CompanyAddress,t.TAG_ID as TagID,t.TAG_Name as TeamName,t.TAG_ClassName as ClassName,t.TAG_Color as Color";
+    	$this->db->select($selects);
+		$this->db->from('Users u');
+		$this->db->join('Users_Info ui','ui.USER_ID = u.USER_ID','inner');
+		$this->db->join('xSystemAccess a','ui.ACCESS_ID = a.ACCESS_ID','inner');
+		$this->db->join('Directories d','ui.DIRECTORY_ID = d.DIRECTORY_ID','inner');
+		$this->db->join('Clients c','c.CLIENT_ID = ui.CLIENT_ID','inner');
+		$this->db->join('xTags t','t.TAG_ID = u.Team','inner');
+		
+		if($id) :
+			$this->db->where('u.USER_ID',$id);
+		else :
+			if($client_id) :
+				$this->db->where('ui.CLIENT_ID',$client_id);
+			else :
+				$this->db->order_by('d.DIRECTORY_LastName','ASC');
+			endif;
+		endif; 
+		
         //query to show users info on listing and edit pages.
-        $sql = "SELECT 
+       /* $sql = "SELECT 
                 u.USER_ID as ID, 
 				u.USER_Name as Username,
                 u.USER_Name as EmailAddress,
@@ -110,8 +129,9 @@ class Administration extends CI_Model {
 					}else {
         				$sql .= " ORDER BY d.DIRECTORY_LastName ASC";
 					}
-				}
-        $users = $this->db->query($sql);
+				} 
+        $users = $this->db->query($sql);*/
+        $users = $this->db->get();
         if ($id) {
 			$users = $users->row();
             $users->Address = isset($users->Address) ? mod_parser($users->Address) : '';
@@ -124,56 +144,49 @@ class Administration extends CI_Model {
     }
 
     public function getPermissionsList($userLevel) {
-        $sql = "SELECT
-				ACCESS_ID as ID,
-				ACCESS_Name as Name,
-				ACCESS_Level as Level,
-				ACCESS_Perm as Modules 
-				FROM xSystemAccess 
-				WHERE ACCESS_Level <= '" . $userLevel . "' 
-				ORDER BY ACCESS_LEVEL DESC;";
-		$query = $this->db->query($sql);
+    	$this->db->select('ACCESS_ID as ID,ACCESS_Name as Name,ACCESS_Level as Level,ACCESS_Perm as Modules');
+    	$this->db->from('xSystemAccess');
+    	$this->db->where('ACCESS_Level <=', $userLevel);
+    	$this->db->order_by('ACCESS_LEVEL','DESC');
+		$query = $this->db->get();
 		return ($query) ? $query->result() : FALSE;
     }
 
     public function getAgencies($id = false) {
-		$sql = "SELECT 
-				AGENCY_ID as ID, 
-				AGENCY_Name as Name, 
-				AGENCY_Notes as Description, 
-				AGENCY_Active as Status 
-				FROM Agencies";
-		$sql = ($id) ? " WHERE AGENCY_ID = '" . $id . "';" : " ORDER BY AGENCY_Name ASC";
-		$query = $this->db->query($sql);
-		return ($query) ? $query->result() : FALSE;
+    	$this->db->select('AGENCY_ID as ID,AGENCY_Name as Name,AGENCY_Notes as Description, AGENCY_Active as Status');
+		$this->db->from('Agencies');
+		if($id) {$this->db->where('AGENCY_ID',$id);}	
+		$query = $this->db->get();
+		return($query) ? $query->result() : FALSE;	
     }
 
     public function getGroups($id) {
-        $sql = "SELECT 
-                g.GROUP_ID as GroupId, 
-                g.AGENCY_ID as AgencyId, 
-                g.GROUP_Name as Name, 
-                g.GROUP_Notes as Description, 
-                g.GROUP_Active as Status, 
-                g.GROUP_Created as CreateDate ,
-                a.AGENCY_Name as AgencyName,
-                a.AGENCY_ID as AgencyId
-                FROM Groups g 
-                INNER JOIN Agencies a ON g.AGENCY_ID = a.AGENCY_ID
-                WHERE g.AGENCY_ID = '" . $id . "';";
-		$query = $this->db->query($sql);
+    	$this->db->select('g.GROUP_ID as GroupId,g.AGENCY_ID as AgencyId,g.GROUP_Name as Name,g.GROUP_Notes as Description,g.GROUP_Active as Status,g.GROUP_Created as CreateDate,a.AGENCY_Name as AgencyName,a.AGENCY_ID as AgencyId');
+		$this->db->from('Groups g');
+		$this->db->join('Agencies a','g.AGENCY_ID = a.AGENCY_ID');
+		$this->db->where('g.AGENCY_ID',$id);
+		$query = $this->db->get();
 		return ($query) ? $query->result() : FALSE;
     }
-
+    
+	/*
+	 * TO RETURN A SINGLE CLIENT
+	 * @PARAM $id = Client ID passed from controller.
+	 * Will return a single client if the id is found, else it will return false
+	 */
     public function getClient($id) {
-        $sql = "SELECT CLIENT_ID as ID, CLIENT_Name as Name, CLIENT_Address as Address, CLIENT_Phone as Phone, CLIENT_Notes as Notes, GROUP_ID as GroupdID FROM Clients WHERE CLIENT_ID = '" . $id . "';";
-		$query = $this->db->query($sql);
+    	$this->db->select('CLIENT_ID as ID, CLIENT_Name as Name, CLIENT_Address as Address, CLIENT_Phone as Phone, CLIENT_Notes as Notes, GROUP_ID as GroupdID');
+		$this->db->from('Clients');
+		$this->db->where('CLIENT_ID',$id);
+		$query = $this->db->get();
 		return ($query) ? $query->row() : FALSE;
     }
 
     public function getTypeList() {
-        $sql = "SELECT TITLE_ID as Id, TITLE_Name as Name FROM xTitles ORDER BY TITLE_Name;";
-		$query = $this->db->query($sql);
+    	$this->db->select('TITLE_ID as Id, TITLE_Name as Name');
+		$this->db->from('xTitles');
+		$this->db->order_by('TITLE_Name','ASC');
+		$query = $this->db->get();
 		return ($query) ? $query->result() : FALSE;
     }
 
@@ -213,14 +226,10 @@ class Administration extends CI_Model {
 	}
 
     public function getAgencyByID($id) {
-        $sql = "SELECT 
-                AGENCY_ID as Id, 
-                AGENCY_Name as Name, 
-                AGENCY_Notes as Description, 
-                AGENCY_Active as Status, 
-                AGENCY_Created as Created 
-                FROM Agencies WHERE AGENCY_ID = '" . $id . "';";
-		$query = $this->db->query($sql);
+    	$this->db->select('AGENCY_ID as Id,AGENCY_Name as Name,AGENCY_Notes as Description,AGENCY_Active as Status,AGENCY_Created as Created');
+		$this->db->from('Agencies');
+		$this->db->where('AGENCY_ID',$id);
+		$query = $this->db->get();
 		return ($query) ? $query->row() : FALSE;
     }
 
@@ -231,20 +240,26 @@ class Administration extends CI_Model {
      * ********************************************************************** */
 
     public function getGroupID($id) { //Get the selected group id and the associated agency id
-        $sql = 'SELECT GROUP_ID as GroupID,AGENCY_ID as AgencyID FROM Groups WHERE GROUP_ID = "' . $id . '";';
-		$query = $this->db->query($sql);
-        return ($query) ? $query->row() : FALSE;
+    	$this->db->select('GROUP_ID as GroupID,AGENCY_ID as AgencyID');
+		$this->db->from('Groups');
+		$this->db->where('GROUP_ID',$id);
+		$query = $this->db->get();
+		return ($query) ? $query->row() : FALSE;
     }
 
     public function getClientID($id) { //get the client id with the associated group id
-        $sql = 'SELECT CLIENT_ID as ClientID, GROUP_ID as GroupID FROM Clients WHERE Client_ID = "' . $id . '";';
-		$query = $this->db->query($sql);
+    	$this->db->select('CLIENT_ID as ClientID,GROUP_ID as GroupID');
+		$this->db->from('Clients');
+		$this->db->where('CLIENT_ID',$id);
+		$query = $this->db->get();
 		return ($query) ? $query->row() : FALSE;
     }
 
     public function getAgencyID($id) { //get the agency id
-        $sql = 'SELECT AGENCY_ID as AgencyID FROM Agencies WHERE AGENCY_ID = "' . $id . '";';
-		$query = $this->db->query($sql);
+    	$this->db->select('AGENCY_ID as AgencyID');
+		$this->db->from('Agencies');
+		$this->db->where('AGENCY_ID',$id);
+		$query = $this->db->get();
 		return ($query) ? $query->row() : FALSE;
     }
 

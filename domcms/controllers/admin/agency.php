@@ -50,6 +50,7 @@ class Agency extends DOM_Controller {
 	}
 
     public function index() {
+    	$this->load->model('administration');
 		$permissions = $this->CheckModule('Agency_List');
 		if (!$permissions) {
 			$this->AccessDenied();
@@ -61,6 +62,7 @@ class Agency extends DOM_Controller {
 			//create html table with codeigniter library. This is awesome btw.
 			$this->table->set_heading('Name', 'Description', 'Status', 'Action');
 			$agency_id = (($level != 'a') ? $this->user['DropdownDefault']->SelectedAgency : false);
+			//echo $agency_id;
 			$agencies = $this->administration->getAgencies($agency_id);
 
 			if($agencies) {
@@ -93,11 +95,12 @@ class Agency extends DOM_Controller {
 					//USE TO POST TO THE EDIT PAGE TO GRAB THE CORRECT AGENCY FROM THE DB.
 					$this->table->add_row($agency->Name, $agency->Description, (($agency->Status) ? 'Active' : 'Disabled'), $form);
 				endforeach;
+				$html .= $this->table->generate();
 			}else {
+				$html .= '<div class="nNote nFailure"><p><strong>Error:</strong> No Agencies found.</p></div>';
 			}
 
 			//BUILD THE HTML FOR THE PAGE HERE IN A STRING. THE VIEW JUST ECHOS THIS OUT.
-			$html .= $this->table->generate();
 
 			if ($this->CheckModule('Agency_Add')) {
 				$html .= anchor(base_url() . 'agency/add', 'Add New Agency', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_agency_btn"');

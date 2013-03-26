@@ -3,7 +3,7 @@
 	class Dpr extends DOM_Controller {
 	
 		public function __construct() {
-		parent::__construct();
+			parent::__construct();
 			//loading the member model here makes it available for any member of the controller.
 			$this->load->model('getdpr');
 			$this->load->helper('charts_helper');
@@ -72,6 +72,7 @@
 			}
 			
 			// Processing for dpr report page.
+<<<<<<< HEAD
 			if ($page == 'reports') {				
 				if ($this->user['DropdownDefault']->SelectedClient < 1) {
 					throwError(newError('Clients Add', -1, 'You must chose a dealership in order to view a DPR report.', 0, ''));
@@ -87,6 +88,15 @@
 					// Wrap each chart in a div to keep them seperate.
 					$report_element_start = 1;
 					
+=======
+			if ($page == 'reports') {
+				if ($this->user['DropdownDefault']->SelectedClient <= 1) {
+						
+					$report = $this->rep->getDPRReport($this->user['DropdownDefault']->SelectedClient, 2010, 2012);
+					// Wrap each chart in a div to keep them seperate.
+					$report_element_start = 1;
+					
+>>>>>>> 31e5306... my daily changes
 					$report_lineChart_script = '';
 					$report_html = generateLineChart($report, 'lineChart', $report_element_start, $report_lineChart_script);
 					$report_lineChart = "<div id='reportBlock_lineChart' class='report'>" . $report_html . "</div>";
@@ -97,6 +107,7 @@
 					
 					$report_html = generateTableChart($report, 'leads', $report_element_start);
 					$report_leads = "<div id='reportBlock_tableChart' class='report'>" . $report_html . "</div>";
+<<<<<<< HEAD
 					
 					$runReport = true;
 				}
@@ -121,5 +132,27 @@
 			}	
 			
 		}
+=======
 	
+					$data = array(
+						'html' => '',
+						'providers' => '',
+						'agencies' => '',
+						'report_leads' => $report_leads,
+						'report_lineChart' => $report_lineChart,
+						'report_lineChart_script' => $report_lineChart_script,
+						'report_pieChart' => $report_pieChart,
+						'report_pieChart_script' => $report_pieChart_script
+					);
+				}
+
+				switch ($page) {
+					case 'add':		$this->LoadTemplate('forms/form_addDpr',$data); break;
+					case 'reports': $this->LoadTemplate('forms/form_reportDpr',$data); break;
+				}	
+				
+			}
+>>>>>>> 31e5306... my daily changes
+	
+		}
 	}

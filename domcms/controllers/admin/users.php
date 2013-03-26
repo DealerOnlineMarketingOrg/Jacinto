@@ -14,6 +14,7 @@ class Users extends DOM_Controller {
 
     public function index() {
 		$html = '';
+		$table = '';
 		if($this->level == 1 OR $this->level == 'a') {
 			$agency_id = $this->user['DropdownDefault']->SelectedAgency;	
 			$groups = $this->administration->getAllGroupsInAgencyResults($agency_id);
@@ -49,7 +50,7 @@ class Users extends DOM_Controller {
 		
 		if($users) {
 			
-			$table ='<table style="width:100%" cellpadding="0" cellspacing="0" class="tableStatic">';
+			$table .= '<table style="width:100%" cellpadding="0" cellspacing="0" class="tableStatic">';
 			$table .= '<thead><tr><td>Team</td><td>Avatar</td><td>Email Address</td><td>Name</td><td>Status</td><td>Member Since</td><td>Actions</td></tr></thead>';
 			$table .= '<tbody>';
 			foreach ($users as $user) {
@@ -90,11 +91,11 @@ class Users extends DOM_Controller {
 			}
 			$table .= '</tbody></table><script type="text/javascript">jQuery(".viewBtn").click(function() { jQuery(this).parent().submit(); });</script>';
 		}else {
-			$error_msg = '<p style="text-align:center">No users are associated for this client. Please use the Dealer Dropdown to select another client, or add users by clicking the "Add New User" button below.</p>';	
+			$table = '<p style="text-align:center">No users are associated for this client. Please use the Dealer Dropdown to select another client, or add users by clicking the "Add New User" button below.</p>';	
 		}
 		
 		//BUILD THE HTML FOR THE PAGE HERE IN A STRING. THE VIEW JUST ECHOS THIS OUT.
-		$html .=  ((count($users) > 0) ? $table : $error_msg);
+		$html .=  $table;
 
 		if ($this->CheckModule('User_Add')) {
 			$html .= anchor(base_url() . 'users/add', 'Add New User', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_user_btn"');
