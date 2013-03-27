@@ -181,6 +181,45 @@ function getLiveChangesCount() {
 	endif;
 }
 
+function load_client_websites($cid = false) {
+	if(!$cid) {
+		$cid = $ci->user['DropdownDefault']->SelectedClient;
+	}
+	$ci =& get_instance();
+	$ci->load->model('administration');
+	$websites = $ci->administration->getClientWebsites($cid);
+	$html = '';
+	$table = '';
+	if($websites) {
+		//print_object($websites);
+		$edit_img = '<a href="#"><img src="' . base_url() . THEMEIMGS . 'icons/dark/pencil.png" alt="Edit Website" /></a>';
+		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
+		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td><td>Actions</td></tr></thead>';
+		$table .= '<tbody>';
+		foreach($websites as $website) :
+			$table .= '<tr>';
+			$table .= '<td>' . $website->VendorName . '</td>';
+			$table .= '<td><a href="' . $website->URL . '" target="_blank">' . $website->URL . '</a></td>';
+			$table .= '<td>' . $website->Description . '</td>';
+			$table .= '<td style="text-align:center;">' . $edit_img .'</td>';
+			$table .= '</tr>';
+		endforeach;
+		$table .= '</tbody></table>';
+		
+		$html = $table;
+		//print_object($html);
+	}else {
+		$html .= '<p>No websites found for this client. You can add one by clicking the add website button below.</p>';
+	}
+	
+	if($ci->CheckModule('Website_Add')) {
+		$html .= '<a href="javascript:addWebsite(\'' . $cid . '\');" class="greenBtn floatRight button">Add Website</a>';
+		//$html .= anchor('javascript:addWebsite(\'' . $cid . '\')', 'Add Website', 'class="greenBtn floatRight button" style="margin-top:10px;margin-bottom:10px;" id="add_website_btn"');
+	}
+	
+	return $html;
+}
+
 function breadcrumb($replacement = false) {
 	//create a empty var to hold the breakcrumb html
 	$link = '';
@@ -210,6 +249,8 @@ function breadcrumb($replacement = false) {
 			}else {
 				if($section != 'profile') {
 					$link .= '<li style="text-transform:capitalize"><a href="' . $prep_link . '">' . $section . '</a></li>';
+				}elseif($secion == 'clients') {
+					$link .= '<li style="text-transform:capitalize"><a href="' . base_url() . 'admin">Admin</a></li><li style="text-transform:capitalize"><a href="' . base_url() . 'clients">Clients</a></li>';	
 				}else {
 					$link .= '<li style="text-transform:capitalize"><a href="' . base_url() . 'users">Users</a></li>';	
 				}
