@@ -16,7 +16,7 @@
     	<ul>
         	<li class="iFolder" id="changeCount"><a href="<?= base_url(); ?>beta" title=""><span>Changes</span></a></li>
             <?php if($level == 'a' OR $level == 1) { ?><li class="iList"><a href="<?= base_url(); ?>masterlist" title=""><span>Master List</span></a></li><?php } ?>
-            <li class="iLocked2"><a  href="#" title=""><span>Passwords</span></a></li>
+            <?php if($level == 'c' OR $level == 3) { ?><li class="iLocked2"><a  href="#" title=""><span>Passwords</span></a></li><?php } ?>
             <li class="iUser"><a href="<?php echo  base_url(); ?>contacts" title=""><span>Contacts</span></a></li>
         </ul>
     </div>

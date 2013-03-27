@@ -621,6 +621,33 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
 	}
 	
+	public function getPasswords($cid) {
+		$sql = 'SELECT
+				p.PASS_ID as ID,
+				tag.TAG_ClassName as Tag,
+				t.PASS_TYPE_Name as Type,
+				v.VENDOR_Name as Vendor,
+				p.PASS_Rep as Rep,
+				p.PASS_BestPhone as BestPhone,
+				p.PASS_LoginAddress as LoginAddress,
+				p.PASS_Username as Username,
+				p.PASS_Password as Password,
+				p.PASS_LeadRouting as LeadRouting,
+				p.PASS_RoutingPhone as RoutingPhone,
+				p.PASS_Terms as Terms,
+				p.PASS_Budget as Budget,
+				p.PASS_Notes as Notes
+				FROM Passwords p
+				INNER JOIN xPasswordTypes t on p.PASS_TypeID = t.PASS_TYPE_ID
+				INNER JOIN Vendors v on p.PASS_VendorID = v.VENDOR_ID
+				INNER JOIN Clients c on p.PASS_ClientID = c.CLIENT_ID
+				INNER JOIN xTags tag ON c.CLIENT_Tag = tag.TAG_ID
+				WHERE p.PASS_ClientID = ' . $cid . '
+				ORDER BY p.PASS_Username ASC';
+		$query = $this->db->query($sql);
+		return ($query) ? $query->result() : FALSE;
+	}
+	
 	public function getVendors() {
 		$this->db->select('VENDOR_ID as ID,VENDOR_Name as Name,VENDOR_Address as Address,VENDOR_Notes as Notes,VENDOR_Active as Status,VENDOR_ActiveTS as LastUpdate,VENDOR_Created as Created');
 		$this->db->from('Vendors');

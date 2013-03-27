@@ -17,7 +17,7 @@
 	        <!-- Input text fields -->
         <fieldset>
         	<div class="widget first" style="padding:5px">
-               <?php if ($this->user['DropdownDefault']->SelectedClient == 0) { ?>
+               <?php if ($this->user['DropdownDefault']->LevelType != 'c') { ?>
 					<div class="head"><h5 class="iList">Add DPR Lead: <span style="color:red">No dealer is selected. Please select a dealer to input DPR leads.</span></h5></div>
                 
 				<?php } else { ?>

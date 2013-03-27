@@ -13,7 +13,7 @@
 		<?php echo form_open('/dpr/reports',$form); ?>
             <!-- Input text fields -->
             <fieldset>
-			<?php if ($this->user['DropdownDefault']->SelectedClient == 0) { ?>
+			<?php if ($this->user['DropdownDefault']->LevelType != 'c') { ?>
 	            <div>
                     <div style="width:1;float:left;vertical-align:middle">
                         <input ID="add" class="greenBtn" type="button" value="Add Leads" />

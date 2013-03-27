@@ -53,7 +53,7 @@ $route['lock_user']						= 'auth/login/breach_warning';
 $route['google_connect']				= 'auth/google/connect';
 $route['google_authenticate']			= 'auth/google/auth';
 $route['example']						= 'auth/google/example';
-
+$route['passwords']						= 'admin/passwords';
 $route['mysettings']					= 'user/settings';
 $route['profile/avatar/upload']			= 'user/profile/upload_avatar';
 $route['profile/(:any)']				= 'user/profile/view';
