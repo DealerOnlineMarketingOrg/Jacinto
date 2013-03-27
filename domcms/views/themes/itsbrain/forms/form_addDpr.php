@@ -5,7 +5,10 @@
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
     <?php
-        $form = array(
+		$dateRange = $this->input->post();
+    
+	    $form = array(
+			'id' => 'addDpr',
             'name' => 'addDpr',
             'class' => 'mainForm valid'
         );
@@ -22,7 +25,7 @@
                     <div class="head"><h5 class="iList">Add DPR Lead</h5></div>
                     <div class="noborder noSearch" style="position:relative;float:left;margin:5px">
                         <label style="position:relative;float:left"><span class="req">*</span>Provider</label>
-                        <select id="providers" name="providers" class="input msSelect chzn-select required validate[required]" style="position:relative;float:left" placeholder="Select A Lead Provider...">
+                        <select id="providers" name="providers" class="input msSelect chzn-select " style="position:relative;float:left" placeholder="Select A Lead Provider...">
                             <option value="">Select A Lead Provider</option>
                             <?php echo $providers; ?>
                             <option value="AddCustom">Other</option>
@@ -43,7 +46,7 @@
                     	<div style="position:relative;float:left">
                             <label>Month</label>
 	                        <div class="fix"></div>
-                            <select id="month" name="month" class="input chzn-select required validate[required]" placeholder="Select a month...">
+                            <select id="month" name="month" class="input chzn-select " placeholder="Select a month...">
                                 <option value="">Select a Month</option>
                                 <option value="1">January</option>
                                 <option value="2">Febuary</option>
@@ -62,7 +65,7 @@
                     	<div style="position:relative;float:left;margin-left:5px">                        
                             <label>Year</label>
 							<div class="fix"></div>
-                            <select id="year" name="year" class="input chzn-select required validate[required]" placeholder="Select a year...">
+                            <select id="year" name="year" class="input chzn-select " placeholder="Select a year...">
                                 <option value="">Select a Year</option>
                                 <option value="2013">2013</option>
                                 <option value="2012">2012</option>
@@ -73,14 +76,14 @@
                         </div>
                         <div class="fix"></div>
                         <label style="position:relative;float:left">Cost</label>
-						<input type="text" class="input required validate[required]" style="width:150px;position:relative;float:left" id="cost" name="cost" placeholder="The monthly cost for leads" max-length="10" />
+						<input type="text" class="input " style="width:150px;position:relative;float:left" id="cost" name="cost" placeholder="The monthly cost for leads" max-length="10" />
 					</div>
                     <div class="fix"></div>
                     <div id="sourceBlock_1" class="" style="position:relative;border:1px dotted #d5d5d5;margin:5px;padding:5px">
                     	<div style="position:relative;float:left;margin:5px">
                             <label style="position:relative;float:left">Source</label>
                             <!-- This should be a chosen (chzn-select) dropdown. Apply chosen after cloning. -->
-                            <select id="sources_1" name="sources_1" class="msSelect required validate[required]" style="position:relative;float:left" placeholder="Select A Lead Source...">
+                            <select id="sources_1" name="sources_1" class="msSelect " style="position:relative;float:left" placeholder="Select A Lead Source...">
                                 <option value="">Select A Lead Source</option>
                                     <?php echo $services; ?>
                                 <option value="AddCustom">Other</option>
@@ -91,7 +94,7 @@
                         </div>
                         <div style="position:relative;float:left;margin:5px">
 							<label style="position:relative;float:left">Total</label>
-							<input type="text" class="input required validate[required]" style="width:150px;position:relative;float:left" id="total_1" name="total_1" placeholder="The total lead count" max-length="8" />
+							<input type="text" class="input " style="width:150px;position:relative;float:left" id="total_1" name="total_1" placeholder="The total lead count" max-length="8" />
                       	</div>
 		                <div class="fix"></div>
                     </div>
@@ -102,18 +105,63 @@
                 <div class="fix"></div>
             </div>
             <div class="submitForm">
+            	<input type="button" id="cancel" value="Cancel" class="basicBtn" />
                 <input type="reset" id="reset" value="Reset" class="basicBtn" />
                 <input type="submit" value="submit" class="redBtn" />
             </div>
+		<?php echo  form_close(); ?>
+            
+		<?php
+			$form = array(
+				'id' => 'reportAddDprCancel',
+				'name' => 'reportAddDprCancel',
+				'class' => 'mainForm valid'
+			);
+			echo form_open('%page%',$form); ?>
+			<input ID="startMonthCancel" name="startMonth" type="hidden" value="<?php echo $dateRange['startMonth']; ?>" />
+			<input ID="startYearCancel" name="startYear" type="hidden" value="<?php echo $dateRange['startYear']; ?>" />
+			<input ID="endMonthCancel" name="endMonth" type="hidden" value="<?php echo $dateRange['endMonth']; ?>" />
+			<input ID="endYearCancel" name="endYear" type="hidden" value="<?php echo $dateRange['endYear']; ?>" />
+		<?php echo  form_close(); ?>
+    
 		<script type="text/javascript">
 			//$(document).ready(function() {
 				var sourceNum = 1;
+				var validateForm = true;
+				
             	jQuery(window).load(function() {
 					// Don't turn off template sourceBlock before document is loaded, otherwise
 					//  drop down fields may not get populated.
 					//jQuery('#sourceBlock').css('display','none');
 					//newSource();
 				});
+				
+				jQuery('input#cancel').click(function() {
+					validateForm = false;
+					// Go back to report page with cancelled values.
+					jQuery('form#reportAddDprCancel').attr('action', '<?= base_url(); ?>dpr');
+					jQuery("form#reportAddDprCancel").submit();
+				});
+				
+				jQuery('input#reset').click(function(e) {
+					validateForm = false;
+					// Refresh add report lead page with cancelled values.
+					jQuery('form#reportAddDprCancel').attr('action', '<?= base_url(); ?>dpr/add');
+					jQuery("form#reportAddDprCancel").submit();
+				});
+				
+                jQuery('form#addDpr').submit(function(e) {
+					if (validateForm) {
+						if (validateBlank()) {
+							alert('All fields are required. Please fill in all fields.');
+							return false;
+						} else if (validateData()) {
+							alert('Total field must be numeric.');
+							return false;
+						} else {
+						}
+					}
+                });
 				
 				jQuery('#addSource').click(function(e) {
 					//newSource();
@@ -258,26 +306,33 @@
 				
 				function validateBlank()
 				{
-					if (jQuery('input#providers').val() == '' ||
-                         (jQuery('input#providers').val() == 'AddCustom' &&
-						   (jQuery('input#customProvider').val() == '' ||
-						    jQuery('input#customProviderURL').val() == '')) ||
-                        jQuery('input#sources').val() == '' ||
-                         (jQuery('input#sources').val() == 'AddCustom' &&
-						  jQuery('input#customSource').val() == '') ||
-                        jQuery('input#month').val() == '' ||
-                        jQuery('input#year').val() == '' ||
-                        jQuery('input#total').val() == '')
+					if (validateForm) {
+						if (jQuery('input#providers').val() == '' ||
+							 (jQuery('input#providers').val() == 'AddCustom' &&
+							   (jQuery('input#customProvider').val() == '' ||
+								jQuery('input#customProviderURL').val() == '')) ||
+							jQuery('input#month').val() == '' ||
+							jQuery('input#year').val() == '' ||
+							jQuery('input#cost').val() == '' ||
+							jQuery('input#sources_1').val() == '' ||
+							 (jQuery('input#sources_1').val() == 'AddCustom' &&
+							  jQuery('input#customSource_1').val() == '') ||
+							jQuery('input#total_1').val() == '')
+							return true;
+						else
+							return false;
+					} else
 						return true;
-					else
-						return false;
 				}
 				
 				function validateData()
 				{
-					if (jQuery('input#total').val().match(/^[0-9]+|([0-9]+)?\.[0-9]+$/))
-						return false;
-					else
+					if (validateForm) {
+						if (jQuery('input#total').val().match(/^[0-9]+|([0-9]+)?\.[0-9]+$/))
+							return false;
+						else
+							return true;
+					} else
 						return true;
 				}
 				
@@ -307,29 +362,6 @@
 					}
 				});
 				
-				jQuery('#reset').click(function(e) {
-					// Brute-force method: reload the page.
-					window.location.replace("<?= base_url(); ?>dpr/add")
-					/*
-					jQuery('#providers').selectedIndex = 0;
-					jQuery('#cost').val("");
-					jQuery('#sources').selectedIndex = 0;
-					jQuery('#month').selectedIndex = 0;
-					jQuery('#year').selectedIndex = 0;
-					jQuery('#total').val("");					
-					*/
-				});
-				
-                jQuery('form.valid').submit(function(e) {
-                    if (validateBlank()) {
-						alert('All fields are required. Please fill in all fields.');
-						return false;
-                    } else if (validateData()) {
-						alert('Total field must be numeric.');
-						return false;
-                    } else {
-                    }
-                });
             //});
         </script>
         </fieldset>

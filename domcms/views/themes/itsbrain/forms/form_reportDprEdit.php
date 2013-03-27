@@ -88,12 +88,39 @@
                 <?php } ?>
             </div>
             <div class="submitForm">
+	            <input type="button" id="cancel" value="Cancel" class="basicBtn" />
+	            <input type="reset" id="reset" value="Reset" class="basicBtn" />
             	<input type="submit" value="submit" class="redBtn" />
             </div>
         </fieldset>
     <?php echo  form_close(); ?>
     
+    <?php
+        $form = array(
+			'id' => 'reportDprEditCancel',
+            'name' => 'reportDprEditCancel',
+            'class' => 'mainForm valid'
+        );
+		echo form_open('%page%',$form); ?>
+    	<input ID="startMonthCancel" name="startMonth" type="hidden" value="<?php echo $dateRange['startMonth']; ?>" />
+        <input ID="startYearCancel" name="startYear" type="hidden" value="<?php echo $dateRange['startYear']; ?>" />
+        <input ID="endMonthCancel" name="endMonth" type="hidden" value="<?php echo $dateRange['endMonth']; ?>" />
+        <input ID="endYearCancel" name="endYear" type="hidden" value="<?php echo $dateRange['endYear']; ?>" />
+    <?php echo  form_close(); ?>
+    
     <script type="text/javascript">
+	
+		$('input#cancel').click(function() {
+			// Go back to report page with cancelled values.
+			jQuery('form#reportDprEditCancel').attr('action', '<?= base_url(); ?>dpr');
+			$("form#reportDprEditCancel").submit();
+		});
+		
+		$('input#reset').click(function() {
+			// Refresh edit report page with cancelled values.
+			jQuery('form#reportDprEditCancel').attr('action', '<?= base_url(); ?>dpr/editReport');
+			$("form#reportDprEditCancel").submit();
+		});
 		
 	</script>
 </div>

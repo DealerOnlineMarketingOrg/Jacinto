@@ -905,7 +905,7 @@ class DOM_Controller extends CI_Controller {
 						
 						// Throw error and redirect back to DPR.
 						throwError(newError("DPR Report Add", $err_level, $err_msg, 0, ''));
-						redirect('dpr','refresh');
+						redirect('dpr/add','refresh');
 					break;
 				endswitch;
 				

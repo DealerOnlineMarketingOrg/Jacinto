@@ -70,6 +70,10 @@
                         </div>
                         <div class="fix"></div>
                     </div>
+                    <div style="width:1;float:left;vertical-align:middle">
+                        <input ID="add" class="greenBtn" type="button" value="Add Leads" />
+                        <input ID="editReport" class="seaBtn" type="button" value="Edit Report" />
+                    </div>
                     <div style="width:1;float:right;vertical-align:middle">
                         <input ID="excel" class="greyishBtn" type="button" value="Excel" />
                         <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
@@ -78,14 +82,14 @@
 			<?php } ?>
     	</fieldset>
     <?php echo  form_close(); ?>
+    
     <?php
         $form = array(
-            'id' => 'reportDprEdit',
-			'name' => 'reportDprEdit',
+            'id' => 'reportReport',
+			'name' => 'reportReport',
             'class' => 'mainForm valid'
         );
-	?>
-    <?php echo form_open('/dpr/editReport',$form); ?>
+		echo form_open('%page%',$form); ?>
     	<input ID="startMonth" name="startMonth" type="hidden" value="<?php echo $dateRange['startMonth']; ?>" />
         <input ID="startYear" name="startYear" type="hidden" value="<?php echo $dateRange['startYear']; ?>" />
         <input ID="endMonth" name="endMonth" type="hidden" value="<?php echo $dateRange['endMonth']; ?>" />
@@ -93,6 +97,18 @@
     <?php echo  form_close(); ?>
     
     <script type="text/javascript">
+		$('input#add').click(function() {
+			// Go to add report lead page with date range values.
+			jQuery('form#reportReport').attr('action', '<?= base_url(); ?>dpr/add');
+			$("form#reportReport").submit();
+		});
+		
+		$('input#editReport').click(function() {
+			// Go to report edit page with date range values.
+			jQuery('form#reportReport').attr('action', '<?= base_url(); ?>dpr/editReport');
+			$("form#reportReport").submit();
+		});
+		
 		$(window).load (function() {
 			plotLineChart();
 			plotPieChart();
@@ -116,7 +132,7 @@
 									url:"<?= base_url(); ?>file/saveDataURL",
 									data:{data:dataURL, destPath:imgFile}});
 			}});}
-							
+		
 		// Converts a html piece into an excel file, saving it to
 		//  destFile (on the server).
 		function convertToExcel(destFile,reportHtml)
@@ -144,14 +160,6 @@
 		function getZip(zipFile)
 			{$.fileDownload("<?= base_url(); ?>" + zipFile);
 			}
-		
-		$('input#add').click(function() {
-			window.location.href = "<?= base_url(); ?>dpr/add";
-		});
-		
-		$('input#editReport').click(function() {
-			$("form#reportDprEdit").submit();
-		});
 		
 		$('input#excel').click(function() {
 			// Compile the report.
