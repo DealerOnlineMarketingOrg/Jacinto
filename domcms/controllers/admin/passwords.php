@@ -62,9 +62,9 @@ class Passwords extends DOM_Controller {
 				$table .= '<td style="text-align:left;">' . $contact->Vendor . '</td>';
 				$table .= '<td><a href="' . $contact->LoginAddress . '">' . $contact->LoginAddress . '</a></td>';
 				
-				$table .= '<td><span style="font-weight:bold;"><div id="zeroClip' . $counter . '" onclick="javascript:textToClipboard(\'' . $contact->Username . '\',' . $counter . ');"  style="display:none; width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><a href="mailto:' . $contact->Username . '">' . $contact->Username . '</a></span></td>';
+				$table .= '<td><span style="font-weight:bold;"><div id="zeroClip' . $counter . '" onclick="javascript:textToClipboard(\'' . $contact->Username . '\',\'zeroClip' . $counter . '\');"  style="width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><a href="mailto:' . $contact->Username . '">' . $contact->Username . '</a></span></td>';
 				$table .= '<td>' . $contact->Password . '</td>';
-				$table .= '<td style="width:25%"><div style="overflow:hidden; max-height:37px"><div style="float:left;width:80%">' . $contact->Notes . '</div><div onclick="javascript: openMore(\'' . $contact->Notes . '\');" style="float:right;color:blue;bottom:0">...more</div></div></td>';
+				$table .= '<td style="width:25%"><div style="overflow:hidden; max-height:37px"><div style="float:left;width:80%">' . $contact->Notes . '</div><div onclick="javascript: openMore(\'' . $contact->Notes . '\');" style="cursor:pointer;float:right;color:blue;bottom:0">...more</div></div></td>';
 				$table .= '<td style="text-align:center;vertical-align:middle;border-right:none;">' . $edit_button . $view_button . '</td>';
 				$table .= '</tr>';
 			}
@@ -87,15 +87,31 @@ class Passwords extends DOM_Controller {
 		}
 		$html = $btn . $html . $btn;
 
-		$scripts = '	
+		$scripts = '
+			var clip;
+			$(window).load (function() {
+				// Run through all the username divs and load ZeroClipboard for each.
+				var zcPath = "' . base_url() . 'assets/ZeroClipboard.swf";
+				ZeroClipboard.setDefaults({
+						moviePath: zcPath,
+						afterCopy:function(){ alert(text + " copied to clipboard."); }
+					});
+				clip = new ZeroClipboard.Client();
+			}
+			
 			function openMore(text) {
 				alert(text);
 			}
 			
-			function textToClipboard(text, item_num) {
-				var clip = new ZeroClipboard($(".zeroClip" + item_num), {moviePath:"assets/ZeroClipboard.swf"});
+			function textToClipboard(text, id) {
+				var zcPath = "' . base_url() . 'assets/ZeroClipboard.swf";
+				ZeroClipboard.setDefaults({
+						moviePath: zcPath,
+						afterCopy:function(){ alert(text + " copied to clipboard."); }
+					});
+				var clip = new ZeroClipboard();
+				
 				clip.setText(text);
-				alert(text + " copied to clipboard.");
 			}
 		';
 		
