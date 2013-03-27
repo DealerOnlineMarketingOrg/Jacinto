@@ -311,10 +311,42 @@ class Members extends CI_Model {
 			return FALSE;   
    }
    
-   public function reset_password($email) {
+   public function manual_reset_pass($email,$password) {
+	   	$this->load->helper('msg_helper');
+		$this->db->select('*');
+		$this->db->from('Users');
+		$this->db->where('USER_Name',$email);
+		$user = $this->db->get();
+		
+		if($user) {
+			$user = $user->row();
+			$user_id = $user->USER_ID;
+			$this->db->where('USER_ID',$user_id);
+			if($this->db->update('Users_Info',array('USER_Password'=>encrypt_password($password),'USER_Generated'=>1))) {
+				$subject = 'Password Reset';
+				$msg = email_reset_msg($password);
+				$emailed = $this->email_results($email,$subject,$msg);
+				if($emailed) {
+					return TRUE;
+				}else {
+					return FALSE;
+				}
+			}else {
+				return FALSE;
+			}
+		}else {
+			return FALSE;
+		}
+   }
+   
+   public function reset_password($email, $password = false) {
 		$this->load->helper('msg_helper');
 		$email = $this->security->xss_clean($this->input->post('email'));
-		$new_pass = createRandomString(10,'ALPHANUMSYM');
+		if($password) {
+			$new_pass = $password;
+		}else {
+			$new_pass = createRandomString(10,'ALPHANUMSYM');
+		}
 		
         $sql = 'SELECT * FROM Users WHERE USER_Name = "' . $email . '";';
         $query = $this->db->query($sql);
@@ -322,13 +354,10 @@ class Members extends CI_Model {
         if($query->num_rows() == 1) {
             $user_row = $query->row();
             $user_id = $user_row->USER_ID;
-            
-            $update_sql = "UPDATE Users_Info SET USER_Password = '" . encrypt_password($new_pass) . "', USER_Generated='1' WHERE USER_ID = '" . $user_id . "';";
-            
-            $update = $this->db->query($update_sql);
-            
-            if($update) {
-                //return TRUE;
+			
+			$this->db->where('USER_ID',$user_id);
+			if($this->db->update('Users_Info',array('USER_Password'=>encrypt_password($new_pass),'USER_Generated'=>'1'))) {
+                 //return TRUE;
                 $subject = 'Password Reset';
 				$msg = email_reset_msg($new_pass);
                 $emailed = $this->email_results($email, $subject, $msg);
@@ -432,5 +461,16 @@ class Members extends CI_Model {
             return false;
         }
     }
+
+	public function disable_user($user_id) {
+		$this->db->where('USER_ID',$user_id);
+		return $this->db->update('Users_Info',array('USER_Active'=>0)) ? TRUE : FALSE;
+	}
+	
+	public function enable_user($user_id) {
+		$this->db->where('USER_ID',$user_id);
+		return $this->db->update('Users_Info',array('USER_Active'=>1)) ? TRUE : FALSE;
+	}
+	
     
 }

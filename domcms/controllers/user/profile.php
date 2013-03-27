@@ -21,7 +21,7 @@ class Profile extends DOM_Controller {
 		
 		$user                   = $this->administration->getUsers($user_id);
 		$user->UserID           = $user->ID;
-		$user->Edit       		= ($this->user['UserID'] == $user->UserID) ? TRUE : FALSE;
+		$user->Edit       		= ($this->user['UserID'] == $user->UserID OR $this->user['AccessLevel'] >= 600000) ? TRUE : FALSE;
 		
 		//Grab avatar
 		if($user->Avatar AND !$user->Google_Avatar) {
@@ -87,6 +87,25 @@ class Profile extends DOM_Controller {
 			    redirect($profile_url . '/upload_avatar_error','refresh');
 			endif;
 			
+		}
+	}
+
+	public function Reset_password() {
+		$this->load->model('members');
+		$this->load->helper('pass');
+		$new_pass = createRandomString(10,'ALPHANUMSYM');
+		$email = $this->input->post('userEmail');
+		
+		//echo $new_pass;
+		if($new_pass) {
+			$reset_password = $this->members->manual_reset_pass($email,$new_pass);
+			if($reset_password) {
+				echo $new_pass;
+			} else {
+				echo '0';
+			}
+		}else {
+			echo '0';
 		}
 	}
 	

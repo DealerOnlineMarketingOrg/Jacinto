@@ -7,7 +7,7 @@
 	                <div class="rowElem noborder" style="">
 	                 	<span class="formNote required"><span style="color:red;">*</span> Name</span>
 	                    <?= form_input(array('style'=>'margin:0 0 5px 0;','class'=>'required validate[required]','name' => 'name','id'=>'name', 'value'=>((isset($vendor) ? $vendor->Name : '')))); ?>
-	                	<span class="formNote">* Street Address</span>
+	                	<span class="formNote">Street Address</span>
                 		<?= form_input(array('style'=>'margin:0 0 5px 0;','class'=>'required validate[required]','name'=>'street','id'=>'street','value'=>((isset($vendor)) ? $vendor->Address['street'] : ''))); ?>
                 		<span class="formNote">City</span>
                 		<?= form_input(array('style'=>'margin:0 0 5px 0;','class'=>'required validate[required]','name'=>'city','id'=>'city','value'=>((isset($vendor)) ? $vendor->Address['city'] : ''))); ?>

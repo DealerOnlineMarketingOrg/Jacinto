@@ -67,7 +67,9 @@ $route['groups/(:any)']					= 'admin/groups/$1';
 $route['masterlist']					= 'admin/masterlist';
 
 $route['clients']						= 'admin/clients';
+$route['clients/edit/(:any)']			= 'admin/clients/edit';
 $route['clients/(:any)']				= 'admin/clients/$1';
+$route['client/(:any)']					= 'admin/clients/profile';
 
 $route['users']							= 'admin/users';
 $route['users/(:any)']					= 'admin/users/$1';

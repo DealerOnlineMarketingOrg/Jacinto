@@ -73,14 +73,14 @@
     <div class="dialog-message" id="editUser" title="Edit User Info">
         <div class="uiForm">
                 <?= form_open(base_url().'profile/update/userInfo', array('id' => 'UpdateUserInfo','class'=>'valid'));
-	            echo '<p style="margin-left:15px !important;">First Name</p>';
+	            echo '<p style="margin-left:5px !important;text-align:left;">First Name</p>';
 	            echo form_input(array('id' => 'firstname','name'=>'firstname','placeHolder'=>'Your First Name','value'=>$user->FirstName,'class'=>'validate[required]','style'=>'margin-top:5px;'));
-    	        echo '<p style="margin-left:15px !important;">Last Name</p>';
+    	        echo '<p style="margin-left:5px !important;text-align:left;">Last Name</p>';
                 echo form_input(array('id' => 'lastname','name'=>'lastname','placeHolder'=>'Your Last Name','value'=>$user->LastName,'class'=>'validate[required]','style'=>'margin-top:5px;'));
-    	        echo '<p style="margin-left:15px !important;">Username</p>';
+    	        echo '<p style="margin-left:5px !important;text-align:left;">Username</p>';
 				echo form_input(array('id' => 'username','name'=>'username','placeHolder'=>'Your Username','value'=>$user->Username,'class'=>'validate[required]','style'=>'margin-top:5px;'));
 				if($admin['AccessLevel'] >= 600000) {
-					echo '<p style="margin-left:15px !important;">Security Level</p>';
+					echo '<p style="margin-left:5px !important;text-align:left;">Security Level</p>';
 					$options = array(
 						'1' => 'Super-Admin',
 						'2' => 'Admin',
@@ -89,9 +89,12 @@
 						'5' => 'Manager',
 						'6' => 'User'
 					);
-					echo form_dropdown('permissionlevel', $options, $user->AccessID);        
+					echo form_dropdown('permissionlevel', $options, $user->AccessID,'style="width:100%;"');        
+					if($admin['AccessLevel'] >= 600000) {
+						echo '<br /><a href="javascript:resetPassword(\'' . $user->EmailAddress . '\');" class="button blueBtn" style="display:block;margin-top:15px;width:90%;float:left;">Reset Password</a>';
+					}
 				}
-				echo '</form>'; ?>
+				echo form_close(); ?>
         </div>
     </div>
 </div>
@@ -115,6 +118,26 @@
 </div>
 <div id="editUserModules"></div>
 <script type="text/javascript">
+
+	function resetPassword(email) {
+		jConfirm('Are you sure you want to reset this users password?', 'Confirmation Password Reset', function(r) {
+			if(r) {
+				jQuery.ajax({
+					type:'POST',
+					url:'<?= base_url(); ?>user/profile/reset_password',
+					data:{userEmail:email},
+					success:function(data) {
+						alert(data);
+						if(data != '0') {
+							jAlert('You have reset the users password to '+ data);
+						}else {
+							jAlert('There was a problem with the password reset. Please try again.');
+						}
+					}
+				})
+			}
+		});
+	}
 
 	function editAvatar(id) {
 		jQuery("#editAvatar").dialog({

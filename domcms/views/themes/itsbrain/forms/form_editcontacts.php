@@ -2,6 +2,7 @@
     <div class="title"><h5>Admin</h5></div>
     <?php notifyError(); ?>
     <!-- Form begins -->
+    <?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
     <?php echo  form_open('/admin/contacts/form_processor/contacts/edit',array('id'=>'usualValidate','class'=>'mainForm','name'=>'edit')); ?>
         <!-- Input text fields -->
         <fieldset>
