@@ -40,3 +40,22 @@
 			}
 		})
 	}
+	
+	function editWebsite(id) {
+		jQuery.ajax({
+			type:'POST',
+			url:'/admin/clients/edit_website',
+			data:{wid:id},
+			success:function(data) {
+				if(data) {
+					jAlert('The website has been successfully changed.','Success',function() {
+						window.location.reload();
+					})
+				}else {
+					jAlert('There was an error editing the website','Error',function() {
+						window.location.reload();
+					})
+				}
+			}
+		})
+	}

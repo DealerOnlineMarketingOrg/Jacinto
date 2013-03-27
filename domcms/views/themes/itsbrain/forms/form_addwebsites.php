@@ -1,5 +1,5 @@
 <div class="uDialog">
-    <div class="dialog-message" id="addWebsiteForm" title="Add New Website to <?= $client->Name; ?>">
+    <div class="dialog-message" id="addWebsiteForm" title="<?= ((isset($website)) ? 'Edit ' . $client->Name . ' Website' : 'Add New Website To ' . $client->Name); ?>">
         <div class="uiForm">
         	 <div class="widget" style="margin-top:-10px;padding-top:0;">
 				<?= form_open(base_url() . 'admin/clients/add_website',array('id'=>'client_' . $client->ID,'class'=>'valid','style'=>'text-align:left;')); ?>
@@ -9,7 +9,11 @@
 		                    <div class="formRight">
 		                        <select id="vendors" name="vendor" class="chzn-select">
 		                        	<? foreach($vendors as $vendor) : ?>
-		                        		<option value="<?= $vendor->ID; ?>"><?= $vendor->Name; ?></option>
+		                        		<?php if(isset($website)) { ?>
+		                        			<option <?= ($website->Vendor == $vendor->ID) ? 'selected="selected"' : ''; ?> value="<?= $vendor->ID; ?>"><?= $vendor->Name; ?></option>
+		                        		<?php }else { ?>
+		                        			<option value="<?= $vendor->ID; ?>"><?= $vendor->Name; ?></option>
+		                        		<?php } ?>
 		                        	<? endforeach; ?>
 		                        </select>
 		                    </div>
@@ -18,49 +22,49 @@
 						<div class="rowElem noborder">
 							<label><span class="req">*</span> URL</label>
 							<div class="formRight">
-								<?= form_input(array('name'=>'url','id'=>'web_url','class'=>'validate[required,custom[url]]')); ?>
+								<?= form_input(array('name'=>'url','id'=>'web_url','class'=>'validate[required,custom[url]]','value'=>((isset($website->URL)) ? $website->URL : ''))); ?>
 							</div>
 							<div class="fix"></div>
 						</div>
 						<div class="rowElem noborder">
 							<label>Google Analytics UA Code</label>
 							<div class="formRight">
-								<?= form_input(array('name'=>'ua_code','id'=>'google_ua_code')); ?>
+								<?= form_input(array('name'=>'ua_code','id'=>'google_ua_code','value'=>((isset($website->GoogleUACode)) ? $website->GoogleUACode : ''))); ?>
 							</div>
 							<div class="fix"></div>
 						</div>
 						<div class="rowElem noborder">
 							<label>Google Webmaster Tools<br />Meta Code Number</label>
 							<div class="formRight">
-								<?= form_input(array('name'=>'meta_code_number','id'=>'meta_code_number')); ?>
+								<?= form_input(array('name'=>'meta_code_number','id'=>'meta_code_number','value'=>((isset($website->GoogleWebToolsMetaCode)) ? $website->GoogleWebToolsMetaCode : ''))); ?>
 							</div>
 							<div class="fix"></div>
 						</div>
 						<div class="rowElem noborder">
 							<label>Google+ Code</label>
 							<div class="formRight">
-								<?= form_input(array('name'=>'gplus_code','id'=>'gplus_code')); ?>
+								<?= form_input(array('name'=>'gplus_code','id'=>'gplus_code','value'=>((isset($website->GooglePlusCode)) ? $website->GooglePlusCode : ''))); ?>
 							</div>
 							<div class="fix"></div>
 						</div>
 						<div class="rowElem noborder">
 							<label>Bing Code</label>
 							<div class="formRight">
-								<?= form_input(array('name'=>'bing_code','id'=>'bing_code')); ?>
+								<?= form_input(array('name'=>'bing_code','id'=>'bing_code','value'=>((isset($website->BingCode)) ? $website->BingCode : ''))); ?>
 							</div>
 							<div class="fix"></div>
 						</div>
 						<div class="rowElem noborder">
 							<label>Yahoo Code</label>
 							<div class="formRight">
-								<?= form_input(array('name'=>'yahoo_code','id'=>'yahoo_code')); ?>
+								<?= form_input(array('name'=>'yahoo_code','id'=>'yahoo_code','value'=>((isset($website->YahooCode)) ? $website->YahooCode : ''))); ?>
 							</div>
 							<div class="fix"></div>
 						</div>
 						<div class="rowElem noborder">
 							<label>Global JS Script</label>
 							<div class="formRight">
-								<?= form_textarea(array('name'=>'global_code','id'=>'global_code')); ?>
+								<?= form_textarea(array('name'=>'global_code','id'=>'global_code','value'=>((isset($website->GlobalScript)) ? $website->GlobalScript : ''))); ?>
 							</div>
 							<div class="fix"></div>
 						</div>

@@ -186,6 +186,19 @@ class Clients extends DOM_Controller {
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
 	}
+
+	public function edit_website_form() {
+		if(isset($_POST['wid'])) {
+			$website_id = $this->input->post('wid');
+		}elseif(isset($_GET['wid'])) {
+			$website_id = $this->input->get('wid');
+		}else {
+			$website_id = $this->input->post('wid');
+		}
+		
+		
+		
+	}
 	
 	public function Add() {
 		$html = '';
