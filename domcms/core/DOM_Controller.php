@@ -469,9 +469,9 @@ class DOM_Controller extends CI_Controller {
 															: 'Something went wrong. Please try again or contact your admin.',
 											0, ''));
 						if($form['Status'] == '0')
-							$this->reset_dd_session('/admin/clients/edit');
+							$this->reset_dd_session('/clients/edit');
 						else
-							redirect('/admin/clients/edit','refresh');
+							redirect('/clients','refresh');
 					break;
 				endswitch;
 			break;
