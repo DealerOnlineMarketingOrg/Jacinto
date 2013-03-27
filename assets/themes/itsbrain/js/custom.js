@@ -11,6 +11,52 @@ function filterTags() {
 	}
 }
 
+function disableUser(id) {
+	jConfirm('Are you sure you want to disable this user?','Disable User Confirmation',function(r) {
+		if(r){
+			jQuery.ajax({
+				type:'POST',
+				url:'/admin/users/disable',
+				data:{user_id:id},
+				success:function(data) {
+					if(data) {
+						location.reload();
+					}
+				}
+			})
+		}
+	})
+}
+
+function enableUser(id) {
+	jConfirm('Are you sure you want to enable this user?','Enable User Confirmation',function(r) {
+		if(r){
+			jQuery.ajax({
+				type:'POST',
+				url:'/admin/users/enable',
+				data:{user_id:id},
+				success:function(data) {
+					if(data) {
+						location.reload();
+					}
+				}
+			})
+		}
+	})
+}
+
+
+function viewUser(link,id) {
+	$.ajax({
+		type:'POST',
+		url:'/profile/' + link,
+		data:{user_id:id},
+		success:function() {
+			window.location = "/profile/" + link;
+		}
+	})
+}
+
 $(function() {
 	//===== Autocomplete =====//
 	
@@ -633,7 +679,8 @@ $(function() {
 		"bJQueryUI": true,
 		"sPaginationType": "full_numbers",
 		"sDom": '<""f>t<"F"lp>',
-		'iDisplayLength':1000
+		'iDisplayLength':1000,
+		"aLengthMenu": [[-1,10,25,50],['All',10,25,50]]
 	});
 	
 	

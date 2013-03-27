@@ -74,22 +74,31 @@ class Users extends DOM_Controller {
 					'class'=>'blueBtn',
 					'value'=>'View'
 				);
+				
+				$green_check = '<img src="' . base_url() . THEMEIMGS . 'icons/notifications/accept.png" alt="Enabled" />';
+				$disabled_ex = '<img src="' . base_url() . THEMEIMGS . 'icons/color/cross.png" alt="Disabled" />';
 
+				$avatar = $this->members->get_user_avatar($user->ID);
 				
-				$view_form = form_open('profile/'.strtolower($user->FirstName . $user->LastName),array('name'=>'view_user','id'=>'form_' . $user->ID)) . form_hidden('user_id',$user->ID) . '<img class="viewBtn" id="view_user_' . $user->ID . '" src="' . base_url() . 'assets/themes/global/imgs/icons/dark/user.png" alt="View Profile" />' . form_close();
+				$view_form = form_open('profile/'.strtolower($user->FirstName . $user->LastName),array('name'=>'view_user','id'=>'form_' . $user->ID,'style'=>'float:left;')) . form_hidden('user_id',$user->ID) . '<img class="viewBtn" id="view_user_' . $user->ID . '" src="' . base_url() . 'assets/themes/global/imgs/icons/dark/user.png" alt="View Profile" />' . form_close();
+				$disable_user = '<a href="javascript:disableUser(\'' . $user->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/cross.png" alt="Disable User" /></a>';
+				$enable_user = '<a href="javascript:enableUser(\'' . $user->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/notifications/accept.png" alt="Enable User" /></a>';
 				
-				$table .= '<td class="tags"><div class="' . $user->ClassName . '">&nbsp;</div></td>';
+				$table .= '<td class="tags" style="width:35px;"><div class="' . $user->ClassName . '">&nbsp;</div></td>';
 				//grab users avatar
-				$table .= '<td><div align="center"><img style="width:25px;" src="' . (($user->ID != 5) ? $this->members->get_user_avatar($user->ID) : 'https://lh6.googleusercontent.com/-zI6ICNng1yA/AAAAAAAAAAI/AAAAAAAAAKA/DrJiF6DykVI/s48-c-k/photo.jpg') . '" /></div></td>';
+				$table .= '<td style="width:30px;"><div align="center"><img style="width:25px;" src="' . $avatar . '" /></div></td>';
 				
-				$table .= '<td>' . $user->Username . '</td>';
+				$table .= '<td>' . '<a href="mailto:' . $user->Username . '">' . $user->Username . '</a>' . '</td>';
 				$table .= '<td>' . $user->FirstName . ' ' . $user->LastName . '</td>';
-				$table .= '<td>' . (($user->Status != 1) ? 'Disabled' : 'Active') . '</td>';
-				$table .= '<td>' . date('n-j-Y',strtotime($user->JoinDate)) . '</td>';
-				$table .= '<td><div align="center">' . $view_form . '</div></td>';
+				$table .= '<td style="width:30px;text-align:center;">' . (($user->Status != 1) ? $disabled_ex : $green_check) . '</td>';
+				$table .= '<td style="width:65px;text-align:center;">' . date('n-j-Y',strtotime($user->JoinDate)) . '</td>';
+				$table .= '<td style="width:40px;"><div align="center">' . $view_form . (($user->Status != 1) ? $enable_user : $disable_user) . '</div></td>';
 				$table .= '</tr>';				
 			}
-			$table .= '</tbody></table><script type="text/javascript">jQuery(".viewBtn").click(function() { jQuery(this).parent().submit(); });</script>';
+			$table .= '</tbody></table>
+				<script type="text/javascript">
+					jQuery(".viewBtn").click(function() { jQuery(this).parent().submit(); });
+				</script>';
 		}else {
 			$table = '<p style="text-align:center">No users are associated for this client. Please use the Dealer Dropdown to select another client, or add users by clicking the "Add New User" button below.</p>';	
 		}
@@ -100,7 +109,7 @@ class Users extends DOM_Controller {
 		if ($this->CheckModule('User_Add')) {
 			$html .= anchor(base_url() . 'users/add', 'Add New User', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_user_btn"');
 		}
-
+		
 		//Prepare data for template in $data array; when in template, you call the keys like vars: example => $html;
 		$data = array(
 			'page_id' => 'Users',
@@ -135,6 +144,30 @@ class Users extends DOM_Controller {
 	
 	public function Delete() {
 		
+	}
+	
+	public function Disable() {
+		$this->load->model('members');
+		$user_id = $this->input->post('user_id');
+		
+		$disable = $this->members->disable_user($user_id);
+		if($disable) {
+			echo TRUE;
+		}else {
+			echo FALSE;
+		}
+	}
+	
+	public function Enable() {
+		$this->load->model('members');
+		$user_id = $this->input->post('user_id');
+		
+		$enable = $this->members->enable_user($user_id);
+		if($enable) {
+			echo TRUE;
+		}else {
+			echo FALSE;
+		}
 	}
 	
 	public function View() {

@@ -11,6 +11,24 @@ function strip_chars_from_phone($phone) {
 	return preg_replace("/[^0-9]/", "", $phone);
 }
 
+function reset_users_password($email) {
+	$ci =& get_instance();
+	$ci->load->model('members');
+	$ci->load->helper('pass');
+	$password = createRandomString(10,'ALPHANUMSYM');
+	
+	if($password) {
+		$passchange = $ci->members->reset_password($email,$password);
+		if($passchange) {
+			return $password;
+		}else {
+			return FALSE;
+		}
+	}else {
+		return FALSE;
+	}
+}
+
 function ArrayWithTextIndexToString($array, $type = false) {
 	$myString = '';
 	foreach($array as $key => $value) {
