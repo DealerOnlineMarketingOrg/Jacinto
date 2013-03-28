@@ -2,7 +2,7 @@
     <div class="dialog-message" id="addWebsiteForm" title="<?= ((isset($website)) ? 'Edit ' . $client->Name . ' Website' : 'Add New Website To ' . $client->Name); ?>">
         <div class="uiForm">
         	 <div class="widget" style="margin-top:-10px;padding-top:0;">
-				<?= form_open(base_url() . 'admin/clients/add_website',array('id'=>'client_' . $client->ID,'class'=>'valid','style'=>'text-align:left;')); ?>
+				<?= form_open(base_url() . 'admin/clients/add_website',array('id'=>'web','class'=>'valid','style'=>'text-align:left;')); ?>
 					<fieldset>
 						<div class="rowElem noborder noSearch">
 		                    <label><span class="req">*</span> Vendor</label>
@@ -68,7 +68,17 @@
 							</div>
 							<div class="fix"></div>
 						</div>
+						<div class="rowElem noborder">
+							<label>Notes</label>
+							<div class="formRight">
+								<?= form_textarea(array('name'=>'notes','id'=>'web_notes','value'=>((isset($website->Description))?$website->Description:''))); ?>
+							</div>
+							<div class="fix"></div>
+						</div>
 		                <div class="submitForm">
+		                	<?php if(isset($website->ID)) { ?>
+		                		<input type="hidden" name="web_id" value="<?= $website->ID; ?>" />
+		                	<?php } ?>
 		               		<input type="hidden" name="ClientID" value="<?php echo  $client->ID; ?>" />
 		                    <input type="submit" value="submit" class="redBtn" />
 		                </div> 
@@ -80,6 +90,30 @@
 	</div>
 </div>
 <script type="text/javascript">
+	jQuery('#web').submit(function(e) {
+		e.preventDefault();
+		<? if(isset($website)) { ?>
+			var formData = jQuery(this).serialize();
+			jQuery.post('/admin/clients/add_website',formData,function(data) {
+				if(data) {
+					jAlert('New website added successfully.','Success');
+				}else {
+					jAlert('Error adding new website.','Error');
+				}
+			});
+		<?php }else { ?>
+			var formData = jQuery(this).serialize();
+			jQuery.post('/admin/clients/edit_website',formData,function(data) {
+				if(data) {
+					jAlert('Website edited successfully.','Success');
+				}else {
+					jAlert('Error editing website.','Error');
+				}
+			});
+		<?php } ?>
+			
+	});
+	
 	jQuery(".chzn-select").chosen();
 	jQuery("#addWebsiteForm").dialog({
 		minWidth:500,

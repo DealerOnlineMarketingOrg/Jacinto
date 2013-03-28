@@ -187,7 +187,7 @@ class Clients extends DOM_Controller {
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
 	}
 
-	public function edit_website_form() {
+	public function edit_website() {
 		if(isset($_POST['wid'])) {
 			$website_id = $this->input->post('wid');
 		}elseif(isset($_GET['wid'])) {
@@ -196,8 +196,28 @@ class Clients extends DOM_Controller {
 			$website_id = $this->input->post('wid');
 		}
 		
+		$form = $this->input->post();
 		
-		
+		$edit = $this->administration->editWebsiteInfo($form);
+		if($edit) {
+			echo 1;
+		}else {
+			echo 0;
+		}
+	}
+	
+	public function add_website() {
+		if(isset($_POST['wid'])) {
+			$form = $this->input->post();
+			$add = $this->administration->addWebsiteInfo($form);
+			if($add) {
+				echo 1;
+			}else {
+				echo 0;
+			}
+		}else {
+			echo 0;
+		}
 	}
 	
 	public function Add() {

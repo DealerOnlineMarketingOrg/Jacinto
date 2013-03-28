@@ -12,11 +12,54 @@ class Administration extends CI_Model {
         $this->load->helper('string_parser');
     }
 	
-	public function getClientWebsites($cid) {
+	public function editWebsiteInfo($formdata) {
+		$data = array(
+			'CLIENT_ID' => $formdata['ClientID'],
+			'WEB_Vendor' => $formdata['vendor'],
+			'WEB_GoogleUACode'=>$formdata['ua_code'],
+			'WEB_GoogleWebToolsMetaCode'=>$formdata['meta_code_number'],
+			'WEB_GooglePlusCode'=>$formdata['gplus_code'],
+			'WEB_BingCode'=>$formdata['bing_code'],
+			'WEB_YahooCode'=>$formdata['yahoo_code'],
+			'WEB_GlobalScript'=>$formdata['global_code'],
+			'WEB_Url'=>$formdata['url'],
+			'WEB_Notes'=>$formdata['notes'],
+			'WEB_ActiveTS'=>date(FULL_MILITARY_DATETIME),
+			'WEB_Created'=>date(FULL_MILITARY_DATETIME)
+		);
+		$this->db->where('WEB_ID',$formdata['web_id']);
+		return ($this->db->update('Websites',$data) ? TRUE :FALSE);
+	}
+	
+	public function addWebsiteInfo($formdata) {
+		$data = array(
+			'CLIENT_ID' => $formdata['ClientID'],
+			'WEB_Vendor' => $formdata['vendor'],
+			'WEB_GoogleUACode'=>$formdata['ua_code'],
+			'WEB_GoogleWebToolsMetaCode'=>$formdata['meta_code_number'],
+			'WEB_GooglePlusCode'=>$formdata['gplus_code'],
+			'WEB_BingCode'=>$formdata['bing_code'],
+			'WEB_YahooCode'=>$formdata['yahoo_code'],
+			'WEB_GlobalScript'=>$formdata['global_code'],
+			'WEB_Type'=>'cid:' . $formdata['ClientID'],
+			'WEB_Url'=>$formdata['url'],
+			'WEB_Active'=>'1',
+			'WEB_Notes'=>$formdata['notes'],
+			'WEB_ActiveTS'=>date(FULL_MILITARY_DATETIME),
+			'WEB_Created'=>date(FULL_MILITARY_DATETIME)
+		);
+		
+		return ($this->db->insert('Website',$data) ? TRUE : FALSE);
+	}
+	
+	public function getClientWebsites($cid,$wid=false) {
 		$this->db->select('w.WEB_Vendor as Vendor,w.WEB_GoogleUACode as GoogleUACode,w.WEB_GoogleWebToolsMetaCode as GoogleWebToolsMetaCode,w.WEB_GooglePlusCode as GooglePlusCode,w.WEB_BingCode as BingCode,w.WEB_YahooCode as YahooCode,w.WEB_GlobalScript as GlobalScript,w.WEB_Type as Type,w.WEB_Url as URL,w.WEB_Notes as Description,w.WEB_Active as Status,w.WEB_ActiveTS as LastUpdate,w.WEB_Created as Created,v.VENDOR_Name as VendorName,v.VENDOR_Address as VendorAddress,v.VENDOR_Phone as VendorPhone,v.Vendor_Notes as VendorDescription,v.VENDOR_Active as VendorStatus');
 		$this->db->from('Websites w');
 		$this->db->join('Vendors v','w.WEB_Vendor = v.VENDOR_ID');
 		$this->db->where('CLIENT_ID',$cid);
+		if($wid) {
+			$this->db->where('WEB_ID',$wid);
+		}
 		$website = $this->db->get();
 		
 		return ($website) ? $website->result() : FALSE;
