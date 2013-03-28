@@ -1,13 +1,13 @@
 <div class="uDialog" style="text-align:left;">
-    <div class="dialog-message" id="editClient" title="Edit Client">
+    <div class="dialog-message" id="editClient" title="Edit <?= $client->Name; ?>">
         <div class="uiForm">
 			<style type="text/css">
 				label{margin-top:5px;float:left;}
 			</style>
             <div class="widget" style="margin-top:0;padding-top:0;">
             	<ul class="tabs">
-            		<li class="activeTab"><a href="#clientInfo">Client Information</a></li>
-            		<li><a href="#websites">Websites</a></li>
+            		<li class="activeTab"><a href="javascript:void(0);" rel="clientInfo">Client Information</a></li>
+            		<li><a href="javascript:void(0);" rel="websites">Websites</a></li>
             		<!-- <li><a href="#contacts">Contacts</a></li>
             		<li><a href="#users">Users</a></li>
             		<li><a href="#vendors">Vendors</a></li> -->
@@ -143,6 +143,7 @@
     					<?php if(isset($websites)) {
     						echo $websites;} ?>
     				</div>
+                    <div id="loader" style="display:none;"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
     				<div class="fix"></div>
     			</div>	
     			<div class="fix"></div>			       
@@ -151,15 +152,18 @@
 	</div>
 </div>
 <script type="text/javascript">
-	var infoTabState = jQuery('#clientInfo').is(':visible');
-	var webTabState = jQuery('#websites').is(':visible');
-	
-	if(infoTabState && webTabState) {
-		jQuery('#clientInfo').css('display','block');
-		jQuery('.tabs ul li:first-child').addClass('activeTab');
-	}
-	
-	jQuery("div[class^='widget']").simpleTabs();
+	jQuery('ul.tabs li a').live('click',function() {
+		//remove all activetabs
+		jQuery('ul.tabs').find('li.activeTab').removeClass('activeTab');
+		
+		jQuery(this).parent().addClass('activeTab');
+		var content = 'div#' + jQuery(this).attr('rel');
+		//alert(content);
+		jQuery('#editClient div.tab_container div.tab_content').hide();
+		jQuery('#editClient div.tab_container').find(content).css({'display':'block'});
+		//alert(content);
+	});
+	//jQuery("div[class^='widget']").simpleTabs();
 	jQuery(".chzn-select").chosen();
 	jQuery("#editClient").dialog({
 		minWidth:800,
@@ -173,6 +177,4 @@
 			},
 		}
 	});
-
-
 </script>
