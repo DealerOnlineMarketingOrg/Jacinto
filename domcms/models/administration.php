@@ -711,8 +711,27 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
 	}
 	
-	public function getPasswords($cid) {
+	public function getAllTypes() {
 		$sql = 'SELECT
+				p.PASS_TYPE_ID as ID,
+				p.PASS_TYPE_Name as Name
+				FROM xPasswordTypes p
+				ORDER BY p.PASS_TYPE_Name';
+		$query = $this->db->query($sql);
+		return ($query) ? $query->result() : FALSE;		
+	}
+	
+	public function getPasswords($cid = FALSE) {
+		return $this->getPasswordsList($cid, FALSE);
+	}
+	
+	public function getPasswordsByID($id = FALSE) {
+		return $this->getPasswordsList(FALSE, $id);
+	}
+	
+	private function getPasswordsList($cid, $pwdid) {
+		$sql = 'SELECT
+				c.CLIENT_ID as ClientID,
 				p.PASS_ID as ID,
 				tag.TAG_ClassName as Tag,
 				t.PASS_TYPE_Name as Type,
@@ -731,11 +750,25 @@ class Administration extends CI_Model {
 				INNER JOIN xPasswordTypes t on p.PASS_TypeID = t.PASS_TYPE_ID
 				INNER JOIN Vendors v on p.PASS_VendorID = v.VENDOR_ID
 				INNER JOIN Clients c on p.PASS_ClientID = c.CLIENT_ID
-				INNER JOIN xTags tag ON c.CLIENT_Tag = tag.TAG_ID
-				WHERE p.PASS_ClientID = ' . $cid . '
-				ORDER BY p.PASS_Username ASC';
+				INNER JOIN xTags tag ON c.CLIENT_Tag = tag.TAG_ID';
+				$where = '';
+				$where_count = 0;
+				if ($cid) {
+					$where = ($cid ? ('p.PASS_ClientID = ' . $cid) : '');
+					$where_count++;
+				}
+				if ($pwdid)
+			    	$where .= ($pwdid ? (($where_count > 0 ? ' AND' : '') . ' p.PASS_ID = ' . $pwdid)     : '');
+				if ($where)
+					$sql .= ' WHERE ' . $where;
+				$sql .= ' ORDER BY p.PASS_Username ASC';
+				
 		$query = $this->db->query($sql);
-		return ($query) ? $query->result() : FALSE;
+		switch ($query->num_rows) {
+			case 0:  return FALSE;
+			case 1:  return $query->row();
+			default: return $query->result();
+		}
 	}
 	
 	public function getVendors() {

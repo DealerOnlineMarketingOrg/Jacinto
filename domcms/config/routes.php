@@ -54,6 +54,7 @@ $route['google_connect']				= 'auth/google/connect';
 $route['google_authenticate']			= 'auth/google/auth';
 $route['example']						= 'auth/google/example';
 $route['passwords']						= 'admin/passwords';
+$route['passwords/(:any)']				= 'admin/passwords/$1';
 $route['mysettings']					= 'user/settings';
 $route['profile/avatar/upload']			= 'user/profile/upload_avatar';
 $route['profile/(:any)']				= 'user/profile/view';
