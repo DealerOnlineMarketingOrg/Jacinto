@@ -192,11 +192,12 @@ function load_client_websites($cid = false) {
 	$table = '';
 	if($websites) {
 		//print_object($websites);
-		$edit_img = '<a href="javascript:editWebsiteForm(\'' . $cid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/dark/pencil.png" alt="Edit Website" /></a>';
+		
 		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
 		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td><td>Actions</td></tr></thead>';
 		$table .= '<tbody>';
 		foreach($websites as $website) :
+			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $cid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/dark/pencil.png" alt="Edit Website" /></a>';
 			$table .= '<tr>';
 			$table .= '<td>' . $website->VendorName . '</td>';
 			$table .= '<td><a href="' . $website->URL . '" target="_blank">' . $website->URL . '</a></td>';

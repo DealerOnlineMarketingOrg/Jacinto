@@ -24,18 +24,39 @@ class Websites extends DOM_Controller {
 		}
 	}
 	
-	public function load_table() {
+	public function Load_table() {
 		$this->load->helper('template');
 		$table = load_client_websites($this->client_id);
 		echo $table;
 	}
 	
 	public function add() {
-		
+		if(isset($_GET['cid'])) {
+			$form = $this->input->post();
+			//var_dump($form);
+			$add = $this->administration->addWebsiteInfo($form);
+			if($add) {
+				echo 1;
+			}else {
+				echo 0;
+			}
+		}else {
+			echo 0;
+		}
 	}
 	
 	public function edit() {
-		
+		if(isset($_GET['wid'])) {
+			$form = $this->input->post();
+			$add = $this->administration->editWebsiteInfo($form);
+			if($add) {
+				echo 1;
+			}else {
+				echo 0;
+			}
+		}else {
+			echo 0;
+		}
 	}
 	
 	public function disable() {
@@ -43,14 +64,18 @@ class Websites extends DOM_Controller {
 	}
 	
 	public function form() {
-		
 		$client = $this->administration->getClient($this->client_id);
 		$vendors = $this->administration->getAllVendors();
 		$data = array(
 			'client'=>$client,
-			'vendors'=>$vendors
+			'vendors'=>$vendors,
+			'website'=>((isset($this->website_id)) ? $this->administration->getWebsite($this->website_id) : FALSE),
 		);
-		if(isset($this->website_id)) {array_push($data, array('website' => $this->administration->getClientWebsites($this->client_id, $this->website_id)));}
+		if(isset($this->website_id)) {
+			$site = $this->administration->getWebsite($this->website_id);
+			array_push($data,array('website'=>$site));
+			//array_push($data, array('website' => $this->administration->getWebsite($this->website_id)));}
+		}
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
 	}
 	

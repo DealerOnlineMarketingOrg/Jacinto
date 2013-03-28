@@ -55,9 +55,8 @@
 			}
 		})
 	}
-
 	
-	function editWebsite(wid,cid) {
+	function editWebsite(cid,wid) {
 		var formData = jQuery('#web').serialize();
 		jQuery.ajax({
 			type:'POST',
