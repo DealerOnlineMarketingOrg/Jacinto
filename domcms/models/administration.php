@@ -12,6 +12,46 @@ class Administration extends CI_Model {
         $this->load->helper('string_parser');
     }
 	
+	public function disableWebsite($wid) {
+		//we need the client id
+		$this->db->select('CLIENT_ID as ClientID');
+		$this->db->from('Websites');
+		$this->db->where('WEB_ID',$wid);
+		$client_id = $this->db->get();
+		if($client_id) {
+			$client_id = $client_id->row()->ClientID;
+			$this->db->where('WEB_ID',$wid);
+			$update = ($this->db->update('Websites',array('WEB_Active'=>0)) ? TRUE : FALSE);	
+			if($update) {
+				return $client_id;	
+			}else {
+				return FALSE;	
+			}
+		}else {
+			return FALSE;	
+		}
+	}
+	
+	public function enableWebsite($wid) {
+		//we need the client id
+		$this->db->select('CLIENT_ID as ClientID');
+		$this->db->from('Websites');
+		$this->db->where('WEB_ID',$wid);
+		$client_id = $this->db->get();
+		if($client_id) {
+			$client_id = $client_id->row()->ClientID;
+			$this->db->where('WEB_ID',$wid);
+			$update = ($this->db->update('Websites',array('WEB_Active'=>1)) ? TRUE : FALSE);	
+			if($update) {
+				return $client_id;	
+			}else {
+				return FALSE;	
+			}
+		}else {
+			return FALSE;	
+		}
+	}
+	
 	public function editWebsiteInfo($formdata) {
 		$data = array(
 			'CLIENT_ID' => $formdata['ClientID'],
@@ -250,6 +290,18 @@ class Administration extends CI_Model {
 		$query = $this->db->get();
 		return ($query) ? $query->result() : FALSE;
     }
+	
+	/*
+	 * Enabling and disabling a client
+	 */ 
+	 
+	 public function changeClientStatus($cid,$which) {
+		$data = array(
+			'CLIENT_Active' => ($which) ? 1 : 0
+		);
+		$this->db->where('CLIENT_ID',$cid);
+		return ($this->db->update('Clients',$data)) ? TRUE : FALSE;
+	 }
     
 	/*
 	 * TO RETURN A SINGLE CLIENT

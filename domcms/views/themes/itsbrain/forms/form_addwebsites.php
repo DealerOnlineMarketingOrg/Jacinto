@@ -1,16 +1,16 @@
 <div class="uDialog">
     <div class="dialog-message" id="addWebsiteForm" title="<?= (($website) ? 'Edit ' . $client->Name . ' Website' : 'Add New Website To ' . $client->Name); ?>">
         <div class="uiForm">
-        	 <div class="widget" style="margin-top:-10px;padding-top:0;">
+        	 <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
 				<?= form_open(base_url() . 'admin/clients/add_website',array('id'=>'web','class'=>'valid mainForm','style'=>'text-align:left;')); ?>
 					<fieldset>
 						<div class="rowElem noborder noSearch">
 		                    <label><span class="req">*</span> Vendor</label>
 		                    <div class="formRight">
-		                        <select id="vendors" name="vendor" class="chzn-select validate[required]" style="float:left;">
+		                        <select id="vendors" name="vendor" class="chzn-select validate[required] vendors" style="float:left;">
                                 	<option value="">Choose a Vendor</option>
 		                        	<? foreach($vendors as $vendor) : ?>
-		                        		<?php if(isset($website)) { ?>
+		                        		<?php if($website) { ?>
 		                        			<option <?= ($website->Vendor == $vendor->ID) ? 'selected="selected"' : ''; ?> value="<?= $vendor->ID; ?>"><?= $vendor->Name; ?></option>
 		                        		<?php }else { ?>
 		                        			<option value="<?= $vendor->ID; ?>"><?= $vendor->Name; ?></option>
@@ -18,7 +18,7 @@
 		                        	<? endforeach; ?>
                                     <option value="custom">Custom</option>
 		                        </select>
-                                <div id="CustomVendor" style="float:left;display:none;">
+                                <div id="CustomVendor" class="CustomVendor" style="float:left;display:none;">
                                 	<?= form_input(array('name'=>'custom_vendor','id'=>'custom_vendor')); ?>
                                     <span class="formNote">Type the vendor name here and the vendor will be added to the system.</span>
                                 </div>
@@ -99,95 +99,48 @@
 </div>
 <script type="text/javascript">
 	jQuery('#web').validationEngine({promptPosition : "top", scroll: true});
-	jQuery('#vendors').live('change',function() {
+	jQuery('.vendors').change(function() {
 		var selectBox = jQuery(this);
 		if(selectBox.val() == '') {
 			alert('Vendors are required');	
 		}
 		if(selectBox.val() == 'custom') {
-			jQuery('#CustomVendor').slideDown('fast');
-			jQuery('#CustomVendor input').addClass('validate[required]');
-			jQuery('#vendors').removeClass('validate[required]');
+			jQuery('div.CustomVendor').slideDown('fast');
+			jQuery('div.CustomVendor input').addClass('validate[required]');
+			jQuery('.vendors').removeClass('validate[required]');
 		}else {
-			jQuery("#vendors").addClass('validate[required]');
-			jQuery("#CustomVendor input").removeClass('validate[required]');
-			jQuery('#CustomVendor').slideUp('fast');	
+			jQuery(".vendors").addClass('validate[required]');
+			jQuery("div.CustomVendor input").removeClass('validate[required]');
+			jQuery('div.CustomVendor').slideUp('fast');	
 		}
 	});
 
 	jQuery('#web').submit(function(e) {
 		e.preventDefault();
+		var cid = '<?= $client->ID; ?>';
+		var msg;
+		var wid;
+		var cUrl;
 		var formData = jQuery(this).serialize();
-		var cUrl = '';
-		var type = 0;
-		var msg = 'New website added successfully.';
-		var title = 'Success';
-		<?php if(isset($website)) { ?>
-			cUrl = '<?= base_url(); ?>admin/websites/edit?cid=<?= $client->ID; ?>&wid=<?= $website->ID ?>';
-			type = 1;
+		<?php if($website) { ?>
+			wid = '<?= $website->ID; ?>';
+			cUrl = '/admin/websites/edit?cid='+cid+'&wid='+wid;
 			msg = 'Website edited successfully.';
 		<?php }else { ?>
-			type = 2;
-			cUrl = '<?= base_url(); ?>admin/websites/add?cid=<?=$client->ID; ?>';
+			cUrl = '/admin/websites/add?cid='+cid;
 		<?php } ?>
 		
-		if(type == 0) {
-			msg = 'There was a problem with processing your change. Please try again';
-			title = 'Error';
-		}
-		
-		jQuery.ajax({
-			type:'POST',
-			url:cUrl,
-			data:formData,
-			success:function(data) {
-				if(data == '1') {
-					//alert(data);
-					jAlert(msg,title,function() {
-						reloadWebsites('<?= $client->ID; ?>');	
-					});
-				}else {
-					jAlert('There was a problem with processing your change. Please try again.','Error',function() {
-						reloadWebsites('<?= $client->ID; ?>');
-					});	
-				}
-			}
-		});
+		submitWebsiteForm(cid,formData,cUrl,msg);
 	});
 	
-	function reloadWebsites(cid) {
-		jQuery('#addWebsiteForm').dialog('close');	
-		jQuery('#websites').slideUp('fast',function() {
-			jQuery('#websites').empty();
-			jQuery('#loader').fadeIn('fast',function() {
-				jQuery('#loader').fadeIn('fast',function() {
-					jQuery.ajax({
-						type:'GET',
-						url:'<?= base_url(); ?>admin/websites/load_table?cid='+cid,
-						success:function(data) {
-							jQuery('#websites').html(data);
-							jQuery('#loader').delay(2000).fadeOut('fast',function() {
-								jQuery('#websites').slideDown('fast');
-							});
-						}
-					});
-				});
-			});
-		});					
-	}
-	
 	jQuery(".chzn-select").chosen();
+	
+	//load the popup by default;
 	jQuery("#addWebsiteForm").dialog({
 		minWidth:600,
 		height:500,
 		autoOpen: true,
-		modal: false,
-		buttons: {
-			Close:function() {
-				jQuery('#addWebsiteForm').dialog('close');
-				jQuery('#addWebsiteForm').empty();
-			},
-		}
+		modal: false
 	});
 
 </script>

@@ -18,18 +18,83 @@
 		alert(id);
 	}
 	
-	function disableClient(id) {
-		alert(id);	
-	}
-	
 	function enableClient(id) {
-		alert(id);
+		jConfirm('Are you sure you would like to enable this client?','Enable Confirmation',function(r) {
+			if(r) {
+				jQuery.ajax({
+					type:'GET',
+					url:'/admin/clients/enable?cid='+id,
+					success:function(c) {
+						if(c) {
+							window.location.reload();	
+						}else {
+							jAlert('There was an error enabling the client you requested. Please try again.','Enable Error');
+						}
+					}
+				});
+			}
+		});
 	}
 	
-	function addWebsiteForm(id) {
+	function disableClient(id) {
+		jConfirm('Are you sure you would like to disable this client?','Disable Confirmation',function(r) {
+			if(r) {
+				jQuery.ajax({
+					type:'GET',
+					url:'/admin/clients/disable?cid='+id,
+					success:function(c) {
+						if(c) {
+							window.location.reload();	
+						}else {
+							jAlert('There was an error disabling the client you requested. Please try again.','Disable Error');
+						}
+					}
+				});
+			}
+		});
+	}
+	
+	function disableWebsite(wid) {
+		jConfirm('Are you sure you would like to disable this website?','Disable Confirmation',function(r) {
+			if(r) {
+				jQuery.ajax({
+					type:'GET',
+					url:'/admin/websites/disable?wid='+wid,
+					success:function(cid) {
+						if(cid) {
+							loadWebsiteTable(cid);
+						}else {
+							jAlert('There was an error disabling the website you requested. Please try again.','Disable Error');	
+						}
+					}
+				});
+			}
+		});
+	}
+	
+	function enableWebsite(wid) {
+		jConfirm('Are you sure you would like to enable this website?','Enable Confirmation',function(r) {
+			if(r) {
+				jQuery.ajax({
+					type:'GET',
+					url:'/admin/websites/enable?wid='+wid,
+					success:function(cid) {
+						if(cid) {
+							loadWebsiteTable(cid);
+						}else {
+							jAlert('There was an error enabling the website you requested. Please try again.','Enable Error');	
+						}
+					}
+				});
+			}
+		});
+	}
+
+	
+	function addWebsiteForm(cid) {
 		jQuery.ajax({
 			type:'GET',
-			url:'/admin/websites/form?cid='+id,
+			url:'/admin/websites/form?cid='+cid,
 			//data:{client_id:id},
 			success:function(data) {
 				if(data){
@@ -95,27 +160,65 @@
 		})
 	}
 
-
-	function loadWebsiteTable(id) {
-		var loader = '<div id="loader" style="text-align:center"><img src="/assets/themes/itsbrain/imgs/loaders/loader2.gif" alt="Loading Website Table" /></div>';
+	function submitWebsiteForm(cid,formData,cUrl,msg) {
 		jQuery.ajax({
-			type:'GET',
-			url:'/admin/websites/load_table?cid='+id,
+			type:'POST',
+			url:cUrl,
+			data:formData,
 			success:function(data) {
-				if(data) {
-					if(jQuery('#websites').length) {
-						jQuery('#websites').slideUp('fast',function() {
-							//remove the table
-							jQuery('#websites').empty();
-							//add the loader
-							jQuery('#websites').append(loader);
-							//load the table
-							jQuery('#websites').apppend(data);
-						})
-					}
-					
-					
+				if(data == '1') {
+					jAlert(msg,'Success',function() {
+						reloadWebsites(cid);	
+						jQuery('#editWebsite').empty();
+						jQuery('#addWebsite').empty();
+					});
+				}else {
+					jAlert('There was a problem with processing your change. Please try again.','Error',function() {
+						reloadWebsites(cid);
+					});	
 				}
 			}
-		})
+		});
+	}
+
+	function loadWebsiteTable(id) {
+		//jQuery('#addWebsiteForm').dialog('close');	
+		jQuery('#websites').slideUp('fast',function() {
+			jQuery('#websites').empty();
+			jQuery('#loader').fadeIn('fast',function() {
+				jQuery('#loader').fadeIn('fast',function() {
+					jQuery.ajax({
+						type:'GET',
+						url:'/admin/websites/load_table?cid='+id,
+						success:function(data) {
+							jQuery('#websites').html(data);
+							jQuery('#loader').delay(2000).fadeOut('fast',function() {
+								jQuery('#websites').slideDown('fast');
+							});
+						}
+					});
+				});
+			});
+		});					
+	}
+
+	function reloadWebsites(cid) {
+		//jQuery('#addWebsiteForm').dialog('close');	
+		jQuery('#websites').slideUp('fast',function() {
+			jQuery('#websites').empty();
+			jQuery('#loader').fadeIn('fast',function() {
+				jQuery('#loader').fadeIn('fast',function() {
+					jQuery.ajax({
+						type:'GET',
+						url:'/admin/websites/load_table?cid='+cid,
+						success:function(data) {
+							jQuery('#websites').html(data);
+							jQuery('#loader').delay(2000).fadeOut('fast',function() {
+								jQuery('#websites').slideDown('fast');
+							});
+						}
+					});
+				});
+			});
+		});					
 	}
