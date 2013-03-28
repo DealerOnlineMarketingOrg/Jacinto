@@ -14,6 +14,7 @@
 	</style>
 	<?php if (isset($page_scripts)) {
 		echo '<script type="text/javascript">';
+		// These are general page scripts for the current view.
 		echo $page_scripts;
 		echo '</script>';
 		}

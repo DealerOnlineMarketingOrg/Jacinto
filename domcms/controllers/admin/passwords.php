@@ -35,10 +35,10 @@ class Passwords extends DOM_Controller {
 			$error_msg = error_msg();
 		}
 		
+		$counter = 0;
 		if($contacts) :
 			$table .= '<thead><tr><th>Team</th><th>Type</th><th>Vendor</th><th>Login Address</th><th>Username</th><th>Password</th><th>Notes</th><th style="text-align:center">Action</th></thead>';
 			$table .= '<tbody>';
-			$counter = 1;
 			foreach($contacts as $contact) {
 				$edit_button = '';
 				/*
@@ -62,11 +62,13 @@ class Passwords extends DOM_Controller {
 				$table .= '<td style="text-align:left;">' . $contact->Vendor . '</td>';
 				$table .= '<td><a href="' . $contact->LoginAddress . '">' . $contact->LoginAddress . '</a></td>';
 				
-				$table .= '<td><span style="font-weight:bold;"><div id="zeroClip' . $counter . '" onclick="javascript:textToClipboard(\'' . $contact->Username . '\',\'zeroClip' . $counter . '\');"  style="width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><a href="mailto:' . $contact->Username . '">' . $contact->Username . '</a></span></td>';
-				$table .= '<td>' . $contact->Password . '</td>';
+				$table .= '<td><span style="font-weight:bold;"><div id="username'.$counter . '" class="clipBoard" clipBoardData="' . $contact->Username . '" style="width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><div style="float:left"><a href="mailto:' . $contact->Username . '">' . $contact->Username . '</a></div></span></td>';
+				$table .= '<td><div id="password'.$counter . '" class="clipBoard" clipBoardData="' . $contact->Password . '" style="width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><div style="float:left">' . $contact->Password . '</div></td>';
 				$table .= '<td style="width:25%"><div style="overflow:hidden; max-height:37px"><div style="float:left;width:80%">' . $contact->Notes . '</div><div onclick="javascript: openMore(\'' . $contact->Notes . '\');" style="cursor:pointer;float:right;color:blue;bottom:0">...more</div></div></td>';
 				$table .= '<td style="text-align:center;vertical-align:middle;border-right:none;">' . $edit_button . $view_button . '</td>';
 				$table .= '</tr>';
+				
+				$counter++;
 			}
 			$table .= '</tbody>';
 		else :
@@ -90,28 +92,38 @@ class Passwords extends DOM_Controller {
 		$scripts = '
 			var clip;
 			$(window).load (function() {
-				// Run through all the username divs and load ZeroClipboard for each.
+				$(".clipBoard").zclip({
+					path: "' . base_url() . 'assets/ZeroClipboard.swf",
+					copy: $(this).attr("clipBoardData"),
+					afterCopy: function() {alert("after");}
+				});			
+			});
+			
+			function initClipboard() {
+				clip = new Array();
+				
+				// Create clipboard object for each copy region in the form.
 				var zcPath = "' . base_url() . 'assets/ZeroClipboard.swf";
 				ZeroClipboard.setDefaults({
-						moviePath: zcPath,
-						afterCopy:function(){ alert(text + " copied to clipboard."); }
+						moviePath: zcPath
 					});
-				clip = new ZeroClipboard.Client();
+				
+				// Run through all the username divs and link up the clipboard dom-object for each.
+				// ZeroClipboard works by having an invisible flash object on the dom-object,
+				//  which runs when the user clicks the dom-object.
+				// count contains the number of data rows. Rows are 0-indexed.
+				var count = ' . $counter . ';
+				for (i = 0; i < count; i++) {
+					clip[i] = new Array();
+					clip[i]["username"] = new ZeroClipboard($("#username"+i));
+					clip[i]["username"].on("click", function(client) {clip.setText($(this).val())});
+					clip[i]["password"] = new ZeroClipboard($("#password"+i));
+					clip[i]["password"].on("click", function(client) {clip.setText($(this).val())});
+				}
 			}
 			
 			function openMore(text) {
 				alert(text);
-			}
-			
-			function textToClipboard(text, id) {
-				var zcPath = "' . base_url() . 'assets/ZeroClipboard.swf";
-				ZeroClipboard.setDefaults({
-						moviePath: zcPath,
-						afterCopy:function(){ alert(text + " copied to clipboard."); }
-					});
-				var clip = new ZeroClipboard();
-				
-				clip.setText(text);
 			}
 		';
 		
