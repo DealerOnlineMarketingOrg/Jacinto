@@ -51,13 +51,7 @@
 			                <div class="rowElem noborder">
 			                    <label>State</label>
 			                    <div class="formRight searchDrop noSearch" style="text-align:left;">
-                                	<?php
-										if($client) {
-											echo showStates(((isset($client->Address['state'])) ? $client->Address['state'] : false));
-										}else {
-											echo showStates();
-										}
-									?>
+                                	<?php echo showStates(((isset($client->Address['state'])) ? $client->Address['state'] : false));?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>

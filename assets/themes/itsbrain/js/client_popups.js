@@ -18,12 +18,40 @@
 		alert(id);
 	}
 	
-	function disableClient(id) {
-		alert(id);	
+	function enableClient(id) {
+		jConfirm('Are you sure you would like to enable this client?','Enable Confirmation',function(r) {
+			if(r) {
+				jQuery.ajax({
+					type:'GET',
+					url:'/admin/clients/enable?cid='+id,
+					success:function(c) {
+						if(c) {
+							window.location.reload();	
+						}else {
+							jAlert('There was an error enabling the client you requested. Please try again.','Enable Error');
+						}
+					}
+				});
+			}
+		});
 	}
 	
-	function enableClient(id) {
-		alert(id);
+	function disableClient(id) {
+		jConfirm('Are you sure you would like to disable this client?','Disable Confirmation',function(r) {
+			if(r) {
+				jQuery.ajax({
+					type:'GET',
+					url:'/admin/clients/disable?cid='+id,
+					success:function(c) {
+						if(c) {
+							window.location.reload();	
+						}else {
+							jAlert('There was an error disabling the client you requested. Please try again.','Disable Error');
+						}
+					}
+				});
+			}
+		});
 	}
 	
 	function disableWebsite(wid) {

@@ -103,7 +103,7 @@ class Clients extends DOM_Controller {
 				$disable_a = '<a class="actions_link" href="javascript:disableClient(\'' . $client->ClientID . '\');" title="Disable Client">' . $disable_img . '</a>';
 				//enable button
 				$enable_img = '<img src="' . base_url() . THEMEIMGS . 'icons/notifications/accept.png" alt="Enable Client" />';
-				$enable_a = '<a class="actions_link" href="javasript:enableClient(\'' . $client->ClientID . '\');" title="Enable Client">' . $enable_img . '</a>';
+				$enable_a = '<a class="actions_link" href="javascript:enableClient(\'' . $client->ClientID . '\');" title="Enable Client">' . $enable_img . '</a>';
 								
 				$edit_button = '<input data-client="' . $client->ClientID . '" title="Edit Client Information" type="image" src="' . base_url() . 'assets/themes/global/imgs/icons/color/pencil.png" name="edit_' . $client->ClientID . '" id="client_id_' . $client->ClientID . '" class="imageBtn editBtn" />';
 				
@@ -168,57 +168,6 @@ class Clients extends DOM_Controller {
 			$this->LoadTemplate('pages/listings', $data);
 		}
     }
-	
-	public function add_website_form() {
-		if(isset($_POST['client_id'])) {
-			$client_id = $this->input->post('client_id');
-		}elseif(isset($_GET['cid'])) {
-			$client_id = $this->input->get('cid');
-		}else {
-			$client_id = $this->user['DropdownDefault']->SelectedClient;
-		}
-		$client = $this->administration->getClient($client_id);
-		$vendors = $this->administration->getAllVendors();
-		
-		$data = array(
-			'client'=>$client,
-			'vendors'=>$vendors
-		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
-	}
-
-	public function edit_website() {
-		if(isset($_POST['wid'])) {
-			$website_id = $this->input->post('wid');
-		}elseif(isset($_GET['wid'])) {
-			$website_id = $this->input->get('wid');
-		}else {
-			$website_id = $this->input->post('wid');
-		}
-		
-		$form = $this->input->post();
-		
-		$edit = $this->administration->editWebsiteInfo($form);
-		if($edit) {
-			echo 1;
-		}else {
-			echo 0;
-		}
-	}
-	
-	public function add_website() {
-		if(isset($_POST['wid'])) {
-			$form = $this->input->post();
-			$add = $this->administration->addWebsiteInfo($form);
-			if($add) {
-				echo 1;
-			}else {
-				echo 0;
-			}
-		}else {
-			echo 0;
-		}
-	}
 	
 	public function Add() {
 		$html = '';
@@ -290,8 +239,46 @@ class Clients extends DOM_Controller {
 		}
 	}
 	
-	public function Delete() {
+	public function Disable($cid) {
+		if(isset($_GET['cid'])) {
+			$client_id = $_GET['cid'];
+		}elseif(isset($_POST['cid'])) {
+			$client_id = $_POST['cid'];	
+		}else {
+			$client_id = $this->user['DropdownDefault']->SelectedClient;	
+		}
 		
+		//load administration model
+		$this->load->model('administration');
+		
+		$disable = $this->administration->changeClientStatus($client_id,0);
+		
+		if($disable) {
+			echo 1;	
+		}else {
+			echo 0;	
+		}
+	}
+	
+	public function Enable($cid) {
+		if(isset($_GET['cid'])) {
+			$client_id = $_GET['cid'];
+		}elseif(isset($_POST['cid'])) {
+			$client_id = $_POST['cid'];	
+		}else {
+			$client_id = $this->user['DropdownDefault']->SelectedClient;	
+		}
+		
+		//load administration model
+		$this->load->model('administration');
+		
+		$disable = $this->administration->changeClientStatus($client_id,1);
+		
+		if($disable) {
+			echo 1;	
+		}else {
+			echo 0;	
+		}
 	}
 	
 	public function View() {

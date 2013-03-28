@@ -290,6 +290,18 @@ class Administration extends CI_Model {
 		$query = $this->db->get();
 		return ($query) ? $query->result() : FALSE;
     }
+	
+	/*
+	 * Enabling and disabling a client
+	 */ 
+	 
+	 public function changeClientStatus($cid,$which) {
+		$data = array(
+			'CLIENT_Active' => ($which) ? 1 : 0
+		);
+		$this->db->where('CLIENT_ID',$cid);
+		return ($this->db->update('Clients',$data)) ? TRUE : FALSE;
+	 }
     
 	/*
 	 * TO RETURN A SINGLE CLIENT
