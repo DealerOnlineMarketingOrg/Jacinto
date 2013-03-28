@@ -198,11 +198,16 @@ function load_client_websites($cid = false) {
 		$table .= '<tbody>';
 		foreach($websites as $website) :
 			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $cid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/dark/pencil.png" alt="Edit Website" /></a>';
+			if($website->Status) {
+				$status_img = '<a style="margin-left:5px;" title="Disable Website" href="javascript:disableWebsite(\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/cross.png" alt="Disable Website" /></a>';	
+			}else {
+				$status_img = '<a style="margin-left:5px;" title="Enable Website" href="javascript:enableWebsite(\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/play.png" alt="Enable Website" /></a>';	
+			}
 			$table .= '<tr>';
 			$table .= '<td>' . $website->VendorName . '</td>';
 			$table .= '<td><a href="' . $website->URL . '" target="_blank">' . $website->URL . '</a></td>';
 			$table .= '<td>' . $website->Description . '</td>';
-			$table .= '<td style="text-align:center;">' . $edit_img .'</td>';
+			$table .= '<td style="text-align:center;">' . $edit_img . $status_img . '</td>';
 			$table .= '</tr>';
 		endforeach;
 		$table .= '</tbody></table>';

@@ -7,6 +7,7 @@ class Websites extends DOM_Controller {
 	
 	//if were editing we should always have this
 	public $website_id;
+	
     public function __construct() {
         parent::__construct();
 		//load the admin model
@@ -60,8 +61,31 @@ class Websites extends DOM_Controller {
 	}
 	
 	public function disable() {
-		
+		if(isset($_GET['wid'])) {
+			$disable = $this->administration->disableWebsite($this->website_id);
+			if($disable) {
+				echo $disable;	
+			}else {
+				echo 0;	
+			}
+		}else {
+			echo 0;	
+		}
 	}
+	
+	public function enable() {
+		if(isset($_GET['wid'])) {
+			$enable = $this->administration->enableWebsite($this->website_id);
+			if($enable) {
+				echo $enable;	
+			}else {
+				echo 0;	
+			}
+		}else {
+			echo 0;	
+		}
+	}
+
 	
 	public function form() {
 		$client = $this->administration->getClient($this->client_id);
