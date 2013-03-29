@@ -109,7 +109,7 @@ class DOM_Controller extends CI_Controller {
 			
 			$this->session->sess_write();
 			
-			$this->load->model('nav');			
+			$this->load->model('nav');
 			$this->main_nav = $this->nav->main($this->user['AccessLevel']);
 			$this->user_nav = $this->nav->user($this->user['AccessLevel']);
 		endif;
@@ -809,6 +809,102 @@ class DOM_Controller extends CI_Controller {
                     break;
                 endswitch;
            break;
+		   
+		   case "passwords":
+		   		switch ($which) :
+					case "add":
+					
+						$form = $this->input->post();
+						
+						// Get ID of Type. Add new Type if needed.
+						if ($form['radioType'] == 'old')
+							$typeID = $form['types'];
+						else {
+							$typeID = $this->administration->hasPasswordType($form['newType']);
+							if (!$typeID) {
+								$data = array('PASS_TYPE_Name' => $form['newType']);
+								$typeID = $this->administration->addPasswordType($data);
+							}
+						}
+						
+						// Get ID of Vendor. Add new Vendor if needed.
+						if ($form['radioVendor'] == 'old')
+							$vendorID = $form['vendors'];
+						else {
+							$vendorID = $this->administration->hasVendor($form['newVendor']);
+							if (!$vendorID) {
+								$data = array('VENDOR_Name' => $form['newVendor']);
+								$vendorID = $this->administration->addVendor($data);
+							}
+						}
+						
+						// Save information.
+						$data = array(
+							'PASS_ClientID' => $form['ClientID'],
+							'PASS_TypeID' => $typeID,
+							'PASS_VendorID' => $vendorID,
+							'PASS_LoginAddress' => $form['login_address'],
+							'PASS_Username' => $form['username'],
+							'PASS_Password' => $form['password'],
+							'PASS_Notes' => $form['notes']
+						);
+						$pwds = $this->administration->addPasswords($data);
+						
+						// Throw error and redirect back to DPR.
+						if ($pwds)
+							throwError(newError("Passwords Add", 1, 'Password successfully added!', 0, ''));
+						else
+							throwError(newError("Passwords Add", -1, 'Something went wrong. Please try again or contact your admin.', 0, ''));
+						
+						redirect('passwords','refresh');
+					break;
+					
+					case "edit":
+						$form = $this->input->post();
+						
+						// Get ID of Type. Add new Type if needed.
+						if ($form['radioType'] == 'old')
+							$typeID = $form['types'];
+						else {
+							$typeID = $this->administration->hasPasswordType($form['newType']);
+							if (!$typeID) {
+								$data = array('PASS_TYPE_Name' => $form['newType']);
+								$typeID = $this->administration->addPasswordType($data);
+							}
+						}
+						
+						// Get ID of Vendor. Add new Vendor if needed.
+						if ($form['radioVendor'] == 'old')
+							$vendorID = $form['vendors'];
+						else {
+							$vendorID = $this->administration->hasVendor($form['newVendor']);
+							if (!$vendorID) {
+								$data = array('VENDOR_Name' => $form['newVendor']);
+								$vendorID = $this->administration->addVendor($data);
+							}
+						}
+							
+						// Save information.
+						$data = array(
+							'PASS_TypeID' => $typeID,
+							'PASS_VendorID' => $vendorID,
+							'PASS_LoginAddress' => $form['login_address'],
+							'PASS_Username' => $form['username'],
+							'PASS_Password' => $form['password'],
+							'PASS_Notes' => $form['notes']
+						);
+						$pwds = $this->administration->editPassword($data, $form['PasswordsID']);
+						
+						// Throw error and redirect back to DPR.
+						if ($pwds)
+							throwError(newError("Passwords Edit", 1, 'Password successfully updated!', 0, ''));
+						else
+							throwError(newError("Passwords Edit", -1, 'Something went wrong. Please try again or contact your admin.', 0, ''));
+						
+						redirect('passwords','refresh');
+						
+					break;
+				endswitch;
 		   
 		   case "dpr":
 		   		switch ($which) :

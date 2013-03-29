@@ -1,5 +1,5 @@
 <div class="uDialog" style="text-align:left;">
-    <div class="dialog-message" id="editPasswords" title="Edit Password (<?= $contact->Username; ?>)">
+    <div class="dialog-message" id="editPasswords" title="Edit Password (<?= $password->Username; ?>)">
         <div class="uiForm">
 			<style type="text/css">
 				label{margin-top:5px;float:left;}
@@ -19,7 +19,6 @@
 					            'id' => 'valid',
 					            'class' => 'mainForm editPasswords',
 					            'style'=>'text-align:left !important;'
-					            
 					        );
 			
 			        		echo form_open('/admin/passwords/form_processor/passwords/edit',$form);
@@ -29,29 +28,37 @@
                         	<div class="rowElem noborder">
 			                    <label>Type</label>
 			                    <div class="formRight">
-                                   	<input type="radio" name="type" value="old" checked>
-                                    <select name="type">
+                                   	<input type="radio" name="radioType" value="old" checked>
+                                    <select name="types">
                                     	<option value="">Select Type</option>
                                         <?php foreach ($types as $type) { ?>
-                                            <option value="<?php echo $type->ID; ?>"<?php if ($type->ID == $contact->ID) echo ' selected'; ?>><?php echo $type->Name; ?></option>
+                                            <option value="<?php echo $type->ID; ?>"<?php if ($type->ID == $password->ID) echo ' selected'; ?>><?php echo $type->Name; ?></option>
                                         <?php } ?>
                                     </select>
-                                   	<input type="radio" name="type" value="new" style="margin-left:15px">
-                                    <input type="text" name="typeNew" style="width:15em !important">
+                                   	<input type="radio" name="radioType" value="new" style="margin-left:15px">
+                                    <input type="text" name="newType" style="width:15em !important">
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label>Vendor</label>
 			                    <div class="formRight">
-			                        <?php echo  form_input(array('name'=>'vendor','id'=>'vendor','value'=> $contact->Vendor)); ?>
+                                    <input type="radio" name="radioVendor" value="old" checked>
+                                    <select name="vendors">
+                                    	<option value="">Select Vendor</option>
+                                        <?php foreach ($vendors as $vendor) { ?>
+                                            <option value="<?php echo $vendor->ID; ?>"<?php if ($vendor->ID == $password->VendorID) echo ' selected'; ?>><?php echo $vendor->Name; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                   	<input type="radio" name="radioVendor" value="new" style="margin-left:15px">
+                                    <input type="text" name="newVendor" style="width:15em !important">
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label>URL</label>
 			                    <div class="formRight">
-			                        <?php echo  form_input(array('name'=>'login_address','id'=>'login_address','value' => $contact->LoginAddress)); ?>
+			                        <?php echo  form_input(array('name'=>'login_address','id'=>'login_address','value' => $password->LoginAddress)); ?>
 			                    </div>
 			                    <div class="fix"></div>
 			
@@ -59,27 +66,27 @@
 			                <div class="rowElem noborder">
 			                    <label><span class="req">*</span>Username</label>
 			                    <div class="formRight">
-			                        <?php echo  form_input(array('class'=>'required validate[required]','name'=>'username','id'=>'username','value'=>$contact->Username)); ?>
+			                        <?php echo  form_input(array('class'=>'required validate[required]','name'=>'username','id'=>'username','value'=>$password->Username)); ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label>Password</label>
 			                    <div class="formRight">
-			                        <?php echo  form_input(array('name'=>'password','id'=>'password','value'=>$contact->Password)); ?>
+			                        <?php echo  form_input(array('name'=>'password','id'=>'password','value'=>$password->Password)); ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label>Notes</label>
 			                    <div class="formRight">
-			                        <?php echo  form_input(array('name'=>'notes','id'=>'notes','value'=>$contact->Notes)); ?>
+			                        <?php echo  form_input(array('name'=>'notes','id'=>'notes','value'=>$password->Notes)); ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>	                
 			                 
 			                <div class="submitForm">
-			               		<input type="hidden" name="PasswordsID" value="<?php echo  $contact->ID; ?>" />
+			               		<input type="hidden" name="PasswordsID" value="<?php echo  $password->ID; ?>" />
 			                    <input type="submit" value="submit" class="redBtn" />
 			                </div>
 			                <div class="fix"></div>

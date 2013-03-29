@@ -12,7 +12,7 @@
             'class' => 'mainForm valid'
         );
 		
-        echo form_open('/dpr/reports',$form);
+        echo form_open('/dpr',$form);
     ?>
 	        <!-- Input text fields -->
         <fieldset>

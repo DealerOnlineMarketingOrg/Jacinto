@@ -773,6 +773,26 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;		
 	}
 	
+	// Returns ID of type if exist, else FALSE.
+	public function hasPasswordType($typeName) {
+		$this->db->where('PASS_TYPE_Name', $typeName);
+		$query = $this->db->get('xPasswordTypes');
+		if ($query->num_rows() > 0) {
+			$result = $query->result();
+			return ($result[0]->PASS_TYPE_ID);
+		} else
+			return FALSE;
+	}
+	
+	public function addPasswordType($data) {
+		$this->db->insert('xPasswordTypes',$data);
+		return $this->hasPasswordType($data['PASS_TYPE_Name']);
+	}
+	
+	public function addPasswords($data) {
+		return $this->db->insert('Passwords',$data);
+	}
+	
 	public function getPasswords($cid = FALSE) {
 		return $this->getPasswordsList($cid, FALSE);
 	}
@@ -782,45 +802,43 @@ class Administration extends CI_Model {
 	}
 	
 	private function getPasswordsList($cid, $pwdid) {
-		$sql = 'SELECT
-				c.CLIENT_ID as ClientID,
-				p.PASS_ID as ID,
-				tag.TAG_ClassName as Tag,
-				t.PASS_TYPE_Name as Type,
-				v.VENDOR_Name as Vendor,
-				p.PASS_Rep as Rep,
-				p.PASS_BestPhone as BestPhone,
-				p.PASS_LoginAddress as LoginAddress,
-				p.PASS_Username as Username,
-				p.PASS_Password as Password,
-				p.PASS_LeadRouting as LeadRouting,
-				p.PASS_RoutingPhone as RoutingPhone,
-				p.PASS_Terms as Terms,
-				p.PASS_Budget as Budget,
-				p.PASS_Notes as Notes
-				FROM Passwords p
-				INNER JOIN xPasswordTypes t on p.PASS_TypeID = t.PASS_TYPE_ID
-				INNER JOIN Vendors v on p.PASS_VendorID = v.VENDOR_ID
-				INNER JOIN Clients c on p.PASS_ClientID = c.CLIENT_ID
-				INNER JOIN xTags tag ON c.CLIENT_Tag = tag.TAG_ID';
-				$where = '';
-				$where_count = 0;
-				if ($cid) {
-					$where = ($cid ? ('p.PASS_ClientID = ' . $cid) : '');
-					$where_count++;
-				}
-				if ($pwdid)
-			    	$where .= ($pwdid ? (($where_count > 0 ? ' AND' : '') . ' p.PASS_ID = ' . $pwdid)     : '');
-				if ($where)
-					$sql .= ' WHERE ' . $where;
-				$sql .= ' ORDER BY p.PASS_Username ASC';
-				
-		$query = $this->db->query($sql);
+		$this->db->select('
+			c.CLIENT_ID as ClientID,
+			p.PASS_ID as ID,
+			tag.TAG_ClassName as Tag,
+			t.PASS_TYPE_Name as Type,
+			p.PASS_VendorID as VendorID,
+			v.VENDOR_Name as Vendor,
+			p.PASS_Rep as Rep,
+			p.PASS_BestPhone as BestPhone,
+			p.PASS_LoginAddress as LoginAddress,
+			p.PASS_Username as Username,
+			p.PASS_Password as Password,
+			p.PASS_LeadRouting as LeadRouting,
+			p.PASS_RoutingPhone as RoutingPhone,
+			p.PASS_Terms as Terms,
+			p.PASS_Budget as Budget,
+			p.PASS_Notes as Notes'
+		);
+		$this->db->from('Passwords p');
+		$this->db->join('xPasswordTypes t', 'p.PASS_TypeID = t.PASS_TYPE_ID', 'inner');
+		$this->db->join('Vendors v', 'p.PASS_VendorID = v.VENDOR_ID', 'inner');
+		$this->db->join('Clients c', 'p.PASS_ClientID = c.CLIENT_ID', 'inner');
+		$this->db->join('xTags tag', 'c.CLIENT_Tag = tag.TAG_ID', 'inner');
+		if ($cid) $this->db->where('p.PASS_ClientID', $cid);
+		if ($pwdid) $this->db->where('p.PASS_ID', $pwdid);
+		$this->db->order_by('p.PASS_Username', 'ASC');
+		
+		$query = $this->db->get();
 		switch ($query->num_rows) {
 			case 0:  return FALSE;
-			case 1:  return $query->row();
 			default: return $query->result();
 		}
+	}
+	
+	public function editPassword($data, $id) {
+		$this->db->where('PASS_ID',$id);
+		return $this->db->update('Passwords',$data);
 	}
 	
 	public function getVendors() {
@@ -836,6 +854,21 @@ class Administration extends CI_Model {
 		
 	}
 
+	public function hasVendor($vendorName) {
+		$this->db->where('VENDOR_Name', $vendorName);
+		$query = $this->db->get('Vendors');
+		if ($query->num_rows() > 0) {
+			$result = $query->result();
+			return ($result[0]->VENDOR_ID);
+		} else
+			return FALSE;
+	}
+	
+	public function addVendor($data) {
+		$this->db->insert('Vendors',$data);
+		return $this->hasVendor($data['VENDOR_Name']);
+	}
+	
 	public function getVendor($id) {
 		$this->db->select('VENDOR_ID as ID,VENDOR_Name as Name,VENDOR_Address as Address,VENDOR_Notes as Notes,VENDOR_Active as Status,VENDOR_ActiveTS as LastUpdate,VENDOR_Created as Created');
 		$this->db->from('Vendors');
@@ -843,7 +876,6 @@ class Administration extends CI_Model {
 		
 		$query = $this->db->get();
 		return ($query) ? $query->row() : FALSE;
-		
 	}
 
 	public function disableVendor($id,$which = 'disable') {

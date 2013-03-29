@@ -32,7 +32,7 @@ class Groups extends DOM_Controller {
 		} else {
 			
 			$tmpl = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
-	
+			
 			$groups = ($this->level != 'a') ? $this->administration->getSelectedGroupResults($this->group_id) : $this->administration->getAllGroupsInAgencyResults($this->agency_id);
 			
 			$tmpl .= '<thead>';

@@ -7,6 +7,8 @@
 			//loading the member model here makes it available for any member of the controller.
 			$this->load->model('getdpr');
 			$this->load->helper('charts_helper');
+			
+			$this->activeNav = 'reports';
 		}
 		
 		public function Index() {

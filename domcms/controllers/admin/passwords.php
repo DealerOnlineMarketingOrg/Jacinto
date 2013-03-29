@@ -20,7 +20,7 @@ class Passwords extends DOM_Controller {
 	
 		// Password page will only be for clients.
 		$level = $this->user['DropdownDefault']->LevelType;
-		$contacts = $this->administration->getPasswords($this->user['DropdownDefault']->SelectedClient);
+		$passwords = $this->administration->getPasswords($this->user['DropdownDefault']->SelectedClient);
 		
 		//table heading
 		$html = '';
@@ -39,42 +39,43 @@ class Passwords extends DOM_Controller {
 		$header .= '<script type="text/javascript" src="' . base_url() . 'assets/themes/itsbrain/js/passwords_popups.js"></script>';
 
 		$counter = 0;
-		if($contacts) :
+		if($passwords) :
 			$table .= '<thead><tr><th>Team</th><th>Type</th><th>Vendor</th><th>Login Address</th><th>Username</th><th>Password</th><th>Notes</th><th style="text-align:center">Action</th></thead>';
 			$table .= '<tbody>';
-			foreach($contacts as $contact) {
+			foreach($passwords as $password) {
 				//edit button
 				$edit_img = '<img src="' . base_url() . THEMEIMGS . 'icons/dark/pencil.png" alt="Edit Passwords" />';
-				$edit_a = '<a class="actions_link" href="javascript:editPasswords(\'' . $contact->ID . '\',\'' . base_url() . '\');" title="Edit Passwords">' . $edit_img . '</a>';
+				$edit_a = '<a class="actions_link" href="javascript:editPasswords(\'' . $password->ID . '\',\'' . base_url() . '\');" title="Edit Passwords">' . $edit_img . '</a>';
 				//view button
 				$view_img = '<img src="' . base_url() . THEMEIMGS . 'icons/color/application.png" alt="View Passwords Information" />';
-				$view_a = '<a class="actions_link" href="javascript:viewPasswords(\'' . $contact->ID . '\');" title="View Passwords Information">' . $view_img . '</a>';
+				$view_a = '<a class="actions_link" href="javascript:viewPasswords(\'' . $password->ID . '\');" title="View Passwords Information">' . $view_img . '</a>';
 				//disable button
 				$disable_img = '<img src="' . base_url() . THEMEIMGS . 'icons/color/cross.png" alt="Disable Passwords" />';
-				$disable_a = '<a class="actions_link" href="javascript:disablePasswords(\'' . $contact->ID . '\');" title="Disable Passwords">' . $disable_img . '</a>';
+				$disable_a = '<a class="actions_link" href="javascript:disablePasswords(\'' . $password->ID . '\');" title="Disable Passwords">' . $disable_img . '</a>';
 				//enable button
 				$enable_img = '<img src="' . base_url() . THEMEIMGS . 'icons/notifications/accept.png" alt="Enable Passwords" />';
-				$enable_a = '<a class="actions_link" href="javasript:enablePasswords(\'' . $contact->ID . '\');" title="Enable Passwords">' . $enable_img . '</a>';
+				$enable_a = '<a class="actions_link" href="javasript:enablePasswords(\'' . $password->ID . '\');" title="Enable Passwords">' . $enable_img . '</a>';
 				
-				$table .= '<tr class="tagElement ' . $contact->Tag . '">';
-				$table .= '<td class="tags"><div class="' . $contact->Tag . '">&nbsp;</div></td>';
-				$table .= '<td style="text-align:left;">' . $contact->Type . '</td>';
-				$table .= '<td style="text-align:left;">' . $contact->Vendor . '</td>';
-				$table .= '<td><a href="' . $contact->LoginAddress . '">' . $contact->LoginAddress . '</a></td>';
+				$table .= '<tr class="tagElement ' . $password->Tag . '">';
+				$table .= '<td class="tags"><div class="' . $password->Tag . '">&nbsp;</div></td>';
+				$table .= '<td style="text-align:left;">' . $password->Type . '</td>';
+				$table .= '<td style="text-align:left;">' . $password->Vendor . '</td>';
+				$table .= '<td><a href="' . $password->LoginAddress . '">' . $password->LoginAddress . '</a></td>';
 				
-				$table .= '<td><span style="font-weight:bold;"><div id="username'.$counter . '" class="clipBoard" clipBoardData="' . $contact->Username . '" style="width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><div style="float:left"><a href="mailto:' . $contact->Username . '">' . $contact->Username . '</a></div></span></td>';
-				$table .= '<td><div id="password'.$counter . '" class="clipBoard" clipBoardData="' . $contact->Password . '" style="width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><div style="float:left">' . $contact->Password . '</div></td>';
-				$table .= '<td style="width:25%"><div style="overflow:hidden; max-height:37px"><div style="float:left;width:80%">' . $contact->Notes . '</div><div onclick="javascript: openMore(\'' . $contact->Notes . '\');" style="cursor:pointer;float:right;color:blue;bottom:0">...more</div></div></td>';
+				$table .= '<td><span style="font-weight:bold;"><div id="username'.$counter . '" class="clipBoard" clipBoardData="' . $password->Username . '" style="display:none; width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><div style="float:left"><a href="mailto:' . $password->Username . '">' . $password->Username . '</a></div></span></td>';
+				$table .= '<td><div id="password'.$counter . '" class="clipBoard" clipBoardData="' . $password->Password . '" style="display:none; width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><div style="float:left">' . $password->Password . '</div></td>';
+				$table .= '<td style="width:25%"><div style="overflow:hidden; max-height:37px"><div style="float:left;width:80%">' . $password->Notes . '</div><div onclick="javascript: openMore(\'' . $password->Notes . '\');" style="cursor:pointer;float:right;color:blue;top:0">...more</div></div></td>';
 				$table .= '<td class="actionsCol" style="width:75px;text-align:center">';
 				
 				//put allowed action buttons in place
-				//if($this->CheckModule('Passwords_Edit')) {
+				if($this->CheckModule('Passwords_Edit')) {
 					$table .= $edit_a;
-				//}
+				}
 				$table .= $view_a;
 				/*
-				if($this->CheckModule('Client_Disable_Enable')) {
-					if($client->Status) {
+				// Disable/Enable not implemented yet.
+				if($this->CheckModule('Passwords_Disable_Enable')) {
+					if($password->Status) {
 						$table .= $disable_a;
 					}else {
 						$table .= $enable_a;
@@ -94,20 +95,20 @@ class Passwords extends DOM_Controller {
 		endif;
 		$table .= '</table><div class="fix"></div>';
 		//This builds the pages html out. We do this here so all our listing pages can have the same template view.
-		$html .= ((count($contacts) > 0) ? $table . "\n":$error_msg);
+		$html .= ((count($passwords) > 0) ? $table . "\n":$error_msg);
 		$html .= '<div class="fix"></div>';
 		
 		//If the user has permission to add a new group, then show a button to do so, top and bottom.
 		$btn = '';
-		if ($this->CheckModule('Client_Add') && $level == 'c') {
-			$btn = anchor(base_url() . 'contacts/add', 'Add New Contact', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_contact_btn"');
-		}else if ($this->CheckModule('Client_Add')) {
-			$btn = '<p style="float:right;">To add new contacts, please select a client from the Dealer Dropdown</p>';	
+		if ($this->CheckModule('Passwords_Add') && $level == 'c') {
+			$btn = '<input type="button" value="Add New Password" class="greenBtn" style="float:right;margin-top:10px;" id="add_password_btn" onclick="javascript:addPasswords(\'' . base_url() . '\');"></input>';
+		}else if ($this->CheckModule('Passwords_Add')) {
+			$btn = '<p style="float:right;">To add new password, please select a client from the Dealer Dropdown</p>';	
 		}
 		
-		$popups = '</tbody></table><div id="editPasswordsInfo"></div><div id="viewPasswordsInfo"></div></div>' . "\n";
+		$popups = '</tbody></table><div id="addPasswordsInfo"></div><div id="editPasswordsInfo"></div><div id="viewPasswordsInfo"></div></div>' . "\n";
 		
-		$html = $header . $btn . $html . $btn . $popups;
+		$html = $header . $html . $btn . $popups;
 
 		$scripts = '
 			var clip;
@@ -156,21 +157,60 @@ class Passwords extends DOM_Controller {
 		$this->LoadTemplate('pages/listings', $data);
     }
 	
-	public function Add($msg=false) {
+	private function getData($action) {
+		$this->load->model('administration');
+
 		$html = '';
-		$titles = '';
-		//If there is a message to the user, present it as it should be.
-		if ($msg AND $msg != 'error') {
-			//The success message after a group was added or edited.
-			$html .= success_msg('The Passwords was added successfully!');
-		} elseif($msg AND $msg != 'success') {
-			//The error message after a group was added, or edited.
-			$html .= error_msg();
+		
+		$types = $this->administration->getAllTypes();
+		$vendors = $this->administration->getVendors();
+
+		if ($action == 'edit') {
+			$client_id = FALSE;
+			$pwd_id = FALSE;
+			if(isset($_POST['pwd_id'])) {
+				$pwd_id = $this->input->post('pwd_id');
+			}elseif(isset($_GET['pwdid'])) {
+				$pwd_id = $this->input->get('pwdid');
+			}else {
+				$client_id = $this->user['DropdownDefault']->SelectedClient;
+			}
+		
+			if ($client_id)
+				$password = $this->administration->getPasswords($client_id);
+			else
+				$password = $this->administration->getPasswordsByID($pwd_id);
+
+			if($password) {
+				$data = array(
+					'password' => $password[0],
+					'html' => $html,
+					'types' => $types,
+					'vendors' => $vendors
+				);
+				return $data;
+			} else
+				return FALSE;
+				
+		} else {
+			$client_id = $this->user['DropdownDefault']->SelectedClient;
+			$data = array(
+				'clientID' => $client_id,
+				'html' => $html,
+				'types' => $types,
+				'vendors' => $vendors
+			);
+			return $data;
 		}
-		$data = array(
-			'html' => $html
-		);
-		$this->LoadTemplate('forms/form_addpasswords',$data);
+	}
+	
+	public function Add($msg=false) {
+		$data = $this->getData('add');
+
+		if ($data)
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addpasswords',$data);
+		else
+			echo 0;
 	}
 	
 	public function Edit($msg=false) {
@@ -187,40 +227,13 @@ class Passwords extends DOM_Controller {
 		}
 		*/
 		
-		$html = '';
-		
-		$contact_id = FALSE;
-		$pwd_id = FALSE;
-		if(isset($_POST['pwd_id'])) {
-			$pwd_id = $this->input->post('pwd_id');
-		}elseif(isset($_GET['pwdid'])) {
-			$pwd_id = $this->input->get('pwdid');
-		}else {
-			$contact_id = $this->user['DropdownDefault']->SelectedClient;
-		}
-	
-		 //WE POST WHAT AGENCY WERE EDITING, THIS IS THE ID IN THE DB.
-		//$contact_id = ($this->input->post('contact_id'))?$this->input->post('contact_id'):$this->user['DropdownDefault']->SelectedClient;
-		$this->load->model('administration');
-		if ($contact_id)
-			$contact = $this->administration->getPasswords($contact_id);
-		else
-			$contact = $this->administration->getPasswordsByID($pwd_id);
-		$types = $this->administration->getAllTypes();
-		if($contact) {
-			$data = array(
-				'contact' => $contact,
-				'html' => $html,
-				'types'=>$types
-			);
+		$data = $this->getData('edit');
+		if ($data)
 			//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
-		
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editpasswords',$data);
-			
-		}else {
+		else
 			//this returns nothing to the ajax call....therefor the ajax call knows to show a popup error.
 			echo 0;
-		}
 	}
 	
 	public function Delete($msg=false) {

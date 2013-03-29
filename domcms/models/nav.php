@@ -24,7 +24,7 @@
 		}
 		
 		public function main($user_lvl) {
-			$top_level = $this->get_nav('0',$user_lvl,'1');		
+			$top_level = $this->get_nav('0',$user_lvl,'1');
 			$button = array();
 			if($top_level) {
 				foreach($top_level as $icon) {
