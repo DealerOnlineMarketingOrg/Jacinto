@@ -106,13 +106,13 @@
 		})
 	}
 	
-	function editWebsiteForm(id,cid) {
+	function editWebsiteForm(cid,wid) {
 		jQuery.ajax({
 			type:'GET',
-			url:'/admin/websites/form?cid='+cid+'&wid='+id,
-			//data:{client_id:id},
+			url:'/admin/websites/form?cid='+cid+'&wid='+wid,
 			success:function(data) {
 				if(data){
+					jQuery('#editWebsite').empty();
 					jQuery('#editWebsite').html(data);
 				}else {
 					jAlert('There was a problem finding the client you needed. Please try again.','Add Website Error');
@@ -203,7 +203,7 @@
 	}
 
 	function reloadWebsites(cid) {
-		//jQuery('#addWebsiteForm').dialog('close');	
+		jQuery('#addWebsiteForm').dialog('close');	
 		jQuery('#websites').slideUp('fast',function() {
 			jQuery('#websites').empty();
 			jQuery('#loader').fadeIn('fast',function() {
@@ -222,3 +222,17 @@
 			});
 		});					
 	}
+
+function addClient() {
+  jQuery.ajax({
+    type:'GET',
+    url:'/admin/clients/add_form',
+    success:function(data) {
+      if(data) {
+        jQuery('#addClientsForm').html(data);
+      }else {
+        jAlert('There was an error with your request. Please Try Again.','Error');
+      }
+    }
+  });
+}

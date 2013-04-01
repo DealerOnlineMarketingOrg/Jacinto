@@ -1,6 +1,29 @@
 <?php
 
 if (!defined('BASEPATH')) exit('No direct script access allowed');
+	 
+//This function will check to see if the user has given module access, the name of the module and the user level is required.
+//This is our Bouncer for the whole system, it should boot any users trying to view a module without access to the dashboard.
+function GateKeeper($mod,$uPerm) {
+	
+	//We need to know where codeigniter is.
+	$ci =& get_instance();
+	$ci->load->model('mods');
+	
+	//load the model in the helper
+	$perms = $ci->mods->getModLevelByName($mod);
+	
+	//check the permission levels
+	if (!$perms) {
+		redirect('/','refresh');
+	} else {
+		if ($uPerm >= $perms->Level) {
+			return TRUE;
+		} else {
+			redirect('/','refresh');
+		}
+	}
+}
 
 function get_welcome_message() {
     $ci =& get_instance();

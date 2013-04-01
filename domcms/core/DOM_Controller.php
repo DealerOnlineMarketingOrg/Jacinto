@@ -278,19 +278,8 @@ class DOM_Controller extends CI_Controller {
     }
 
     //This checks to see if the user has permissions to the specific module
-    public function CheckModule($module_name = false) {
-        $this->load->model('mods');
-        $user_level = $this->user['DropdownDefault']->PermLevel;
-        $permission = $this->mods->getModLevelByName($module_name);
-        if (!$permission) {
-            return FALSE;
-        } else {
-            if ($user_level >= $permission->Level) {
-                return TRUE;
-            } else {
-                return FALSE;
-            }
-        }
+    public function CheckModule($module_name) {
+		return GateKeeper($module_name,$this->user['AccessLevel']);
     }
 
     //custom 404 page

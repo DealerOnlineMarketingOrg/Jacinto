@@ -20,57 +20,29 @@ class Clients extends DOM_Controller {
         $this->group_id = $this->user['DropdownDefault']->SelectedGroup;
 		$this->activeNav = 'admin';
     }
-
-    public function index() {
-    	$this->load->helper('template');
-		$permissions = $this->CheckModule('Client_List');
-		
-		$table = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
-		
-		if (!$permissions) {
-			$this->AccessDenied();
-		} else {
-			$level = $this->user['DropdownDefault']->LevelType;
-			$permission_level = $this->user['DropdownDefault']->PermLevel;
-
-			switch($level) {
-				case 1:
-					$clients = $this->administration->getAllClientsInAgency($this->agency_id);
-				break;
-				case 2:
-					$clients = $this->administration->getAllClientsInGroup($this->group_id);
-				break;
-				case 3:
-					$clients = $this->administration->getClientByID($this->user['DropdownDefault']->SelectedClient);
-				break;
-				case 'a':
-					$clients = $this->administration->getAllClientsInAgency($this->agency_id);
-				break;
-				case 'g':
-					$clients = $this->administration->getAllClientsInGroup($this->group_id);
-				break;
-				case 'c':
-					$clients = $this->administration->getClientByID($this->user['DropdownDefault']->SelectedClient);
-				break;	
-			}
-			
-			
-				$table .= "<thead>" . "\n" . 
-							"\t" . '<tr>' . "\n" . 
-							"\t\t" . "<th>Tag</th>" . "\n" . 
-							"\t\t" . "<th>Code</th>" . "\n" . 
-							"\t\t" . "<th>Dealership</th>" . "\n" .
-							"\t\t" . "<th>Group</th>" . "\n" .
-							"\t\t" . "<th>Status</th>" . "\n" .
-							"\t\t" . "<th>Actions</th>" . "\n" .
-							"\t" . "</tr>" . "\n" .
-						  "</thead>" . "\n";
-				$table .= '<tbody>' . "\n";
 	
-			$html = '';
+	public function load_table($return = false) {
+		$this->load->helper('template');
+		$allowence = $this->CheckModule('Client_List');
+		$html = '';
+		if($allowence) : //the user has permission to view this
+			$level = $this->user['DropdownDefault']->LevelType;
+			$table = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
+			$clients = $this->_getClientsByDropdownLevel($level);		
+			$table .= "<thead>" . "\n" . 
+						"\t" . '<tr>' . "\n" . 
+						"\t\t" . "<th>Tag</th>" . "\n" . 
+						"\t\t" . "<th>Code</th>" . "\n" . 
+						"\t\t" . "<th>Dealership</th>" . "\n" .
+						"\t\t" . "<th>Group</th>" . "\n" .
+						"\t\t" . "<th>Status</th>" . "\n" .
+						"\t\t" . "<th>Actions</th>" . "\n" .
+						"\t" . "</tr>" . "\n" .
+					  "</thead>" . "\n";
+			$table .= '<tbody>' . "\n";
 			$html .= '<style type="text/css">a.actions_link{margin-right:5px;td.actionsCol{width:75px !important;text-align:center;}</style>';
 			$html .= '<script type="text/javascript" src="' . base_url() . 'assets/themes/itsbrain/js/client_popups.js"></script>';
-			//LOOP THROUGH EACH AGENCY AND CREATE A FORM BUTTON "EDIT" AND ROW FOR IT.
+			
 			foreach ($clients as $client) :
 				
 				//EACH FORM IS NAMED BY THE EDIT_{AGENCY_ID}, SAME CONCEPT WITH THE ID
@@ -125,6 +97,7 @@ class Clients extends DOM_Controller {
 				if($this->CheckModule('Client_Edit')) {
 					$table .= $edit_a;
 				}
+				
 				$table .= $view_a;
 				if($this->CheckModule('Client_Disable_Enable')) {
 					if($client->Status) {
@@ -134,7 +107,6 @@ class Clients extends DOM_Controller {
 					}
 				}
 				
-				
 				$table .= '</td>';
 				$table .= '</tr>' . "\n";
 			endforeach;
@@ -143,7 +115,7 @@ class Clients extends DOM_Controller {
 			$html .= $table;
 			
 			
-			//THE ADD AGENCY BUTTON
+			//THE ADD Clients BUTTON
 			$add_button = array(
 				'class' => 'greenBtn floatRight button',
 				'id' => 'add_client_btn',
@@ -156,17 +128,57 @@ class Clients extends DOM_Controller {
 			
 			//If the user has permission to add a new group, then show a button to do so.
 			if ($this->CheckModule('Group_Add')) {
-				$html .= anchor(base_url() . 'clients/add', 'Add Client', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_client_btn"');
+				$html .= '<a href="javascript:addClient();" class="greenBtn floatRight button" style="margin-top:10px;" id="add_client_btn">Add New Client</a>';
+				//$html .= anchor(base_url() . 'clients/add', 'Add Client', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_client_btn"');
 			}
-	
-			$data = array(
-				'page_id' => 'Clients',
-				'page_html' => $html,
-				
-			);
-			//LOAD THE TEMPLATE
-			$this->LoadTemplate('pages/listings', $data);
+			//you dont have permission to view this
+		endif;
+			
+		
+		if($return) {
+			return $html;
+		}else {
+			echo $html;
 		}
+
+	}
+	
+	private function _getClientsByDropdownLevel($level) {
+		switch($level) {
+			case 1:
+				return $this->administration->getAllClientsInAgency($this->agency_id);
+			break;
+			case 2:
+				return $this->administration->getAllClientsInGroup($this->group_id);
+			break;
+			case 3:
+				return $this->administration->getClientByID($this->user['DropdownDefault']->SelectedClient);
+			break;
+			case 'a':
+				return $this->administration->getAllClientsInAgency($this->agency_id);
+			break;
+			case 'g':
+				return $this->administration->getAllClientsInGroup($this->group_id);
+			break;
+			case 'c':
+				return $this->administration->getClientByID($this->user['DropdownDefault']->SelectedClient);
+			break;	
+			default:
+				return $this->administration->getAllClientsInAgency($this->agency_id);
+			break;
+		}
+	}
+
+    public function index() {
+    	$this->load->helper('template');
+		$html = $this->load_table(true);
+		$data = array(
+			'page_id' => 'Clients',
+			'page_html' => $html,
+			
+		);
+		//LOAD THE TEMPLATE
+		$this->LoadTemplate('pages/client_listing', $data);
     }
 	
 	public function Add() {
@@ -180,22 +192,21 @@ class Clients extends DOM_Controller {
 
 		$this->LoadTemplate('forms/form_addclients',$data);
 	}
+    
+    public function add_form() {
+      $tags = $this->administration->getAllTags();
+      $data = array(
+          'client'=>false,
+          'tags'=>$tags
+      );
+      $this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);
+    }
 	
 
 	
 	public function Edit() {
 		$this->load->helper('template');
 		$level = $this->user['DropdownDefault']->LevelType;
-		
-		/*
-		if($level == 'g') {
-			redirect('/groups/edit','refresh');	
-		}
-		
-		if($level == 'a') {
-			redirect('/agencies/edit','refresh');	
-		}
-		*/
 		
 		$html = '';
 	
@@ -235,7 +246,7 @@ class Clients extends DOM_Controller {
 			
 		}else {
 			//this returns nothing to the ajax call....therefor the ajax call knows to show a popup error.
-			echo 0;
+			print 0;
 		}
 	}
 	

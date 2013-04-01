@@ -7,7 +7,9 @@
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
             		<li class="activeTab"><a href="javascript:void(0);" rel="clientInfo">Client Information</a></li>
-            		<li><a href="javascript:void(0);" rel="websites">Websites</a></li>
+            		<?php if(isset($websites)) { ?>
+                    <li><a href="javascript:void(0);" rel="websites">Websites</a></li>
+                    <?php } ?>
             		<!-- <li><a href="#contacts">Contacts</a></li>
             		<li><a href="#users">Users</a></li>
             		<li><a href="#vendors">Vendors</a></li> -->
@@ -89,7 +91,7 @@
 			                	<label>Google Review</label>
 			                    <div class="formRight">
 			                    	<?= form_input(array('class'=>'validate[custum[url]]','name'=>'GoogleReviewURL','id'=>'GoogleReview','value'=>($client) ? $client->Reviews['Google'] : '')); ?>
-			                        <?= form_hidden('GoogleID',($client->Reviews['GoogleID']) ? $client->Reviews['GoogleID'] : 0); ?>
+			                        <?= form_hidden('GoogleID',(isset($client->Reviews['GoogleID'])) ? $client->Reviews['GoogleID'] : 0); ?>
 			                        <p class="formNote">The Web Address for the clients Google Review Page</p>
 			                    </div>
 			                    <div class="fix"></div>
@@ -99,7 +101,7 @@
 			                	<label>Yelp Review</label>
 			                    <div class="formRight">
 			                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YelpReviewURL','id'=>'YelpReview','value'=>($client) ? $client->Reviews['Yelp'] : '')); ?>
-			                        <?= form_hidden('YelpID',($client->Reviews['YelpID']) ? $client->Reviews['YelpID'] : 0); ?>
+			                        <?= form_hidden('YelpID',(isset($client->Reviews['YelpID'])) ? $client->Reviews['YelpID'] : 0); ?>
 			                        <p class="formNote">The Web Address for the clients Yelp Review Page</p>
 			                    </div>
 			                    <div class="fix"></div>
@@ -109,7 +111,7 @@
 			                	<label>Yahoo Review</label>
 			                    <div class="formRight">
 			                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YahooReviewURL','id'=>'YahooReview','value'=>($client) ? $client->Reviews['Yahoo'] : '')); ?>
-			                        <?= form_hidden('YahooID',($client->Reviews['YahooID']) ? $client->Reviews['YahooID'] : 0); ?>
+			                        <?= form_hidden('YahooID',(isset($client->Reviews['YahooID'])) ? $client->Reviews['YahooID'] : 0); ?>
 			                        <p class="formNote">The Web Address for the clients Yahoo Review Page</p>
 			                    </div>
 			                </div>
@@ -137,9 +139,11 @@
 			           </fieldset>
     				<?= form_close(); ?>
     				</div>
+                    <?php if(isset($websites)) { ?>
     				<div id="websites" class="tab_content" style="display:none;">
                     	<?= (isset($websites)) ? $websites : ''; ?>
     				</div>
+                    <?php } ?>
                     <div id="loader" style="display:none;"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
     				<div class="fix"></div>
     			</div>	
@@ -164,7 +168,7 @@
 	jQuery(".chzn-select").chosen();
 	jQuery("#editClient").dialog({
 		minWidth:800,
-		height:700,
+		height:500,
 		autoOpen: true,
 		modal: false
 	});
