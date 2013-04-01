@@ -31,6 +31,7 @@
                     <div style="width:1;float:right;vertical-align:middle">
                         <input ID="excel" class="greyishBtn" type="button" value="Excel" />
                         <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
+                        <input ID="email" class="greyishBtn" type="button" value="EMAIL" />
                     </div>
                 </div>
                 <div id="reportLive">
@@ -109,6 +110,29 @@
 			$("form#reportReport").submit();
 		});
 		
+		$('input#email').click(function() {
+			var nl = "\n";
+			var email = {
+				sender_email:'dpr@dealeronlinemarketing.com',
+				sender_name:'Phil',
+				reply_to_email:'pkazda@dealeronlinemarketing.com',
+				reply_to_name:'Phil',
+				to:'pkazda@dealeronlinemarketing.com',
+				subject:'DPR report',
+				message:'Attached is your Digital Performance Report, which we will be discussing on our next call.' + nl + nl + 'Thank you.',
+				signatures:'John Doe,Jane Doe',
+				attachments:'assets/uploads/dprReport.pdf'
+			};
+			$.ajax({type:"POST",
+				url:"<?= base_url(); ?>io/sendEmail",
+				data:email,
+				success:function(msg) {
+					var dialogHtml = $('<div id="emailDialog" title="Email"><p>The DPR Report has been sent to the dealer via email.</p></div>');
+					dialogHtml.dialog();
+				}
+			});
+		});
+		
 		$(window).load (function() {
 			plotLineChart();
 			plotPieChart();
@@ -129,7 +153,7 @@
 			{$(element).html2canvas({onrendered:function(canvas){
 					 dataURL = canvas.toDataURL("image/png");
 					 return $.ajax({type:"POST",
-									url:"<?= base_url(); ?>file/saveDataURL",
+									url:"<?= base_url(); ?>io/saveDataURL",
 									data:{data:dataURL, destPath:imgFile}});
 			}});}
 		
@@ -152,7 +176,7 @@
 		// Zips up the files in fileList and saves as zipFile (on the server).
 		function saveZip(zipFile,fileList)
 			{return $.ajax({type:"POST",
-							url:"<?= base_url(); ?>file/zipFiles",
+							url:"<?= base_url(); ?>io/zipFiles",
 							data:{file_list:fileList, zip_file:zipFile}});
 			}
 		
@@ -177,14 +201,14 @@
 			$("#lineID").html2canvas({onrendered:function(canvas){
 					 dataURL = canvas.toDataURL("image/png");
 					 $.ajax({type:"POST",
-							url:"<?= base_url(); ?>file/saveDataURL",
+							url:"<?= base_url(); ?>io/saveDataURL",
 							data:{data:dataURL, destPath:lineChartFile},
 							success:(function() {
 								// HTMLToImage (pieChartFile)
 								$("#pieID").html2canvas({onrendered:function(canvas){
 										 dataURL = canvas.toDataURL("image/png");
 										 $.ajax({type:"POST",
-												url:"<?= base_url(); ?>file/saveDataURL",
+												url:"<?= base_url(); ?>io/saveDataURL",
 												data:{data:dataURL, destPath:pieChartFile},
 												success:(function() {
 													// convertToExcel
@@ -194,7 +218,7 @@
 															success:(function() {
 																// saveZip
 																$.ajax({type:"POST",
-																		url:"<?= base_url(); ?>file/zipFiles",
+																		url:"<?= base_url(); ?>io/zipFiles",
 																		data:{file_list:[ "assets/uploads/dprReport.xlsx" ], zip_file:"assets/uploads/dprReportExcel.zip"},
 																		success:(function() {
 																			// getZip
@@ -219,7 +243,7 @@
 			$("#fullReportID").html2canvas({onrendered:function(canvas){
 					 dataURL = canvas.toDataURL("image/png");
 					 $.ajax({type:"POST",
-							url:"<?= base_url(); ?>file/saveDataURL",
+							url:"<?= base_url(); ?>io/saveDataURL",
 							data:{data:dataURL, destPath:fullReportFile},
 							success:(function() {
 								// convertToPDF
@@ -229,7 +253,7 @@
 										success:(function(data, textStatus) {
 											// saveZip
 											$.ajax({type:"POST",
-													url:"<?= base_url(); ?>file/zipFiles",
+													url:"<?= base_url(); ?>io/zipFiles",
 													data:{file_list:[ "assets/uploads/dprReport.pdf" ], zip_file:"assets/uploads/dprReportPDF.zip"},
 													success:(function() {
 														// getZip

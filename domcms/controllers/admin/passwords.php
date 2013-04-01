@@ -20,6 +20,7 @@ class Passwords extends DOM_Controller {
 	
 		// Password page will only be for clients.
 		$level = $this->user['DropdownDefault']->LevelType;
+
 		$passwords = $this->administration->getPasswords($this->user['DropdownDefault']->SelectedClient);
 		
 		//table heading
@@ -29,7 +30,7 @@ class Passwords extends DOM_Controller {
 		//If there is a message to the user, present it as it should be.
 		if ($msg AND $msg != 'error') {
 			//The success message after a group was added or edited.
-			$html .= success_msg('The Client was edited successfully!');
+			$html .= success_msg('The Password was edited successfully!');
 		} elseif($msg AND $msg != 'success') {
 			//The error message after a group was added, or edited.
 			$error_msg = error_msg();
@@ -62,9 +63,14 @@ class Passwords extends DOM_Controller {
 				$table .= '<td style="text-align:left;">' . $password->Vendor . '</td>';
 				$table .= '<td><a href="' . $password->LoginAddress . '">' . $password->LoginAddress . '</a></td>';
 				
-				$table .= '<td><span style="font-weight:bold;"><div id="username'.$counter . '" class="clipBoard" clipBoardData="' . $password->Username . '" style="display:none; width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><div style="float:left"><a href="mailto:' . $password->Username . '">' . $password->Username . '</a></div></span></td>';
-				$table .= '<td><div id="password'.$counter . '" class="clipBoard" clipBoardData="' . $password->Password . '" style="display:none; width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><div style="float:left">' . $password->Password . '</div></td>';
-				$table .= '<td style="width:25%"><div style="overflow:hidden; max-height:37px"><div style="float:left;width:80%">' . $password->Notes . '</div><div onclick="javascript: openMore(\'' . $password->Notes . '\');" style="cursor:pointer;float:right;color:blue;top:0">...more</div></div></td>';
+				$del = ",";
+				$clipData = 'Login Address' . $del . $password->LoginAddress . $del . 'User Name' . $del . $password->Username . $del . 'Password' . $del . $password->Password;
+				$table .= '<td style="white-space:nowrap"><span style="font-weight:bold;"><div id="username'.$counter . '" class="clipBoard" clipBoardData="' . $clipData . '" style="width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><div style="float:left"><a href="mailto:' . $password->Username . '">' . $password->Username . '</a></div></span></td>';
+				
+				$table .= '<td style="white-space:nowrap"><div id="password'.$counter . '" class="clipBoard" clipBoardData="' . $clipData . '" style="width:22px; height:22px; float:left; cursor:pointer; background: url(' .  base_url() . 'assets/icons/dark/clipboard.png) no-repeat"></div><div style="float:left">' . $password->Password . '</div></td>';
+				
+				$table .= '<td style="width:25%"><div style="overflow:hidden; max-height:37px"><div style="float:left;width:80%">' . $password->Notes . '</div><div onclick="javascript: openMore(\'' . $password->Notes . '\');" style="cursor:pointer;float:left;color:blue;top:0">...more</div></div></td>';
+				
 				$table .= '<td class="actionsCol" style="width:75px;text-align:center">';
 				
 				//put allowed action buttons in place
@@ -90,8 +96,7 @@ class Passwords extends DOM_Controller {
 			}
 			$table .= '</tbody>';
 		else :
-		   $table .= '<thead><tr><th>Error</th></tr></thead>';
-		   $table .= '<tbody><tr><td><p>Sorry, No contacts found for this client. Select another client from the dropdown selector or add a contact by clicking the add contact button below.</p></td></tr></tbody>';
+			throwError(newError('Passwords', -1, 'Sorry, no passwords were found for this client. Please add a password or select a different client.',0,''));
 		endif;
 		$table .= '</table><div class="fix"></div>';
 		//This builds the pages html out. We do this here so all our listing pages can have the same template view.
@@ -111,40 +116,45 @@ class Passwords extends DOM_Controller {
 		$html = $header . $html . $btn . $popups;
 
 		$scripts = '
-			var clip;
 			$(window).load (function() {
-				$(".clipBoard").zclip({
-					path: "' . base_url() . 'assets/ZeroClipboard.swf",
-					copy: $(this).attr("clipBoardData"),
-					afterCopy: function() {alert("after");}
-				});			
 			});
 			
-			function initClipboard() {
-				clip = new Array();
+			$(".clipBoard").click(function() {
+				// Arguments need to be in the order of:
+				//  Login Address Label, Login Address data,
+				//  User Name label, User Name data,
+				//  Password label, Password data
+				var data = $(this).attr("clipBoardData");
+				clipboardCopyDialog(data);
+			});
+			
+			// Creates a clipboard-copy dialog.
+			// The textList is an associative array:
+			//   textLabel = textDescriptionToCopy
+			function clipboardCopyDialog(textList) {
+				var htmlHead = \'<div class="uDialog" title="Copy" style="text-align:left;"><div class="dialog-message" id="copy" title="Copy"><div class="uiForm"><style type="text/css">label{margin-top:5px;float:left;}</style><div class="widget" style="margin-top:0;padding-top:0;"><fieldset>\';
 				
-				// Create clipboard object for each copy region in the form.
-				var zcPath = "' . base_url() . 'assets/ZeroClipboard.swf";
-				ZeroClipboard.setDefaults({
-						moviePath: zcPath
-					});
-				
-				// Run through all the username divs and link up the clipboard dom-object for each.
-				// ZeroClipboard works by having an invisible flash object on the dom-object,
-				//  which runs when the user clicks the dom-object.
-				// count contains the number of data rows. Rows are 0-indexed.
-				var count = ' . $counter . ';
-				for (i = 0; i < count; i++) {
-					clip[i] = new Array();
-					clip[i]["username"] = new ZeroClipboard($("#username"+i));
-					clip[i]["username"].on("click", function(client) {clip.setText($(this).val())});
-					clip[i]["password"] = new ZeroClipboard($("#password"+i));
-					clip[i]["password"].on("click", function(client) {clip.setText($(this).val())});
+				var htmlBody = \'\';
+				var args = textList.split(",");
+				for (var i = 0; i < args.length; i = i + 2) {
+					htmlBody += \'<div class="rowElem noborder"><label style="white-space:nowrap">\' + args[i] + \'</label><div class="formRight"><input type="text" class="clipBoard" value="\' + args[i+1] + \'" readonly><label style="font-size:75%;color:grey;margin:0">Click on box and press control+c to copy</label></div></div>\';
 				}
+				
+				var htmlFoot = \'</fieldset></div></div></div></div>\';
+				
+				// We use <\/script> because some browsers have issues parsing this, even in a static string.
+				var scripts = \'<script type="text/javascript">$(".clipBoard").click(function() {$(this).select();});<\/script>\';
+				
+				var dialogHtml = $(htmlHead + htmlBody + htmlFoot + scripts);
+				// This syntax manually appends the script to the dialog window.
+				// On some versions of dialog, there is a bug which will open a seperate window for
+				//   the script fragment.
+				dialogHtml.filter("div").dialog({width:500}).end().filter("script").appendTo("body");
 			}
 			
 			function openMore(text) {
-				alert(text);
+				var dialogHtml = $(\'<div id="notesDialog" title="Note"><p>\' + text + \'</p></div>\');
+				dialogHtml.dialog();
 			}
 		';
 		
