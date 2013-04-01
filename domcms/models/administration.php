@@ -384,6 +384,10 @@ class Administration extends CI_Model {
 		}
 	}
 	
+	public function addReputation($group) {
+		return ($this->db->insert_batch('Reputations',$group)) ? TRUE : FALSE;
+	}
+	
 	public function editClient($data, $id) {
 		$this->db->where('CLIENT_ID',$id);
 		return $this->db->update('Clients',$data);	
@@ -452,18 +456,10 @@ class Administration extends CI_Model {
     }
     
     public function getSelectedClient($id) {
-        $sql = 'SELECT
-                c.CLIENT_ID as ClientID,
-                c.CLIENT_Name as Name,
-                c.CLIENT_Address as Address,
-                c.CLIENT_Phone as Phone,
-                c.CLIENT_Notes as Description,
-                c.CLIENT_Code as Code,
-                c.CLIENT_Tag as Tag,
-                c.CLIENT_Active as Status
-                FROM Clients c
-                WHERE c.CLIENT_ID = "' . $id . '";';
-		$query = $this->db->query($sql);
+		$this->db->select('c.CLIENT_ID as ClientID,c.CLIENT_Name as Name,c.CLIENT_Address as Address,c.CLIENT_Phone as Phone,c.CLIENT_Notes as Description,c.CLIENT_Code as Code,c.CLIENT_Tag as Tag,c.CLIENT_Active as Status,c.GROUP_ID as GroupID');
+		$this->db->from('Clients c');
+		$this->db->where('c.CLIENT_ID',$id);
+		$query = $this->db->get();
 		return ($query) ? $query->row() : FALSE;
     }
 	
@@ -495,6 +491,20 @@ class Administration extends CI_Model {
                 WHERE c.CLIENT_ID = "' . $id . '" ORDER BY c.CLIENT_Name ASC;';		
 		$query = $this->db->query($sql);
 		return ($query) ? $query->result() : FALSE;
+	}
+	
+	public function updateClient($cid,$data) {
+		$this->db->where('CLIENT_ID',$cid);
+		return ($this->db->update('Clients',$data)) ? TRUE : FALSE;
+	}
+	
+	public function updateSingleReputation($id,$rep) {
+		$this->db->where('ID',$id);
+		return ($this->db->update('Reputations',$rep)) ? TRUE : FALSE;
+	}
+	
+	public function updateReputations($group) {
+		return ($this->db->update_batch('Reputations',$group,'ID')) ? TRUE : FALSE;
 	}
 	
 	public function doReviewsExist($client_id,$service_id) {

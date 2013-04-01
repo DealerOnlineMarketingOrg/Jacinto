@@ -181,6 +181,149 @@ class Clients extends DOM_Controller {
 		$this->LoadTemplate('pages/client_listing', $data);
     }
 	
+	public function form() {
+		//build the phone string
+		$phone = 'main:' . $this->security->xss_clean($this->input->post('phone'));
+		//build the address string
+		$address = 'street:' . $this->security->xss_clean($this->input->post('street')) . ',city:' . $this->security->xss_clean($this->input->post('city')) . ',state:' . $this->security->xss_clean($this->input->post('state')) . ',zipcode:' . $this->security->xss_clean($this->input->post('zip'));
+		
+		$client_data = array(
+			'CLIENT_Name'=>$this->security->xss_clean($this->input->post('ClientName')),
+			'CLIENT_Address'=>$address,
+			'CLIENT_Phone'=>$phone,
+			'CLIENT_Notes'=>$this->security->xss_clean($this->input->post('Notes')),
+			'CLIENT_Code'=>$this->security->xss_clean($this->input->post('ClientCode')),
+			'CLIENT_Tag'=>$this->security->xss_clean($this->input->post('tags')),
+			'CLIENT_ActiveTS'=>date(FULL_MILITARY_DATETIME),
+			'GROUP_ID'=>$this->user['DropdownDefault']->SelectedGroup,
+			'CLIENT_Active'=>1
+		);
+		
+		$rep_data = array();
+		
+		if((isset($_POST['GoogleReviewURL'])) AND ($_POST['GoogleReviewURL'] != '')) {
+			$google_group = array(
+				'ServicesID'=>1,
+				'URL'=>$this->security->xss_clean($this->input->post('GoogleReviewURL'))
+			);
+		}
+		
+		if((isset($_POST['YelpReviewURL'])) AND ($_POST['YelpReviewURL'] != '')) {
+			$yelp_group = array(
+				'ServicesID'=>2,
+				'URL'=>$this->security->xss_clean($this->input->post('YelpReviewURL'))
+			);
+		}
+		
+		if((isset($_POST['YahooReviewURL'])) AND ($_POST['YahooReviewURL'] != '')) {
+			$yahoo_group = array(
+				'ServicesID'=>3,
+				'URL'=>$this->security->xss_clean($This->input->post('YahooReviewURL'))
+			);
+		}
+		
+		if(isset($_POST['ClientID'])) { //if this is set, we know its the edit form
+			if((isset($_POST['GoogleReviewURL'])) AND ($_POST['GoogleReviewURL'] != '')) {
+				$google_group_add = array(
+					'ID'=>$this->security->xss_clean($this->input->post('GoogleID')),
+					'ClientID'=>$this->security->xss_clean($this->input->post('ClientID')),
+				);
+				array_merge($google_group,$google_group_add);
+				array_push($rep_data,$google_group);
+			}
+			
+			if((isset($_POST['YelpReviewURL'])) AND ($_POST['YelpReviewURL'] != '')) {
+				$yelp_group_add = array(
+					'ID'=>$this->security->xss_clean($this->input->post('YelpID')),
+					'ClientID'=>$this->security->xss_clean($this->input->post('ClientID')),
+				);
+				array_merge($yelp_group,$yelp_group_add);
+				array_push($rep_data,$yelp_group);
+			}
+			
+			if((isset($_POST['YahooReviewURL'])) AND ($_POST['YahooReviewURL'] != '')) {
+				$yahoo_group_add = array(
+					'ID'=>$this->security->xss_clean($this->input->post('YahooID')),
+					'ClientID'=>$this->security->xss_clean($this->input->post('ClientID')),
+				);
+				array_merge($yahoo_group,$yahoo_group_add);
+				array_push($rep_data,$yahoo_group);
+			}
+			
+			$update_client = $this->administration->updateClient($this->input->post('ClientID'),$client_data);
+			
+			if($update_client) {
+				if(count($rep_data) > 0) {
+					$update_reputations = $this->administration->updateReputations($rep_data);
+					if($update_reputations) {
+						echo '1';	
+					}else {
+						echo '0';	
+					}
+				}else {
+					echo '1';	
+				}
+			}else {
+				echo '0';	
+			}
+			
+			
+		}elseif(isset($_GET['gid'])) { //were adding new client here
+			
+			$add_client_data = array(
+				'CLIENT_Created'=>date(FULL_MILITARY_DATETIME),
+			);
+			
+			array_merge($client_data,$add_client_data);
+			$client = $this->administration->addClient($client_data);
+			if($client) {
+				if(isset($google_group) OR isset($yelp_group) OR isset($yahoo_group)) {
+					$client_id = $client;
+					$rep_push = array(
+						'ClientID'=>$client_id
+					);
+					
+					if(isset($google_group)) {
+						if(count($google_group) > 0) {
+							array_merge($google_group,$rep_push);
+							array_push($rep_data,$google_group);
+						}
+					}
+					
+					if(isset($yelp_group)) {
+						if(count($yelp_group) > 0) {
+							array_merge($yelp_group,$rep_push);
+							array_push($rep_data,$yelp_group);
+						}
+					}
+					
+					if(isset($yahoo_group)) {
+						if(count($yahoo_group) > 0) {
+							array_merge($yahoo_group,$rep_push);
+							array_push($rep_data,$yahoo_group);
+						}
+					}
+					
+					if(count($rep_data) > 0) {
+						$add_rep = $this->administration->addReputation($rep_data);
+						if($add_rep) {
+							echo '1';	
+						}else {
+							echo '0';	
+						}
+					}else {
+						echo '1';	
+					}
+				}else {
+					echo '1';	
+				}
+				
+			}else {
+				echo '1';	
+			}
+		}
+	}
+	
 	public function Add() {
 		$html = '';
 		$tags = $this->administration->getAllTags();  

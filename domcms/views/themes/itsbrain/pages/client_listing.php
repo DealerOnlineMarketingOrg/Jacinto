@@ -15,21 +15,5 @@
     div#dataClient{margin-top:1px;display:none;}
 </style>
 <div id="addClientsForm"></div>
-<script type="text/javascript">
-  jQuery('#loader_block').slideDown('fast',function() {
-    jQuery.ajax({
-      type:"GET",
-      url:'/admin/clients/load_table',
-      success:function(data) {
-        if(data) {
-          jQuery('#dataClient').html(data);
-          jQuery('#loader_block').slideUp('fast',function() {
-            jQuery('#dataClient').slideDown('fast');
-          });
-        }else {
-          jQuery('#dataClient').html('<p>No clients found at this level. Please use the Dealer Dropdown to change to a different group.</p>');
-        }
-      }
-    });
-  });
- </script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/client_popups.js"></script>
+<script type="text/javascript">clientListTable();</script>

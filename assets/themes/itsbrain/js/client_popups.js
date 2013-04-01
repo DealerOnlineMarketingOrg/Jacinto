@@ -18,6 +18,25 @@
 		alert(id);
 	}
 	
+	function clientListTable() {
+	  jQuery('#loader_block').slideDown('fast',function() {
+		jQuery.ajax({
+		  type:"GET",
+		  url:'/admin/clients/load_table',
+		  success:function(data) {
+			if(data) {
+			  jQuery('#dataClient').html(data);
+			  jQuery('#loader_block').slideUp('fast',function() {
+				jQuery('#dataClient').slideDown('fast');
+			  });
+			}else {
+			  jQuery('#dataClient').html('<p>No clients found at this level. Please use the Dealer Dropdown to change to a different group.</p>');
+			}
+		  }
+		});
+	  });
+	}
+	
 	function enableClient(id) {
 		jConfirm('Are you sure you would like to enable this client?','Enable Confirmation',function(r) {
 			if(r) {
@@ -26,7 +45,7 @@
 					url:'/admin/clients/enable?cid='+id,
 					success:function(c) {
 						if(c) {
-							window.location.reload();	
+							clientListTable();	
 						}else {
 							jAlert('There was an error enabling the client you requested. Please try again.','Enable Error');
 						}
@@ -44,7 +63,7 @@
 					url:'/admin/clients/disable?cid='+id,
 					success:function(c) {
 						if(c) {
-							window.location.reload();	
+							clientListTable();	
 						}else {
 							jAlert('There was an error disabling the client you requested. Please try again.','Disable Error');
 						}
