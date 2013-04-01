@@ -227,9 +227,9 @@ function load_client_websites($cid = false) {
 				$status_img = '<a style="margin-left:5px;" title="Enable Website" href="javascript:enableWebsite(\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/play.png" alt="Enable Website" /></a>';	
 			}
 			$table .= '<tr>';
-			$table .= '<td>' . $website->VendorName . '</td>';
+			$table .= '<td><p>' . $website->VendorName . '</p></td>';
 			$table .= '<td><a href="' . $website->URL . '" target="_blank">' . $website->URL . '</a></td>';
-			$table .= '<td>' . $website->Description . '</td>';
+			$table .= '<td class="descCell"><p id="web_' . $website->ID . '">' . $website->Description . '</p></td>';
 			$table .= '<td style="text-align:center;">' . $edit_img . $status_img . '</td>';
 			$table .= '</tr>';
 		endforeach;
@@ -246,6 +246,75 @@ function load_client_websites($cid = false) {
 		//$html .= anchor('javascript:addWebsite(\'' . $cid . '\')', 'Add Website', 'class="greenBtn floatRight button" style="margin-top:10px;margin-bottom:10px;" id="add_website_btn"');
 	}
 	
+	$html .= '<script type="text/javascript">				
+				jQuery("a.copyClipboard").click(function(e) {
+    				e.preventDefault();
+    				window.prompt("Press ctrl/cmd + c to copy text", jQuery(this).prev("p").text());
+				});</script>';
+
+	
+	return $html;
+}
+
+function load_client_contacts($cid) {
+	$ci =& get_instance();
+	$ci->load->helper('string_parser');
+	$ci->load->model('administration');
+	$contacts = $ci->administration->getContacts($cid);
+	$html = '';
+	$table = '';
+	if($contacts) {
+		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
+		$table .= '<thead><tr><td>Title</td><td>Name</td><td>Email Address</td><td>Phone</td></tr></thead>';
+		$table .= '<tbody>';
+		foreach($contacts as $contact) {
+			$contact->Email = mod_parser($contact->Email, 'home,work');
+			$contact->Address 	= mod_parser($contact->Address);
+			$contact->Phone 	= mod_parser($contact->Phone, 'main,mobile,fax');
+			$table .= '<tr>';
+				$table .= '<td>' . $contact->JobTitle . '</td>';
+				$table .= '<td>' . $contact->FirstName . ' ' . $contact->LastName . '</td>';
+				$table .= '<td>' . '<span style="font-weight:bold;">Personal Email</span><br /><a href="mailto:' . $contact->Email["home"] . '">' . $contact->Email['home'] . '</a></span>' . ((isset($contact->Email['work'])) ? '<br /><span style="font-weight:bold;">Work Email</span><br /><a href="mailto:' . $contact->Email["work"] . '">' . $contact->Email['work'] . '</a></span>' : '') . '</td>';
+				$table .= '<td>'  . '<span style="font-weight:bold;">Direct</span><br /><span style="white-space:nowrap;"><a href="tel:' . $contact->Phone['main'] . '">' . $contact->Phone['main'] . '</a></span>' . ((isset($contact->Phone['mobile'])) ? '<br /><span style="font-weight:bold;">Mobile</span><br /><span style="white-space:nowrap;"><a href="tel:' . $contact->Phone['mobile'] . '">' . $contact->Phone['mobile'] . '</a></span>' : '') . ((isset($contact->Phone['fax'])) ? '<br /><span style="font-weight:bold;">Fax</span><br /><span style="white-space:nowrap;"><a href="tel:' . $contact->Phone['fax'] . '">' . $contact->Phone['fax'] . '</a></span>' : '') . '<td>';
+			$table .= '</tr>';	
+		}
+		$table .= '</tbody></table>';
+	}else {
+		$html .= '<p>No contacts found for this client.</p>';	
+	}
+	
+	$html .= $table;
+	
+	return $html;
+}
+
+function load_client_related_users($cid) {
+	$ci =& get_instance();
+	$ci->load->helper('string_parser');
+	$ci->load->model('administration');
+	$ci->load->model('members');
+	$users = $ci->administration->getUsersOfClient($cid);
+	$html = '';
+	$table = '';
+	if($users) {
+		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
+		$table .= '<thead><tr><td>Avatar</td><td>Username</td><td>Name</td><td>Member Since</td></tr></thead>';
+		$table .= '<tbody>';
+		foreach($users as $user) {
+			$avatar = $ci->members->get_user_avatar($user->ID);
+			$table .= '<tr>';
+			$table .= '<td>' . $avatar . '</td>';
+			$table .= '<td>' . $user->Username . '</td>';
+			$table .= '<td>' . $user->FirstName . ' ' . $user->LastName . '</td>';
+			$table .= '<td>' . $user->MemberSince . '</td>';
+			$table .= '</tr>';	
+		}
+		$table .= '</tbody></table>';
+	}else {
+		$html .= '<p>No users found for this client.</p>';	
+	}
+	
+	$html .= $table;
 	return $html;
 }
 

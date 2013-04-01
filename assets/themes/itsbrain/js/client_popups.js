@@ -15,7 +15,17 @@
 	}
 	
 	function viewClient(id) {
-		alert(id);
+		jQuery.ajax({
+			type:"GET",
+			url:'/admin/clients/view?cid='+id,
+			success:function(data) {
+				if(data) {
+					jQuery('#viewClientInfo').html(data);
+				}else {
+					jAlert('There was an error finding the client in our system. Please try again.','View Error');
+				}
+			}
+		});
 	}
 	
 	function clientListTable() {
@@ -45,7 +55,8 @@
 					url:'/admin/clients/enable?cid='+id,
 					success:function(c) {
 						if(c) {
-							clientListTable();	
+							clientListTable();
+							writeDealerDropdown();	
 						}else {
 							jAlert('There was an error enabling the client you requested. Please try again.','Enable Error');
 						}
@@ -64,6 +75,7 @@
 					success:function(c) {
 						if(c) {
 							clientListTable();	
+							writeDealerDropdown();
 						}else {
 							jAlert('There was an error disabling the client you requested. Please try again.','Disable Error');
 						}
@@ -212,7 +224,8 @@
 						success:function(data) {
 							jQuery('#websites').html(data);
 							jQuery('#loader').delay(2000).fadeOut('fast',function() {
-								jQuery('#websites').slideDown('fast');
+								jQuery('#websites').slideDown('fast',function() {
+								});
 							});
 						}
 					});

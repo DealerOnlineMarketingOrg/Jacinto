@@ -16,7 +16,7 @@
                 </ul>
             </div>
             <div class="dealerDropdowns">
-                <div class="rowElem searchDrop" style="float:left;margin-right:5px;">
+                <div id="myDealers" class="rowElem searchDrop" style="float:left;margin-right:5px;">
 					<?= dealer_selector(); ?>        
             	</div>
             </div>

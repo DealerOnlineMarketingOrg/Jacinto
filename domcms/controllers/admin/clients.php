@@ -4,6 +4,7 @@ class Clients extends DOM_Controller {
 
 	public $agency_id;
 	public $group_id;
+	public $client_id;
 
     public function __construct() {
         parent::__construct();
@@ -19,6 +20,10 @@ class Clients extends DOM_Controller {
         $this->agency_id = $this->user['DropdownDefault']->SelectedAgency;
         $this->group_id = $this->user['DropdownDefault']->SelectedGroup;
 		$this->activeNav = 'admin';
+		
+		if(isset($_GET['cid'])) {
+			$this->client_id = $_GET['cid'];
+		}
     }
 	
 	public function load_table($return = false) {
@@ -195,8 +200,6 @@ class Clients extends DOM_Controller {
 			'CLIENT_Code'=>$this->security->xss_clean($this->input->post('ClientCode')),
 			'CLIENT_Tag'=>$this->security->xss_clean($this->input->post('tags')),
 			'CLIENT_ActiveTS'=>date(FULL_MILITARY_DATETIME),
-			'GROUP_ID'=>$this->user['DropdownDefault']->SelectedGroup,
-			'CLIENT_Active'=>1
 		);
 		
 		$rep_data = array();
@@ -228,7 +231,7 @@ class Clients extends DOM_Controller {
 					'ID'=>$this->security->xss_clean($this->input->post('GoogleID')),
 					'ClientID'=>$this->security->xss_clean($this->input->post('ClientID')),
 				);
-				array_merge($google_group,$google_group_add);
+				$google_group = $google_group + $google_group_add;
 				array_push($rep_data,$google_group);
 			}
 			
@@ -237,7 +240,7 @@ class Clients extends DOM_Controller {
 					'ID'=>$this->security->xss_clean($this->input->post('YelpID')),
 					'ClientID'=>$this->security->xss_clean($this->input->post('ClientID')),
 				);
-				array_merge($yelp_group,$yelp_group_add);
+				$yelp_group = $yelp_group + $yelp_group_add;
 				array_push($rep_data,$yelp_group);
 			}
 			
@@ -246,7 +249,7 @@ class Clients extends DOM_Controller {
 					'ID'=>$this->security->xss_clean($this->input->post('YahooID')),
 					'ClientID'=>$this->security->xss_clean($this->input->post('ClientID')),
 				);
-				array_merge($yahoo_group,$yahoo_group_add);
+				$yahoo_group = $yahoo_group + $yahoo_group_add;
 				array_push($rep_data,$yahoo_group);
 			}
 			
@@ -271,11 +274,14 @@ class Clients extends DOM_Controller {
 		}elseif(isset($_GET['gid'])) { //were adding new client here
 			
 			$add_client_data = array(
+				'GROUP_ID' => $this->user['DropdownDefault']->SelectedGroup,
+				'CLIENT_Active' => $this->security->xss_clean($this->input->post('Status')),
 				'CLIENT_Created'=>date(FULL_MILITARY_DATETIME),
 			);
 			
-			array_merge($client_data,$add_client_data);
-			$client = $this->administration->addClient($client_data);
+			//merge add fields to array
+			$client_info = $client_data + $add_client_data;
+			$client = $this->administration->addClient($client_info);
 			if($client) {
 				if(isset($google_group) OR isset($yelp_group) OR isset($yahoo_group)) {
 					$client_id = $client;
@@ -285,21 +291,21 @@ class Clients extends DOM_Controller {
 					
 					if(isset($google_group)) {
 						if(count($google_group) > 0) {
-							array_merge($google_group,$rep_push);
+							$google_group = $google_group + $rep_push;
 							array_push($rep_data,$google_group);
 						}
 					}
 					
 					if(isset($yelp_group)) {
 						if(count($yelp_group) > 0) {
-							array_merge($yelp_group,$rep_push);
+							$yelp_group = $yelp_group + $rep_push;
 							array_push($rep_data,$yelp_group);
 						}
 					}
 					
 					if(isset($yahoo_group)) {
 						if(count($yahoo_group) > 0) {
-							array_merge($yahoo_group,$rep_push);
+							$yahoo_group = $yahoo_group + $rep_push;
 							array_push($rep_data,$yahoo_group);
 						}
 					}
@@ -370,12 +376,12 @@ class Clients extends DOM_Controller {
 			$client->Address = (isset($client->Address)) ? mod_parser($client->Address) : false;
 			$client->Phone = (isset($client->Phone)) ? mod_parser($client->Phone) : false;
 			$client->Reviews = array(
-				'Google'   => $this->administration->getSelectedClientsReviews($client_id,1)->URL,
-				'GoogleID' => $this->administration->getSelectedClientsReviews($client_id,1)->ID,
-				'Yelp'     => $this->administration->getSelectedClientsReviews($client_id,2)->URL,
-				'YelpID'   => $this->administration->getSelectedClientsReviews($client_id,2)->ID,
-				'Yahoo'    => $this->administration->getSelectedClientsReviews($client_id,3)->URL,
-				'YahooID'  => $this->administration->getSelectedClientsReviews($client_id,3)->ID
+				'Google'   => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->URL : FALSE,
+				'GoogleID' => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->ID  : FALSE,
+				'Yelp'     => ($this->administration->getSelectedClientsReviews($client_id,2)) ? $this->administration->getSelectedClientsReviews($client_id,2)->URL : FALSE,
+				'YelpID'   => ($this->administration->getSelectedClientsReviews($client_id,2)) ? $this->administration->getSelectedClientsReviews($client_id,2)->ID  : FALSE,
+				'Yahoo'    => ($this->administration->getSelectedClientsReviews($client_id,3)) ? $this->administration->getSelectedClientsReviews($client_id,3)->URL : FALSE,
+				'YahooID'  => ($this->administration->getSelectedClientsReviews($client_id,3)) ? $this->administration->getSelectedClientsReviews($client_id,3)->ID  : FALSE
 			);
 			$data = array(
 				'client' => $client,
@@ -436,16 +442,31 @@ class Clients extends DOM_Controller {
 	}
 	
 	public function View() {
-		$client = $this->administration->getClient($this->input->post('view_id'));
-		
-		$client->Name = $client->Name;
+		$this->load->model('administration');
+		$client_id = $_GET['cid'];
+		$client          = $this->administration->getSelectedClient($_GET['cid']);
+		$client->Name    = $client->Name;
 		$client->Address = (isset($client->Address)) ? mod_parser($client->Address) : false;
-		$client->Phone = (isset($client->Phone)) ? mod_parser($client->Phone) : false;
-		$client->Notes = $client->Notes;
-		$data = array(
-			'display'=>$client
+		$client->Phone   = (isset($client->Phone)) ? mod_parser($client->Phone) : false;
+		$client->Reviews = array(
+			'Google'   => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->URL : FALSE,
+			'GoogleID' => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->ID  : FALSE,
+			'Yelp'     => ($this->administration->getSelectedClientsReviews($client_id,2)) ? $this->administration->getSelectedClientsReviews($client_id,2)->URL : FALSE,
+			'YelpID'   => ($this->administration->getSelectedClientsReviews($client_id,2)) ? $this->administration->getSelectedClientsReviews($client_id,2)->ID  : FALSE,
+			'Yahoo'    => ($this->administration->getSelectedClientsReviews($client_id,3)) ? $this->administration->getSelectedClientsReviews($client_id,3)->URL : FALSE,
+			'YahooID'  => ($this->administration->getSelectedClientsReviews($client_id,3)) ? $this->administration->getSelectedClientsReviews($client_id,3)->ID  : FALSE
 		);
-		$this->LoadTemplate('pages/details_client',$data);
+		
+		$data = array(
+			'client'   => $client,
+			//'websites' => load_client_websites($this->client_id),
+			//'contacts' => load_client_contacts($this->client_id),
+			//'users'    => load_client_related_users($this->client_id),
+		);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/view_client',$data);
+		
+		//print_object($client);
+		
 	}
 
 }

@@ -107,7 +107,6 @@
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
-			                
 			                <div class="rowElem noborder">
 			                	<label>Yahoo Review</label>
 			                    <div class="formRight">
@@ -132,6 +131,7 @@
 			                 
 			                <div class="submitForm">
                             	<?php if($client) { ?>
+                                	<input type="hidden" name="Status" value="<?= $client->Status; ?>" />
 			               			<input type="hidden" name="ClientID" value="<?= $client->ClientID; ?>" />
                                 <?php } ?>
 			                    <input type="submit" value="submit" class="redBtn" />
@@ -183,11 +183,13 @@
 						jAlert('The client was edited successfully','Success',function() {
 							jQuery('#editClient').dialog('close');
 							clientListTable();
+							writeDealerDropdown()
 						});
 					}else {
 						jAlert('The client was added successfully','Success',function() {
 							jQuery('#editClient').dialog('close');
 							clientListTable();
+							writeDealerDropdown()
 						});
 					}
 				}else {
@@ -195,11 +197,13 @@
 						jAlert('The edited changes could not be processed. Please contact support or try again','Error',function() {
 							jQuery('#editClient').dialog('close');
 							clientListTable();
+							writeDealerDropdown()
 						});
 					}else {
 						jAlert('The client you are trying to add could not be added. Please try again','Error',function() {
 							jQuery('#editClient').dialog('close');
 							clientListTable();
+							writeDealerDropdown()
 						});
 					}
 				}

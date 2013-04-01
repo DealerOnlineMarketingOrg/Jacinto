@@ -375,10 +375,7 @@ class Administration extends CI_Model {
 	
 	public function addClient($data) {
 		if($this->db->insert('Clients',$data)) {
-			$this->db->where($data);
-			$this->db->order_by('CLIENT_ActiveTS','desc');
-			$query = $this->db->get('Clients',1);
-			return $query->row()->CLIENT_ID;
+			return $this->db->insert_id();
 		}else {
 			return FALSE;
 		}
@@ -694,6 +691,16 @@ class Administration extends CI_Model {
 		$sql = 'SELECT CLIENT_ID as ID FROM Clients WHERE GROUP_ID = "' . $id . '"';
 		$query = $this->db->query($sql);
 		return ($query) ? $query->result() : FALSE;	
+	}
+	
+	public function getUsersOfClient($cid) {
+		$this->db->select('u.USER_ID as ID,u.USER_Name as Username,d.DIRECTORY_FirstName as FirstName,d.DIRECTORY_LastName as LastName,ui.USER_Created as MemberSince');
+		$this->db->from('Users u');
+		$this->db->join('Users_Info ui','ui.USER_ID = u.USER_ID','right');
+		$this->db->join('Directories d','d.DIRECTORY_ID = ui.DIRECTORY_ID','right');
+		$this->db->where('d.CLIENT_Owner',$cid);
+		$query = $this->db->get();
+		return ($query) ? $query->result() : FALSE;
 	}
     
     public function getContacts($id) {
