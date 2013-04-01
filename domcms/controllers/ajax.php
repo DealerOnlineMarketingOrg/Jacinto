@@ -99,6 +99,10 @@ class Ajax extends DOM_Controller {
 		$this->session->sess_write();
 		
 	}
+	
+	public function write_dealer_dropdown() {
+		echo dealer_selector();	
+	}
 
     /*
       ADMIN CONTROLLERS

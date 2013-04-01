@@ -67,7 +67,8 @@
 						$group->Value = 'g' . $group->GID;
 						//create array to hold all clients
 						$group->Clients = array();
-						$i = 0; //need to count how many clients meet our request so we can move the client up a level if they are by themselves.						//loop through each client 
+						$i = 0; //need to count how many clients meet our request so we can move the client up a level if they are by themselves.						
+						//loop through each client 
 						foreach($clients as $client) {
 							//check to see if the client belongs to this group
 							if($client->GID == $group->GID) {
@@ -139,7 +140,7 @@
 							jQuery.ajax({
 								url:"/ajax/name_changer",
 								data:({Agency:name,Level:level}),
-								method:"post",
+								method:"POST",
 								success:function(data) {
 									//jQuery("#clientInformation").html(data);
 									location.reload();

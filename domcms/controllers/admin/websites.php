@@ -28,7 +28,7 @@ class Websites extends DOM_Controller {
 	public function Load_table() {
 		$this->load->helper('template');
 		$table = load_client_websites($this->client_id);
-		echo $table;
+		print $table;
 	}
 	
 	public function add() {
@@ -37,12 +37,12 @@ class Websites extends DOM_Controller {
 			//var_dump($form);
 			$add = $this->administration->addWebsiteInfo($form);
 			if($add) {
-				echo 1;
+				print 1;
 			}else {
-				echo 0;
+				print 0;
 			}
 		}else {
-			echo 0;
+			print 0;
 		}
 	}
 	
@@ -51,12 +51,12 @@ class Websites extends DOM_Controller {
 			$form = $this->input->post();
 			$add = $this->administration->editWebsiteInfo($form);
 			if($add) {
-				echo 1;
+				print 1;
 			}else {
-				echo 0;
+				print 0;
 			}
 		}else {
-			echo 0;
+			print 0;
 		}
 	}
 	
@@ -64,12 +64,12 @@ class Websites extends DOM_Controller {
 		if(isset($_GET['wid'])) {
 			$disable = $this->administration->disableWebsite($this->website_id);
 			if($disable) {
-				echo $disable;	
+				print $disable;	
 			}else {
-				echo 0;	
+				print 0;	
 			}
 		}else {
-			echo 0;	
+			print 0;	
 		}
 	}
 	
@@ -77,30 +77,31 @@ class Websites extends DOM_Controller {
 		if(isset($_GET['wid'])) {
 			$enable = $this->administration->enableWebsite($this->website_id);
 			if($enable) {
-				echo $enable;	
+				print $enable;	
 			}else {
-				echo 0;	
+				print 0;	
 			}
 		}else {
-			echo 0;	
+			print 0;	
 		}
 	}
-
 	
 	public function form() {
-		$client = $this->administration->getClient($this->client_id);
-		$vendors = $this->administration->getAllVendors();
-		$data = array(
-			'client'=>$client,
-			'vendors'=>$vendors,
-			'website'=>((isset($this->website_id)) ? $this->administration->getWebsite($this->website_id) : FALSE),
-		);
-		if(isset($this->website_id)) {
-			$site = $this->administration->getWebsite($this->website_id);
-			array_push($data,array('website'=>$site));
-			//array_push($data, array('website' => $this->administration->getWebsite($this->website_id)));}
+		if(isset($_GET['cid'])) {
+			$this->client_id = $_GET['cid'];
+			//get the right client info
+			$client = $this->administration->getClient($_GET['cid']);
+			//vendors are not associated per client
+			$vendors = $this->administration->getAllVendors();
+			//prepare the array
+			$data = array(
+				'client'=>$client,
+				'vendors'=>$vendors,
+				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE),
+			);
+			//print_object($this->administration->getWebsite($_GET['wid']));
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
 		}
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
 	}
 	
 }

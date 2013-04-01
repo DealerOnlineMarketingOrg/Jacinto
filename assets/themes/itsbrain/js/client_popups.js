@@ -15,7 +15,36 @@
 	}
 	
 	function viewClient(id) {
-		alert(id);
+		jQuery.ajax({
+			type:"GET",
+			url:'/admin/clients/view?cid='+id,
+			success:function(data) {
+				if(data) {
+					jQuery('#viewClientInfo').html(data);
+				}else {
+					jAlert('There was an error finding the client in our system. Please try again.','View Error');
+				}
+			}
+		});
+	}
+	
+	function clientListTable() {
+	  jQuery('#loader_block').slideDown('fast',function() {
+		jQuery.ajax({
+		  type:"GET",
+		  url:'/admin/clients/load_table',
+		  success:function(data) {
+			if(data) {
+			  jQuery('#dataClient').html(data);
+			  jQuery('#loader_block').slideUp('fast',function() {
+				jQuery('#dataClient').slideDown('fast');
+			  });
+			}else {
+			  jQuery('#dataClient').html('<p>No clients found at this level. Please use the Dealer Dropdown to change to a different group.</p>');
+			}
+		  }
+		});
+	  });
 	}
 	
 	function enableClient(id) {
@@ -26,7 +55,8 @@
 					url:'/admin/clients/enable?cid='+id,
 					success:function(c) {
 						if(c) {
-							window.location.reload();	
+							clientListTable();
+							writeDealerDropdown();	
 						}else {
 							jAlert('There was an error enabling the client you requested. Please try again.','Enable Error');
 						}
@@ -44,7 +74,8 @@
 					url:'/admin/clients/disable?cid='+id,
 					success:function(c) {
 						if(c) {
-							window.location.reload();	
+							clientListTable();	
+							writeDealerDropdown();
 						}else {
 							jAlert('There was an error disabling the client you requested. Please try again.','Disable Error');
 						}
@@ -106,13 +137,13 @@
 		})
 	}
 	
-	function editWebsiteForm(id,cid) {
+	function editWebsiteForm(cid,wid) {
 		jQuery.ajax({
 			type:'GET',
-			url:'/admin/websites/form?cid='+cid+'&wid='+id,
-			//data:{client_id:id},
+			url:'/admin/websites/form?cid='+cid+'&wid='+wid,
 			success:function(data) {
 				if(data){
+					jQuery('#editWebsite').empty();
 					jQuery('#editWebsite').html(data);
 				}else {
 					jAlert('There was a problem finding the client you needed. Please try again.','Add Website Error');
@@ -193,7 +224,8 @@
 						success:function(data) {
 							jQuery('#websites').html(data);
 							jQuery('#loader').delay(2000).fadeOut('fast',function() {
-								jQuery('#websites').slideDown('fast');
+								jQuery('#websites').slideDown('fast',function() {
+								});
 							});
 						}
 					});
@@ -203,7 +235,7 @@
 	}
 
 	function reloadWebsites(cid) {
-		//jQuery('#addWebsiteForm').dialog('close');	
+		jQuery('#addWebsiteForm').dialog('close');	
 		jQuery('#websites').slideUp('fast',function() {
 			jQuery('#websites').empty();
 			jQuery('#loader').fadeIn('fast',function() {
@@ -222,3 +254,17 @@
 			});
 		});					
 	}
+
+function addClient() {
+  jQuery.ajax({
+    type:'GET',
+    url:'/admin/clients/add_form',
+    success:function(data) {
+      if(data) {
+        jQuery('#addClientsForm').html(data);
+      }else {
+        jAlert('There was an error with your request. Please Try Again.','Error');
+      }
+    }
+  });
+}

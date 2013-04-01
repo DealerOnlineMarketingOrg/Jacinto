@@ -11,6 +11,7 @@ function filterTags() {
 	}
 }
 
+
 function disableUser(id) {
 	jConfirm('Are you sure you want to disable this user?','Disable User Confirmation',function(r) {
 		if(r){
@@ -57,7 +58,27 @@ function viewUser(link,id) {
 	})
 }
 
+function writeDealerDropdown() {
+	$('#myDealers').slideUp('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/ajax/write_dealer_dropdown',
+			success:function(dd) {
+				if(dd) {
+					$('#myDealers').html(dd).slideDown('fast');	
+					$(".chzn-select").chosen();
+				}else {
+					jAlert('Problem rewriting the dropdown.','Error');	
+				}
+			}
+	   });
+	});
+}
+
 $(function() {
+	
+	
+	
 	//===== Autocomplete =====//
 	
 	var availableTags = ["Green",

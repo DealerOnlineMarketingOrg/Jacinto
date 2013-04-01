@@ -112,10 +112,32 @@ class Administration extends CI_Model {
 	}
 	
 	public function getWebsite($wid) {
-		$this->db->select('w.WEB_ID as ID,w.WEB_Vendor as Vendor,w.WEB_GoogleUACode as GoogleUACode,w.WEB_GoogleWebToolsMetaCode as GoogleWebToolsMetaCode,w.WEB_GooglePlusCode as GooglePlusCode,w.WEB_BingCode as BingCode,w.WEB_YahooCode as YahooCode,w.WEB_GlobalScript as GlobalScript,w.WEB_Type as Type,w.WEB_Url as URL,w.WEB_Notes as Description,w.WEB_Active as Status,w.WEB_ActiveTS as LastUpdate,w.WEB_Created as Created,v.VENDOR_Name as VendorName,v.VENDOR_Address as VendorAddress,v.VENDOR_Phone as VendorPhone,v.Vendor_Notes as VendorDescription,v.VENDOR_Active as VendorStatus');
+		
+		$get = 'w.WEB_ID as ID,
+				w.WEB_Vendor as Vendor,
+				w.WEB_GoogleUACode as GoogleUACode,
+				w.WEB_GoogleWebToolsMetaCode as GoogleWebToolsMetaCode,
+				w.WEB_GooglePlusCode as GooglePlusCode,
+				w.WEB_BingCode as BingCode,
+				w.WEB_YahooCode as YahooCode,
+				w.WEB_GlobalScript as GlobalScript,
+				w.WEB_Type as Type,
+				w.WEB_Url as URL,
+				w.WEB_Notes as Description,
+				w.WEB_Active as Status,
+				w.WEB_ActiveTS as LastUpdate,
+				w.WEB_Created as Created,
+				v.VENDOR_Name as VendorName,
+				v.VENDOR_Address as VendorAddress,
+				v.VENDOR_Phone as VendorPhone,
+				v.Vendor_Notes as VendorDescription,
+				v.VENDOR_Active as VendorStatus';
+		
+		$this->db->select($get);
 		$this->db->from('Websites w');
 		$this->db->join('Vendors v','w.WEB_Vendor = v.VENDOR_ID');
 		$this->db->where('w.WEB_ID',$wid);
+		//$this->db->where('w.CLIENT_ID',$cid);
 		$website = $this->db->get();
 		
 		return ($website) ? $website->row() : FALSE;
@@ -353,13 +375,14 @@ class Administration extends CI_Model {
 	
 	public function addClient($data) {
 		if($this->db->insert('Clients',$data)) {
-			$this->db->where($data);
-			$this->db->order_by('CLIENT_ActiveTS','desc');
-			$query = $this->db->get('Clients',1);
-			return $query->row()->CLIENT_ID;
+			return $this->db->insert_id();
 		}else {
 			return FALSE;
 		}
+	}
+	
+	public function addReputation($group) {
+		return ($this->db->insert_batch('Reputations',$group)) ? TRUE : FALSE;
 	}
 	
 	public function editClient($data, $id) {
@@ -430,18 +453,10 @@ class Administration extends CI_Model {
     }
     
     public function getSelectedClient($id) {
-        $sql = 'SELECT
-                c.CLIENT_ID as ClientID,
-                c.CLIENT_Name as Name,
-                c.CLIENT_Address as Address,
-                c.CLIENT_Phone as Phone,
-                c.CLIENT_Notes as Description,
-                c.CLIENT_Code as Code,
-                c.CLIENT_Tag as Tag,
-                c.CLIENT_Active as Status
-                FROM Clients c
-                WHERE c.CLIENT_ID = "' . $id . '";';
-		$query = $this->db->query($sql);
+		$this->db->select('c.CLIENT_ID as ClientID,c.CLIENT_Name as Name,c.CLIENT_Address as Address,c.CLIENT_Phone as Phone,c.CLIENT_Notes as Description,c.CLIENT_Code as Code,c.CLIENT_Tag as Tag,c.CLIENT_Active as Status,c.GROUP_ID as GroupID');
+		$this->db->from('Clients c');
+		$this->db->where('c.CLIENT_ID',$id);
+		$query = $this->db->get();
 		return ($query) ? $query->row() : FALSE;
     }
 	
@@ -473,6 +488,20 @@ class Administration extends CI_Model {
                 WHERE c.CLIENT_ID = "' . $id . '" ORDER BY c.CLIENT_Name ASC;';		
 		$query = $this->db->query($sql);
 		return ($query) ? $query->result() : FALSE;
+	}
+	
+	public function updateClient($cid,$data) {
+		$this->db->where('CLIENT_ID',$cid);
+		return ($this->db->update('Clients',$data)) ? TRUE : FALSE;
+	}
+	
+	public function updateSingleReputation($id,$rep) {
+		$this->db->where('ID',$id);
+		return ($this->db->update('Reputations',$rep)) ? TRUE : FALSE;
+	}
+	
+	public function updateReputations($group) {
+		return ($this->db->update_batch('Reputations',$group,'ID')) ? TRUE : FALSE;
 	}
 	
 	public function doReviewsExist($client_id,$service_id) {
@@ -662,6 +691,16 @@ class Administration extends CI_Model {
 		$sql = 'SELECT CLIENT_ID as ID FROM Clients WHERE GROUP_ID = "' . $id . '"';
 		$query = $this->db->query($sql);
 		return ($query) ? $query->result() : FALSE;	
+	}
+	
+	public function getUsersOfClient($cid) {
+		$this->db->select('u.USER_ID as ID,u.USER_Name as Username,d.DIRECTORY_FirstName as FirstName,d.DIRECTORY_LastName as LastName,ui.USER_Created as MemberSince');
+		$this->db->from('Users u');
+		$this->db->join('Users_Info ui','ui.USER_ID = u.USER_ID','right');
+		$this->db->join('Directories d','d.DIRECTORY_ID = ui.DIRECTORY_ID','right');
+		$this->db->where('d.CLIENT_Owner',$cid);
+		$query = $this->db->get();
+		return ($query) ? $query->result() : FALSE;
 	}
     
     public function getContacts($id) {

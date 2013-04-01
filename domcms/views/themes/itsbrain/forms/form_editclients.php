@@ -3,11 +3,14 @@
         <div class="uiForm">
 			<style type="text/css">
 				label{margin-top:5px;float:left;}
+				div.formError{z-index:2000 !important;}
 			</style>
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
             		<li class="activeTab"><a href="javascript:void(0);" rel="clientInfo">Client Information</a></li>
-            		<li><a href="javascript:void(0);" rel="websites">Websites</a></li>
+            		<?php if(isset($websites)) { ?>
+                    <li><a href="javascript:void(0);" rel="websites">Websites</a></li>
+                    <?php } ?>
             		<!-- <li><a href="#contacts">Contacts</a></li>
             		<li><a href="#users">Users</a></li>
             		<li><a href="#vendors">Vendors</a></li> -->
@@ -88,8 +91,8 @@
 			                <div class="rowElem noborder">
 			                	<label>Google Review</label>
 			                    <div class="formRight">
-			                    	<?= form_input(array('class'=>'validate[custum[url]]','name'=>'GoogleReviewURL','id'=>'GoogleReview','value'=>($client) ? $client->Reviews['Google'] : '')); ?>
-			                        <?= form_hidden('GoogleID',($client->Reviews['GoogleID']) ? $client->Reviews['GoogleID'] : 0); ?>
+			                    	<?= form_input(array('class'=>'validate[custum[url]]','name'=>'GoogleReviewURL','id'=>'GoogleReview','value'=>($client) ? ((isset($client->Reviews['Google'])) ? $client->Reviews['Google'] : '') : '')); ?>
+			                        <?= form_hidden('GoogleID',(isset($client->Reviews['GoogleID'])) ? $client->Reviews['GoogleID'] : 0); ?>
 			                        <p class="formNote">The Web Address for the clients Google Review Page</p>
 			                    </div>
 			                    <div class="fix"></div>
@@ -98,18 +101,17 @@
 			                <div class="rowElem noborder">
 			                	<label>Yelp Review</label>
 			                    <div class="formRight">
-			                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YelpReviewURL','id'=>'YelpReview','value'=>($client) ? $client->Reviews['Yelp'] : '')); ?>
-			                        <?= form_hidden('YelpID',($client->Reviews['YelpID']) ? $client->Reviews['YelpID'] : 0); ?>
+			                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YelpReviewURL','id'=>'YelpReview','value'=>($client) ? ((isset($client->Reviews['Yelp'])) ? $client->Reviews['Yelp'] : '') : '')); ?>
+			                        <?= form_hidden('YelpID',(isset($client->Reviews['YelpID'])) ? $client->Reviews['YelpID'] : 0); ?>
 			                        <p class="formNote">The Web Address for the clients Yelp Review Page</p>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
-			                
 			                <div class="rowElem noborder">
 			                	<label>Yahoo Review</label>
 			                    <div class="formRight">
-			                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YahooReviewURL','id'=>'YahooReview','value'=>($client) ? $client->Reviews['Yahoo'] : '')); ?>
-			                        <?= form_hidden('YahooID',($client->Reviews['YahooID']) ? $client->Reviews['YahooID'] : 0); ?>
+			                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YahooReviewURL','id'=>'YahooReview','value'=>($client) ? ((isset($client->Reviews['Yahoo'])) ? $client->Reviews['Yahoo'] : '') : '')); ?>
+			                        <?= form_hidden('YahooID',(isset($client->Reviews['YahooID'])) ? $client->Reviews['YahooID'] : 0); ?>
 			                        <p class="formNote">The Web Address for the clients Yahoo Review Page</p>
 			                    </div>
 			                </div>
@@ -129,6 +131,7 @@
 			                 
 			                <div class="submitForm">
                             	<?php if($client) { ?>
+                                	<input type="hidden" name="Status" value="<?= $client->Status; ?>" />
 			               			<input type="hidden" name="ClientID" value="<?= $client->ClientID; ?>" />
                                 <?php } ?>
 			                    <input type="submit" value="submit" class="redBtn" />
@@ -137,9 +140,11 @@
 			           </fieldset>
     				<?= form_close(); ?>
     				</div>
+                    <?php if(isset($websites)) { ?>
     				<div id="websites" class="tab_content" style="display:none;">
                     	<?= (isset($websites)) ? $websites : ''; ?>
     				</div>
+                    <?php } ?>
                     <div id="loader" style="display:none;"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
     				<div class="fix"></div>
     			</div>	
@@ -149,6 +154,63 @@
 	</div>
 </div>
 <script type="text/javascript">
+	jQuery.mask.definitions['~'] = "[+-]";
+	jQuery(".maskDate").mask("99/99/9999",{completed:function(){alert("Callback when completed");}});
+	jQuery(".maskPhone").mask("(999) 999-9999");
+	jQuery(".maskPhoneExt").mask("(999) 999-9999? x99999");
+	jQuery(".maskIntPhone").mask("+33 999 999 999");
+	jQuery(".maskTin").mask("99-9999999");
+	jQuery(".maskSsn").mask("999-99-9999");
+	jQuery(".maskProd").mask("a*-999-a999", { placeholder: " " });
+	jQuery(".maskEye").mask("~9.99 ~9.99 999");
+	jQuery(".maskPo").mask("PO: aaa-999-***");
+	jQuery(".maskPct").mask("99%");
+
+	//reinitialize the validation plugin
+	jQuery("#valid,.valid").validationEngine({promptPosition : "right", scroll: true});
+	
+	jQuery('form.editClient,form.addClient').submit(function(e) {
+		e.preventDefault();
+		var formData = jQuery(this).serialize();
+		var type = '<?= ($client) ? 'edit' : 'add'; ?>';
+		jQuery.ajax({
+			type:'POST',
+			data:formData,
+			url:'<?php echo (($client) ? '/admin/clients/form?cid=' . $client->ClientID : '/admin/clients/form?gid=' . $this->user['DropdownDefault']->SelectedGroup); ?>',
+			success:function(resp) {
+				if(resp == '1') {
+					if(type != 'add') {
+						jAlert('The client was edited successfully','Success',function() {
+							jQuery('#editClient').dialog('close');
+							clientListTable();
+							writeDealerDropdown()
+						});
+					}else {
+						jAlert('The client was added successfully','Success',function() {
+							jQuery('#editClient').dialog('close');
+							clientListTable();
+							writeDealerDropdown()
+						});
+					}
+				}else {
+					if(type != 'add') {
+						jAlert('The edited changes could not be processed. Please contact support or try again','Error',function() {
+							jQuery('#editClient').dialog('close');
+							clientListTable();
+							writeDealerDropdown()
+						});
+					}else {
+						jAlert('The client you are trying to add could not be added. Please try again','Error',function() {
+							jQuery('#editClient').dialog('close');
+							clientListTable();
+							writeDealerDropdown()
+						});
+					}
+				}
+			}
+		});
+	});
+
 	jQuery('ul.tabs li a').live('click',function() {
 		//remove all activetabs
 		jQuery('ul.tabs').find('li.activeTab').removeClass('activeTab');
@@ -164,7 +226,7 @@
 	jQuery(".chzn-select").chosen();
 	jQuery("#editClient").dialog({
 		minWidth:800,
-		height:700,
+		height:500,
 		autoOpen: true,
 		modal: false
 	});
