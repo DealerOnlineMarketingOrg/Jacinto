@@ -20,7 +20,13 @@ class Passwords extends DOM_Controller {
 	
 		// Password page will only be for clients.
 		$level = $this->user['DropdownDefault']->LevelType;
-
+		// If not on Client level, go back to dashboard.
+		if ($level != 'c') {
+			throwError(newError('Passwords', -1, 'Sorry, the Password page is not available for ' . (($level == 'a') ? 'agencies' : 'groups') . '.',0,''));
+			redirect('/','refresh');
+			exit;
+		}
+		
 		$passwords = $this->administration->getPasswords($this->user['DropdownDefault']->SelectedClient);
 		
 		//table heading

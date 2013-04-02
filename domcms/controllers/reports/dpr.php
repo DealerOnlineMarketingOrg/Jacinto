@@ -60,6 +60,41 @@
 			echo $cost;
 		}
 		
+		public function eMail() {
+			$this->load->model('administration');
+	
+			$qu_contacts = $this->administration->getContacts($this->user['DropdownDefault']->SelectedClient);
+			
+			$contacts = array();
+			foreach ($qu_contacts as $qu_contact) {
+				$name = $qu_contact->FirstName . ' ' . $qu_contact->LastName;
+				if ($qu_contact->JobTitle != '')
+					$name .= ' (' . $qu_contact->JobTitle . ')';
+				$c['text'] = $name;
+				// Get work email from list.
+				$emails = explode(',', $qu_contact->Email);
+				$c['value'] = '';
+				foreach ($emails as $email) {
+					$emailParts = explode(':', $email);
+					if ($emailParts[0] == 'work')
+						$c['value'] = $emailParts[1];
+				}
+				$contacts[] = $c;
+			}
+			
+			$data = array (
+				'items' => $contacts,
+				'options' => $this->input->post()
+			);
+			
+			if ($contacts)
+				//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
+				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_input', $data);
+			else
+				//this returns nothing to the ajax call....therefor the ajax call knows to show a popup error.
+				echo 0;
+		}
+		
 		public function Load($page, $rdata = FALSE) {
 			$form = $this->input->post();
 				

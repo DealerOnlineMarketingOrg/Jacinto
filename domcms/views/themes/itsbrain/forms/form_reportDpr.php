@@ -1,6 +1,7 @@
 <!-- Content -->
 <div class="content hideTagFilter" id="container">
     <div class="title"><h5>Reports</h5></div>
+	<script type="text/javascript" src="<?php base_url(); ?>assets/themes/itsbrain/js/input_popups.js"></script>
     <?php notifyError(); ?>
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
@@ -80,6 +81,7 @@
                         <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
                     </div>
 				</div>
+                <div id="inputInfo"></div>
 			<?php } ?>
     	</fieldset>
     <?php echo  form_close(); ?>
@@ -111,6 +113,25 @@
 		});
 		
 		$('input#email').click(function() {
+			inputPopup({
+				type:'dualList',
+				dataFunc:'<?php base_url(); ?>dpr/eMail',
+				success:function(data) {
+					var addresses = '';
+					for (var i = 0; i < data.data.length; i++) {
+						if (data.data[i] != '') {
+							addresses += data.data[i];
+							if (i < data.data.length-1)
+								addresses += ',';
+						}
+					}
+					alert(addresses);
+				},
+				error:function() {alert('not won!');}
+			});
+		});
+		
+		function doEmail(recipients) {
 			var nl = "\n";
 			var email = {
 				sender_email:'dpr@dealeronlinemarketing.com',
@@ -131,7 +152,7 @@
 					dialogHtml.dialog();
 				}
 			});
-		});
+		};
 		
 		$(window).load (function() {
 			plotLineChart();

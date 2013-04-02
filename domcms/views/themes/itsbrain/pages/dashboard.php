@@ -1,6 +1,7 @@
 <!-- Content -->
     <div class="content hideTagFilter">
     	<div class="title"><h5>Dashboard</h5></div>
+        <?php notifyError(); ?>
         
         <!-- Statistics -->
         <div class="stats">

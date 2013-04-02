@@ -22,6 +22,7 @@ class Masterlist extends DOM_Controller {
 
     public function index() {
 		$html = '';
+		$scripts = '';
 		if($this->activeLevel != 1) {
 			$html .= '<div class="nNote nFailure"><p>The current page is not available on ' . (($this->activeLevel == 2) ? 'Group' : 'Client') . ' Level. Please use the Dealer Dropdown to change to Agency Level to view the Master List.</p></div>';
 		}else {
