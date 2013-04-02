@@ -459,14 +459,11 @@ class Clients extends DOM_Controller {
 		
 		$data = array(
 			'client'   => $client,
-			//'websites' => load_client_websites($this->client_id),
+			'websites' => load_client_websites($this->client_id,false),
 			//'contacts' => load_client_contacts($this->client_id),
 			//'users'    => load_client_related_users($this->client_id),
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/view_client',$data);
-		
-		//print_object($client);
-		
 	}
 
 }

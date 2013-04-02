@@ -183,13 +183,13 @@
 						jAlert('The client was edited successfully','Success',function() {
 							jQuery('#editClient').dialog('close');
 							clientListTable();
-							writeDealerDropdown()
+							writeDealerDropdown();
 						});
 					}else {
 						jAlert('The client was added successfully','Success',function() {
 							jQuery('#editClient').dialog('close');
 							clientListTable();
-							writeDealerDropdown()
+							writeDealerDropdown();
 						});
 					}
 				}else {
@@ -197,13 +197,13 @@
 						jAlert('The edited changes could not be processed. Please contact support or try again','Error',function() {
 							jQuery('#editClient').dialog('close');
 							clientListTable();
-							writeDealerDropdown()
+							writeDealerDropdown();
 						});
 					}else {
 						jAlert('The client you are trying to add could not be added. Please try again','Error',function() {
 							jQuery('#editClient').dialog('close');
 							clientListTable();
-							writeDealerDropdown()
+							writeDealerDropdown();
 						});
 					}
 				}

@@ -204,7 +204,7 @@ function getLiveChangesCount() {
 	endif;
 }
 
-function load_client_websites($cid = false) {
+function load_client_websites($cid = false, $actions = true) {
 	if(!$cid) {
 		$cid = $ci->user['DropdownDefault']->SelectedClient;
 	}
@@ -217,7 +217,7 @@ function load_client_websites($cid = false) {
 		//print_object($websites);
 		
 		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
-		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td><td>Actions</td></tr></thead>';
+		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td>' . ($actions) ? '<td>Actions</td>' : '' . '</tr></thead>';
 		$table .= '<tbody>';
 		foreach($websites as $website) :
 			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $cid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/dark/pencil.png" alt="Edit Website" /></a>';
@@ -230,7 +230,9 @@ function load_client_websites($cid = false) {
 			$table .= '<td><p>' . $website->VendorName . '</p></td>';
 			$table .= '<td><a href="' . $website->URL . '" target="_blank">' . $website->URL . '</a></td>';
 			$table .= '<td class="descCell"><p id="web_' . $website->ID . '">' . $website->Description . '</p></td>';
-			$table .= '<td style="text-align:center;">' . $edit_img . $status_img . '</td>';
+			if($actions) {
+				$table .= '<td style="text-align:center;">' . $edit_img . $status_img . '</td>';
+			}
 			$table .= '</tr>';
 		endforeach;
 		$table .= '</tbody></table>';
@@ -241,7 +243,7 @@ function load_client_websites($cid = false) {
 		$html .= '<p>No websites found for this client. You can add one by clicking the add website button below.</p>';
 	}
 	
-	if($ci->CheckModule('Website_Add')) {
+	if($ci->CheckModule('Website_Add') && $actions) {
 		$html .= '<a href="javascript:addWebsiteForm(\'' . $cid . '\');" class="greenBtn floatRight button" style="margin-top:10px;margin-bottom:10px;">Add Website</a>';
 		//$html .= anchor('javascript:addWebsite(\'' . $cid . '\')', 'Add Website', 'class="greenBtn floatRight button" style="margin-top:10px;margin-bottom:10px;" id="add_website_btn"');
 	}
