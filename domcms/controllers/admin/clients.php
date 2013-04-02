@@ -82,11 +82,6 @@ class Clients extends DOM_Controller {
 				$enable_img = '<img src="' . base_url() . THEMEIMGS . 'icons/notifications/accept.png" alt="Enable Client" />';
 				$enable_a = '<a class="actions_link" href="javascript:enableClient(\'' . $client->ClientID . '\');" title="Enable Client">' . $enable_img . '</a>';
 								
-				$edit_button = '<input data-client="' . $client->ClientID . '" title="Edit Client Information" type="image" src="' . base_url() . 'assets/themes/global/imgs/icons/color/pencil.png" name="edit_' . $client->ClientID . '" id="client_id_' . $client->ClientID . '" class="imageBtn editBtn" />';
-				
-				$view_button = '<input data-client="' . $client->ClientID . '" style="margin-left:10px;" title="View Client Information" type="image" src="' . base_url() . 'assets/themes/global/imgs/icons/color/application.png" name="view_' . $client->ClientID . '" id="viewClient_id_' . $client->ClientID . '" class="imageBtn viewBtn" />';
-				
-				$delete_button = '<input data-client="' . $client->ClientID . '" style="margin-left:10px;" title="Disable Client" type="image" src="' . base_url() . 'assets/themes/global/imgs/icons/color/cross.png" name="disable_' . $client->ClientID . '" id="disableClient_id_' . $client->ClientID . '" class="imageBtn disableBtn" />';
 				
 				//BUILD THE FORM ROW IN THE TABLE WITH NAME,DESCRIPTION,STATUS, and EDIT BUTTON, THE FORM ALSO HAS A HIDDEN ELEMENT WITH THE AGENCY ID, THIS IS WHAT WE
 				//USE TO POST TO THE EDIT PAGE TO GRAB THE CORRECT AGENCY FROM THE DB.	
@@ -459,14 +454,11 @@ class Clients extends DOM_Controller {
 		
 		$data = array(
 			'client'   => $client,
-			//'websites' => load_client_websites($this->client_id),
+			'websites' => load_client_websites($this->client_id,false),
 			//'contacts' => load_client_contacts($this->client_id),
 			//'users'    => load_client_related_users($this->client_id),
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/view_client',$data);
-		
-		//print_object($client);
-		
 	}
 
 }
