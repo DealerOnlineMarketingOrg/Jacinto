@@ -391,7 +391,7 @@ class Administration extends CI_Model {
 	}
 
     public function getAgencyByID($id) {
-    	$this->db->select('AGENCY_ID as Id,AGENCY_Name as Name,AGENCY_Notes as Description,AGENCY_Active as Status,AGENCY_Created as Created');
+    	$this->db->select('AGENCY_ID as ID,AGENCY_Name as Name,AGENCY_Notes as Description,AGENCY_Active as Status,AGENCY_Created as Created');
 		$this->db->from('Agencies');
 		$this->db->where('AGENCY_ID',$id);
 		$query = $this->db->get();

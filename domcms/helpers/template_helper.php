@@ -15,12 +15,12 @@ function GateKeeper($mod,$uPerm) {
 	
 	//check the permission levels
 	if (!$perms) {
-		redirect('/','refresh');
+		return false;
 	} else {
 		if ($uPerm >= $perms->Level) {
 			return TRUE;
 		} else {
-			redirect('/','refresh');
+			return false;
 		}
 	}
 }
@@ -240,7 +240,7 @@ function load_client_websites($cid = false, $actions = true) {
 		$html = $table;
 		//print_object($html);
 	}else {
-		$html .= '<p>No websites found for this client. You can add one by clicking the add website button below.</p>';
+		$html .= '<p>No websites found for this client.' . (($actions) ? ' You can add one by clicking the add website button below.' : '') . '</p>';
 	}
 	
 	if($ci->CheckModule('Website_Add') && $actions) {

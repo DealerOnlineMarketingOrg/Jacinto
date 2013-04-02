@@ -51,6 +51,7 @@ define('COMPANYURLLINK','<a href="http://www.dealeronlinemarketing.com" target="
 define('COMPANYURL','http://www.dealeronlinemarketing.com');
 define('THEMEDIR','ReActive');
 define('THEMEIMGS','assets/themes/itsbrain/imgs/');
+define('GLOBALIMGS','assets/themes/global/imgs/');
 define('DOMDIR','Global');
 define('COPYRIGHT', '&copy; Copyright 2013 DealerOnlineMarketing.com. All Rights Reserved.');
 define('LOGO', '<img src="/Assets/Global/imgs/login_logo.png" alt="Dealer Online Marketing" />');
