@@ -29,7 +29,7 @@
 			                <div class="rowElem noborder">
 			                    <label>Notes</label>
 			                    <div class="formRight">
-                                	<textarea disabled><?= $group->Description; ?></textarea>
+                                	<textarea name="textarea" cols="80" rows="8" disabled><?= $group->Description; ?></textarea>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
@@ -65,3 +65,7 @@
 		modal: false
 	});
 </script>
+<style type="text/css">
+	div.formRight{padding:0;}
+	div.ui-dialog input[type="text"]{margin:0;}
+</style>
