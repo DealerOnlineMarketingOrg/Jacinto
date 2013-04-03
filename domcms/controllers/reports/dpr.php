@@ -7,7 +7,8 @@
 			//loading the member model here makes it available for any member of the controller.
 			$this->load->model('getdpr');
 			$this->load->helper('charts_helper');
-			
+			$this->load->model('administration');
+
 			$this->activeNav = 'reports';
 		}
 		
@@ -61,18 +62,24 @@
 		}
 		
 		public function eMail() {
-			$this->load->model('administration');
-	
-			$qu_contacts = $this->administration->getContacts($this->user['DropdownDefault']->SelectedClient);
+			$domGroup = 1;
+			// Don't grab group contacts if we're already on the dom group.
+			if ($this->user['DropdownDefault']->SelectedClient != $domGroup) {
+				$group_contacts = $this->administration->getAllContactsInGroup($this->user['DropdownDefault']->SelectedClient);
+				$dom_contacts = $this->administration->getAllContactsInGroup($domGroup);
+				$all_contacts = array_merge($group_contacts, $dom_contacts);
+			} else {
+				$all_contacts = $this->administration->getAllContactsInGroup($domGroup);
+			}
 			
 			$contacts = array();
-			foreach ($qu_contacts as $qu_contact) {
-				$name = $qu_contact->FirstName . ' ' . $qu_contact->LastName;
-				if ($qu_contact->JobTitle != '')
-					$name .= ' (' . $qu_contact->JobTitle . ')';
+			foreach ($all_contacts as $contact) {
+				$name = '[' . $contact->ClientCode . '] ' . $contact->FirstName . ' ' . $contact->LastName;
+				if ($contact->JobTitle != '')
+					$name .= ' (' . $contact->JobTitle . ')';
 				$c['text'] = $name;
 				// Get work email from list.
-				$emails = explode(',', $qu_contact->Email);
+				$emails = explode(',', $contact->Email);
 				$c['value'] = '';
 				foreach ($emails as $email) {
 					$emailParts = explode(':', $email);
@@ -127,6 +134,7 @@
 				// If function was called posted instead of called, get posted data.
 				if (!$rdata) $rdata = $form;
 				
+				$signature = '';
 				if ($this->user['DropdownDefault']->SelectedClient < 1) {
 					throwError(newError('Clients Add', -1, 'You must chose a dealership in order to view a DPR report.', 0, ''));
 					$runReport = false;
@@ -153,6 +161,7 @@
 					$report_leads = "<div id='reportBlock_tableChart' class='report'>" . $report_html . "</div>";
 					
 					$runReport = true;
+					$signature = $this->administration->getSignatureFragment($this->user['UserID']);
 				}
 				
 				$data = array(
@@ -171,7 +180,8 @@
 						'startYear' => $rdata['startYear'],
 						'endMonth' => $rdata['endMonth'],
 						'endYear' => $rdata['endYear']
-					)
+					),
+					'signatureFragment' => ($signature) ? $signature : ''
 				);
 			}
 

@@ -49,11 +49,12 @@ if (!defined('BASEPATH'))
 		// signatures is a comma-delimited list of signature line labels.
 		public function sendEmail() {
 			$this->load->library('email');
-
+			$this->load->model('administration');
+			
 			$form = $this->input->post();
 			
 			$config = array (
-				'mailtype' => 'text',
+				'mailtype' => 'html',
 				'crlf' => "\n",
 				'newline' => "\n"
 			);
@@ -63,20 +64,24 @@ if (!defined('BASEPATH'))
 			
 			$this->email->to($form['to']);
 			if (isset($form['cc']))
-				$this->email->cc($form['cc']);
+				if ($form['cc'] != '')
+					$this->email->cc($form['cc']);
 			if (isset($form['bcc']))
-				$this->email->bcc($form['bcc']);
+				if ($form['bcc'] != '')
+					$this->email->bcc($form['bcc']);
 			
 			if (isset($form['reply_to_email'])) {
-				$name = (isset($form['reply_to_name'])) ? $form['reply_to_name'] : '';
+				$name = (isset($form['reply_to_name'])) ? $form['reply_to_name'] : $form['sender_name'];
 				$this->email->reply_to($form['reply_to_email'], $name);
+			} else {
+				$this->email->reply_to($form['sender_email'], $form['sender_name']);
 			}
-				
+			
 			$this->email->subject($form['subject']);
 			$message = $form['message'];
-			if (isset($form['signatures'])) {
+			if (isset($form['signature'])) {
 				// attach signatures to bottom of message.
-				$tokens = explode(',', $form['signatures']);
+				$tokens = explode(',', $form['signature']);
 				foreach ($tokens as $token)
 					$message .= str_repeat("\n", 3) . $token . ' ' . str_repeat('_', 35);
 			}

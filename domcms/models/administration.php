@@ -209,6 +209,24 @@ class Administration extends CI_Model {
 		return $all_contacts;
 	}
 
+	public function getAllContactsInGroup($id) {
+		$all_contacts = array();
+
+		$csql = 'SELECT CLIENT_ID as CID,CLIENT_Tag as Tag,CLIENT_Code as ClientCode,Client_Name as Dealership FROM Clients WHERE CLIENT_ID = "' . $id . '" ORDER BY CLIENT_Name ASC';
+		$clients = $this->db->query($csql)->result();
+		
+		foreach($clients as $client) :
+			$contacts = $this->getContacts($client->CID);
+			foreach($contacts as $contact) {
+				// Add client code to the contact.
+				$contact->ClientCode = $client->ClientCode;
+				array_push($all_contacts, $contact);
+			}
+		endforeach; //end clients foreach
+		
+		return $all_contacts;
+	}
+	
     public function getUsers($id = false,$client_id = false) {
     	$selects = "u.USER_ID as ID,u.USER_Name as Username,u.USER_Name as EmailAddress,ui.USER_Active as Status,ui.USER_Created as JoinDate,ui.USER_ActiveTS as LastUpdate,ui.USER_Modules as Modules,ui.USER_Avatar as Avatar,ui.Google_Avatar,ui.USER_GravatarEmail as Gravatar,d.DIRECTORY_ID as DirectoryID,d.DIRECTORY_Type as UserType,d.DIRECTORY_FirstName as FirstName,d.DIRECTORY_LastName as LastName,d.DIRECTORY_Address as Address,d.DIRECTORY_EMAIL as Emails,d.DIRECTORY_Phone as Phones,d.DIRECTORY_Notes as Notes,d.TITLE_ID as TitleID,a.ACCESS_NAME as AccessName,a.ACCESS_Level as AccessLevel,a.ACCESS_ID as AccessID,c.CLIENT_Name as Dealership,c.CLIENT_Address as CompanyAddress,t.TAG_ID as TagID,t.TAG_Name as TeamName,t.TAG_ClassName as ClassName,t.TAG_Color as Color";
     	$this->db->select($selects);
@@ -923,6 +941,15 @@ class Administration extends CI_Model {
 		);
 		$this->db->where('VENDOR_ID',$id);
 		return ($this->db->update('Vendors',$data) ? TRUE : FALSE);
+	}
+	
+	public function getSignatureFragment($user_id) {
+		$this->db->select('USER_PREFS_Signature as Signature');
+		$this->db->from('User_Prefs');
+		$this->db->where('USER_ID',$user_id);
+
+		$query = $this->db->get();
+		return ($query) ? $query->row()->Signature : FALSE;
 	}
 
 }

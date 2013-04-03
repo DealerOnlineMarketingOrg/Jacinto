@@ -82,6 +82,7 @@
                     </div>
 				</div>
                 <div id="inputInfo"></div>
+                <div id="dynDialog"></div>
 			<?php } ?>
     	</fieldset>
     <?php echo  form_close(); ?>
@@ -100,6 +101,8 @@
     <?php echo  form_close(); ?>
     
     <script type="text/javascript">
+		var pdfCreated = false;
+		
 		$('input#add').click(function() {
 			// Go to add report lead page with date range values.
 			jQuery('form#reportReport').attr('action', '<?= base_url(); ?>dpr/add');
@@ -113,35 +116,85 @@
 		});
 		
 		$('input#email').click(function() {
+			getEmailInfo();
+		});
+
+		function getEmailInfo() {
+			if (!pdfCreated)
+				createPDF();
+			
 			inputPopup({
 				type:'dualList',
 				dataFunc:'<?php base_url(); ?>dpr/eMail',
 				success:function(data) {
-					var addresses = '';
-					for (var i = 0; i < data.data.length; i++) {
+					var namesHtml = '<div id="namesDialog" title="Email Names"<p>Send the DPR report to these people?</p>';
+					for (var i = 0; i < data.data.length; i=i+2) {
 						if (data.data[i] != '') {
-							addresses += data.data[i];
-							if (i < data.data.length-1)
-								addresses += ',';
+							namesHtml += '<p>' + data.data[i] + '</p>';
 						}
 					}
-					alert(addresses);
+					$("#dynDialog").html(namesHtml);
+					$("#namesDialog").dialog({
+						buttons: {
+							Back:function() {
+								$(this).dialog("close");
+								$(this).empty();
+								$(this).remove;
+								getEmailInfo();
+							},
+							Cancel:function() {
+								$(this).dialog("close");
+								$(this).empty();
+								$(this).remove;
+							},
+							Send:function() {
+								$(this).dialog("close");
+								$(this).empty();
+								$(this).remove;
+								var addresses = '';
+								for (var i = 1; i < data.data.length; i=i+2) {
+									if (data.data[i] != '') {
+										addresses += data.data[i] + ',';
+									}
+								}
+								doEmail('',addresses);
+							}
+						}
+					});
 				},
-				error:function() {alert('not won!');}
+				error:function() {
+					var dialogHtml = $('<div id="emailDialog" title="Email"><p>DPR email has been cancelled. The DPR report email has not been sent out.</p></div>');
+					$("#dynDialog").html(dialogHtml);
+					$("#emailDialog").dialog({
+						buttons: {
+							Ok:function() {
+								$(this).dialog("close");
+								$(this).empty();
+								$(this).remove;
+							}
+						}
+					});
+				}
 			});
-		});
+		}
 		
-		function doEmail(recipients) {
-			var nl = "\n";
+		function doEmail(ccRecipients,bccRecipients) {
+			var msg = '<head></head><body><p>Attached is your Digital Performance Report, which we will be discussing on our next call.</p>' +
+					  '<p>Thank you.</p>';
+			var sig = '<?php echo str_replace("'", "\'", $signatureFragment); ?>';
+			if (sig != '')
+				msg += '<p>--</p><p>' + sig + '</p>';
+			msg += '</body>';
 			var email = {
-				sender_email:'dpr@dealeronlinemarketing.com',
-				sender_name:'Phil',
-				reply_to_email:'pkazda@dealeronlinemarketing.com',
-				reply_to_name:'Phil',
-				to:'pkazda@dealeronlinemarketing.com',
+				sender_email:'<?php echo $user['Username']; ?>',
+				sender_name:'<?php echo ($user['FirstName'] . ' ' . $user['LastName']); ?>',
+				reply_to_email:'<?php echo $user['Username']; ?>',
+				reply_to_name:'<?php echo ($user['FirstName'] . ' ' . $user['LastName']); ?>',
+				to:'<?php echo $user['Username']; ?>',
+				cc:ccRecipients,
+				bcc:bccRecipients,
 				subject:'DPR report',
-				message:'Attached is your Digital Performance Report, which we will be discussing on our next call.' + nl + nl + 'Thank you.',
-				signatures:'John Doe,Jane Doe',
+				message:msg,
 				attachments:'assets/uploads/dprReport.pdf'
 			};
 			$.ajax({type:"POST",
@@ -149,7 +202,16 @@
 				data:email,
 				success:function(msg) {
 					var dialogHtml = $('<div id="emailDialog" title="Email"><p>The DPR Report has been sent to the dealer via email.</p></div>');
-					dialogHtml.dialog();
+					$("#dynDialog").html(dialogHtml);
+					$("#emailDialog").dialog({
+						buttons: {
+							Ok:function() {
+								$(this).dialog("close");
+								$(this).empty();
+								$(this).remove;
+							}
+						}
+					});
 				}
 			});
 		};
@@ -258,6 +320,16 @@
 		
 		
 		$('input#pdf').click(function() {
+			createPDF();
+			downloadPDF();
+		});
+		
+		function downloadPDF() {
+			// getZip
+			$.fileDownload("<?= base_url(); ?>" + "assets/uploads/dprReportPDF.zip");
+		}
+		
+		function createPDF() {
 			fullReportFile = "assets/uploads/fullReport.png";
 			
 			// HTMLToImage
@@ -277,8 +349,7 @@
 													url:"<?= base_url(); ?>io/zipFiles",
 													data:{file_list:[ "assets/uploads/dprReport.pdf" ], zip_file:"assets/uploads/dprReportPDF.zip"},
 													success:(function() {
-														// getZip
-														$.fileDownload("<?= base_url(); ?>" + "assets/uploads/dprReportPDF.zip");
+														pdfCreated = true;
 													})
 											});
 										})
@@ -286,7 +357,7 @@
 							})
 					});
 			}});
-		});
+		}
 		
 	</script>
 </div>

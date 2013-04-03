@@ -19,7 +19,7 @@
                     	<?php switch($options['type']) {
                         	case 'dualList': ?>
                             <div class="rowElem noborder dualBoxes">
-                                <div class="floatleft w40">
+                                <div class="floatleft" style="width:45%">
                                     <input type="text" id="box1Filter" class="boxFilter" placeholder="Filter entries..." /><button type="button" id="box1Clear" class="dualBtn fltr">x</button><br />
                                     
                                     <select id="box1View" multiple="multiple" class="multiple" style="height:300px;">
@@ -34,13 +34,11 @@
                                 </div>
                                     
                                 <div class="dualControl">
-                                    <button id="to2" type="button" class="dualBtn mr5 mb15">&nbsp;&gt;&nbsp;</button>
-                                    <button id="allTo2" type="button" class="dualBtn">&nbsp;&gt;&gt;&nbsp;</button><br />
+                                    <button id="to2" type="button" class="dualBtn mr5 mb15">&nbsp;&gt;&nbsp;</button><br />
                                     <button id="to1" type="button" class="dualBtn mr5">&nbsp;&lt;&nbsp;</button>
-                                    <button id="allTo1" type="button" class="dualBtn">&nbsp;&lt;&lt;&nbsp;</button>
                                 </div>
                                     
-                                <div class="floatright w40">
+                                <div class="floatright" style="width:45%">
                                     <input type="text" id="box2Filter" class="boxFilter" placeholder="Filter entries..." /><button type="button" id="box2Clear" class="dualBtn fltr">x</button><br />
                                     <select id="box2View" multiple="multiple" class="multiple" style="height:300px;"></select><br/>
                                     <span id="box2Counter" class="countLabel"></span>
@@ -91,15 +89,30 @@
 	jQuery.configureBoxes();
 	
 	jQuery("#dialogDualListAcceptBtn").click(function() {
+		acceptInput();
+		closeInput();
+	});
+	
+	function acceptInput() {
 		// Gather info for return value.
 		// Get the values of all rows in the 'to' select box.
 		var values = new Array();
 		$("#box2View").find('option').each(function() {
+			values.push($(this).text())
 			values.push($(this).val());
 		});
 		var returnData = JSON.stringify({state:'success', data:values});
 		// Set return value as json object.
 		$("<? echo $options['anchorDiv']; ?>").attr('return',returnData);
+	}
+	
+	function cancelInput() {
+		// We only have an empty return value for cancel.
+		var returnData = JSON.stringify({state:'error', data:''});
+		$("<? echo $options['anchorDiv']; ?>").attr('return',returnData);
+	}
+	
+	function closeInput() {
 		// Trigger change event to tell ajax loader we're ready with the return data.
 		$("input#returnTrigger").val('done');
 		// Stop dialog.
@@ -107,7 +120,7 @@
 		// Clear and destroy dialog.
 		$("#input").empty();
 		$("#input").remove();
-	});
+	}
 	
 	jQuery("#input").dialog({
 		<?php switch($options['type']) {
@@ -118,18 +131,18 @@
 		} ?>
 		autoOpen: true,
 		modal: false,
+		/*beforeClose: function(event,ui) {
+			// Respond to the close 'x' button
+			if (event.originalEvent != undefined && event.originalEvent.srcElement.innerText == "close") {
+				cancelInput();
+				closeInput();
+			}
+			return true;
+		},*/
 		buttons: {
 			Cancel:function() {
-				// We only have an empty return value for cancel.
-				var returnData = JSON.stringify({state:'error', data:''});
-				$("<? echo $options['anchorDiv']; ?>").attr('return',returnData);
-				// Trigger change event to tell ajax loader we're ready with the return data.
-				$("input#returnTrigger").val('done');
-				// Stop dialog.
-				$(this).dialog("close");
-				// Clear and destroy dialog.
-				$(this).empty();
-				$(this).remove();
+				cancelInput();
+				closeInput();
 			},
 		}
 	});
