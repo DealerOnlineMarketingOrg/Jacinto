@@ -69,7 +69,14 @@
 		//$('#thirdPartyConnect').load('<?= base_url(); ?>google_connect');	
 		$('#resetPass').click(function(e) {
 			e.preventDefault();
-			$('#loadedContent').load('<?= base_url(); ?>reset_password_form');
+			$('#loadedContent').empty();
+			$.ajax({
+				type:'GET',
+				url:'/reset_password_form',
+				success:function(code) {
+					$('#loadedContent').html(code);	
+				}
+			});
 		});
 	
 		$('#valid').submit(function(e) {

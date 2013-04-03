@@ -374,7 +374,7 @@ div.leftNav li.content { padding-bottom: 0px; overflow: hidden; }
 .moreFields ul li span { display: block; padding: 3px 12px; white-space: nowrap; }
 .itemDisabled { color: #b7b7b7; }
 .rowElem { clear: both; border-top: 1px solid #e7e7e7; padding: 10px 16px; position: relative; }
-.formRight { float: right; width: 76%; margin: 12px 0; display: block; position: relative; }
+.formRight { float: right; width: 76%; margin:0; display: block; position: relative; }
 .formRight label, .loginRow label { cursor: pointer; }
 .formBottom { /*width: 688px;*/ margin: 12px 12px 12px 0; }
 .rowElem > label { padding: 15px 0; width: 14%; }

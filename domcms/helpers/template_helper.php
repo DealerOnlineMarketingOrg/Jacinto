@@ -69,6 +69,88 @@ function AgencyListingTable($agencies = false) { ?>
     <?php endif; ?>
 <?php }
 
+function GroupsListingTable($groups = false) { ?>
+	<?php if($groups) : ?>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/group_popups.js"></script>
+    <?php 
+		$ci =& get_instance();
+        $userPermissionLevel = $ci->user['AccessLevel'];
+        $addPriv     		 = GateKeeper('Group_Add',$userPermissionLevel);
+        $editPriv    		 = GateKeeper('Group_Edit',$userPermissionLevel);
+        $disablePriv 		 = GateKeeper('Group_Disable_Enable',$userPermissionLevel);
+        $listingPriv 		 = GateKeeper('Group_List',$userPermissionLevel);
+    ?>
+    <?php if($addPriv) { ?><a href="javascript:addGroup();" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px;">Add New Group</a><?php } ?>
+    <?php if($listingPriv) { ?>
+        <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%;">
+            <thead>
+                <tr>
+                    <th style="width:30%;text-align:left;">Name</th>
+                    <th style="text-align:left;">Member Of</th>
+                    <th class="status">Status</th>
+                    <?php if($editPriv) { ?>
+                    <th class="actions">Actions</th>
+                    <?php } ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($groups as $group) { ?>
+                    <tr>
+                        <td style="text-align:left;"><?= $group->Name; ?></td>
+                        <td><?= $group->AgencyName; ?></td>
+                        <td style="width:30px;text-align:center;"><?= (($group->Status) ? 'Active' : 'Disable'); ?></td>
+                        <?php if($editPriv) { ?>
+                        <td class="actionsCol" style="width:75px;text-align:center;">
+                            <a title="Edit Group" href="javascript:editGroup('<?= $group->GroupId; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                            <a title="View Group" href="javascript:viewGroup('<?= $group->GroupId; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
+                        </td>
+                        <?php } ?>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    <?php } ?>
+    <?php if($addPriv) { ?><a href="javascript:addGroup();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Group</a><?php } ?>
+    <?php else : ?>
+    <div class="nNote nFailure"><p><strong>Error:</strong> No groups found.</p></div>
+    <?php endif; ?>
+<?php }
+
+function GroupsClientTable($group_id) {
+	$ci =& get_instance();
+	//load the model
+	$ci->load->model('administration');
+	//get the clients in the group
+	$clients = $ci->administration->getAllClientsInGroup($group_id); 
+	
+	if($clients) {
+	?>
+	
+    <table cellpadding="0" cellspacing="0" class="tableStatic" id="clientExample" style="width:100%;">
+    	<thead>
+        	<tr>
+            	<td style="width:31px;text-align:center;">Tag</td>
+                <td style="width:51px;text-align:center;">Code</td>
+                <td style="text-align:left;padding-left:5px;">Dealership Name</td>
+                <td style="width:50px;text-align:center;">Status</td>
+            </tr>
+        </thead>
+        <tbody>
+        	<?php foreach($clients as $client) : ?>
+            	<tr class="tagElement <?= $client->ClassName; ?>">
+                	<td><div class="<?= $client->ClassName; ?>">&nbsp;</div></td>
+                    <td><?= $client->ClientCode; ?></td>
+                    <td><?= $client->Name; ?></td>
+                    <td><?php if($client->Status) { ?><div class="iCheck">&nbsp;</div><?php }else { ?><div class="iBlock">&nbsp;</div><?php } ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    
+<?php }else { ?>
+	<div class="nNote nWarning"><p><strong>Warning:</strong> No clients have been added to this group.</p></div>
+<? } }
+
 function get_welcome_message() {
     $ci =& get_instance();
     return 'Welcome, ' . $ci->session->userdata['valid_user']['FirstName'] . ' ' . $ci->session->userdata['valid_user']['LastName'];

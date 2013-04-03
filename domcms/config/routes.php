@@ -63,7 +63,7 @@ $route['profile/update/userInfo']		= 'user/profile/update_UserInfo';
 $route['profile/update/userContactInfo']= 'user/profile/update_UserContactInfo';
 
 //admin redirects
-$route['groups']						= 'admin/groups';
+$route['groups']						= 'admin/groups/index';
 $route['groups/(:any)']					= 'admin/groups/$1';
 $route['masterlist']					= 'admin/masterlist';
 
