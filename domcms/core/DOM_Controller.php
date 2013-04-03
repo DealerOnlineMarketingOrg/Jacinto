@@ -901,7 +901,8 @@ class DOM_Controller extends CI_Controller {
 						$form = $this->input->post();
 						
 						// There may be more then one service posted. Loop through them.
-						for ($s = 1; $s <= $form['sourceCount']; $s++) {
+						// Services are 0-indexed.
+						for ($s = 0; $s < $form['sourceCount']; $s++) {
 							$provider_id = $form['providers'];
 							// Pull custom info (use if select value is AddCustom)
 							$customProvider = $form['customProvider'];
@@ -983,13 +984,13 @@ class DOM_Controller extends CI_Controller {
 								$this->rep->addLeadTotal($lead_data);
 								
 								$err_level = 1;
-								$err_msg = 'Lead successfully saved.';
+								$err_msg = 'Leads successfully saved.';
 							}
 						}
 						
 						// Throw error and redirect back to DPR.
-						throwError(newError("DPR Report Add", $err_level, $err_msg, 0, ''));
-						redirect('dpr/add','refresh');
+						throwError(newError("DPR Sources", $err_level, $err_msg, 0, ''));
+						redirect('dpr','refresh');
 					break;
 				endswitch;
 				

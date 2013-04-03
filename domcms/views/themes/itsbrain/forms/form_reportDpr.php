@@ -3,21 +3,40 @@
     <div class="title"><h5>Reports</h5></div>
 	<script type="text/javascript" src="<?php base_url(); ?>assets/themes/itsbrain/js/input_popups.js"></script>
     <?php notifyError(); ?>
+    <?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
     <?php echo  (($html) ? $html : ''); ?>
     <!-- Form begins -->
     <?php
         $form = array(
+			'id' => 'reportDpr',
             'name' => 'reportDpr',
             'class' => 'mainForm valid'
         );
 	?>
-		<?php echo form_open('/dpr/reports',$form); ?>
+		<?php echo form_open('%page%',$form); ?>
+        
+        <?php
+        	function monthButton($start, $end, $currentMonthNum, $id) {
+				echo '<select id="'.$id.'" name="'.$id.'" class="input chzn-select required validate[required]" style="width:120px" placeholder="Select a month...">';
+				$months = array('January','Febuary','March','April','May','June','July','August','September','October','November','December');
+				for ($i = $start; $i <= $end; $i++)
+					echo '<option value="'.$i.'"' . (($currentMonthNum == $i) ? ' selected' : '') . '>'.$months[$i-1].'</option>';
+				echo '</select>';
+			}
+			
+			function yearButton($start, $end, $currentYear, $id) {
+				echo '<select id="'.$id.'" name="'.$id.'" class="input chzn-select required validate[required]" style="width:120px" placeholder="Select a year...">';
+				for ($i = $end; $i >= $start; $i--)
+					echo '<option value="'.$i.'"' . (($currentYear == $i) ? ' selected' : '') . '>'.$i.'</option>';
+				echo '</select>';
+			}
+		?>
             <!-- Input text fields -->
             <fieldset>
 			<?php if ($this->user['DropdownDefault']->LevelType != 'c') { ?>
 	            <div>
                     <div style="width:1;float:left;vertical-align:middle">
-                        <input ID="add" class="greenBtn" type="button" value="Add Leads" />
+                        <input ID="add" class="greenBtn" type="button" value="Sources" />
                     </div>
                 </div>
    	            <div class="widget" style="margin-top:0px">
@@ -27,12 +46,22 @@
             	<div>
                     <div style="width:1;float:left;vertical-align:middle">
                         <input ID="add" class="greenBtn" type="button" value="Add Leads" />
-                        <input ID="editReport" class="seaBtn" type="button" value="Edit Report" />
                     </div>
                     <div style="width:1;float:right;vertical-align:middle">
                         <input ID="excel" class="greyishBtn" type="button" value="Excel" />
                         <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
-                        <input ID="email" class="greyishBtn" type="button" value="EMAIL" />
+                        <input ID="email" class="greyishBtn" type="button" value="Email" />
+                    </div>
+                </div>
+                <div class="fix"></div>
+                <div class='noSearch'>
+	                <div style="position:relative;float:left">
+                    	<label>Beginning date:</label>
+						<label style="clear:both">Ending date:</label>
+					</div>
+					<div style="position:relative;float:left">
+						<div><?php monthButton(1,12,$dateRange['startMonth'],'startMonth'); yearButton(2009,2013,$dateRange['startYear'],'startYear'); ?></div>
+	                	<div><?php monthButton(1,12,$dateRange['endMonth'],'endMonth'); yearButton(2009,2013,$dateRange['endYear'],'endYear'); ?></div>
                     </div>
                 </div>
                 <div id="reportLive">
@@ -74,11 +103,11 @@
                     </div>
                     <div style="width:1;float:left;vertical-align:middle">
                         <input ID="add" class="greenBtn" type="button" value="Add Leads" />
-                        <input ID="editReport" class="seaBtn" type="button" value="Edit Report" />
                     </div>
                     <div style="width:1;float:right;vertical-align:middle">
                         <input ID="excel" class="greyishBtn" type="button" value="Excel" />
                         <input ID="pdf" class="greyishBtn" type="button" value="PDF" />
+                        <input ID="email" class="greyishBtn" type="button" value="Email" />
                     </div>
 				</div>
                 <div id="inputInfo"></div>
@@ -87,34 +116,22 @@
     	</fieldset>
     <?php echo  form_close(); ?>
     
-    <?php
-        $form = array(
-            'id' => 'reportReport',
-			'name' => 'reportReport',
-            'class' => 'mainForm valid'
-        );
-		echo form_open('%page%',$form); ?>
-    	<input ID="startMonth" name="startMonth" type="hidden" value="<?php echo $dateRange['startMonth']; ?>" />
-        <input ID="startYear" name="startYear" type="hidden" value="<?php echo $dateRange['startYear']; ?>" />
-        <input ID="endMonth" name="endMonth" type="hidden" value="<?php echo $dateRange['endMonth']; ?>" />
-        <input ID="endYear" name="endYear" type="hidden" value="<?php echo $dateRange['endYear']; ?>" />
-    <?php echo  form_close(); ?>
-    
     <script type="text/javascript">
 		var excelCreated = false;
 		var pdfCreated = false;
 		
 		$('input#add').click(function() {
 			// Go to add report lead page with date range values.
-			jQuery('form#reportReport').attr('action', '<?= base_url(); ?>dpr/add');
-			$("form#reportReport").submit();
+			jQuery('form#reportDpr').attr('action', '<?= base_url(); ?>dpr/add');
+			$("form#reportDpr").submit();
+		});
+
+		$("#startMonth,#startYear,#endMonth,#endYear").change(function() {
+			// Go to report edit page with date range values.
+			jQuery('form#reportDpr').attr('action', '<?= base_url(); ?>dpr/editReport');
+			$("form#reportDpr").submit();	
 		});
 		
-		$('input#editReport').click(function() {
-			// Go to report edit page with date range values.
-			jQuery('form#reportReport').attr('action', '<?= base_url(); ?>dpr/editReport');
-			$("form#reportReport").submit();
-		});
 		
 		$('input#email').click(function() {
 			getEmailInfo();

@@ -192,7 +192,7 @@ class Administration extends CI_Model {
 			$groups = $this->db->query($gsql)->result();
 			
 			foreach($groups as $group) :
-				$csql = 'SELECT CLIENT_ID as CID,CLIENT_Tag as Tag,Client_Name as Dealership FROM Clients WHERE CLIENT_ID = "' . $group->GID . '" ORDER BY CLIENT_Name ASC';
+				$csql = 'SELECT CLIENT_ID as CID,CLIENT_Tag as Tag,Client_Name as Dealership FROM Clients WHERE GROUP_ID = "' . $group->GID . '" ORDER BY CLIENT_Name ASC';
 				$clients = $this->db->query($csql)->result();
 				
 				foreach($clients as $client) :

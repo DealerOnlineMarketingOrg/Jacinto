@@ -93,12 +93,20 @@ class Agency extends DOM_Controller {
 	}
 
     public function index() {
-		$agency_id = $this->user['DropdownDefault']->SelectedAgency;
-		$agencies = $this->administration->getAgencies();	
-		$data = array(
-			'agencies' => $agencies
-		);
-		$this->LoadTemplate('pages/agency_listing',$data);
+		// We'll only open this up on agency level.
+		$level = $this->user['DropdownDefault']->LevelType;
+		if ($level == 'a') {
+			$agency_id = $this->user['DropdownDefault']->SelectedAgency;
+			$agencies = $this->administration->getAgencies();	
+			$data = array(
+				'agencies' => $agencies
+			);
+			$this->LoadTemplate('pages/agency_listing',$data);
+		} else {
+			throwError(newError('Agencies', -1, 'Sorry, the Agency page is not available for ' . (($level == 'g') ? 'groups' : 'clients') . '.',0,''));
+			redirect('/','refresh');
+			exit;
+		}
     }
 
 }

@@ -41,6 +41,7 @@ class Contacts extends DOM_Controller {
 		
 		//table heading
 		$html = '';
+		$error_msg = '';
 		
 		if($contacts) :
 			$table .= '<thead><tr>' . '<th>Team</th>' . (($level == 'g' OR $level == 'a') ? '<th style="text-align:left;">Dealership</th>' : '' ) . '<th style="width:10%;">Title</th><th>Name</th><th>Email</th><th>Phone</th><th style="text-align:center">Edit</th><th style="text-align:center">View</tr></thead>';

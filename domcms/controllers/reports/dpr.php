@@ -122,15 +122,8 @@
 				);
 			}
 			
-			// Processing for dpr report entry page.
-			if ($page == 'editReport') {
-				$data = array(
-					'html' => ''
-				);
-			}
-			
 			// Processing for dpr report page.
-			if ($page == 'reports') {
+			if ($page == 'reports' || $page == 'editReport') {
 				// If function was called posted instead of called, get posted data.
 				if (!$rdata) $rdata = $form;
 				
@@ -188,7 +181,7 @@
 			switch ($page) {
 				case 'add':		$this->LoadTemplate('forms/form_addDpr',$data); break;
 				case 'reports': $this->LoadTemplate('forms/form_reportDpr',$data); break;
-				case 'editReport': $this->LoadTemplate('forms/form_reportDprEdit',$data); break;
+				case 'editReport': $this->LoadTemplate('forms/form_reportDpr',$data); break;
 			}	
 			
 		}

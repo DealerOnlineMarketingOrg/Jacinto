@@ -1,5 +1,5 @@
 <!-- Content -->
-<div class="content" id="container">
+<div class="content" id="container" style="overflow:visible">
     <div class="title"><h5>Reports</h5></div>
     <?php notifyError(); ?>
     <?php echo  (($html) ? $html : ''); ?>
@@ -25,7 +25,7 @@
                     <div class="head"><h5 class="iList">Add DPR Lead</h5></div>
                     <div class="noborder noSearch" style="position:relative;float:left;margin:5px">
                         <label style="position:relative;float:left"><span class="req">*</span>Provider</label>
-                        <select id="providers" name="providers" class="input msSelect chzn-select " style="position:relative;float:left" placeholder="Select A Lead Provider...">
+                        <select id="providers" name="providers" class="input msSelect chzn-select" style="position:relative;float:left" placeholder="Select A Lead Provider...">
                             <option value="">Select A Lead Provider</option>
                             <?php echo $providers; ?>
                             <option value="AddCustom">Other</option>
@@ -46,7 +46,7 @@
                     	<div style="position:relative;float:left">
                             <label>Month</label>
 	                        <div class="fix"></div>
-                            <select id="month" name="month" class="input chzn-select " placeholder="Select a month...">
+                            <select id="month" name="month" class="input chzn-select" placeholder="Select a month...">
                                 <option value="">Select a Month</option>
                                 <option value="1">January</option>
                                 <option value="2">Febuary</option>
@@ -65,7 +65,7 @@
                     	<div style="position:relative;float:left;margin-left:5px">                        
                             <label>Year</label>
 							<div class="fix"></div>
-                            <select id="year" name="year" class="input chzn-select " placeholder="Select a year...">
+                            <select id="year" name="year" class="input chzn-select" placeholder="Select a year...">
                                 <option value="">Select a Year</option>
                                 <option value="2013">2013</option>
                                 <option value="2012">2012</option>
@@ -78,29 +78,35 @@
                         <label style="position:relative;float:left">Cost</label>
 						<input type="text" class="input " style="width:150px;position:relative;float:left" id="cost" name="cost" placeholder="The monthly cost for leads" max-length="10" />
 					</div>
+                    <?php
+                    $sourceBlock = '
                     <div class="fix"></div>
-                    <div id="sourceBlock_1" class="" style="position:relative;border:1px dotted #d5d5d5;margin:5px;padding:5px">
+					<div id="sourceBlock_%c%" class="noSearch" style="position:relative;float:left;width=1px;border:1px dotted #d5d5d5;margin:5px;margin-bottom:0;padding:5px">
                     	<div style="position:relative;float:left;margin:5px">
                             <label style="position:relative;float:left">Source</label>
                             <!-- This should be a chosen (chzn-select) dropdown. Apply chosen after cloning. -->
-                            <select id="sources_1" name="sources_1" class="msSelect " style="position:relative;float:left" placeholder="Select A Lead Source...">
+                            <select id="sources_%c%" name="sources_%c%" class="msSelect chzn-select" style="position:relative;float:left" placeholder="Select A Lead Source...">
                                 <option value="">Select A Lead Source</option>
-                                    <?php echo $services; ?>
+                                   ' . $services . '
                                 <option value="AddCustom">Other</option>
                             </select>
 		                    <div class="fix"></div>
-                            <label data-binding="sources" style="display:none;position:relative;float:left">New source:</label>
-                            <input id="customSource_1" name="customSource_1" class="input" data-binding="sources" placeholder="Enter new source" type="text" style="width:200px;display:none;position:relative;float:left" />
+                            <label data-binding="sources_%c%" style="display:none;position:relative;float:left">New source:</label>
+                            <input id="customSource_%c%" name="customSource_%c%" class="" data-binding="sources_%c%" placeholder="Enter new source" type="text" style="width:200px;display:none;position:relative;float:left" />
                         </div>
                         <div style="position:relative;float:left;margin:5px">
 							<label style="position:relative;float:left">Total</label>
-							<input type="text" class="input " style="width:150px;position:relative;float:left" id="total_1" name="total_1" placeholder="The total lead count" max-length="8" />
+							<input type="text" class="" style="width:150px;position:relative;float:left" id="total_%c%" name="total_%c%" placeholder="The total lead count" max-length="8" />
                       	</div>
+	                    <div id="sourceCopy_%c%" style="float:left;margin:5px"><input type="button" id="addSource" value="+" class="greenBtn" style="font-weight:bold;font-size:120%;padding-top:2px;padding-bottom:2px;padding-left:10px;padding-right:10px" /></div>
 		                <div class="fix"></div>
                     </div>
-                    <div class="fix"></div>
-                    <!-- <div id="sourceCopy" style="margin:5px"><input type="button" id="addSource" value="+ Source" class="greenBtn" /></div> -->
-                    <input id="sourceCount" name="sourceCount" type="hidden" value="1" />
+					';
+					
+					for ($i = 0; $i < 10; $i++)
+						echo str_replace('%c%', $i, $sourceBlock);
+					?>
+                    <input id="sourceCount" name="sourceCount" type="hidden" value="0" />
 				<?php } ?>
                 <div class="fix"></div>
             </div>
@@ -132,7 +138,14 @@
             	jQuery(window).load(function() {
 					// Don't turn off template sourceBlock before document is loaded, otherwise
 					//  drop down fields may not get populated.
-					//jQuery('#sourceBlock').css('display','none');
+					for (i = 0; i < 10; i++)
+						jQuery('#sourceBlock_' + i).css('display','none');
+
+					// Set first source to visible by default.
+					next = parseInt(jQuery("#sourceCount").val())+1;
+					jQuery("#sourceCount").val(next);
+					jQuery("#sourceBlock_0").css('display','');
+					
 					//newSource();
 				});
 				
@@ -163,7 +176,18 @@
 					}
                 });
 				
-				jQuery('#addSource').click(function(e) {
+				jQuery('[id^="addSource"]').click(function(e) {
+					// Set next source to visible.
+					next = parseInt(jQuery("#sourceCount").val())+1;
+					jQuery("#sourceCount").val(next);
+					// Make last add-source button invisible.
+					jQuery("#sourceCopy_" + (next-2)).css('display','none');
+					jQuery("#sourceBlock_" + (next-1)).css('display','');
+					
+					// If we're at the last source, turn off addSource button.
+					if (next == 10)
+						jQuery("#sourceCopy_9").css('display','none');
+						
 					//newSource();
 				});
 				
