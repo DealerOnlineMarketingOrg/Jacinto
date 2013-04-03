@@ -9,7 +9,7 @@
     </div>
 </div>
 <script type="text/javascript">
-	$("#valid,.valid").validationEngine({promptPosition : "right", scroll: true});
+	jQuery("#resetPassword").validationEngine({promptPosition : "right", scroll: true});
 	jQuery('#resetPassword').submit(function(e) {
 		e.preventDefault();
 	});
@@ -50,3 +50,6 @@
 		});
 	}
 </script>
+<style type="text/css">
+	.formError{z-index:2000;}
+</style>
