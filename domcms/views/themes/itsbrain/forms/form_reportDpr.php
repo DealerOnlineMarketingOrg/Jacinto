@@ -101,6 +101,7 @@
     <?php echo  form_close(); ?>
     
     <script type="text/javascript">
+		var excelCreated = false;
 		var pdfCreated = false;
 		
 		$('input#add').click(function() {
@@ -269,6 +270,17 @@
 			}
 		
 		$('input#excel').click(function() {
+			if (!excelCreated)
+				createExcel();
+			downloadExcel();
+		});
+		
+		function downloadExcel() {
+			// getZip
+			$.fileDownload("<?= base_url(); ?>" + "assets/uploads/dprReportExcel.zip");
+		}
+		
+		function createExcel() {
 			// Compile the report.
 			var lineChartFile = "assets/uploads/lineChart.png";
 			var pieChartFile = "assets/uploads/pieChart.png";
@@ -304,8 +316,7 @@
 																		url:"<?= base_url(); ?>io/zipFiles",
 																		data:{file_list:[ "assets/uploads/dprReport.xlsx" ], zip_file:"assets/uploads/dprReportExcel.zip"},
 																		success:(function() {
-																			// getZip
-																			$.fileDownload("<?= base_url(); ?>" + "assets/uploads/dprReportExcel.zip");
+																			excelCreated = true;
 																		})
 																});
 															})
@@ -316,11 +327,11 @@
 							})
 					});
 			}});
-		});
-		
+		}
 		
 		$('input#pdf').click(function() {
-			createPDF();
+			if (!pdfCreated)
+				createPDF();
 			downloadPDF();
 		});
 		
