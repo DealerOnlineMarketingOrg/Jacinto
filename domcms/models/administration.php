@@ -668,7 +668,7 @@ class Administration extends CI_Model {
 
     public function updateAgencyInformation($id, $data) {
         $this->db->where('AGENCY_ID', $id);
-        $this->db->update('Agencies', $data);
+        return ($this->db->update('Agencies', $data)) ? TRUE : FALSE;
     }
 	
 	public function updateUser($data) {

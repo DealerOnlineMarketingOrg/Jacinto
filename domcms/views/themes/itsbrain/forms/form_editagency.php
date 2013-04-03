@@ -102,7 +102,7 @@
 			data:formData,
 			success:function(code) {
 				var msg;
-				if(code) {
+				if(code == '1') {
 					if(type == 1) {
 						msg = 'The Agency was edited successfully.';
 					}else {
@@ -110,8 +110,12 @@
 					}
 					jAlert(msg,'Success',function() {
 						agencyListTable();
-						jQuery('#editAgency').dialog('close');	
+						if ($("#editAgency").dialog( "isOpen" )===true) {
+							jQuery('#editAgency').dialog("close");
+						}
 					});
+				}else if(code == '3') {
+					jAlert('You must first disable all groups and clients related to this agency before disabling. Please try again.','Disable Error');
 				}else {
 					if(type == 1) {
 						msg = 'There was something wrong editing the given agency. Please try again.';
@@ -119,8 +123,10 @@
 						msg = 'Something went wrong while adding the agency you requested. Please try again.';	
 					}
 					jAlert(msg,'Success',function() {
+						if (jQuery("#editAgency").dialog( "isOpen" )===true) {
+							jQuery('#editAgency').dialog("close");
+						}
 						agencyListTable();
-						jQuery('#editAgency').dialog('close');	
 					});
 				}
 			}

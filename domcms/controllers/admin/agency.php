@@ -25,16 +25,26 @@ class Agency extends DOM_Controller {
 			'AGENCY_Notes' => $agency_data['notes']
 		);
 		if($agency_id) {
-			$edit_form = array(
-				'AGENCY_Active' => $agency_data['status']
-			);
-			$data = $data + $edit_form;
-			$edit_agency = $this->administration->updateAgencyInformation($agency_id,$data);
-			if($edit_agency) {
-				echo 1;	
+			
+			if($agency_data['status'] == 0) {
+				//check if there are groups enabled.
+				$group_check = $this->administration->getGroups($agency_id);
+				if($group_check) {
+					echo '3';	
+				}
 			}else {
-				echo 0;	
+				$edit_form = array(
+					'AGENCY_Active' => $agency_data['status']
+				);
+				$data = $data + $edit_form;
+				$edit_agency = $this->administration->updateAgencyInformation($agency_id,$data);
+				if($edit_agency) {
+					echo '1';	
+				}else {
+					echo '0';	
+				}
 			}
+			
 		}else {
 			$add_form = array(
 				'AGENCY_Active' => 1,
@@ -43,12 +53,11 @@ class Agency extends DOM_Controller {
 			$data = $data + $add_form;
 			$add_agency = $this->administration->addAgencies($data);
 			if($add_agency) {
-				echo 1;	
+				echo '1';	
 			}else {
-				echo 0;	
+				echo '0';	
 			}
 		}
-		
 	}
 	
 	public function Edit() {
@@ -84,7 +93,12 @@ class Agency extends DOM_Controller {
 	}
 
     public function index() {
-		$this->LoadTemplate('pages/agency_listing');
+		$agency_id = $this->user['DropdownDefault']->SelectedAgency;
+		$agencies = $this->administration->getAgencies();	
+		$data = array(
+			'agencies' => $agencies
+		);
+		$this->LoadTemplate('pages/agency_listing',$data);
     }
 
 }
