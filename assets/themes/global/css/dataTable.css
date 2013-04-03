@@ -9,7 +9,7 @@
 .dataTables_paginate { width: auto; }
 .dataTables_info { padding: 7px 0 0 80px; color: #878787; }
 
-table.display thead th { padding: 3px 0px 3px 10px; cursor: pointer; * cursor: hand; font-size: 11px; background: #EFEFEF url(../imgs/leftNavBg.png) repeat-x; }
+table.display thead th { padding: 4px 0px 3px 10px; cursor: pointer; * cursor: hand; font-size: 11px; }
 
 div.dataTables_wrapper .ui-widget-header { font-weight: normal; background: #efefef url(../imgs/leftNavBg.png) repeat-x; border-top: 1px solid #D5D5D5; margin-top: -1px;	 border-right: none; }
 
@@ -22,15 +22,15 @@ table.display thead th div.DataTables_sort_wrapper span { position: absolute; to
 
 .dataTables_wrapper { position: relative; _height: 302px; clear: both; }
 .dataTables_processing { position: absolute; top: 0px; left: 50%; width: 250px; margin-left: -125px; border: 1px solid #ddd; text-align: center; color: #999; font-size: 11px; padding: 2px 0; }
-.dataTables_length { float: left; color: #878787; margin: 6px 5px 0 5px; }
+.dataTables_length { float: left; color: #878787; margin: 7px 5px 0 5px; }
 .itemsPerPage { display: block; float: left; margin-right: 10px; }
 .dataTables_length label { padding-top: 10px; font-size: 11px; }
-.dataTables_length select { font-size: 11px!important; margin: 0 5px; }
+.dataTables_length select { font-size: 11px; margin: 0 5px; }
 .dataTables_filter { text-align: left; margin: 4px 8px 2px 10px; position: absolute; right: 0; top: -34px; color: #878787; font-size: 11px; }
 .dataTables_filter input[type="text"] { padding: 3px 5px; border: 1px solid #D5D5D5; width: 200px; position: relative; margin-left: 6px; -moz-border-radius: 2px; -webkit-border-radius: 2px; -khtml-border-radius: 2px; border-radius: 2px; color: #878787; }
 .dataTables_filter .srch { position: absolute; right: 6px; top: 7px; background: url(../imgs/searchSmall.png) no-repeat 0 0; border: none; width: 9px; height: 9px; }
 .dataTables_info { float: left; }
-.dataTables_paginate { text-align: right; margin: 7px 6px; }
+.dataTables_paginate { text-align: right; margin: 8px; }
 
 
 /* Pagination nested */
@@ -155,5 +155,3 @@ tr.even.gradeU td.sorting_3 { background-color: #e2e2e2; }
 /* Row highlighting example */
 .ex_highlight #example tbody tr.even:hover, #example tbody tr.even td.highlighted { background-color: #ECFFB3; }
 .ex_highlight #example tbody tr.odd:hover, #example tbody tr.odd td.highlighted { background-color: #E6FF99; }
-
-table.display td a{ color:blue; }

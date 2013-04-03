@@ -331,6 +331,15 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
     }
 	
+	public function getGroup($gid) {
+		$this->db->select('g.GROUP_ID as GroupId,g.AGENCY_ID as AgencyId,g.GROUP_Name as Name,g.GROUP_Notes as Description,g.GROUP_Active as Status,g.GROUP_Created as JoinDate,a.AGENCY_Name as AgencyName,a.AGENCY_ID as AgencyId');
+		$this->db->from('Groups g');
+		$this->db->join('Agencies a','g.AGENCY_ID = a.AGENCY_ID','left');
+		$this->db->where('g.GROUP_ID',$gid);	
+		$query = $this->db->get();
+		return ($query) ? $query->row() : FALSE;
+	}
+	
 	/*
 	 * Enabling and disabling a client
 	 */ 

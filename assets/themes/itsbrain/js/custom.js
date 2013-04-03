@@ -78,7 +78,6 @@ function writeDealerDropdown() {
 $(function() {
 	
 	
-	
 	//===== Autocomplete =====//
 	
 	var availableTags = ["Green",
