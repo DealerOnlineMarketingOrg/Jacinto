@@ -1,15 +1,15 @@
-<div id="loader_block">
-    <div id="client_loader"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
-</div>
 <div class="content">
+    <div id="loader_block">
+        <div id="client_loader"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
+    </div>
     <div class="title"><h5>Agencies</div>
     <?php notifyError(); ?>
     <?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
     <div class="table" style="margin-top:5px;">
         <div class="head"><h5 class="iView">View All Agencies</h5></div>
-        	<div id="agencyTable"></div>
+        	<div id="agencyTable"><?= AgencyListingTable($agencies); ?></div>
         </div>
-     </div>
+    </div>
     <div class="fix"></div>
 </div>
 <div class="fix"></div>
@@ -22,4 +22,3 @@
     div#dataClient{margin-top:1px;}
 </style>
 <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/agency_popups.js"></script>
-<script type="text/javascript">agencyListTable();</script>
