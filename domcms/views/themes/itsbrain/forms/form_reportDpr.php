@@ -16,12 +16,31 @@
 		<?php echo form_open('%page%',$form); ?>
         
         <?php
+			$startDate = $dateRange['startMonth'].'/1/'.$dateRange['startYear'];
+			$endDate = $dateRange['endMonth'].'/1/'.$dateRange['endYear'];
+			$lowerStart = '1/1/2000';
+			$upperStart = $endDate;
+			$lowerEnd = $startDate;
+			$upperEnd = '1/1/2020';
+
 			function dateToMonth($date) {return date('n',strtotime($date));}
 			function dateToYear($date) {return date('Y',strtotime($date));}
+			// Returns a date set to the specified bounds.
+			function setToBounds($lowerDate, $upperDate, $date) {
+				// If date is out of bounds, set it to the closest bounded date.
+				if (strtotime($date) < strtotime($lowerDate))
+					$boundDate = $lowerDate;
+				elseif (strtotime($date) > strtotime($upperDate))
+					$boundDate = $upperDate;
+				else
+					$boundDate = $date;
+				return $boundDate;
+			}
 			// Creates a month-year set of date buttons, bounded by
 			//  lowerDate and upperDate.
 			function dateButtons($lowerDate, $upperDate, $date, $id) {
-				echo 'l:'.$lowerDate.',u:'.$upperDate.',d:'.$date;
+				$date = setToBounds($lowerDate, $upperDate, $date);
+
 				$startMonth = (dateToYear($lowerDate) == dateToYear($date)) ? dateToMonth($date) : 1;
 				$endMonth = (dateToYear($upperDate) == dateToYear($date)) ? dateToMonth($date) : 12;
 				monthButton($startMonth,$endMonth,dateToMonth($date),$id.'Month');
@@ -71,14 +90,6 @@
                 <div class="fix"></div>
                 <div class='noSearch'>
 	                <div style="position:relative;float:left;border:solid 1px #D5D5D5;padding-top:5px;padding-right:5px">
-                    	<?php
-							$startDate = $dateRange['startMonth'].'/1/'.$dateRange['startYear'];
-							$endDate = $dateRange['endMonth'].'/1/'.$dateRange['endYear'];
-							$lowerStart = '1/1/2000';
-							$upperStart = $endDate;
-							$lowerEnd = $startDate;
-							$upperEnd = '1/1/2020';
-						?>
                     	<div style="float:left">
                             <label style="margin-right:0">Date Range:</label>
                             <?php dateButtons($lowerStart,$upperStart,$startDate,'start'); ?>
@@ -152,10 +163,52 @@
 			$("form#reportDpr").submit();
 		});
 
-		$("#startMonth,#startYear,#endMonth,#endYear").change(function() {
-			// Go to report edit page with date range values.
-			jQuery('form#reportDpr').attr('action', '<?= base_url(); ?>dpr/editReport');
-			$("form#reportDpr").submit();	
+		function setToBounds(lowerDate, upperDate, date) {
+			// If date is out of bounds, set it to the closest bounded date.
+			if (date < lowerDate)
+				boundDate = lowerDate;
+			else if (date > upperDate)
+				boundDate = upperDate;
+			else
+				boundDate = date;
+			return boundDate;
+		}
+		
+		var startLock = false;
+		$("#startMonth,#startYear").change(function() {
+			if (!startLock) {
+				endLock = true;
+				// Go to report edit page with date range values.
+				jQuery('form#reportDpr').attr('action', '<?= base_url(); ?>dpr/editReport');
+				startDate = $("#startMonth").val() + "/1/" + $("#startYear").val();
+				// We're changing the start dates. Make sure the end dates don't conflict.
+				lowerDateObj = new Date(startDate);
+				upperDateObj = new Date('<?php echo $upperEnd; ?>');
+				endDate = $("#endMonth").val() + "/1/" + $("#endYear").val();
+				endDateObj = new Date(endDate);
+				endDateObj = setToBounds(lowerDateObj, upperDateObj, endDateObj);
+				$("#endMonth").val(endDateObj.getMonth()+1);
+				$("#endYear").val(endDateObj.getFullYear());
+				$("form#reportDpr").submit();
+			}
+		});
+		var endLock = false;
+		$("#endMonth,#endYear").change(function() {
+			if (!endLock) {
+				startLock = true;
+				// Go to report edit page with date range values.
+				jQuery('form#reportDpr').attr('action', '<?= base_url(); ?>dpr/editReport');
+				endDate = $("#endMonth").val() + "/1/" + $("#endYear").val();
+				// We're changing the end dates. Make sure the start dates don't conflict.
+				lowerDateObj = new Date('<?php echo $lowerStart; ?>');
+				upperDateObj = new Date(endDate);				
+				startDate = $("#startMonth").val() + "/1/" + $("#startYear").val();
+				startDateObj = new Date(startDate);
+				startDateObj = setToBounds(lowerDateObj, upperDateObj, startDateObj);
+				$("#startMonth").val(startDateObj.getMonth());
+				$("#startYear").val(startDateObj.getFullYear());
+				$("form#reportDpr").submit();
+			}
 		});
 		
 		
