@@ -41,11 +41,11 @@
 			}
 			
 			//Grab all agencies,groups and clients and return them to an array
-			$a_sql = 'SELECT AGENCY_ID as AID, AGENCY_Name as AName, AGENCY_Active as AStatus, AGENCY_Tags as ATags from Agencies WHERE AGENCY_Active = "1" ORDER BY AGENCY_Name ASC';
+			$a_sql = 'SELECT AGENCY_ID as AID, AGENCY_Name as AName, AGENCY_Active as AStatus, AGENCY_Tags as ATags from Agencies WHERE AGENCY_Active = 1 ORDER BY AGENCY_Name ASC';
 			$agents = $this->db->query($a_sql)->result();
-			$g_sql = 'SELECT AGENCY_ID as AID, GROUP_Name as GName, GROUP_ID as GID, GROUP_Active as GStatus, GROUP_Tags as GTags FROM Groups WHERE GROUP_Active = "1" ORDER BY GROUP_Name ASC';
+			$g_sql = 'SELECT AGENCY_ID as AID, GROUP_Name as GName, GROUP_ID as GID, GROUP_Active as GStatus, GROUP_Tags as GTags FROM Groups WHERE GROUP_Active = 1 ORDER BY GROUP_Name ASC';
 			$groups = $this->db->query($g_sql)->result();
-			$c_sql = 'SELECT CLIENT_ID as CID, GROUP_ID as GID, CLIENT_Name as CName, CLIENT_Code as Code, CLIENT_Tag as CTag, CLIENT_Active as CStatus FROM Clients WHERE CLIENT_Active = "1" ORDER BY CLIENT_Name ASC';
+			$c_sql = 'SELECT CLIENT_ID as CID, GROUP_ID as GID, CLIENT_Name as CName, CLIENT_Code as Code, CLIENT_Tag as CTag, CLIENT_Active as CStatus FROM Clients WHERE CLIENT_Active = 1 ORDER BY CLIENT_Name ASC';
 			
 			$clients = $this->db->query($c_sql)->result();
 			foreach($agents as $agent) {
@@ -87,7 +87,9 @@
 							array_push($agent->Groups,$group);
 						else :
 							//if we only have one client in the group, push the client up a level.
-							array_push($agent->Groups,$group->Clients[0]);
+							if(isset($group->Clients[0])) {
+								array_push($agent->Groups,$group->Clients[0]);
+							}
 						endif;
 					}
 				}
@@ -97,35 +99,37 @@
 			$select .= '<option value=""></option>';
 			foreach($clientList as $org) {
 				foreach($org as $list) {
-					$select .= "\t" . '<option ' . 
-								(($list->isSelected) ? 'selected="selected"' : '') . 
-								'id="' . $list->Class . '" 
-								 class="tagElementOn no-indent ' . $list->Class . '" 
-								 value="' . $list->Value . '">' . 
-								 	$list->AName . 
-								'</option>' . "\n";
-								
-					foreach($list->Groups as $listGroup) {
-						
+					if(count($list->Groups) > 0) { 
 						$select .= "\t" . '<option ' . 
-									(($listGroup->isSelected) ? 'selected="selected"' : '') . 
-									'id="' . $listGroup->Class . '" 
-									 class="tagElementOn single-indent ' . $listGroup->Class . '" 
-									 value="' . $listGroup->Value . '">' . 
-									 	$listGroup->Label . 
-									'</option>' . "\n";	
+									(($list->isSelected) ? 'selected="selected"' : '') . 
+									'id="' . $list->Class . '" 
+									 class="tagElementOn no-indent ' . $list->Class . '" 
+									 value="' . $list->Value . '">' . 
+										$list->AName . 
+									'</option>' . "\n";
 									
-						if(isset($listGroup->Clients) AND (count($listGroup->Clients) > 1)) {
-							$i = 0;
-							foreach($listGroup->Clients as $listClients) {
-								$i++;
-								$select .= "\t" . '<option ' . 
-											(($listClients->isSelected) ? 'selected="selected"' : '') . 
-											'id="' . $listClients->Class . '" 
-											 class="tagElementOn double-indent ' . $listClients->Class . (($i == count($listGroup->Clients)) ? ' last' : '') . '" 
-											 value="' . $listClients->Value . '">' . 
-												$listClients->Label . 
-											'</option>' . "\n";	
+						foreach($list->Groups as $listGroup) {
+							
+							$select .= "\t" . '<option ' . 
+										(($listGroup->isSelected) ? 'selected="selected"' : '') . 
+										'id="' . $listGroup->Class . '" 
+										 class="tagElementOn single-indent ' . $listGroup->Class . '" 
+										 value="' . $listGroup->Value . '">' . 
+											$listGroup->Label . 
+										'</option>' . "\n";	
+										
+							if(isset($listGroup->Clients) AND (count($listGroup->Clients) > 1)) {
+								$i = 0;
+								foreach($listGroup->Clients as $listClients) {
+									$i++;
+									$select .= "\t" . '<option ' . 
+												(($listClients->isSelected) ? 'selected="selected"' : '') . 
+												'id="' . $listClients->Class . '" 
+												 class="tagElementOn double-indent ' . $listClients->Class . (($i == count($listGroup->Clients)) ? ' last' : '') . '" 
+												 value="' . $listClients->Value . '">' . 
+													$listClients->Label . 
+												'</option>' . "\n";	
+								}
 							}
 						}
 					}

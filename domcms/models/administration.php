@@ -370,6 +370,11 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
     }
 	
+	public function updateGroup($gid,$data) {
+		$this->db->where("GROUP_ID",$gid);
+		return ($this->db->update('Groups',$data)) ? TRUE : FALSE;
+	}
+	
 	public function getGroup($gid) {
 		$this->db->select('g.GROUP_ID as GroupId,g.AGENCY_ID as AgencyId,g.GROUP_Name as Name,g.GROUP_Notes as Description,g.GROUP_Active as Status,g.GROUP_Created as JoinDate,a.AGENCY_Name as AgencyName,a.AGENCY_ID as AgencyId');
 		$this->db->from('Groups g');

@@ -36,21 +36,21 @@ function AgencyListingTable($agencies = false) { ?>
     ?>
     <?php if($addPriv) { ?><a href="javascript:addAgency();" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px;">Add New Agency</a><?php } ?>
     <?php if($listingPriv) { ?>
-        <table cellpadding="0" cellspacing="0" border="0" class="tableStatic" width="100%;">
+        <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%;">
             <thead>
                 <tr>
-                    <td>Name</td>
-                    <td>Description</td>
-                    <td>Status</td>
+                    <th style="width:30%;text-align:left;">Name</th>
+                    <th style="text-align:left;">Description</th>
+                    <th>Status</th>
                     <?php if($editPriv) { ?>
-                    <td>Actions</td>
+                    <th>Actions</th>
                     <?php } ?>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach($agencies as $agency) { ?>
                     <tr>
-                        <td><?= $agency->Name; ?></td>
+                        <td style="text-align:left;"><?= $agency->Name; ?></td>
                         <td><?= $agency->Description; ?></td>
                         <td style="width:30px;text-align:center;"><?= (($agency->Status) ? 'Active' : 'Disable'); ?></td>
                         <?php if($editPriv) { ?>

@@ -1,4 +1,4 @@
-<div class="content">
+<div class="content hideTagFilter">
     <div id="loader_block">
         <div id="client_loader"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
     </div>

@@ -1,15 +1,15 @@
-	<?php if(isset($groups)) : ?>
-    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/group_popups.js"></script>
+<?php if(isset($groups)) : ?>
+	<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/group_popups.js"></script>
     <?php 
-		$ci =& get_instance();
+        $ci =& get_instance();
         $userPermissionLevel = $ci->user['AccessLevel'];
         $addPriv     		 = GateKeeper('Group_Add',$userPermissionLevel);
         $editPriv    		 = GateKeeper('Group_Edit',$userPermissionLevel);
         $disablePriv 		 = GateKeeper('Group_Disable_Enable',$userPermissionLevel);
         $listingPriv 		 = GateKeeper('Group_List',$userPermissionLevel);
     ?>
-    <?php if($addPriv) { ?><a href="javascript:addGroup();" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px;">Add New Group</a><?php } ?>
-    <?php if($listingPriv) { ?>
+	<?php if($addPriv) { ?><a href="javascript:addGroup();" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px;">Add New Group</a><?php } ?>
+	<?php if($listingPriv) { ?>
         <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%;">
             <thead>
                 <tr>
@@ -39,6 +39,6 @@
         </table>
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addGroup();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Group</a><?php } ?>
-    <?php else : ?>
+<?php else : ?>
     <div class="nNote nFailure"><p><strong>Error:</strong> No groups found.</p></div>
-    <?php endif; ?>
+<?php endif; ?>

@@ -46,7 +46,61 @@ class Groups extends DOM_Controller {
 		}
 	}
 	
+	public function Form() {
+		$group_data = $this->security->xss_clean($this->input->post());
+		if(isset($_GET['gid'])) {
+			$group_id = $_GET['gid'];
+			$group_data = $this->security->xss_clean($this->input->post());
+			
+			//prepare the update
+			$edit_data = array(
+				'AGENCY_ID'=>$group_data['agency_id'],
+				'GROUP_Name'=>$group_data['name'],
+				'GROUP_Notes'=>$group_data['notes'],
+				'GROUP_Active'=>$group_data['status'],
+				'GROUP_ActiveTS'=>date(FULL_MILITARY_DATETIME)
+			);
+			
+			$update = $this->administration->updateGroup($group_id,$edit_data);
+			
+			if($update) {
+				echo '1';	
+			}else {
+				echo '0';	
+			}
+			
+		}else {
+			//prepare the add
+			$add_data = array(
+				'AGENCY_ID'=>$this->user['DropdownDefault']->SelectedAgency,
+				'GROUP_Name'=>$group_data['name'],
+				'GROUP_Notes'=>$group_data['notes'],
+				'GROUP_Active'=>1,
+				'GROUP_ActiveTS'=>date(FULL_MILITARY_DATETIME)
+			);
+			
+			$add = $this->administration->addGroup($add_data);
+			
+			if($add) {
+				echo '1';	
+			}else {
+				echo '0';	
+			}
+			
+		}
+	}
+	
 	public function Add() {
+		$agencies = $this->administration->getAgencies();
+		$myAgencies = array();
+		foreach($agencies as $agency) {
+			$myAgencies[$agency->ID] = $agency->Name;	
+		}
+		$data = array(
+			'agencies'=>$myAgencies
+		);
+		
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddgroup',$data);
 	}
 	
 	public function Edit() {
