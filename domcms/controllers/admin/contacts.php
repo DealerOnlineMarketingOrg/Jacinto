@@ -15,7 +15,7 @@ class Contacts extends DOM_Controller {
     }
 
     public function index() {
-			
+		
 		$table = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
 	
 		$level = $this->user['DropdownDefault']->LevelType;
@@ -40,23 +40,29 @@ class Contacts extends DOM_Controller {
 		}
 		
 		//table heading
-		$html = '';
+		$html = '<script type="text/javascript" src="'.base_url().'assets/themes/itsbrain/js/contact_popups.js"></script>';
 		$error_msg = '';
 		
 		if($contacts) :
 			$table .= '<thead><tr>' . '<th>Team</th>' . (($level == 'g' OR $level == 'a') ? '<th style="text-align:left;">Dealership</th>' : '' ) . '<th style="width:10%;">Title</th><th>Name</th><th>Email</th><th>Phone</th><th style="text-align:center">Edit</th><th style="text-align:center">View</tr></thead>';
 			$table .= '<tbody>';
 			foreach($contacts as $contact) {
+				/*
 				$edit_button = '';
 				$edit_button .= form_open('/contacts/edit',array('name'=>'EditForm','id'=>'contact_' . $contact->ContactID));
 				$edit_button .= form_hidden('contact_id',$contact->ContactID);
 				$edit_button .= form_submit('editContact','Edit','class="redBtn" ');
 				$edit_button .= form_close();
+				*/
+				$edit_button = '<input type="button" class="redBtn" value="Edit" onclick="javascript:editContact('.$contact->ContactID.');">';
+				/*
 				$view_button = '';
 				$view_button .= form_open('/contacts/view',array('name'=>'ViewContact','id'=>'view_' . $contact->ContactID));
 				$view_button .= form_hidden('view_id',$contact->ContactID);
 				$view_button .= form_submit('viewContact','View','class="blueBtn"');
 				$view_button .= form_close();
+				*/
+				$view_button = '<input type="button" class="blueBtn" value="View" onclick="javascript:viewContact('.$contact->ContactID.');">';
 				$contact->Name 		= $contact->FirstName . ' ' . $contact->LastName;
 				$contact->Address 	= mod_parser($contact->Address);
 				$contact->Email 	= mod_parser($contact->Email, 'home,work');
@@ -112,7 +118,7 @@ class Contacts extends DOM_Controller {
 			'html' => $html,
 			'clients' => $clients
 		);
-		$this->LoadTemplate('forms/form_addcontacts',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addcontacts',$data);
 	}
 	
 	public function Edit() {
