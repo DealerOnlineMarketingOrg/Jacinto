@@ -1,9 +1,10 @@
 <div class="uDialog" style="text-align:left;">
-    <div class="dialog-message popper" id="<?= (isset($agency)) ? 'editAgency' : 'addAgency'; ?>" title="<?= (isset($agency)) ? 'Edit ' . $agency->Name : 'Add New Agency'; ?>">
-        <div class="uiForm">
+    <div class="dialog-message popper" id="<?= (isset($agency)) ? 'editAgency' : 'addAgency'; ?>" title="<?= (isset($agency)) ? 'Edit ' . $agency->Name : 'Add Agency'; ?>">
+        <div class="uiForm" style="text-align:left;">
 			<style type="text/css">
-				label{margin-top:5px;float:left;}
+				label{margin-top:0px;float:left;padding-top:12px;}
 				div.formError{z-index:2000 !important;}
+				textarea {margin-top:12px;}
 			</style>
             <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
                 <!-- Form begins -->
@@ -11,7 +12,8 @@
 					$form = array(
 						'name' => 'EditAgency',
 						'id' => 'EditAgencyForm',
-						'class' => 'mainForm'
+						'class' => 'mainForm',
+						'style'=>'text-align:left;'
 					);
 					
 					if(isset($agency)) {
@@ -24,7 +26,7 @@
                     <fieldset>
                             <?php if(isset($agency->Name)) { ?>
                                 <div class="rowElem noborder">
-                                    <label>Agency Name<span class="req">*</span></label>
+                                    <label><span class="req">*</span> Name</label>
                                     <div class="formRight">
                                         <input type="text" class="required validate[required]" name="name" id="name" value="<?= $agency->Name; ?>" />
                                     </div>
@@ -32,7 +34,7 @@
                                 </div>
                             <?php }else { ?>
                                 <div class="rowElem noborder">
-                                    <label>Agency Name<span class="req">*</span></label>
+                                    <label><span class="req">*</span> Name</label>
                                     <div class="formRight">
                                         <input type="text" class="required validate[required]" name="name" id="name" value="" />
                                     </div>
@@ -42,7 +44,7 @@
                             </div>
                             <?php if(isset($agency->Description)) { ?>
                                 <div class="rowElem noborder">
-                                    <label>Agency Description</label>
+                                    <label>Notes</label>
                                     <div class="formRight">
                                         <textarea rows="8" cols="" class="auto" name="notes"><?= $agency->Description; ?></textarea>
                                     </div>
@@ -50,7 +52,7 @@
                                 </div>
                             <?php }else { ?>
                                 <div class="rowElem noborder">
-                                    <label>Agency Description</label>
+                                    <label>Notes</label>
                                     <div class="formRight">
                                         <textarea rows="8" cols="" class="auto" name="notes"></textarea>
                                     </div>
@@ -59,7 +61,6 @@
                             <?php } ?>
                             <?php if(isset($agency->Status)) { ?>
                                 <div class="rowElem noborder">
-                                    <label>Enable/Disable</label>
                                     <div class="formRight">
                                         <input type="radio" id="radio1" name="status" value="1" <?= (($agency->Status >= 1) ? 'checked="checked"' : ''); ?> />
                                         <label style="float:none;display:inline;" for="radio1">Enabled</label>
@@ -73,7 +74,7 @@
                             	<?php if(isset($agency->ID)) { ?>
                                 	<input type="hidden" name="agency_id" value="<?= $agency->ID; ?>" />
                                 <?php } ?>
-                                <input type="submit" value="submit" class="redBtn" />
+                                <input type="submit" value="<?= (isset($agency)) ? 'Save' : 'Add'; ?>" class="<?= (isset($agency)) ? 'redBtn' : 'greenBtn'; ?>" />
                             </div>
                             <div class="fix"></div>
                         </div>
@@ -110,9 +111,6 @@
 					}
 					jAlert(msg,'Success',function() {
 						agencyListTable();
-						if ($(".popper").dialog( "isOpen" )===true) {
-							jQuery('.popper').dialog("close");
-						}
 					});
 				}else if(code == '3') {
 					jAlert('You must first disable all groups and clients related to this agency before disabling. Please try again.','Disable Error');
@@ -122,10 +120,7 @@
 					}else {
 						msg = 'Something went wrong while adding the agency you requested. Please try again.';	
 					}
-					jAlert(msg,'Success',function() {
-						if (jQuery(".popper").dialog( "isOpen" )===true) {
-							jQuery('.popper').dialog("close");
-						}
+					jAlert(msg,'Error',function() {
 						agencyListTable();
 					});
 				}
@@ -137,8 +132,8 @@
 	
 	jQuery("#editAgency").dialog({
 		minWidth:300,
-		width:800,
-		height:<?= ((isset($agency->Status)) ? '455' : '400'); ?>,
+		width:500,
+		height:400,
 		autoOpen: true,
 		modal: true
 	});
@@ -146,8 +141,8 @@
 	<?php }else { ?>
 	jQuery("#addAgency").dialog({
 		minWidth:300,
-		width:800,
-		height:<?= ((isset($agency->Status)) ? '455' : '400'); ?>,
+		width:500,
+		height:350,
 		autoOpen: true,
 		modal: true
 	});
