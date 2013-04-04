@@ -2,11 +2,11 @@
 	function editClient(id,link) {
 		jQuery.ajax({
 			type:'GET',
-			url:link+'clients/edit?cid=' + id,
+			url:'/admin/clients/edit?cid=' + id,
 			//data:{client_id:id},
 			success:function(data) {
 				if(data) {
-					jQuery('#editClientInfo').html(data);
+					jQuery('#editClientsForm').html(data);
 				}else {
 					jAlert('There was a problem finding the client you needed.Please try again.','Edit Client Error');
 				}
@@ -20,7 +20,7 @@
 			url:'/admin/clients/view?cid='+id,
 			success:function(data) {
 				if(data) {
-					jQuery('#viewClientInfo').html(data);
+					jQuery('#editClientsForm').html(data);
 				}else {
 					jAlert('There was an error finding the client in our system. Please try again.','View Error');
 				}
@@ -45,44 +45,6 @@
 		  }
 		});
 	  });
-	}
-	
-	function enableClient(id) {
-		jConfirm('Are you sure you would like to enable this client?','Enable Confirmation',function(r) {
-			if(r) {
-				jQuery.ajax({
-					type:'GET',
-					url:'/admin/clients/enable?cid='+id,
-					success:function(c) {
-						if(c) {
-							clientListTable();
-							writeDealerDropdown();	
-						}else {
-							jAlert('There was an error enabling the client you requested. Please try again.','Enable Error');
-						}
-					}
-				});
-			}
-		});
-	}
-	
-	function disableClient(id) {
-		jConfirm('Are you sure you would like to disable this client?','Disable Confirmation',function(r) {
-			if(r) {
-				jQuery.ajax({
-					type:'GET',
-					url:'/admin/clients/disable?cid='+id,
-					success:function(c) {
-						if(c) {
-							clientListTable();	
-							writeDealerDropdown();
-						}else {
-							jAlert('There was an error disabling the client you requested. Please try again.','Disable Error');
-						}
-					}
-				});
-			}
-		});
 	}
 	
 	function disableWebsite(wid) {

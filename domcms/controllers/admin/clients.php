@@ -28,122 +28,18 @@ class Clients extends DOM_Controller {
 	
 	public function load_table($return = false) {
 		$this->load->helper('template');
-		$allowence = $this->CheckModule('Client_List');
 		$html = '';
-		if($allowence) : //the user has permission to view this
-			$level = $this->user['DropdownDefault']->LevelType;
-			$table = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
-			$clients = $this->_getClientsByDropdownLevel($level);		
-			$table .= "<thead>" . "\n" . 
-						"\t" . '<tr>' . "\n" . 
-						"\t\t" . "<th>Tag</th>" . "\n" . 
-						"\t\t" . "<th>Code</th>" . "\n" . 
-						"\t\t" . "<th>Dealership</th>" . "\n" .
-						"\t\t" . "<th>Group</th>" . "\n" .
-						"\t\t" . "<th>Status</th>" . "\n" .
-						"\t\t" . "<th>Actions</th>" . "\n" .
-						"\t" . "</tr>" . "\n" .
-					  "</thead>" . "\n";
-			$table .= '<tbody>' . "\n";
-			$html .= '<style type="text/css">a.actions_link{margin-right:5px;td.actionsCol{width:75px !important;text-align:center;}</style>';
-			$html .= '<script type="text/javascript" src="' . base_url() . 'assets/themes/itsbrain/js/client_popups.js"></script>';
-			
-			foreach ($clients as $client) :
-				
-				//EACH FORM IS NAMED BY THE EDIT_{AGENCY_ID}, SAME CONCEPT WITH THE ID
-				$form_attr = array(
-					'name' => 'edit_' . $client->ClientID,
-					'id' => 'edit_form_' . $client->ClientID,
-					'class' => 'actions'
-				);
-				
-				//EACH FORM HAS THE SAME NAME BUT DIFFERENT ID
-				$button = array(
-					'name' => 'submit',
-					'id' => 'client_id_' . $client->ClientID,
-					'class' => 'basicBtn',
-					'value' => 'Edit'
-				);
-				
-				$warning  = '<img src="' . base_url() . 'assets/themes/global/imgs/icons/notifications/error.png"  title="Disabled" alt="Disabled" />';
-				$active   = '<img src="' . base_url() . 'assets/themes/global/imgs/icons/notifications/accept.png" title="Active" alt="Active"   />';
-				$disabled = '<img src="' . base_url() . THEMEIMGS . 'icons/color/cross.png" alt="Client Is Disabled" />';
-				
-				//edit button
-				$edit_img = '<img src="' . base_url() . THEMEIMGS . 'icons/dark/pencil.png" alt="Edit Client" />';
-				$edit_a = '<a class="actions_link" href="javascript:editClient(\'' . $client->ClientID . '\',\'' . base_url() . '\');" title="Edit Client">' . $edit_img . '</a>';
-				//view button
-				$view_img = '<img src="' . base_url() . THEMEIMGS . 'icons/color/application.png" alt="View Client Information" />';
-				$view_a = '<a class="actions_link" href="javascript:viewClient(\'' . $client->ClientID . '\');" title="View Client Information">' . $view_img . '</a>';
-				//disable button
-				$disable_img = '<img src="' . base_url() . THEMEIMGS . 'icons/color/cross.png" alt="Disable Client" />';
-				$disable_a = '<a class="actions_link" href="javascript:disableClient(\'' . $client->ClientID . '\');" title="Disable Client">' . $disable_img . '</a>';
-				//enable button
-				$enable_img = '<img src="' . base_url() . THEMEIMGS . 'icons/notifications/accept.png" alt="Enable Client" />';
-				$enable_a = '<a class="actions_link" href="javascript:enableClient(\'' . $client->ClientID . '\');" title="Enable Client">' . $enable_img . '</a>';
-								
-				
-				//BUILD THE FORM ROW IN THE TABLE WITH NAME,DESCRIPTION,STATUS, and EDIT BUTTON, THE FORM ALSO HAS A HIDDEN ELEMENT WITH THE AGENCY ID, THIS IS WHAT WE
-				//USE TO POST TO THE EDIT PAGE TO GRAB THE CORRECT AGENCY FROM THE DB.	
-				$table .= '<tr class="tagElement ' . $client->ClassName . '">' . "\n";
-				$table .= "\t" . '<td class="tags"><div class="' . $client->ClassName . '">&nbsp;</div></td>' . "\n";
-				$table .= "\t" . '<td class="clientCode" style="width:45px;">' . $client->ClientCode . '</td>' . "\n";
-				$table .= "\t" . '<td>' . $client->Name . '</td>' . "\n";
-				$table .= "\t" . '<td>' . $client->GroupName . '</td>' . "\n";
-				$table .= "\t" . '<td class="status" style="width:30px;text-align:center">' . (($client->Status) ? $active : $disabled) . '</td>' . "\n";
-				$table .= '<td class="actionsCol" style="width:75px;text-align:center">';
-				
-				//put allowed action buttons in place
-				if($this->CheckModule('Client_Edit')) {
-					$table .= $edit_a;
-				}
-				
-				$table .= $view_a;
-				if($this->CheckModule('Client_Disable_Enable')) {
-					if($client->Status) {
-						$table .= $disable_a;
-					}else {
-						$table .= $enable_a;
-					}
-				}
-				
-				$table .= '</td>';
-				$table .= '</tr>' . "\n";
-			endforeach;
-			
-			$table .= '</tbody></table><div id="editClientInfo"></div><div id="viewClientInfo"></div><div id="addWebsite"></div><div id="editWebsite"></div>' . "\n";
-			$html .= $table;
-			
-			
-			//THE ADD Clients BUTTON
-			$add_button = array(
-				'class' => 'greenBtn floatRight button',
-				'id' => 'add_client_btn',
-				'href' => 'javascript:void(0)',
-			);
-	
-	
-			//This builds the pages html out. We do this here so all our listing pages can have the same template view.
-			$html .= '<div class="fix"></div>';
-			
-			//If the user has permission to add a new group, then show a button to do so.
-			if ($this->CheckModule('Group_Add')) {
-				$html .= '<a href="javascript:addClient();" class="greenBtn floatRight button" style="margin-top:10px;" id="add_client_btn">Add New Client</a>';
-				//$html .= anchor(base_url() . 'clients/add', 'Add Client', 'class="greenBtn floatRight button" style="margin-top:10px;" id="add_client_btn"');
-			}
-			//you dont have permission to view this
-		endif;
-			
+		$level = $this->user['DropdownDefault']->LevelType;
+		$clients = $this->_getClientsByDropdownLevel($level);		
 		
-		if($return) {
-			return $html;
-		}else {
-			echo $html;
-		}
-
+		$data = array(
+			'clients'=>$clients
+		);
+		
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/client_listing_table',$data);
 	}
 	
-	private function _getClientsByDropdownLevel($level) {
+	private function _getClientsByDropdownLevel($level = false) {
 		switch($level) {
 			case 1:
 				return $this->administration->getAllClientsInAgency($this->agency_id);
@@ -171,12 +67,13 @@ class Clients extends DOM_Controller {
 
     public function index() {
     	$this->load->helper('template');
-		$html = $this->load_table(true);
+		$level = $this->user['DropdownDefault']->LevelType;
+		$clients = $this->_getClientsByDropdownLevel($level);		
+
 		$data = array(
-			'page_id' => 'Clients',
-			'page_html' => $html,
-			
+			'clients'=>$clients			
 		);
+		
 		//LOAD THE TEMPLATE
 		$this->LoadTemplate('pages/client_listing', $data);
     }

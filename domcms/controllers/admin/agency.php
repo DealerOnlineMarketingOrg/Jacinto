@@ -14,8 +14,6 @@ class Agency extends DOM_Controller {
 		if(isset($_GET['aid'])) {
 			//heres the agency id
 			$agency_id = $_GET['aid'];
-		}else {
-			$agency_id = FALSE;	
 		}
 		
 		//the form data, cleaned and ready to go
@@ -24,19 +22,34 @@ class Agency extends DOM_Controller {
 			'AGENCY_Name' => $agency_data['name'],
 			'AGENCY_Notes' => $agency_data['notes']
 		);
-		if($agency_id) {
+		if(isset($agency_id)) {
 			
 			if($agency_data['status'] == 0) {
 				//check if there are groups enabled.
 				$group_check = $this->administration->getGroups($agency_id);
 				if($group_check) {
 					echo '3';	
+				}else {
+					$edit_form = array(
+						'AGENCY_Active' => 0
+					);	
+					
+					$data = $data + $edit_form;
+					
+					$edit_agency = $this->administration->updateAgencyInformation($agency_id,$data);
+					if($edit_agency) {
+						echo '1';	
+					}else {
+						echo '0';	
+					}
 				}
 			}else {
 				$edit_form = array(
 					'AGENCY_Active' => $agency_data['status']
 				);
 				$data = $data + $edit_form;
+				//print_object($edit_form);
+				
 				$edit_agency = $this->administration->updateAgencyInformation($agency_id,$data);
 				if($edit_agency) {
 					echo '1';	
@@ -58,6 +71,7 @@ class Agency extends DOM_Controller {
 				echo '0';	
 			}
 		}
+		//print_object($data);
 	}
 	
 	public function Edit() {
