@@ -16,6 +16,21 @@
 		<?php echo form_open('%page%',$form); ?>
         
         <?php
+			function dateToMonth($date) {return date('n',strtotime($date));}
+			function dateToYear($date) {return date('Y',strtotime($date));}
+			// Creates a month-year set of date buttons, bounded by
+			//  lowerDate and upperDate.
+			function dateButtons($lowerDate, $upperDate, $date, $id) {
+				echo 'l:'.$lowerDate.',u:'.$upperDate.',d:'.$date;
+				$startMonth = (dateToYear($lowerDate) == dateToYear($date)) ? dateToMonth($date) : 1;
+				$endMonth = (dateToYear($upperDate) == dateToYear($date)) ? dateToMonth($date) : 12;
+				monthButton($startMonth,$endMonth,dateToMonth($date),$id.'Month');
+				
+				$startYear = (dateToYear($lowerDate) == dateToYear($date)) ? dateToYear($date) : dateToYear($lowerDate);
+				$endYear = (dateToYear($upperDate) == dateToYear($date)) ? dateToYear($date) : dateToYear($upperDate);
+				yearButton($startYear,$endYear,dateToYear($date),$id.'Year');
+			}
+			
         	function monthButton($start, $end, $currentMonthNum, $id) {
 				echo '<select id="'.$id.'" name="'.$id.'" class="input chzn-select required validate[required]" style="width:120px" placeholder="Select a month...">';
 				$months = array('January','Febuary','March','April','May','June','July','August','September','October','November','December');
@@ -26,7 +41,7 @@
 			
 			function yearButton($start, $end, $currentYear, $id) {
 				echo '<select id="'.$id.'" name="'.$id.'" class="input chzn-select required validate[required]" style="width:120px" placeholder="Select a year...">';
-				for ($i = $end; $i >= $start; $i--)
+				for ($i = $start; $i <= $end; $i++)
 					echo '<option value="'.$i.'"' . (($currentYear == $i) ? ' selected' : '') . '>'.$i.'</option>';
 				echo '</select>';
 			}
@@ -55,13 +70,24 @@
                 </div>
                 <div class="fix"></div>
                 <div class='noSearch'>
-	                <div style="position:relative;float:left">
-                    	<label>Beginning date:</label>
-						<label style="clear:both">Ending date:</label>
-					</div>
-					<div style="position:relative;float:left">
-						<div><?php monthButton(1,12,$dateRange['startMonth'],'startMonth'); yearButton(2009,2013,$dateRange['startYear'],'startYear'); ?></div>
-	                	<div><?php monthButton(1,12,$dateRange['endMonth'],'endMonth'); yearButton(2009,2013,$dateRange['endYear'],'endYear'); ?></div>
+	                <div style="position:relative;float:left;border:solid 1px #D5D5D5;padding-top:5px;padding-right:5px">
+                    	<?php
+							$startDate = $dateRange['startMonth'].'/1/'.$dateRange['startYear'];
+							$endDate = $dateRange['endMonth'].'/1/'.$dateRange['endYear'];
+							$lowerStart = '1/1/2000';
+							$upperStart = $endDate;
+							$lowerEnd = $startDate;
+							$upperEnd = '1/1/2020';
+						?>
+                    	<div style="float:left">
+                            <label style="margin-right:0">Date Range:</label>
+                            <?php dateButtons($lowerStart,$upperStart,$startDate,'start'); ?>
+                        </div>
+                        <div style="float:left">
+                            <label style="margin-right:0">To</label>
+                            <?php dateButtons($lowerEnd,$upperEnd,$endDate,'end'); ?>
+                        </div>
+                        <div class="fix"></div>
                     </div>
                 </div>
                 <div id="reportLive">

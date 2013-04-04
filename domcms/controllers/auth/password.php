@@ -55,7 +55,7 @@ class Password extends CI_Controller {
 				echo '1';	
 			}
 		}else {
-			echo 'The Password does not contain at least 1 upper case letter, 1 lower case letter, 1 number or special character and/or is not 8 characters long. Please Try Again.';	
+			echo 'The Password must contain at least 1 upper case letter, 2 lower case letters, 1 number and 1 special character, and be at least 8 characters long. Please Try Again.';	
 		}
 	}	
 
