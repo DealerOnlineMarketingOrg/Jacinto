@@ -24,7 +24,7 @@
                             <div class="fix"></div>
                         </div>
                         <div class="rowElem noborder">
-                            <label>Member Of</label>
+                            <label style="padding-top:10px;">Member Of</label>
                             <div class="formRight" style="text-align:left;padding-top:10px;margin-left:68px;float:left;width:auto;">
                             	<?php
 									echo form_dropdown('agency', $agencies, ((isset($group->AgencyID)) ? $group->AgencyID : ''),'id="memberOf" class="chzn-select" disabled="disabled" style="margin-left:10px;"');
@@ -33,32 +33,27 @@
                             <div class="fix"></div>
                         </div>
                         <div class="rowElem noborder">
-                            <label style="margin-right:20px;">Member Since</label>
-                            <div class="formRight"><?= form_input(array('class'=>'datepicker validate[required]','name'=>'created','id'=>'createdDate','value'=>((isset($group->JoinDate)) ? date('m-d-Y', strtotime($group->JoinDate)) : ''))); ?></div>
-                            <div class="fix"></div>
-                        </div>
-                        <div class="rowElem noborder">
                             <label>Notes</label>
                             <div class="formRight">
-                               <?= form_textarea(array('name'=>'notes','id'=>'groupNotes','value'=>(($group->Description) ? $group->Description : ''))); ?>
+                               <?= form_textarea(array('name'=>'notes','id'=>'groupNotes','value'=>((isset($group->Description)) ? $group->Description : ''))); ?>
                             </div>
                             <div class="fix"></div>
                         </div>
 						<?php if(isset($group->Status)) { ?>
                             <div class="rowElem noborder">
-                                <label>Enable/Disable</label>
+                                
                                 <div class="formRight" style="text-align:left;padding-top:15px;">
                                     <input type="radio" id="radio1" name="status" value="1" <?= (($group->Status >= 1) ? 'checked="checked"' : ''); ?> />
-                                    <label style="float:none;display:inline;" for="radio1">Enabled</label>
+                                    <label style="float:none;display:inline;" for="radio1">Enable</label>
                                     <input type="radio" id="radio2" name="status" value="0" <?= (($group->Status < 1) ? 'checked="checked"' : ''); ?>  />
-                                    <label style="float:none;display:inline;" for="radio2">Disabled</label>
+                                    <label style="float:none;display:inline;" for="radio2">Disable</label>
                                 </div>
                                 <div class="fix"></div>
                             </div>
                         <?php } ?>
                         <div class="submitForm">
                             <?php if(isset($group->GroupId)) { ?>
-                                <input type="hidden" name="agency_id" value="<?= $group->GroupId; ?>" />
+                                <input type="hidden" name="agency_id" value="<?= $group->AgencyId; ?>" />
                             <?php } ?>
                             <input type="submit" value="submit" class="redBtn" />
                         </div>
@@ -69,31 +64,54 @@
 		</div>
 	</div>
 </div>
+<style type="text/css">
+.rowElem > label {padding-top:5px;}
+	.ui-datepicker-append{float:left;}
+</style>
 <script type="text/javascript">
-	jQuery(".chzn-select").chosen();
-	jQuery(".datepicker").datepicker({ 
-		defaultDate: +7,
-		autoSize: true,
-		appendText: '(dd-mm-yyyy)',
-		dateFormat: 'mm-dd-yy',
-	});	
-
-	jQuery('ul.tabs li a').live('click',function() {
-		//remove all activetabs
-		jQuery('ul.tabs').find('li.activeTab').removeClass('activeTab');
+	//re initialize jQuery
+	var $ = jQuery.noConflict();
+	
+	$('.formPop').submit(function(e) {
+		e.preventDefault();
+		var formData = $(this).serialize();
 		
-		jQuery(this).parent().addClass('activeTab');
-		var content = 'div#' + jQuery(this).attr('rel');
-		//alert(content);
-		jQuery('#viewGroup div.tab_container div.tab_content').hide();
-		jQuery('#viewGroup div.tab_container').find(content).css({'display':'block'});
-		//alert(content);
+		$.ajax({
+			type:'POST',
+			data:formData,
+			url:'/admin/groups/form<?= ((isset($group)) ? '?gid=' . $group->GroupId : ''); ?>',
+			success:function(code) {
+				var msg;
+				if(code == '1') {
+					msg = '<?= (isset($group)) ? 'Your edit was made succesfully.' : 'Your add was made successfully'; ?>';
+					jAlert(msg,'Success',function() {
+						$("#editGroupPop").empty();
+						$("#addGroupPop").empty();
+						groupListTable();
+					}); 
+				}else {
+					msg = '<?= (isset($group)) ? 'There was a problem with editing the group requested. Please try again.':'There was a problem adding the group. Please try again.'; ?>';
+					jAlert(msg,'Error');
+				}
+			}
+		});
 	});
-	//jQuery("div[class^='widget']").simpleTabs();
-	jQuery("#editGroup").dialog({
+	
+	$(".chzn-select").chosen();
+	
+	$('ul.tabs li a').live('click',function() {
+		//remove all activetabs
+		$('ul.tabs').find('li.activeTab').removeClass('activeTab');
+		$(this).parent().addClass('activeTab');
+		var content = 'div#' + $(this).attr('rel');
+		$('#viewGroup div.tab_container div.tab_content').hide();
+		$('#viewGroup div.tab_container').find(content).css({'display':'block'});
+	});
+	
+	$("#editGroup").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,
-		modal: false
+		modal: false,
 	});
 </script>

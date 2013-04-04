@@ -65,7 +65,4 @@
 		modal: false
 	});
 </script>
-<style type="text/css">
-	div.formRight{padding:0;}
-	div.ui-dialog input[type="text"]{margin:0;}
-</style>
+

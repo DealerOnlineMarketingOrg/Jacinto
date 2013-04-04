@@ -48,8 +48,8 @@
 			It validates only if the string:
 			
 			   * contain at least (1) upper case letter
-			   * contain at least (1) lower case letter
-			   * contain at least (1) number or special character
+			   * contain at least (2) lower case letter
+			   * contain at least (1) number and special character
    			   * contain at least (8) characters in length		
 		*/
 		
