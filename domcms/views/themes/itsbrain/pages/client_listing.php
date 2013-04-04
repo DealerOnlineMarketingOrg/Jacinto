@@ -13,6 +13,6 @@
     div#client_loader{position:absolute;width:16px;height:16px;top:50%;margin-top:-8px;left:50%;margin-left:-8px;}
     div#dataClient{margin-top:1px;}
 </style>
-<div id="addClientsForm"></div> 
+<div id="editClientsForm"></div> 
 <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/client_popups.js"></script>
 <script type="text/javascript"></script>

@@ -16,7 +16,7 @@
                     <th style="width:50px;text-align:center;">Tag</th>
                     <th style="text-align:left;width:50px;">Code</th>
                     <th style="text-align:left;width:30%;">Dealership Name</th>
-                    <th>Group</th>
+                    <th style="text-align:left;">Group</th>
                     <th>Status</th>
                     <?php if($editPriv) { ?>
                     <th class="actions">Actions</th>

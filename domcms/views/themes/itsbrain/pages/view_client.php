@@ -84,7 +84,7 @@
 		//alert(content);
 	});
 	//jQuery("div[class^='widget']").simpleTabs();
-	jQuery(".popper").dialog({
+	jQuery("#viewClient").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,

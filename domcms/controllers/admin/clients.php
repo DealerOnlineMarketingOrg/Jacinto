@@ -39,7 +39,7 @@ class Clients extends DOM_Controller {
 		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/client_listing_table',$data);
 	}
 	
-	private function _getClientsByDropdownLevel($level) {
+	private function _getClientsByDropdownLevel($level = false) {
 		switch($level) {
 			case 1:
 				return $this->administration->getAllClientsInAgency($this->agency_id);
@@ -67,6 +67,7 @@ class Clients extends DOM_Controller {
 
     public function index() {
     	$this->load->helper('template');
+		$level = $this->user['DropdownDefault']->LevelType;
 		$clients = $this->_getClientsByDropdownLevel($level);		
 
 		$data = array(
