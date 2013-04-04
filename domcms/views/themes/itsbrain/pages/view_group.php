@@ -1,5 +1,5 @@
 <div class="uDialog" style="text-align:left;">
-    <div class="dialog-message" id="viewGroup" title="View Group Details">
+    <div class="dialog-message popper" id="viewGroup" title="View Group Details">
         <div class="uiForm">
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
@@ -62,7 +62,7 @@
 		minWidth:800,
 		height:500,
 		autoOpen: true,
-		modal: false
+		modal: true
 	});
 </script>
 

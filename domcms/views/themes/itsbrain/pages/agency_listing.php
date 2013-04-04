@@ -13,7 +13,6 @@
     <div class="fix"></div>
 </div>
 <div class="fix"></div>
-<div id="addAgencyPop"></div>
 <div id="editAgencyPop"></div>
 <style type="text/css">
     div#loader_block{position:fixed;width:100%;height:100%;top:0;left:0;background:#fff;opacity:0.8;z-index:2000;display:none;}

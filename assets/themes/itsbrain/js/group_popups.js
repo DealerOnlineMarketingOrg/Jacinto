@@ -2,6 +2,10 @@
 var $ = jQuery;
 
 function addGroup() {
+	$('#addGroup').remove();
+	$('#editGroup').remove();
+	$('#viewGroup').remove();
+	
 	$.ajax({
 		type:'GET',
 		url:'/admin/groups/add',
@@ -9,13 +13,16 @@ function addGroup() {
 			if(code == '0') {
 				jAlert('The Group can not be found. Please try again','Error');
 			}else {
-				$('#addGroupPop').html(code);
+				$('#editGroupPop').html(code);
 			}
 		}
 	});
 }
 
 function editGroup(gid) {
+	$('#addGroup').remove();
+	$('#editGroup').remove();
+	$('#viewGroup').remove();
 	$.ajax({
 		type:'GET',
 		url:'/admin/groups/edit?gid='+gid,
@@ -30,20 +37,22 @@ function editGroup(gid) {
 }
 
 function viewGroup(gid) {
+	$('#addGroup').remove();
+	$('#editGroup').remove();
+	$('#viewGroup').remove();
 	$.ajax({
 		type:'GET',
 		url:'/admin/groups/view?gid='+gid,
 		success:function(code) {
-			$('#viewGroupPop').html(code);	
+			$('#editGroupPop').html(code);	
 		}
 	});
 }
 
-function groupListTable() {
-	if ($(".dialog-message").dialog( "isOpen" ) === true) {
-		$('.dialog-message').dialog("close");
-	}
-	
+function groupListTable() {	
+	$('#addGroup').remove();
+	$('#editGroup').remove();
+	$('#viewGroup').remove();
 	$('#loader_block').slideDown('fast',function() {
 		$.ajax({
 			type:"GET",

@@ -1,5 +1,5 @@
 <div class="uDialog" style="text-align:left;">
-    <div class="dialog-message" id="editGroup" title="View Group Details">
+    <div class="dialog-message popper" id="<?= ((isset($group)) ? 'editGroup' : 'addGroup'); ?>" title="View Group Details">
         <div class="uiForm">
             <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
             	<?php
@@ -85,8 +85,6 @@
 				if(code == '1') {
 					msg = '<?= (isset($group)) ? 'Your edit was made succesfully.' : 'Your add was made successfully'; ?>';
 					jAlert(msg,'Success',function() {
-						$("#editGroupPop").empty();
-						$("#addGroupPop").empty();
 						groupListTable();
 					}); 
 				}else {
@@ -108,10 +106,19 @@
 		$('#viewGroup div.tab_container').find(content).css({'display':'block'});
 	});
 	
+	<?php if(isset($group)) { ?>
 	$("#editGroup").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,
-		modal: false,
+		modal: true,
 	});
+	<?php }else { ?>
+	$("#addGroup").dialog({
+		minWidth:800,
+		height:500,
+		autoOpen: true,
+		modal: true,
+	});
+	<?php } ?>
 </script>
