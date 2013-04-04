@@ -52,6 +52,45 @@ class Administration extends CI_Model {
 		}
 	}
 	
+	// Formats a url so it has a valid scheme attached to it.
+	// Returns the formatted url. Assumes http if unknown or missing scheme.
+	public function formatUrl($url) {
+		$url = trim($url);
+		// All valid schemes. Includes likely malformed schemes.
+		$schemes = array (
+			'http'  => '~^(((http|ttp|htp|tp|p)))(:?/+)(.*)$~i',
+			'https' => '~^(((http|ttp|htp|tp|p)s))(:?/+)(.*)$~i',
+			'ftp'   => '~^(((ftp|ft|fp)))(:?/+)(.*)$~i',
+			'sftp'  => '~^(s?(ftp|ft|fp)|(ftp|ft|fp)s?)(:?/+)(.*)$~i',
+			'file'  => '~^(((file|fle|fil|ile|le|e)))(:?/+)(.*)$~i',
+		);
+		// If url scheme doesn't match valid schemes, assume http.
+		$newUrl = '';
+		foreach ($schemes as $key => $scheme) {
+			$isMatch = preg_match($scheme, $url, $matches);
+			if ($isMatch) {
+				// This is the most likely intended scheme.
+				//  $key contains scheme name.
+				$newUrl = $key . '://' . $matches[5];
+				break;
+			}
+		}
+		if ($newUrl == '') {
+			// Valid schemes wasn't matched. Attempt a more general match.
+			// Also check for missing scheme name.
+			$schemeGeneral = '~^([^:/]+)?(:?/+)(.*)$~i';
+			$isMatch = preg_match($schemeGeneral, $url, $matches);
+			if ($isMatch)
+				// General scheme found. Assume http.
+				$newUrl = 'http://' . $matches[3];
+			else
+				// url is likely missing the scheme altogether.
+				$newUrl = 'http://' . $url;
+		}
+		
+		return $newUrl;
+	}
+	
 	public function editWebsiteInfo($formdata) {
 		$data = array(
 			'CLIENT_ID' => $formdata['ClientID'],
@@ -62,7 +101,7 @@ class Administration extends CI_Model {
 			'WEB_BingCode'=>$formdata['bing_code'],
 			'WEB_YahooCode'=>$formdata['yahoo_code'],
 			'WEB_GlobalScript'=>$formdata['global_code'],
-			'WEB_Url'=>$formdata['url'],
+			'WEB_Url'=>$this->formatUrl($formdata['url']),
 			'WEB_Notes'=>$formdata['notes'],
 			'WEB_ActiveTS'=>date(FULL_MILITARY_DATETIME),
 			//'WEB_Created'=>date(FULL_MILITARY_DATETIME)
@@ -101,7 +140,7 @@ class Administration extends CI_Model {
 			'WEB_YahooCode'=>$formdata['yahoo_code'],
 			'WEB_GlobalScript'=>$formdata['global_code'],
 			'WEB_Type'=>'cid:' . $formdata['ClientID'],
-			'WEB_Url'=>$formdata['url'],
+			'WEB_Url'=>$this->formatUrl($formdata['url']),
 			'WEB_Active'=>'1',
 			'WEB_Notes'=>$formdata['notes'],
 			'WEB_ActiveTS'=>date(FULL_MILITARY_DATETIME),
