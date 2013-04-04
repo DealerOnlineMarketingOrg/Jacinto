@@ -1,5 +1,5 @@
 <div class="uDialog" style="text-align:left;">
-    <div class="dialog-message" id="editAgency" title="<?= (isset($agency)) ? 'Edit ' . $agency->Name : 'Add New Agency'; ?>">
+    <div class="dialog-message popper" id="<?= (isset($agency)) ? 'editAgency' : 'addAgency'; ?>" title="<?= (isset($agency)) ? 'Edit ' . $agency->Name : 'Add New Agency'; ?>">
         <div class="uiForm">
 			<style type="text/css">
 				label{margin-top:5px;float:left;}
@@ -110,8 +110,8 @@
 					}
 					jAlert(msg,'Success',function() {
 						agencyListTable();
-						if ($("#editAgency").dialog( "isOpen" )===true) {
-							jQuery('#editAgency').dialog("close");
+						if ($(".popper").dialog( "isOpen" )===true) {
+							jQuery('.popper').dialog("close");
 						}
 					});
 				}else if(code == '3') {
@@ -123,8 +123,8 @@
 						msg = 'Something went wrong while adding the agency you requested. Please try again.';	
 					}
 					jAlert(msg,'Success',function() {
-						if (jQuery("#editAgency").dialog( "isOpen" )===true) {
-							jQuery('#editAgency').dialog("close");
+						if (jQuery(".popper").dialog( "isOpen" )===true) {
+							jQuery('.popper').dialog("close");
 						}
 						agencyListTable();
 					});
@@ -133,12 +133,25 @@
 		});
 	});
 	
+	<?php if(isset($agency)) { ?>
+	
 	jQuery("#editAgency").dialog({
 		minWidth:300,
 		width:800,
 		height:<?= ((isset($agency->Status)) ? '455' : '400'); ?>,
 		autoOpen: true,
-		modal: false
+		modal: true
 	});
+	
+	<?php }else { ?>
+	jQuery("#addAgency").dialog({
+		minWidth:300,
+		width:800,
+		height:<?= ((isset($agency->Status)) ? '455' : '400'); ?>,
+		autoOpen: true,
+		modal: true
+	});
+	
+	<?php } ?>
 	
 </script>

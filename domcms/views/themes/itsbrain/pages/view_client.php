@@ -1,5 +1,5 @@
 <div class="uDialog" style="text-align:left;">
-    <div class="dialog-message" id="viewClient" title="View">
+    <div class="dialog-message popper" id="viewClient" title="View">
         <div class="uiForm">
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
@@ -84,10 +84,10 @@
 		//alert(content);
 	});
 	//jQuery("div[class^='widget']").simpleTabs();
-	jQuery("#viewClient").dialog({
+	jQuery(".popper").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,
-		modal: false
+		modal: true
 	});
 </script>
