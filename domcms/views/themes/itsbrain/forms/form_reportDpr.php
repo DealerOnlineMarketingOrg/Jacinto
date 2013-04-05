@@ -21,7 +21,7 @@
 			$lowerStart = '1/1/2000';
 			$upperStart = $endDate;
 			$lowerEnd = $startDate;
-			$upperEnd = '1/1/2020';
+			$upperEnd = date('n/j/Y');
 
 			function dateToMonth($date) {return date('n',strtotime($date));}
 			function dateToYear($date) {return date('Y',strtotime($date));}
