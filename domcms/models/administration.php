@@ -750,7 +750,7 @@ class Administration extends CI_Model {
 		}
 	}
 	
-	public function updateContact($data, $id) {
+	public function updateContact($id, $data) {
 		if($this->db->update('Directories',$data,'DIRECTORY_ID ="' . $id . '"')) {
 			return TRUE;	
 		}else {

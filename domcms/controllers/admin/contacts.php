@@ -37,7 +37,7 @@ class Contacts extends DOM_Controller {
 				break;
 		}
 		foreach ($contacts as &$contact) {
-			formatContactInfo($contact);
+			$this->formatContactInfo($contact);
 		}
 		$data = array(
 			'contacts' => $contacts
@@ -61,7 +61,7 @@ class Contacts extends DOM_Controller {
 		}
 		
 		$contact = $this->administration->getContact($contact_id);
-		formatContactInfo($contact);
+		$this->formatContactInfo($contact);
 
 		if($contact) {
 			$data = array(
@@ -74,17 +74,31 @@ class Contacts extends DOM_Controller {
 	
 	public function Form() {
 		$contact_data = $this->security->xss_clean($this->input->post());
-		if(isset($_GET['gid'])) {
-			$contact_id = $_GET['gid'];
+		if(isset($_GET['cid'])) {
+			$contact_id = $_GET['cid'];
 			$contact_data = $this->security->xss_clean($this->input->post());
 			
+			$email     = 'home:' . $contact_data['PersonalEmailAddress'] . (($contact_data['WorkEmailAddress']) ? ',work:' . $contact_data['WorkEmailAddress'] : '');
+			$phone     = 'main:' . $contact_data['DirectPhone'] . (($contact_data['MobilePhone']) ? ',mobile:' . $contact_data['MobilePhone'] : '') . (($contact_data['FaxPhone']) ? ',fax:' . $contact_data['FaxPhone'] : '');
+			$type      = $contact_data['type'] .':' . $this->user['DropdownDefault']->SelectedClient;
+			$firstname = $contact_data['firstname'];
+			$lastname  =  $contact_data['lastname'];
+			$address   = 'street:' . $contact_data['street'] . ',city:' . $contact_data['city'] . ',state:' . $contact_data['state'] . ',zipcode:' . $contact_data['zip'];
+			$notes     = $contact_data['notes'];
+
 			//prepare the update
 			$edit_data = array(
-				'AGENCY_ID'=>$contact_data['agency_id'],
-				'GROUP_Name'=>$contact_data['name'],
-				'GROUP_Notes'=>$contact_data['notes'],
-				'GROUP_Active'=>$contact_data['status'],
-				'GROUP_ActiveTS'=>date(FULL_MILITARY_DATETIME)
+				'TITLE_ID' => 12,
+				'DIRECTORY_Type' => $type,
+				'DIRECTORY_FirstName' => $firstname,
+				'DIRECTORY_LastName' => $lastname,
+				'DIRECTORY_Address' => $address,
+				'DIRECTORY_Email' => $email,
+				'DIRECTORY_Phone' => $phone,
+				'DIRECTORY_Notes' => $notes,
+				'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME),
+				'JobTitle'=>$contact_data['JobTitle'],
+				'CLIENT_Owner'=> $contact_data['company']
 			);
 			
 			$update = $this->administration->updateContact($contact_id,$edit_data);
@@ -92,17 +106,36 @@ class Contacts extends DOM_Controller {
 			if($update) {
 				echo '1';	
 			}else {
-				echo '0';	
+				echo '0';
 			}
 			
 		}else {
+			$type = $contact_data['type'] .':' . $this->user['DropdownDefault']->SelectedClient;
+			$firstname = $contact_data['firstname'];
+			$lastname =  $contact_data['lastname'];
+			$address = 'street:' . $contact_data['street'] . ',city:' . $contact_data['city'] . ',state:' . $contact_data['state'] . ',zipcode:' . $contact_data['zip'];
+			$notes = $contact_data['notes'];
+			
+			$email  = 'home:' . $contact_data['PersonalEmailAddress'] . 
+			  (($contact_data['WorkEmailAddress']) ? 
+				',work:' . $contact_data['WorkEmailAddress'] : 
+			  '');
+			  
+			$phone  = 'main:' . $contact_data['DirectPhone'] . (($contact_data['MobilePhone']) ? ',mobile:' . $contact_data['MobilePhone'] : '') . (($contact_data['FaxPhone']) ? ',fax:' . $contact_data['FaxPhone'] : '');
+			
 			//prepare the add
 			$add_data = array(
-				'AGENCY_ID'=>$this->user['DropdownDefault']->SelectedAgency,
-				'GROUP_Name'=>$contact_data['name'],
-				'GROUP_Notes'=>$contact_data['notes'],
-				'GROUP_Active'=>1,
-				'GROUP_ActiveTS'=>date(FULL_MILITARY_DATETIME)
+				'TITLE_ID' => 12,
+				'DIRECTORY_Type' => $type,
+				'DIRECTORY_FirstName' => $firstname,
+				'DIRECTORY_LastName' => $lastname,
+				'DIRECTORY_Address' => $address,
+				'DIRECTORY_Email' => $email,
+				'DIRECTORY_Phone' => $phone,
+				'DIRECTORY_Notes' => $notes,
+				'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME),
+				'JobTitle'=>$contact_data['JobTitle'],
+				'CLIENT_Owner'=>$this->user['DropdownDefault']->SelectedClient
 			);
 			
 			$add = $this->administration->addContact($add_data);
@@ -116,37 +149,28 @@ class Contacts extends DOM_Controller {
 		}
 	}
 	
-	public function Add() {
-		$agencies = $this->administration->getAgencies();
-		$myAgencies = array();
-		foreach($agencies as $agency) {
-			$myAgencies[$agency->ID] = $agency->Name;	
-		}
+	public function Add() {		
+		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
 		$data = array(
-			'agencies'=>$myAgencies
+			'clients'=>$clients
 		);
 		
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddcontact',$data);
 	}
 	
 	public function Edit() {
-		if(isset($_GET['gid'])) {
-			$contact_id = $_GET['gid'];	
-		}else {
-			$contact_id = $this->user['DropdownDefault']->SelectedContact;	
+		if(isset($_GET['cid'])) {
+			$contact_id = $_GET['cid'];
 		}
 		
 		$contact = $this->administration->getContact($contact_id);
-		formatContactInfo($contact);
+		$this->formatContactInfo($contact);
+		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
+
 		if($contact) {
-			$myAgencies = array();
-			foreach($agencies as $agency) {
-				$myAgencies[$agency->ID] = $agency->Name;	
-			}
-			
 			$data = array(
 				'contact'=>$contact,
-				'agencies'=>$myAgencies
+				'clients'=>$clients
 			);	
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddcontact',$data);
 		}else {

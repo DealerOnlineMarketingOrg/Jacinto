@@ -19,13 +19,13 @@ function addContact() {
 	});
 }
 
-function editContact(gid) {
+function editContact(cid) {
 	$('#addContact').remove();
 	$('#editContact').remove();
 	$('#viewContact').remove();
 	$.ajax({
 		type:'GET',
-		url:'/admin/contacts/edit?gid='+gid,
+		url:'/admin/contacts/edit?cid='+cid,
 		success:function(code) {
 			if(code == '0') {
 				jAlert('The Contact can not be found. Please try again','Error');
@@ -36,13 +36,13 @@ function editContact(gid) {
 	});
 }
 
-function viewContact(gid) {
+function viewContact(cid) {
 	$('#addContact').remove();
 	$('#editContact').remove();
 	$('#viewContact').remove();
 	$.ajax({
 		type:'GET',
-		url:'/admin/contacts/view?gid='+gid,
+		url:'/admin/contacts/view?cid='+cid,
 		success:function(code) {
 			$('#editContactPop').html(code);	
 		}
@@ -61,14 +61,8 @@ function contactListTable() {
 				if(data) {
 					$('#contactTable').html(data);
 					$('#loader_block').slideUp('fast',function() {
-						$('#example').dataTable({
-							"bJQueryUI": true,
-							"sPaginationType": "full_numbers",
-							"sDom": '<""f>t<"F"lp>',
-							'iDisplayLength':1000,
-							"aLengthMenu": [[-1,10,25,50],['All',10,25,50]]
-						});
-	
+						$('#example').dataTable();
+						
 						$('#contactTable').slideDown('fast');
 					});
 				}else {
