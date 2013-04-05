@@ -83,7 +83,7 @@ class Passwords extends DOM_Controller {
 				if($this->CheckModule('Passwords_Edit')) {
 					$table .= $edit_a;
 				}
-				$table .= $view_a;
+				//$table .= $view_a;
 				/*
 				// Disable/Enable not implemented yet.
 				if($this->CheckModule('Passwords_Disable_Enable')) {

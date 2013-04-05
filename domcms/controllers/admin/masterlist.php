@@ -21,6 +21,15 @@ class Masterlist extends DOM_Controller {
     }
 
     public function index() {
+		// Master List page will only be for agency.
+		$level = $this->user['DropdownDefault']->LevelType;
+		// If not on Client level, go back to dashboard.
+		if ($level != 'a') {
+			throwError(newError('Master List', -1, 'Sorry, the Master List page is not available for ' . (($level == 'c') ? 'clients' : 'groups') . '.',0,''));
+			redirect('/','refresh');
+			exit;
+		}
+		
 		$html = '';
 		$scripts = '';
 		if($this->activeLevel != 1) {
