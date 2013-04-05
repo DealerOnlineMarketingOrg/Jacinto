@@ -251,7 +251,7 @@ class Administration extends CI_Model {
 	public function getAllContactsInGroup($id) {
 		$all_contacts = array();
 
-		$csql = 'SELECT CLIENT_ID as CID,CLIENT_Tag as Tag,CLIENT_Code as ClientCode,Client_Name as Dealership FROM Clients WHERE CLIENT_ID = "' . $id . '" ORDER BY CLIENT_Name ASC';
+		$csql = 'SELECT CLIENT_ID as CID,CLIENT_Tag as Tag,CLIENT_Code as ClientCode,Client_Name as Dealership FROM Clients WHERE GROUP_ID = "' . $id . '" ORDER BY CLIENT_Name ASC';
 		$clients = $this->db->query($csql)->result();
 		
 		foreach($clients as $client) :
