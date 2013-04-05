@@ -92,65 +92,156 @@ class Clients extends DOM_Controller {
 			'CLIENT_Code'=>$this->security->xss_clean($this->input->post('ClientCode')),
 			'CLIENT_Tag'=>$this->security->xss_clean($this->input->post('tags')),
 			'CLIENT_ActiveTS'=>date(FULL_MILITARY_DATETIME),
+			'GROUP_ID'=>$this->security->xss_clean($this->input->post('Group')),
+			'CLIENT_Active'=>$this->security->xss_clean($this->input->post('status')),
 		);
 		
-		$rep_data = array();
+		/*$rep_data = array();
 		
-		if((isset($_POST['GoogleReviewURL'])) AND ($_POST['GoogleReviewURL'] != '')) {
+		if($_POST['GoogleReviewURL'] != '') {
 			$google_group = array(
 				'ServicesID'=>1,
-				'URL'=>$this->security->xss_clean($this->input->post('GoogleReviewURL'))
-			);
+				'URL'=>$this->security->xss_clean($_POST['GoogleReviewURL'])
+			);	
+			
+			if($_POST['ClientID']) {
+				$google_group['ClientID'] = $_POST['ClientID'];	
+			}
+			
+			array_push($rep_data,$google_group);
 		}
 		
-		if((isset($_POST['YelpReviewURL'])) AND ($_POST['YelpReviewURL'] != '')) {
+		if($_POST['YelpReviewURL'] != '') {
 			$yelp_group = array(
 				'ServicesID'=>2,
-				'URL'=>$this->security->xss_clean($this->input->post('YelpReviewURL'))
-			);
+				'URL'=>$this->security->xss_clean($_POST['YelpReviewURL'])
+			);	
+			
+			if($_POST['ClientID']) {
+				$yelp_group['ClientID'] = $_POST['ClientID'];	
+			}
+			
+			array_push($rep_data,$yelp_group);
 		}
 		
-		if((isset($_POST['YahooReviewURL'])) AND ($_POST['YahooReviewURL'] != '')) {
+		if($_POST['YahooReviewURL'] != '') {
 			$yahoo_group = array(
 				'ServicesID'=>3,
-				'URL'=>$this->security->xss_clean($This->input->post('YahooReviewURL'))
-			);
+				'URL'=>$this->security->xss_clean($_POST['YahooReviewURL'])
+			);	
+			
+			if($_POST['ClientID']) {
+				$yahoo_group['ClientID'] = $_POST['ClientID'];	
+			}
+			
+			array_push($rep_data,$yahoo_group);
+		} */
+		
+		
+		if(isset($_POST['ClientID'])) {
+			$client_data['CLIENT_ID'] = $this->security->xss_clean($_POST['ClientID']);	
+		}else {
+			$client_data['CLIENT_Created'] = date(FULL_MILITARY_DATETIME);	
 		}
 		
-		if(isset($_POST['ClientID'])) { //if this is set, we know its the edit form
-			if((isset($_POST['GoogleReviewURL'])) AND ($_POST['GoogleReviewURL'] != '')) {
-				$google_group_add = array(
-					'ID'=>$this->security->xss_clean($this->input->post('GoogleID')),
-					'ClientID'=>$this->security->xss_clean($this->input->post('ClientID')),
-				);
-				$google_group = $google_group + $google_group_add;
-				array_push($rep_data,$google_group);
+		if(isset($_POST['ClientID'])) {
+			$update = $this->administration->updateClient($_POST['ClientID'],$client_data);
+			if($update) {
+				echo '1';	
+			}else {
+				echo '0';	
+			}
+		}else {
+			$add = $this->administration->addClient($client_data);
+			if($add) {
+				echo '1';	
+			}else {
+				echo '0';	
+			}
+		}
+		
+				
+		/*
+		
+		
+		if($_POST['GoogleReviewURL'] != '') {
+			$google_group = array(
+				'ServicesID'=>1,
+				'URL'=>$this->security->xss_clean($_POST['GoogleReviewURL'])
+			);	
+			
+			if($_POST['ClientID']) {
+				$google_group['ID'] = $this->security->xss_clean($_POST['GoogleID']);
+				$google_group['ClientID'] = $_POST['ClientID'];	
 			}
 			
-			if((isset($_POST['YelpReviewURL'])) AND ($_POST['YelpReviewURL'] != '')) {
-				$yelp_group_add = array(
-					'ID'=>$this->security->xss_clean($this->input->post('YelpID')),
-					'ClientID'=>$this->security->xss_clean($this->input->post('ClientID')),
-				);
-				$yelp_group = $yelp_group + $yelp_group_add;
-				array_push($rep_data,$yelp_group);
+			array_push($rep_data,$google_group);
+		}
+		
+		if($_POST['YelpReviewURL'] != '') {
+			$yelp_group = array(
+				'ServicesID'=>2,
+				'URL'=>$this->security->xss_clean($_POST['YelpReviewURL'])
+			);	
+			
+			if($_POST['ClientID']) {
+				$yelp_group['ID'] = $this->security->xss_clean($_POST['YelpID']);
+				$yelp_group['ClientID'] = $_POST['ClientID'];	
 			}
 			
-			if((isset($_POST['YahooReviewURL'])) AND ($_POST['YahooReviewURL'] != '')) {
-				$yahoo_group_add = array(
-					'ID'=>$this->security->xss_clean($this->input->post('YahooID')),
-					'ClientID'=>$this->security->xss_clean($this->input->post('ClientID')),
-				);
-				$yahoo_group = $yahoo_group + $yahoo_group_add;
-				array_push($rep_data,$yahoo_group);
+			array_push($rep_data,$yelp_group);
+		}
+		
+		if($_POST['YahooReviewURL']) {
+			$yahoo_group = array(
+				'ServicesID'=>3,
+				'URL'=>$this->security->xss_clean($_POST['YahooReviewURL'])
+			);	
+			
+			if($_POST['ClientID']) {
+				$yahoo_group['ID'] = $this->security->xss_clean($_POST['YahooID']);
+				$yahoo_group['ClientID'] = $_POST['ClientID'];	
 			}
 			
-			$update_client = $this->administration->updateClient($this->input->post('ClientID'),$client_data);
-			
-			if($update_client) {
+			array_push($rep_data,$yahoo_group);
+		}
+		
+		if(isset($_POST['ClientID'])) {
+			$client_id = $_POST['ClientID'];
+			$update = $this->administration->updateClient($client_id,$client_data);
+			if($update && count($rep_data) > 0) {
+				$rep = $this->administration->updateReputations($rep_data);
+				if($rep) {
+					echo '1';	
+				}else {
+					echo '0';	
+				}
+			}elseif($update && count($rep_data) <= 0) {
+				echo '1';	
+			}else {
+				echo '0';	
+			}
+		}elseif(isset($_GET['gid'])) { //were adding
+			$client_data['GROUP_ID'] = $this->user['DropdownDefault']->SelectedGroup;
+			$client_data['CLIENT_Active'] = $this->security->xss_clean($_POST['Status']);
+			$client_data['CLIENT_Created'] = date(FULL_MILITARY_DATETIME);
+			$client = $this->administration->addClient($client_data);
+			if($client) {
+				if(isset($google_group)) {
+					$google_group['ClientID'] = $client;	
+					array_push($rep_data,$google_group);
+				}
+				if(isset($yelp_group)) {
+					$yelp_group['ClientID'] = $client;	
+					array_push($rep_data,$yelp_group);
+				}
+				if(isset($yahoo_group)) {
+					$yahoo_group['ClientID'] = $client;
+					array_push($rep_data,$yahoo_group);	
+				}
 				if(count($rep_data) > 0) {
-					$update_reputations = $this->administration->updateReputations($rep_data);
-					if($update_reputations) {
+					$add_rep = $this->administration->addReputation($rep_data);	
+					if($add_rep) {
 						echo '1';	
 					}else {
 						echo '0';	
@@ -161,65 +252,11 @@ class Clients extends DOM_Controller {
 			}else {
 				echo '0';	
 			}
-			
-			
-		}elseif(isset($_GET['gid'])) { //were adding new client here
-			
-			$add_client_data = array(
-				'GROUP_ID' => $this->user['DropdownDefault']->SelectedGroup,
-				'CLIENT_Active' => $this->security->xss_clean($this->input->post('Status')),
-				'CLIENT_Created'=>date(FULL_MILITARY_DATETIME),
-			);
-			
-			//merge add fields to array
-			$client_info = $client_data + $add_client_data;
-			$client = $this->administration->addClient($client_info);
-			if($client) {
-				if(isset($google_group) OR isset($yelp_group) OR isset($yahoo_group)) {
-					$client_id = $client;
-					$rep_push = array(
-						'ClientID'=>$client_id
-					);
-					
-					if(isset($google_group)) {
-						if(count($google_group) > 0) {
-							$google_group = $google_group + $rep_push;
-							array_push($rep_data,$google_group);
-						}
-					}
-					
-					if(isset($yelp_group)) {
-						if(count($yelp_group) > 0) {
-							$yelp_group = $yelp_group + $rep_push;
-							array_push($rep_data,$yelp_group);
-						}
-					}
-					
-					if(isset($yahoo_group)) {
-						if(count($yahoo_group) > 0) {
-							$yahoo_group = $yahoo_group + $rep_push;
-							array_push($rep_data,$yahoo_group);
-						}
-					}
-					
-					if(count($rep_data) > 0) {
-						$add_rep = $this->administration->addReputation($rep_data);
-						if($add_rep) {
-							echo '1';	
-						}else {
-							echo '0';	
-						}
-					}else {
-						echo '1';	
-					}
-				}else {
-					echo '1';	
-				}
-				
-			}else {
-				echo '1';	
-			}
+		}else {
+			echo '0';	
 		}
+		
+		*/
 	}
 	
 	public function Add() {
@@ -235,10 +272,13 @@ class Clients extends DOM_Controller {
 	}
     
     public function add_form() {
-      $tags = $this->administration->getAllTags();
+		$tags = $this->administration->getAllTags();    
+		$groups = $this->administration->getAllGroupsInAgency($this->user['DropdownDefault']->SelectedAgency);
+
       $data = array(
           'client'=>false,
-          'tags'=>$tags
+          'tags'=>$tags,
+		  'groups'=>$groups
       );
       $this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);
     }
@@ -264,6 +304,8 @@ class Clients extends DOM_Controller {
 		$this->load->model('administration');
 		$client = $this->administration->getSelectedClient($client_id);
 		$tags = $this->administration->getAllTags();    
+		$groups = $this->administration->getAllGroupsInAgency($this->user['DropdownDefault']->SelectedAgency);
+		
 		if($client) {
 			$client->Address = (isset($client->Address)) ? mod_parser($client->Address) : false;
 			$client->Phone = (isset($client->Phone)) ? mod_parser($client->Phone) : false;
@@ -276,15 +318,14 @@ class Clients extends DOM_Controller {
 				'YahooID'  => ($this->administration->getSelectedClientsReviews($client_id,3)) ? $this->administration->getSelectedClientsReviews($client_id,3)->ID  : FALSE
 			);
 			$data = array(
+				'groups' => $groups,
 				'client' => $client,
 				'html' => $html,
 				'tags'=>$tags,
 				'websites'=>load_client_websites($client_id)
 			);
 			//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
-		
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);
-			
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);		
 		}else {
 			//this returns nothing to the ajax call....therefor the ajax call knows to show a popup error.
 			print 0;

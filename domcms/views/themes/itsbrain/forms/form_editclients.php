@@ -2,17 +2,20 @@
     <div class="dialog-message" id="editClient" title="<?= ($client) ? 'Edit ' . $client->Name : 'Add New Client'; ?>">
         <div class="uiForm">
 			<style type="text/css">
-				label{margin-top:5px;float:left;}
+				#editClient label{margin-top:0px;float:left;padding-top:12px;}
 				div.formError{z-index:2000 !important;}
+				#editClient .chzn-container,textarea{margin-top:12px;}
 			</style>
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
-            		<li class="activeTab"><a href="javascript:void(0);" rel="clientInfo">Client Information</a></li>
+            		<li class="activeTab"><a href="javascript:void(0);" rel="clientInfo">Client Details</a></li>
             		<?php if(isset($websites)) { ?>
                     <li><a href="javascript:void(0);" rel="websites">Websites</a></li>
                     <?php } ?>
-            		<!-- <li><a href="#contacts">Contacts</a></li>
-            		<li><a href="#users">Users</a></li>
+                    <?php if(isset($contacts)) { ?>
+            		<li><a href="javascript:void(0);" rel="contacts">Contacts</a></li>
+                    <?php } ?>
+            		<!-- <li><a href="#users">Users</a></li>
             		<li><a href="#vendors">Vendors</a></li> -->
             	</ul>
             	<div class="tab_container">
@@ -26,10 +29,33 @@
 					            
 					        );
 							
-			        		echo (!$client) ? form_open('/admin/clients/form_processor/clients/add',$form) : form_open('/admin/clients/form_processor/clients/edit',$form);
+			        		echo (!isset($client)) ? form_open('/admin/clients/form_processor/clients/add',$form) : form_open('/admin/clients/form_processor/clients/edit',$form);
 			    		?>
         				<!-- Input text fields -->
         				<fieldset>
+                        	<?php if(isset($client->Tag)) { ?>
+                        	<div class="rowElem noborder">
+                            	<label><span class="req">*</span> Tag</label>
+                                <div class="formRight noSearch">
+                                	<div style="width:25px;border:1px solid #d5d5d5;margin-right:5px;float:left;margin-top:12px;">
+                                		<div id="tagThumb" class="<?= $client->ClassName; ?>" style="float:left;">&nbsp;</div>
+                                    </div>
+                                    <select id="tagChanger" name="tags" data-placeholder="Link Tags To Client..." class="chzn-select validate[required]" tabindex="1">
+			                            <option value=""></option>
+			                            <?php foreach($tags as $tag) : ?>
+			                            	<option rel="<?= $tag->ClassName; ?>" <?= ($client) ? (($tag->ID == $client->Tag) ? 'selected="selected"' : '') : ''; ?> value="<?= $tag->ID; ?>"><?= $tag->Name; ?></option>
+			                            <?php endforeach; ?>
+			                        </select>
+                                </div>
+                            </div>
+                            <?php } ?>
+			                <div class="rowElem noborder">
+			                    <label><span class="req">*</span> Client Code</label>
+			                    <div class="formRight">
+			                        <?= form_input(array('maxlength'=>'4','class'=>'required validate[required]','name'=>'ClientCode','id'=>'code','value'=>($client) ? $client->Code : '')); ?>
+			                    </div>
+			                    <div class="fix"></div>
+			                </div>
 			                <div class="rowElem noborder">
 			                    <label><span class="req">*</span>Client Name</label>
 			                    <div class="formRight">
@@ -61,7 +87,7 @@
 			                <div class="rowElem noborder">
 			                    <label>Zip Code</label>
 			                    <div class="formRight">
-			                        <?= form_input(array('name'=>'zip','id'=>'zip','value'=>((isset($client->Address['zipcode'])) ? $client->Address['zipcode'] : ''))); ?>
+			                        <?= form_input(array('maxlength'=>'6','name'=>'zip','id'=>'zip','value'=>((isset($client->Address['zipcode'])) ? $client->Address['zipcode'] : ''))); ?>
 			                    </div>
 			                    <div class="fix"></div>
 			
@@ -74,17 +100,34 @@
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
+                            <div class="rowElem noborder">
+                            	<label>Member Of</label>
+                                <div class="formRight noSearch">
+                                	<select class="chzn-select validate[required]" name="Group" <?= ($this->user['AccessLevel'] >= 600000) ? '' : 'disabled'; ?> style="width:200px;">
+                                    	<option value=""></option>
+                                        <?php foreach($groups as $group) { ?>
+                                        	<?php 
+												if(isset($client->GroupID)) {
+													if($client->GroupID == $group->GroupID) { ?>
+														<option selected="selected" value="<?=$group->GroupID; ?>"><?=$group->Name; ?></option>
+													<? }else { ?>
+														<option value="<?=$group->GroupID; ?>"><?=$group->Name; ?></option>
+													<? }
+												}else { ?>
+                                                	<?php if(isset($this->user['DropdownDefault']->SelectedGroup) && $this->user['DropdownDefault']->SelectedGroup != '') { ?>
+                                                    <option <?= ($this->user['DropdownDefault']->SelectedGroup == $group->GroupID) ? 'selected="selected"' : ''; ?> value="<?=$group->GroupID; ?>"><?=$group->Name; ?></option>
+                                                    <?php }else { ?>
+													<option value="<?=$group->GroupID; ?>"><?=$group->Name; ?></option>
+                                                    <?php } ?>
+												<? }?>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
 			                <div class="rowElem noborder">
 			                    <label>Notes</label>
 			                    <div class="formRight">
                                 	<?= form_textarea(array('rows'=>'8','cols'=>'','class'=>'auto','name'=>'Notes','id'=>'notes','value'=>($client) ? $client->Description : '')); ?>
-			                    </div>
-			                    <div class="fix"></div>
-			                </div>
-			                <div class="rowElem noborder">
-			                    <label><span class="req">*</span> Client Code</label>
-			                    <div class="formRight">
-			                        <?= form_input(array('class'=>'required validate[required]','name'=>'ClientCode','id'=>'code','value'=>($client) ? $client->Code : '')); ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
@@ -115,26 +158,28 @@
 			                        <p class="formNote">The Web Address for the clients Yahoo Review Page</p>
 			                    </div>
 			                </div>
-			                
-			                <div class="rowElem noborder">
-			                    <label><span class="req">*</span> Tags</label>
-			                    <div class="formRight searchDrop noSearch" style="text-align:left;">
-			                        <select style="width:200px;" name="tags" data-placeholder="Link Tags To Client..." class="chzn-select validate[required]" tabindex="9">
-			                            <option value=""></option>
-			                            <?php foreach($tags as $tag) : ?>
-			                            	<option <?= ($client) ? (($tag->ID == $client->Tag) ? 'selected="selected"' : '') : ''; ?> value="<?= $tag->ID; ?>"><?= $tag->Name; ?></option>
-			                            <?php endforeach; ?>
-			                        </select>
-			                    </div>
-			                    <div class="fix"></div>
-			                </div>		                
-			                 
+                            <div class="rowElem noborder">
+                                <div class="formRight" style="text-align:left;padding-top:15px;">
+                                	<?php if(isset($client->Status)) { ?>
+                                    <input type="radio" id="radio1" name="status" value="1" <?= (($client->Status >= 1) ? 'checked="checked"' : ''); ?> />
+                                    <label style="float:none;display:inline;" for="radio1">Enable</label>
+                                    <input type="radio" id="radio2" name="status" value="0" <?= (($client->Status < 1) ? 'checked="checked"' : ''); ?>  />
+                                    <label style="float:none;display:inline;" for="radio2">Disable</label>
+                                    <?php }else { ?>
+                                    <input type="radio" id="radio1" name="status" value="1" checked="checked" />
+                                    <label style="float:none;display:inline;" for="radio1">Enable</label>
+                                    <input type="radio" id="radio2" name="status" value="0" />
+                                    <label style="float:none;display:inline;" for="radio2">Disable</label>
+                                    <?php } ?>
+                                </div>
+                                <div class="fix"></div>
+                            </div>
+			                <div class="fix"></div>
 			                <div class="submitForm">
                             	<?php if($client) { ?>
-                                	<input type="hidden" name="Status" value="<?= $client->Status; ?>" />
 			               			<input type="hidden" name="ClientID" value="<?= $client->ClientID; ?>" />
                                 <?php } ?>
-			                    <input type="submit" value="submit" class="redBtn" />
+			                    <input type="submit" value="<?= ((isset($client->Status)) ? 'Save' : 'Add'); ?>" class="<?= ((isset($client->Status)) ? 'redBtn' : 'greenBtn'); ?>" />
 			                </div> 
 			                <div class="fix"></div>
 			           </fieldset>
@@ -145,6 +190,11 @@
                     	<?= (isset($websites)) ? $websites : ''; ?>
     				</div>
                     <?php } ?>
+                    <?php if(isset($contacts)) { ?>
+                    <div id="contacts" class="tab_content" style="display:none;">
+                    	<?= (isset($contacts)) ? $contacts : ''; ?>
+                    </div>
+                    <?php } ?>
                     <div id="loader" style="display:none;"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
     				<div class="fix"></div>
     			</div>	
@@ -154,80 +204,80 @@
 	</div>
 </div>
 <script type="text/javascript">
-	jQuery.mask.definitions['~'] = "[+-]";
-	jQuery(".maskDate").mask("99/99/9999",{completed:function(){alert("Callback when completed");}});
-	jQuery(".maskPhone").mask("(999) 999-9999");
-	jQuery(".maskPhoneExt").mask("(999) 999-9999? x99999");
-	jQuery(".maskIntPhone").mask("+33 999 999 999");
-	jQuery(".maskTin").mask("99-9999999");
-	jQuery(".maskSsn").mask("999-99-9999");
-	jQuery(".maskProd").mask("a*-999-a999", { placeholder: " " });
-	jQuery(".maskEye").mask("~9.99 ~9.99 999");
-	jQuery(".maskPo").mask("PO: aaa-999-***");
-	jQuery(".maskPct").mask("99%");
+
+	var $ = jQuery;
+	
+	$('#tagChanger').change(function() {
+		var ele = $(this).find('option:selected');
+		var classname = ele.attr('rel');
+		$('#tagThumb').attr('class',classname);
+	});
+
+	$.mask.definitions['~'] = "[+-]";
+	$(".maskDate").mask("99/99/9999",{completed:function(){alert("Callback when completed");}});
+	$(".maskPhone").mask("(999) 999-9999");
+	$(".maskPhoneExt").mask("(999) 999-9999? x99999");
+	$(".maskIntPhone").mask("+33 999 999 999");
+	$(".maskTin").mask("99-9999999");
+	$(".maskSsn").mask("999-99-9999");
+	$(".maskProd").mask("a*-999-a999", { placeholder: " " });
+	$(".maskEye").mask("~9.99 ~9.99 999");
+	$(".maskPo").mask("PO: aaa-999-***");
+	$(".maskPct").mask("99%");
 
 	//reinitialize the validation plugin
-	jQuery("#valid,.valid").validationEngine({promptPosition : "right", scroll: true});
+	$("#valid,.valid").validationEngine({promptPosition : "right", scroll: true});
 	
-	jQuery('form.editClient,form.addClient').submit(function(e) {
+	$('form.editClient,form.addClient').submit(function(e) {
 		e.preventDefault();
-		var formData = jQuery(this).serialize();
-		var type = '<?= ($client) ? 'edit' : 'add'; ?>';
-		jQuery.ajax({
+		var formData = $(this).serialize();
+		var formType = '<?= ($client) ? 'edit' : 'add'; ?>';
+		$.ajax({
 			type:'POST',
 			data:formData,
 			url:'<?php echo (($client) ? '/admin/clients/form?cid=' . $client->ClientID : '/admin/clients/form?gid=' . $this->user['DropdownDefault']->SelectedGroup); ?>',
 			success:function(resp) {
 				if(resp == '1') {
-					if(type != 'add') {
+					if(formType == 'edit') {
 						jAlert('The client was edited successfully','Success',function() {
-							jQuery('#editClient').dialog('close');
 							clientListTable();
 							writeDealerDropdown();
 						});
 					}else {
 						jAlert('The client was added successfully','Success',function() {
-							jQuery('#editClient').dialog('close');
 							clientListTable();
 							writeDealerDropdown();
 						});
 					}
 				}else {
-					if(type != 'add') {
-						jAlert('The edited changes could not be processed. Please contact support or try again','Error',function() {
-							jQuery('#editClient').dialog('close');
-							clientListTable();
-							writeDealerDropdown();
-						});
+					if(formType == 'edit') {
+						jAlert('Something went wrong while editing the client. Please try again.','Error');
 					}else {
-						jAlert('The client you are trying to add could not be added. Please try again','Error',function() {
-							jQuery('#editClient').dialog('close');
-							clientListTable();
-							writeDealerDropdown();
-						});
+						jAlert('Something went wrong while adding the client. Please try again.','Error');
 					}
 				}
 			}
 		});
 	});
 
-	jQuery('ul.tabs li a').live('click',function() {
+	$('ul.tabs li a').live('click',function() {
 		//remove all activetabs
-		jQuery('ul.tabs').find('li.activeTab').removeClass('activeTab');
+		$('ul.tabs').find('li.activeTab').removeClass('activeTab');
 		
-		jQuery(this).parent().addClass('activeTab');
-		var content = 'div#' + jQuery(this).attr('rel');
+		$(this).parent().addClass('activeTab');
+		var content = 'div#' + $(this).attr('rel');
 		//alert(content);
-		jQuery('#editClient div.tab_container div.tab_content').hide();
-		jQuery('#editClient div.tab_container').find(content).css({'display':'block'});
+		$('#editClient div.tab_container div.tab_content').hide();
+		$('#editClient div.tab_container').find(content).css({'display':'block'});
 		//alert(content);
 	});
 	//jQuery("div[class^='widget']").simpleTabs();
-	jQuery(".chzn-select").chosen();
-	jQuery("#editClient").dialog({
-		minWidth:800,
+	$(".chzn-select").chosen();
+	$("#editClient").dialog({
+		minWidth:300,
+		width:800,
 		height:500,
 		autoOpen: true,
-		modal: false
+		modal: true
 	});
 </script>
