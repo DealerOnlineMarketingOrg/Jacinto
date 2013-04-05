@@ -23,6 +23,7 @@ class Contacts extends DOM_Controller {
 		$contact->Email = mod_parser($contact->Email);
 		$contact->Parent = $this->administration->getClient(substr($contact->Type,4))->Name;
 		$contact->TypeCode = substr($contact->Type,0,3);
+		$contact->TypeID = substr($contact->Type,4);
 	}
 	
     public function index() {
@@ -43,6 +44,7 @@ class Contacts extends DOM_Controller {
 		$data = array(
 			'contacts' => $contacts
 		);
+
 		$this->LoadTemplate('pages/contact_listing',$data);
     }
 	
@@ -75,6 +77,7 @@ class Contacts extends DOM_Controller {
 	
 	public function Form() {
 		$contact_data = $this->security->xss_clean($this->input->post());
+		
 		if(isset($_GET['cid'])) {
 			$contact_id = $_GET['cid'];
 			$contact_data = $this->security->xss_clean($this->input->post());
@@ -89,8 +92,10 @@ class Contacts extends DOM_Controller {
 
 			//prepare the update
 			$edit_data = array(
-				'TITLE_ID' => 12,
+				'TITLE_ID' => $contact_data['jobTitleType'],
+				'JobTitle' => $contact_data['JobTitle'],
 				'DIRECTORY_Type' => $type,
+				'CLIENT_Owner' => $contact_data['parent'],
 				'DIRECTORY_FirstName' => $firstname,
 				'DIRECTORY_LastName' => $lastname,
 				'DIRECTORY_Address' => $address,
@@ -98,8 +103,7 @@ class Contacts extends DOM_Controller {
 				'DIRECTORY_Phone' => $phone,
 				'DIRECTORY_Notes' => $notes,
 				'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME),
-				'JobTitle'=>$contact_data['JobTitle'],
-				'CLIENT_Owner'=> $contact_data['company']
+				'DIRECTORY_Tag' => $contact_data['tags']
 			);
 			
 			$update = $this->administration->updateContact($contact_id,$edit_data);
@@ -126,8 +130,10 @@ class Contacts extends DOM_Controller {
 			
 			//prepare the add
 			$add_data = array(
-				'TITLE_ID' => 12,
+				'TITLE_ID' => $contact_data['jobTitleType'],
+				'JobTitle' => $contact_data['JobTitle'],
 				'DIRECTORY_Type' => $type,
+				'CLIENT_Owner' => $contact_data['parent'],
 				'DIRECTORY_FirstName' => $firstname,
 				'DIRECTORY_LastName' => $lastname,
 				'DIRECTORY_Address' => $address,
@@ -135,8 +141,7 @@ class Contacts extends DOM_Controller {
 				'DIRECTORY_Phone' => $phone,
 				'DIRECTORY_Notes' => $notes,
 				'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME),
-				'JobTitle'=>$contact_data['JobTitle'],
-				'CLIENT_Owner'=>$this->user['DropdownDefault']->SelectedClient
+				'DIRECTORY_Tag' => $contact_data['tags']
 			);
 			
 			$add = $this->administration->addContact($add_data);
@@ -150,10 +155,38 @@ class Contacts extends DOM_Controller {
 		}
 	}
 	
-	public function Add() {		
+	public function Add() {
+		// Create an empty contact.
+		$contact = array (
+			'Type' => '',
+			'FirstName' => '',
+			'LastName' => '',
+			'street' => '',
+			'city' => '',
+			'zip' => '',
+			'Notes' => '',
+			'PersonalEmailAddress' => '',
+			'WorkEmailAddress' => '',
+			'DirectPhone' => '',
+			'MobilePhone' => '',
+			'FaxPhone' => '',
+			'jobTitleType' => '',
+			'JobTitle' => '',
+			'parent' => '',
+			'DealershipID' => '',
+			'ContactID' => '',
+			'TagID' => ''
+		);
+		$contact = (object)$contact;
+		
 		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
+		$tags = $this->administration->getAllTags();  
+
 		$data = array(
-			'clients'=>$clients
+			'page'=>'add',
+			'contact'=>$contact,
+			'clients'=>$clients,
+			'tags'=>$tags
 		);
 		
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddcontact',$data);
@@ -167,11 +200,16 @@ class Contacts extends DOM_Controller {
 		$contact = $this->administration->getContact($contact_id);
 		$this->formatContactInfo($contact);
 		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
+		$types = $this->administration->getTypeList();
+		$tags = $this->administration->getAllTags();  
 
 		if($contact) {
 			$data = array(
+				'page'=>'edit',
 				'contact'=>$contact,
-				'clients'=>$clients
+				'clients'=>$clients,
+				'types'=>$types,
+				'tags'=>$tags
 			);	
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddcontact',$data);
 		}else {

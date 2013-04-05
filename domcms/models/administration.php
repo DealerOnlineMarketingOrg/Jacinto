@@ -778,6 +778,7 @@ class Administration extends CI_Model {
         $sql = 'SELECT 
 				d.DIRECTORY_ID as ContactID,
 				d.TITLE_ID as Title,
+				ti.TITLE_Name as TitleName,
 				d.JobTitle as JobTitle,
 				d.DIRECTORY_Type as Type,
 				d.DIRECTORY_FirstName as FirstName,
@@ -794,6 +795,7 @@ class Administration extends CI_Model {
 				FROM Directories d
 				INNER JOIN Clients c ON c.CLIENT_ID = "' . $id . '"
 				INNER JOIN xTags t on c.CLIENT_Tag = t.TAG_ID
+				INNER JOIN xTitles ti on d.TITLE_ID = ti.TITLE_ID
 				WHERE d.DIRECTORY_Type = "CID:' . $id . '" OR d.DIRECTORY_Type = "VID:' . $id . '" 
 				ORDER BY d.DIRECTORY_LastName,d.DIRECTORY_FirstName,c.CLIENT_Tag ASC';
 		$query = $this->db->query($sql);
@@ -804,6 +806,7 @@ class Administration extends CI_Model {
         $sql = 'SELECT 
 				d.DIRECTORY_ID as ContactID,
 				d.TITLE_ID as Title,
+				ti.TITLE_Name as TitleName,
 				d.JobTitle as JobTitle,
 				d.DIRECTORY_Type as Type,
 				d.DIRECTORY_FirstName as FirstName,
@@ -821,6 +824,7 @@ class Administration extends CI_Model {
 				FROM Directories d
 				INNER JOIN Clients c ON c.CLIENT_ID = d.CLIENT_Owner
 				INNER JOIN xTags t ON c.CLIENT_Tag = t.TAG_ID
+				INNER JOIN xTitles ti on d.TITLE_ID = ti.TITLE_ID
 				WHERE DIRECTORY_ID = "' . $id . '"';
 		$query = $this->db->query($sql);
 		return ($query) ? $query->row() : FALSE;

@@ -77,8 +77,6 @@ $route['users/(:any)']					= 'admin/users/$1';
 
 $route['contacts']						= 'admin/contacts/index';
 $route['contacts/(:any)']				= 'admin/contacts/$1';
-$route['contactsOld']						= 'admin/contactsOld';
-$route['contactsOld/(:any)']				= 'admin/contactsOld/$1';
 
 $route['agency']						= 'admin/agency';
 $route['agency/(:any)']					= 'admin/agency/$1';

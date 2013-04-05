@@ -18,12 +18,17 @@
 			                </div>
                             <?php } ?>
                             <div class="rowElem noborder">
-			                    <label>Type</label>
-			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>(($contact->TypeCode == 'cid') ? 'Client' : 'Vendor'),'style'=>'margin:0')); ?></div>
+			                    <label>Contact Type</label>
+			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>(($contact->TypeCode == 'CID') ? 'Client' : 'Vendor'),'style'=>'margin:0')); ?></div>
 			                    <div class="fix"></div>
 			                </div>
                             <div class="rowElem noborder">
-			                    <label>Title</label>
+			                    <label>Job Title Type</label>
+			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->TitleName,'style'=>'margin:0')); ?></div>
+			                    <div class="fix"></div>
+			                </div>
+                            <div class="rowElem noborder">
+			                    <label>Job Title</label>
 			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->JobTitle,'style'=>'margin:0')); ?></div>
 			                    <div class="fix"></div>
 			                </div>
@@ -47,7 +52,7 @@
 			                </div>
                             <div class="rowElem noborder">
 			                    <label>Phone</label>
-			                    <div class="formRight"><label style="margin:0;color:red">Main:</label><?= form_input(array('disabled'=>'disabled','value'=>$contact->Phone['main'],'style'=>'margin:0')); ?></div>
+			                    <div class="formRight"><label style="margin:0;color:red">Main/Direct:</label><?= form_input(array('disabled'=>'disabled','value'=>$contact->Phone['main'],'style'=>'margin:0')); ?></div>
 			                    <?php if (isset($contact->Phone['mobile'])) { ?>
 			                    <div class="formRight"><label style="margin:0;color:red">Mobile:</label><?= form_input(array('disabled'=>'disabled','value'=>$contact->Phone['mobile'],'style'=>'margin:0')); ?></div>
                                 <?php } ?>

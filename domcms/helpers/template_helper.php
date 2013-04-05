@@ -622,15 +622,15 @@ function breadcrumb($replacement = false) {
 	return $link;
 }
 
-function showStates($selected = false) {
+function showStates($selected = '') {
     $ci =& get_instance();
     $ci->load->model('utilities');
     $states = $ci->utilities->getStates();
-
+	
     $options = '<select data-placeholder="Choose a State..." class="chzn-select" style="width:350px;" name="state">';
 	$options .= '<option value=""></option>';
     foreach ($states as $state) {
-        $options .= '<option ' . (($selected AND $selected == $state->Abbrev) ? 'selected="selected"' : '') . ' value="' . $state->Abbrev . '">' . $state->Name . '</option>';
+        $options .= '<option value="' . $state->Abbrev . '"' .(($selected == $state->Abbrev) ? ' selected' : '') . '>' . $state->Name . '</option>';
     }
     $options .= '</select>';
 
