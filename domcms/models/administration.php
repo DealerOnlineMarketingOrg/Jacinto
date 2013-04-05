@@ -285,53 +285,6 @@ class Administration extends CI_Model {
 				$this->db->order_by('d.DIRECTORY_LastName','ASC');
 			endif;
 		endif; 
-		
-        //query to show users info on listing and edit pages.
-       /* $sql = "SELECT 
-                u.USER_ID as ID, 
-				u.USER_Name as Username,
-                u.USER_Name as EmailAddress,
-                ui.USER_Active as Status,
-                ui.USER_Created as JoinDate,
-                ui.USER_ActiveTS as LastUpdate,
-                ui.USER_Modules as Modules,
-				ui.USER_Avatar as Avatar,
-				ui.Google_Avatar,
-				ui.USER_GravatarEmail as Gravatar,
-				d.DIRECTORY_ID as DirectoryID,
-                d.DIRECTORY_Type as UserType,
-                d.DIRECTORY_FirstName as FirstName,
-                d.DIRECTORY_LastName as LastName,
-                d.DIRECTORY_Address as Address,
-                d.DIRECTORY_EMAIL as Emails,
-                d.DIRECTORY_Phone as Phones,
-                d.DIRECTORY_Notes as Notes,
-                d.TITLE_ID as TitleID,
-                a.ACCESS_NAME as AccessName,
-                a.ACCESS_Level as AccessLevel,
-                a.ACCESS_ID as AccessID,
-				c.CLIENT_Name as Dealership,
-				c.CLIENT_Address as CompanyAddress,
-				t.TAG_ID as TagID,
-				t.TAG_Name as TeamName,
-				t.TAG_ClassName as ClassName,
-				t.TAG_Color as Color
-                FROM Users u
-                INNER JOIN Users_Info ui ON ui.USER_ID = u.USER_ID
-                INNER JOIN xSystemAccess a ON ui.ACCESS_ID = a.ACCESS_ID
-                INNER JOIN Directories d ON ui.DIRECTORY_ID = d.DIRECTORY_ID
-				INNER JOIN Clients c ON c.CLIENT_ID = ui.CLIENT_ID
-				INNER JOIN xTags t ON t.TAG_ID = u.Team";
-				if($id) { 
-					$sql .= " WHERE u.USER_ID = '" . $id . "'"; 
-				}else {
-					if($client_id) {
-						$sql .= " WHERE ui.CLIENT_ID = '" . $client_id . "'";
-					}else {
-        				$sql .= " ORDER BY d.DIRECTORY_LastName ASC";
-					}
-				} 
-        $users = $this->db->query($sql);*/
         $users = $this->db->get();
         if ($id) {
 			$users = $users->row();
@@ -361,11 +314,15 @@ class Administration extends CI_Model {
 		return($query) ? $query->result() : FALSE;	
     }
 
-    public function getGroups($id) {
+    public function getGroups($aid = false,$gid = false) {
     	$this->db->select('g.GROUP_ID as GroupId,g.AGENCY_ID as AgencyId,g.GROUP_Name as Name,g.GROUP_Notes as Description,g.GROUP_Active as Status,g.GROUP_Created as CreateDate,a.AGENCY_Name as AgencyName,a.AGENCY_ID as AgencyId');
 		$this->db->from('Groups g');
 		$this->db->join('Agencies a','g.AGENCY_ID = a.AGENCY_ID');
-		$this->db->where('g.AGENCY_ID',$id);
+		if($gid) {
+			$this->db->where('g.GROUP_ID',$gid);
+		}else {
+			$this->db->where('g.AGENCY_ID',$aid);
+		}
 		$query = $this->db->get();
 		return ($query) ? $query->result() : FALSE;
     }
@@ -445,11 +402,12 @@ class Administration extends CI_Model {
 	}
 	
 	public function addClient($data) {
-		if($this->db->insert('Clients',$data)) {
+		return ($this->db->insert('Clients',$data)) ? TRUE : FALSE;
+		/*if($this->db->insert('Clients',$data)) {
 			return $this->db->insert_id();
 		}else {
 			return FALSE;
-		}
+		}*/
 	}
 	
 	public function addReputation($group) {
@@ -524,8 +482,18 @@ class Administration extends CI_Model {
     }
     
     public function getSelectedClient($id) {
-		$this->db->select('c.CLIENT_ID as ClientID,c.CLIENT_Name as Name,c.CLIENT_Address as Address,c.CLIENT_Phone as Phone,c.CLIENT_Notes as Description,c.CLIENT_Code as Code,c.CLIENT_Tag as Tag,c.CLIENT_Active as Status,c.GROUP_ID as GroupID');
+		$this->db->select('c.CLIENT_ID as ClientID,
+						   c.CLIENT_Name as Name,
+						   c.CLIENT_Address as Address,
+						   c.CLIENT_Phone as Phone,
+						   c.CLIENT_Notes as Description,
+						   c.CLIENT_Code as Code,
+						   c.CLIENT_Tag as Tag,
+						   c.CLIENT_Active as Status,
+						   c.GROUP_ID as GroupID,
+						   t.TAG_ClassName as ClassName');
 		$this->db->from('Clients c');
+		$this->db->join('xTags t','c.CLIENT_Tag = t.TAG_ID');
 		$this->db->where('c.CLIENT_ID',$id);
 		$query = $this->db->get();
 		return ($query) ? $query->row() : FALSE;
@@ -533,7 +501,7 @@ class Administration extends CI_Model {
 	
 	public function getSelectedClientsReviews($client_id,$service_id) {
 		//Using active record to select content from database
-		$sql = 'SELECT ID,URL FROM Reputations WHERE ServicesID = "' . $service_id . '" AND ClientID = "' . $client_id . '";';
+		$sql = 'SELECT ID,URL FROM Reputations WHERE ServicesID = "' . $service_id . '" AND ClientID = "' . $client_id . '" ORDER BY CreatedDate ASC LIMIT 1;';
 		$result = $this->db->query($sql);
 		$row = ($result) ? $result->row() : FALSE;
 		return ($row) ? $row : FALSE;
@@ -566,13 +534,31 @@ class Administration extends CI_Model {
 		return ($this->db->update('Clients',$data)) ? TRUE : FALSE;
 	}
 	
-	public function updateSingleReputation($id,$rep) {
-		$this->db->where('ID',$id);
+	public function updateSingleReputation($rep) {
+		$this->db->where('ID',$rep['ID']);
+		unset($rep['ID']);
 		return ($this->db->update('Reputations',$rep)) ? TRUE : FALSE;
 	}
 	
 	public function updateReputations($group) {
-		return ($this->db->update_batch('Reputations',$group,'ID')) ? TRUE : FALSE;
+		if(count($group) > 0) {
+			foreach($group as $reputation) {
+				$update = $this->updateSingleReputation($reputation);
+				if(!$update)
+					break;
+			}
+		}
+		$update = ($this->db->update_batch('Reputations',$group,'ID')) ? TRUE : FALSE;
+		if($update) {
+			return TRUE;	
+		}else {
+			$add = $this->addReviews($group);
+			if($add) {
+				return TRUE;	
+			}else {
+				return FALSE;	
+			}
+		}
 	}
 	
 	public function doReviewsExist($client_id,$service_id) {

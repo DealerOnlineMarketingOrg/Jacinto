@@ -233,7 +233,7 @@ function ClientsListingTable($clients = false) { ?>
         $disablePriv 		 = GateKeeper('Client_Disable_Enable',$userPermissionLevel);
         $listingPriv 		 = GateKeeper('Client_List',$userPermissionLevel);
     ?>
-    <?php if($addPriv) { ?><a href="javascript:addClient();" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px;">Add New Client</a><?php } ?>
+    <?php if($addPriv) { ?><a href="javascript:addClient();" class="greenBtn floatRight button" style="margin-top:-74px;margin-right:3px;">Add New Client</a><?php } ?>
     <?php if($listingPriv) { ?>
         <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%;">
             <thead>

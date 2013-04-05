@@ -15,7 +15,11 @@ class Groups extends DOM_Controller {
     }
 
     public function index() {
-		$groups = $this->administration->getGroups($this->agency_id);
+		if($this->level == 1 OR $this->level == 'a') {
+			$groups = $this->administration->getGroups($this->agency_id);
+		}else {
+			$groups = $this->administration->getGroups($this->agency_id,$this->user['DropdownDefault']->SelectedGroup);
+		}
 		$data = array(
 			'groups' => $groups
 		);
@@ -23,7 +27,11 @@ class Groups extends DOM_Controller {
     }
 	
 	public function load_table() {
-		$groups = $this->administration->getGroups($this->agency_id);
+		if($this->level != 1 OR $this->level != 'a') {
+			$groups = $this->administration->getGroup($this->user['DropdownDefault']->SelectedGroup);
+		}else {
+			$groups = $this->administration->getGroups($this->agency_id);
+		}
 		$data = array(
 			'groups'=>$groups
 		);

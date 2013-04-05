@@ -29,7 +29,6 @@
                     <div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
-                    <label>Enable/Disable</label>
                     <div class="formRight">
                         <div class="radio" id="uniform-radio1">
                             <input type="radio" id="radio1" name="Status" value="1" <?php echo  (($group->Status != 0) ? 'checked="checked"' : ''); ?> style="opacity:0;"/>

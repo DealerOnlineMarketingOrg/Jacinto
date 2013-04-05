@@ -55,7 +55,7 @@
                             <?php if(isset($group->GroupId)) { ?>
                                 <input type="hidden" name="agency_id" value="<?= $group->AgencyId; ?>" />
                             <?php } ?>
-                            <input type="submit" value="submit" class="redBtn" />
+                            <input type="submit" value="<?= (isset($group)) ? 'Save' : 'Add'; ?>" class="<?= (isset($group)) ? 'redBtn' : 'greenBtn'; ?>" />
                         </div>
                     </fieldset>
                	<?= form_close(); ?>
