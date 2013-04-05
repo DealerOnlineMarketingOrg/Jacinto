@@ -22,6 +22,7 @@ class Contacts extends DOM_Controller {
 		$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;
 		$contact->Email = mod_parser($contact->Email);
 		$contact->Parent = $this->administration->getClient(substr($contact->Type,4))->Name;
+		$contact->TypeCode = substr($contact->Type,0,3);
 	}
 	
     public function index() {
@@ -54,10 +55,10 @@ class Contacts extends DOM_Controller {
 	}
 	
 	public function View() {
-		if(isset($_GET['gid'])) {
-			$contact_id = $_GET['gid'];	
+		if(isset($_GET['cid'])) {
+			$contact_id = $_GET['cid'];	
 		}else {
-			$contact_id = $this->user['DropdownDefault']->SelectedContact;	
+			$contact_id = $this->user['DropdownDefault']->SelectedContact;
 		}
 		
 		$contact = $this->administration->getContact($contact_id);

@@ -12,37 +12,47 @@
 			                <div class="rowElem noborder">
 			                    <label>Parent Client</label>
 			                    <div class="formRight">
-                                	<?= form_input(array('disabled'=>'disabled','value'=>$contact->Parent)); ?>
+                                	<?= form_input(array('disabled'=>'disabled','value'=>$contact->Parent,'style'=>'margin:0')); ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
                             <?php } ?>
-			                <div class="rowElem noborder">
-			                    <label>Name</label>
-			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->Name)); ?></div>
+                            <div class="rowElem noborder">
+			                    <label>Type</label>
+			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>(($contact->TypeCode == 'cid') ? 'Client' : 'Vendor'),'style'=>'margin:0')); ?></div>
 			                    <div class="fix"></div>
 			                </div>
                             <div class="rowElem noborder">
-			                    <label>Emails</label>
-			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->Name)); ?></div>
+			                    <label>Title</label>
+			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->JobTitle,'style'=>'margin:0')); ?></div>
+			                    <div class="fix"></div>
+			                </div>
+			                <div class="rowElem noborder">
+			                    <label>Name</label>
+			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->Name,'style'=>'margin:0')); ?></div>
+			                    <div class="fix"></div>
+			                </div>
+                            <div class="rowElem noborder">
+			                    <label>Email</label>
+			                    <div class="formRight"><label style="margin:0;color:red">Home:</label><?= form_input(array('disabled'=>'disabled','value'=>$contact->Email['home'],'style'=>'margin:0')); ?></div>
+                                <?php if (isset($contact->Email['work'])) { ?>
+			                    <div class="formRight"><label style="margin:0;color:red">Work:</label><?= form_input(array('disabled'=>'disabled','value'=>$contact->Email['work'],'style'=>'margin:0')); ?></div>
+                                <?php } ?>
 			                    <div class="fix"></div>
 			                </div>
                             <div class="rowElem noborder">
 			                    <label>Address</label>
-			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->Email['home'])); ?></div>
-                                <?php if (isset($contact->Email['work'])) { ?>
-			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->Email['work'])); ?></div>
-                                <?php } ?>
+			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->Address['street'].'  '.$contact->Address['city'].', '.$contact->Address['state'].' '.$contact->Address['zipcode'],'style'=>'margin:0')); ?></div>
 			                    <div class="fix"></div>
 			                </div>
                             <div class="rowElem noborder">
 			                    <label>Phone</label>
-			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->Phone['main'])); ?></div>
+			                    <div class="formRight"><label style="margin:0;color:red">Main:</label><?= form_input(array('disabled'=>'disabled','value'=>$contact->Phone['main'],'style'=>'margin:0')); ?></div>
 			                    <?php if (isset($contact->Phone['mobile'])) { ?>
-			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->Phone['mobile'])); ?></div>
+			                    <div class="formRight"><label style="margin:0;color:red">Mobile:</label><?= form_input(array('disabled'=>'disabled','value'=>$contact->Phone['mobile'],'style'=>'margin:0')); ?></div>
                                 <?php } ?>
 			                    <?php if (isset($contact->Phone['fax'])) { ?>
-			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$contact->Phone['fax'])); ?></div>
+			                    <div class="formRight"><label style="margin:0;color:red">Fax:</label><?= form_input(array('disabled'=>'disabled','value'=>$contact->Phone['fax'],'style'=>'margin:0')); ?></div>
                                 <?php } ?>
 			                    <div class="fix"></div>
 			                </div>

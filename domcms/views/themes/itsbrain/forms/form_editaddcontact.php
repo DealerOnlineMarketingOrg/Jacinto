@@ -10,17 +10,7 @@
 					endif;
 				?>
                     <fieldset>
-                        <div class="rowElem noborder">
-                            <label><span class="req">*</span> Contact Type</label>
-                            <div class="formRight searchDrop">
-                                <select class="chzn-select validate[required]" style="width:350px" name="type">
-                                    <option value="CID" <?= (($contact->Type == 'CID') ? 'selected="selected"' : ''); ?>>Client</option>
-                                    <option value="VID" <?= (($contact->Type == 'VID') ? 'selected="selected"' : ''); ?>>Vendor</option>
-                                </select>
-                            </div>
-                            <div class="fix"></div>
-                        </div>
-                        <div class="rowElem noborder">
+                    	<div class="rowElem noborder">
                             <label><span class="req">*</span> Company</label>
                             <div class="formRight searchDrop">
                                 <select class="chzn-select validate[required]" style="width:350px" name="company">
@@ -32,6 +22,16 @@
                                     ?>
                                 </select>
                             </div>
+                        </div>
+                        <div class="rowElem noborder">
+                            <label><span class="req">*</span> Contact Type</label>
+                            <div class="formRight searchDrop">
+                                <select class="chzn-select validate[required]" style="width:350px" name="type">
+                                    <option value="CID" <?= (($contact->Type == 'CID') ? 'selected="selected"' : ''); ?>>Client</option>
+                                    <option value="VID" <?= (($contact->Type == 'VID') ? 'selected="selected"' : ''); ?>>Vendor</option>
+                                </select>
+                            </div>
+                            <div class="fix"></div>
                         </div>
                         <div class="rowElem noborder">
                             <label><span class="req">*</span> Job Title</label>
