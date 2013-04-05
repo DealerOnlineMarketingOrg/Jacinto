@@ -47,7 +47,7 @@ class Passwords extends DOM_Controller {
 
 		$counter = 0;
 		if($passwords) :
-			$table .= '<thead><tr><th>Team</th><th>Type</th><th>Vendor</th><th>Login Address</th><th>Username</th><th>Password</th><th>Notes</th><th style="text-align:center">Action</th></thead>';
+			$table .= '<thead><tr><th>Team</th><th>Type</th><th>Vendor</th><th>Login Address</th><th>Username</th><th>Password</th><th>Notes</th><th class="actions" style="text-align:center">Actions</th></thead>';
 			$table .= '<tbody>';
 			foreach($passwords as $password) {
 				//edit button

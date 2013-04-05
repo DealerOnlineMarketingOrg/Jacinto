@@ -51,7 +51,7 @@ class Users extends DOM_Controller {
 		if($users) {
 			
 			$table .= '<table style="width:100%" cellpadding="0" cellspacing="0" class="tableStatic">';
-			$table .= '<thead><tr><td>Team</td><td>Avatar</td><td>Email Address</td><td>Name</td><td>Status</td><td>Member Since</td><td>Actions</td></tr></thead>';
+			$table .= '<thead><tr><th>Team</th><th>Avatar</th><th>Email Address</th><th>Name</th><th>Status</th><th>Member Since</th><th class="actions">Actions</th></tr></thead>';
 			$table .= '<tbody>';
 			foreach ($users as $user) {
 				$table .= '<tr class="tagElement ' . $user->ClassName . '">';

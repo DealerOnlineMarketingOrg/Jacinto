@@ -16,7 +16,7 @@ class Vendors extends DOM_Controller {
 		if($vendors) :
 			if($this->CheckModule('Vendor_List')) {
 				$table .= '<table style="width:100%" cellpadding="0" cellspacing="0" class="tableStatic">';
-				$table .= '<thead><tr><td>Name</td>Phone<td><td>Status</td><td>Actions</td></tr></thead>';
+				$table .= '<thead><tr><th>Name</th><th>Phone</th><th>Status</th><th class="actions">Actions</th></tr></thead>';
 				$table .= '<tbody>';
 				foreach($vendors as $vendor) {
 					$table .= '<tr>';

@@ -43,7 +43,7 @@ function AgencyListingTable($agencies = false) { ?>
                     <th style="text-align:left;">Description</th>
                     <th>Status</th>
                     <?php if($editPriv) { ?>
-                    <th>Actions</th>
+                    <th class="actions">Actions</th>
                     <?php } ?>
                 </tr>
             </thead>

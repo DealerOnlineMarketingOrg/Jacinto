@@ -77,7 +77,6 @@ function writeDealerDropdown() {
 
 $(function() {
 	
-	
 	//===== Autocomplete =====//
 	
 	var availableTags = ["Green",
@@ -700,7 +699,10 @@ $(function() {
 		"sPaginationType": "full_numbers",
 		"sDom": '<""f>t<"F"lp>',
 		'iDisplayLength':1000,
-		"aLengthMenu": [[-1,10,25,50],['All',10,25,50]]
+		"aLengthMenu": [[-1,10,25,50],['All',10,25,50]],
+		"aoColumnDefs": [
+			{ "bSortable": false, "aTargets": [ "actions" ] }
+		],
 	});
 	
 	
