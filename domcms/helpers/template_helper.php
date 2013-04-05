@@ -116,6 +116,77 @@ function GroupsListingTable($groups = false) { ?>
     <?php endif; ?>
 <?php }
 
+function ContactsListingTable($contacts = false) { ?>
+	<?php if($contacts) : ?>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/contact_popups.js"></script>
+    <?php 
+		$ci =& get_instance();
+		$level				 = $ci->user['DropdownDefault']->LevelType;
+        $userPermissionLevel = $ci->user['AccessLevel'];
+        $addPriv     		 = GateKeeper('Contact_Add',$userPermissionLevel);
+        $editPriv    		 = GateKeeper('Contact_Edit',$userPermissionLevel);
+        $disablePriv 		 = GateKeeper('Contact_Disable_Enable',$userPermissionLevel);
+        $listingPriv 		 = GateKeeper('Contact_List',$userPermissionLevel);
+    ?>
+    <?php if($addPriv) { ?><a href="javascript:addContact();" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px;">Add New Contact</a><?php } ?>
+    <?php if($listingPriv) { ?>
+        <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%;">
+            <thead>
+                <tr>
+                    <th>Team</th>
+                    <?php if($level == 'g' || $level == 'a') { ?>
+                    <th style="text-align:left;">Dealership</th>
+                    <?php } ?>
+                    <th style="width:10%">Title</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <?php if($editPriv) { ?>
+                    <th class="actions">Actions</th>
+                    <?php } ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($contacts as $contact) { ?>
+                    <tr class="tagElement <?php echo $contact->Tag; ?>" >
+                    	<td class="tags"><div class="<?php echo $contact->Tag; ?>">&nbsp;</div>
+                        <?php if($level == 'g' || $level == 'a') { ?>
+                        <th style="width:auto;white-space:no-wrap;text-align:left;"><?php echo $contact->Parent; ?></th>
+                        <?php } ?>
+                        <td style="text-align:left;"><?= $contact->JobTitle; ?></td>
+                        <td><?= $contact->Name; ?></td>
+                        <td>
+                        <span style="font-weight:bold;">Personal Email</span><br /><a href="mailto:'<?php echo $contact->Email["home"]; ?>'"><?php echo $contact->Email['home']; ?></a>
+                        <?php if (isset($contact->Email['work'])) { ?>
+                        <br /><span style="font-weight:bold;">Work Email</span><br /><a href="mailto:'<?php echo $contact->Email["work"]; ?>'"><?php echo $contact->Email['work']; ?></a>
+                        <?php } ?>
+                        </td>
+                        <td>                        
+                        <span style="font-weight:bold;">Direct</span><br /><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["main"]; ?>'"><?php echo $contact->Phone['main']; ?></a></span>
+                        <?php if (isset($contact->Phone['mobile'])) { ?>
+                        <span style="font-weight:bold;">Mobile</span><br /><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["mobile"]; ?>'"><?php echo $contact->Phone['mobile']; ?></a></span>
+                        <?php } ?>
+                        <?php if (isset($contact->Phone['fax'])) { ?>
+                        <span style="font-weight:bold;">Fax</span><br /><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["fax"]; ?>'"><?php echo $contact->Phone['fax']; ?></a></span>
+                        <?php } ?>
+                        </td>
+                        <?php if($editPriv) { ?>
+                        <td class="actionsCol" style="width:75px;text-align:center;">
+                            <a title="Edit Contact" href="javascript:editContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                            <a title="View Contact" href="javascript:viewContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
+                        </td>
+                        <?php } ?>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    <?php } ?>
+    <?php if($addPriv) { ?><a href="javascript:addContact();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Contact</a><?php } ?>
+    <?php else : ?>
+    <div class="nNote nFailure"><p><strong>Error:</strong> No contacts found.</p></div>
+    <?php endif; ?>
+<?php }
+
 function GroupsClientTable($group_id) {
 	$ci =& get_instance();
 	//load the model
