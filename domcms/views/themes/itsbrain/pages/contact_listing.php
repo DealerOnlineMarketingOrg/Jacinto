@@ -7,7 +7,7 @@
     <?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
     <div class="table" style="margin-top:5px;">
         <div class="head"><h5 class="iView">View All Contacts</h5></div>
-        	<div id="groupTable"><?= ContactsListingTable($contacts); ?></div>
+        	<div id="groupTable"><?= ContactsListingTable(false,false); ?></div>
         </div>
     </div>
     <div class="fix"></div>

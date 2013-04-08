@@ -1,5 +1,5 @@
 
-var $ = jQuery;
+var $ = jQuery.noConflict();
 
 function addContact() {
 	$('#addContact').remove();

@@ -116,8 +116,7 @@ function GroupsListingTable($groups = false) { ?>
     <?php endif; ?>
 <?php }
 
-function ContactsListingTable($contacts = false) { ?>
-	<?php if($contacts) : ?>
+function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions = false) { ?>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/contact_popups.js"></script>
     <?php 
 		$ci =& get_instance();
@@ -127,10 +126,36 @@ function ContactsListingTable($contacts = false) { ?>
         $editPriv    		 = GateKeeper('Contact_Edit',$userPermissionLevel);
         $disablePriv 		 = GateKeeper('Contact_Disable_Enable',$userPermissionLevel);
         $listingPriv 		 = GateKeeper('Contact_List',$userPermissionLevel);
+				
+		switch ($level) {
+			case 'a':
+				if(!$client_id) {
+					$contacts = $ci->administration->getAllContactsInAgency($ci->user['DropdownDefault']->SelectedAgency);
+				}else {
+					$contacts = $ci->administration->getContacts($client_id);
+				}
+			break;
+			case 'g':
+				if(!$client_id) {
+					$contacts = $ci->administration->getAllContactsInGroup($ci->user['DropdownDefault']->SelectedGroup);
+				}else {
+					$contacts = $ci->administration->getContacts($client_id);
+				}
+			break;
+			default:
+				if(!$client_id) {
+					$contacts = $ci->administration->getContacts($ci->user['DropdownDefault']->SelectedClient);
+				}else {
+					$contacts = $ci->administration->getContacts($client_id);
+				}
+			break;
+		}
+
     ?>
     <?php if($addPriv) { ?><a href="javascript:addContact();" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px;">Add New Contact</a><?php } ?>
     <?php if($listingPriv) { ?>
-        <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%;">
+    	<?php if($contacts) { ?>
+        <table cellpadding="0" cellspacing="0" border="0" class="display contacts" id="example" width="100%;">
             <thead>
                 <tr>
                     <th>Team</th>
@@ -142,16 +167,33 @@ function ContactsListingTable($contacts = false) { ?>
                     <th>Email</th>
                     <th>Phone</th>
                     <?php if($editPriv) { ?>
-                    <th class="actions">Actions</th>
+                    	<?php if(!$hide_actions) { ?>
+                    		<th class="actions">Actions</th>
+                    	<?php } ?>
                     <?php } ?>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach($contacts as $contact) { ?>
+                	
+                    <?php
+						/*
+							FORMAT THE CONTACTS
+						*/
+						$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
+						$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
+						$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;
+						$contact->Email = mod_parser($contact->Email);
+						$contact->Parent = $ci->administration->getClient(substr($contact->Type,4))->Name;
+						$contact->TypeCode = substr($contact->Type,0,3);
+						$contact->TypeID = substr($contact->Type,4);
+					?>
+
+                
                     <tr class="tagElement <?php echo $contact->Tag; ?>" >
                     	<td class="tags"><div class="<?php echo $contact->Tag; ?>">&nbsp;</div>
                         <?php if($level == 'g' || $level == 'a') { ?>
-                        <th style="width:auto;white-space:no-wrap;text-align:left;"><?php echo $contact->Parent; ?></th>
+                        <td style="width:auto;white-space:no-wrap;text-align:left;"><?php echo $contact->Parent; ?></td>
                         <?php } ?>
                         <td style="text-align:left;"><?= $contact->JobTitle; ?></td>
                         <td><?= $contact->Name; ?></td>
@@ -171,20 +213,26 @@ function ContactsListingTable($contacts = false) { ?>
                         <?php } ?>
                         </td>
                         <?php if($editPriv) { ?>
-                        <td class="actionsCol" style="width:75px;text-align:center;">
-                            <a title="Edit Contact" href="javascript:editContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
-                            <a title="View Contact" href="javascript:viewContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
-                        </td>
+                        	<?php if(!$hide_actions) { ?>
+                                <td class="actionsCol" style="width:75px;text-align:center;">
+                                    <a title="Edit Contact" href="javascript:editContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                                    <a title="View Contact" href="javascript:viewContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
+                                </td>
+                            <?php } ?>
                         <?php } ?>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
     <?php } ?>
-    <?php if($addPriv) { ?><a href="javascript:addContact();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Contact</a><?php } ?>
-    <?php else : ?>
-    <div class="nNote nFailure"><p><strong>Error:</strong> No contacts found.</p></div>
-    <?php endif; ?>
+    <?php if($addPriv) { ?>
+    	<?php if(!$hide_add) { ?>
+    	<a href="javascript:addContact();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Contact</a>
+        <?php } ?>
+	<?php } ?>
+    <?php }else { ?>
+        <div class="nNote nFailure"><p><strong>Error:</strong> No contacts found.</p></div>
+	<?php } ?>
 <?php }
 
 function GroupsClientTable($group_id) {
@@ -257,7 +305,7 @@ function ClientsListingTable($clients = false) { ?>
                         <td><?= $client->GroupName; ?></td>
                         <td style="width:30px;text-align:center;"><?= (($client->Status) ? 'Active' : 'Disable'); ?></td>
                         <?php if($editPriv) { ?>
-                        <td class="actionsCol" style="width:75px;text-align:center;">
+                        <td class="actionsCol actions" style="width:60px;text-align:center;">
                             <a title="Edit Client" href="javascript:editClient('<?= $client->ClientID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
                             <a title="View Client" href="javascript:viewClient('<?= $client->ClientID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
                         </td>
@@ -454,56 +502,35 @@ function getLiveChangesCount() {
 }
 
 function load_client_websites($cid = false, $actions = true) {
-	if(!$cid) {
-		$cid = $ci->user['DropdownDefault']->SelectedClient;
-	}
+	if(!$cid) {$cid = $ci->user['DropdownDefault']->SelectedClient;}
+	
 	$ci =& get_instance();
 	$ci->load->model('administration');
+	
 	$websites = $ci->administration->getClientWebsites($cid);
 	$html = '';
 	$table = '';
 	if($websites) {
-		//print_object($websites);
-		
 		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
-		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td>' . ($actions) ? '<td>Actions</td>' : '' . '</tr></thead>';
+		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td>' . (($actions) ? '<td class="actions">Actions</td>' : '') . '</tr></thead>';
 		$table .= '<tbody>';
 		foreach($websites as $website) :
-			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $cid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/dark/pencil.png" alt="Edit Website" /></a>';
-			if($website->Status) {
-				$status_img = '<a style="margin-left:5px;" title="Disable Website" href="javascript:disableWebsite(\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/cross.png" alt="Disable Website" /></a>';	
-			}else {
-				$status_img = '<a style="margin-left:5px;" title="Enable Website" href="javascript:enableWebsite(\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/play.png" alt="Enable Website" /></a>';	
-			}
+			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $cid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/pencil.png" alt="Edit Website" /></a>';
 			$table .= '<tr>';
 			$table .= '<td><p>' . $website->VendorName . '</p></td>';
 			$table .= '<td><a href="' . $website->URL . '" target="_blank">' . $website->URL . '</a></td>';
 			$table .= '<td class="descCell"><p id="web_' . $website->ID . '">' . $website->Description . '</p></td>';
 			if($actions) {
-				$table .= '<td style="text-align:center;">' . $edit_img . $status_img . '</td>';
+				$table .= '<td style="text-align:center;">' . $edit_img . '</td>';
 			}
 			$table .= '</tr>';
 		endforeach;
 		$table .= '</tbody></table>';
-		
+		                                    
 		$html = $table;
-		//print_object($html);
 	}else {
 		$html .= '<p>No websites found for this client.' . (($actions) ? ' You can add one by clicking the add website button below.' : '') . '</p>';
 	}
-	
-	if($ci->CheckModule('Website_Add') && $actions) {
-		$html .= '<a href="javascript:addWebsiteForm(\'' . $cid . '\');" class="greenBtn floatRight button" style="margin-top:10px;margin-bottom:10px;">Add Website</a>';
-		//$html .= anchor('javascript:addWebsite(\'' . $cid . '\')', 'Add Website', 'class="greenBtn floatRight button" style="margin-top:10px;margin-bottom:10px;" id="add_website_btn"');
-	}
-	
-	$html .= '<script type="text/javascript">				
-				jQuery("a.copyClipboard").click(function(e) {
-    				e.preventDefault();
-    				window.prompt("Press ctrl/cmd + c to copy text", jQuery(this).prev("p").text());
-				});</script>';
-
-	
 	return $html;
 }
 
@@ -622,12 +649,15 @@ function breadcrumb($replacement = false) {
 	return $link;
 }
 
-function showStates($selected = '') {
+function showStates($selected = '',$disabled=false) {
     $ci =& get_instance();
     $ci->load->model('utilities');
     $states = $ci->utilities->getStates();
-	
-    $options = '<select data-placeholder="Choose a State..." class="chzn-select" style="width:350px;" name="state">';
+	if(!$disabled) {
+    	$options = '<select data-placeholder="Choose a State..." class="chzn-select" style="width:350px;" name="state">';
+	}else {
+    	$options = '<select data-placeholder="Choose a State..." class="chzn-select" style="width:350px;" name="state" disabled>';
+	}
 	$options .= '<option value=""></option>';
     foreach ($states as $state) {
         $options .= '<option value="' . $state->Abbrev . '"' .(($selected == $state->Abbrev) ? ' selected' : '') . '>' . $state->Name . '</option>';

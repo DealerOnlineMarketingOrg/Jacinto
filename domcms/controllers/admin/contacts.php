@@ -27,25 +27,7 @@ class Contacts extends DOM_Controller {
 	}
 	
     public function index() {
-		switch ($this->level) {
-			case 'a':
-				$contacts = $this->administration->getAllContactsInAgency($this->agency_id);
-				break;
-			case 'g':
-				$contacts = $this->administration->getAllContactsInGroup($this->group_id);
-				break;
-			case 'c':
-				$contacts = $this->administration->getContacts($this->client_id);
-				break;
-		}
-		foreach ($contacts as &$contact) {
-			$this->formatContactInfo($contact);
-		}
-		$data = array(
-			'contacts' => $contacts
-		);
-
-		$this->LoadTemplate('pages/contact_listing',$data);
+		$this->LoadTemplate('pages/contact_listing');
     }
 	
 	public function load_table() {

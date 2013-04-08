@@ -94,49 +94,7 @@ class Clients extends DOM_Controller {
 			'CLIENT_ActiveTS'=>date(FULL_MILITARY_DATETIME),
 			'GROUP_ID'=>$this->security->xss_clean($this->input->post('Group')),
 			'CLIENT_Active'=>$this->security->xss_clean($this->input->post('status')),
-		);
-		
-		/*$rep_data = array();
-		
-		if($_POST['GoogleReviewURL'] != '') {
-			$google_group = array(
-				'ServicesID'=>1,
-				'URL'=>$this->security->xss_clean($_POST['GoogleReviewURL'])
-			);	
-			
-			if($_POST['ClientID']) {
-				$google_group['ClientID'] = $_POST['ClientID'];	
-			}
-			
-			array_push($rep_data,$google_group);
-		}
-		
-		if($_POST['YelpReviewURL'] != '') {
-			$yelp_group = array(
-				'ServicesID'=>2,
-				'URL'=>$this->security->xss_clean($_POST['YelpReviewURL'])
-			);	
-			
-			if($_POST['ClientID']) {
-				$yelp_group['ClientID'] = $_POST['ClientID'];	
-			}
-			
-			array_push($rep_data,$yelp_group);
-		}
-		
-		if($_POST['YahooReviewURL'] != '') {
-			$yahoo_group = array(
-				'ServicesID'=>3,
-				'URL'=>$this->security->xss_clean($_POST['YahooReviewURL'])
-			);	
-			
-			if($_POST['ClientID']) {
-				$yahoo_group['ClientID'] = $_POST['ClientID'];	
-			}
-			
-			array_push($rep_data,$yahoo_group);
-		} */
-		
+		);		
 		
 		if(isset($_POST['ClientID'])) {
 			$client_data['CLIENT_ID'] = $this->security->xss_clean($_POST['ClientID']);	
@@ -159,104 +117,6 @@ class Clients extends DOM_Controller {
 				echo '0';	
 			}
 		}
-		
-				
-		/*
-		
-		
-		if($_POST['GoogleReviewURL'] != '') {
-			$google_group = array(
-				'ServicesID'=>1,
-				'URL'=>$this->security->xss_clean($_POST['GoogleReviewURL'])
-			);	
-			
-			if($_POST['ClientID']) {
-				$google_group['ID'] = $this->security->xss_clean($_POST['GoogleID']);
-				$google_group['ClientID'] = $_POST['ClientID'];	
-			}
-			
-			array_push($rep_data,$google_group);
-		}
-		
-		if($_POST['YelpReviewURL'] != '') {
-			$yelp_group = array(
-				'ServicesID'=>2,
-				'URL'=>$this->security->xss_clean($_POST['YelpReviewURL'])
-			);	
-			
-			if($_POST['ClientID']) {
-				$yelp_group['ID'] = $this->security->xss_clean($_POST['YelpID']);
-				$yelp_group['ClientID'] = $_POST['ClientID'];	
-			}
-			
-			array_push($rep_data,$yelp_group);
-		}
-		
-		if($_POST['YahooReviewURL']) {
-			$yahoo_group = array(
-				'ServicesID'=>3,
-				'URL'=>$this->security->xss_clean($_POST['YahooReviewURL'])
-			);	
-			
-			if($_POST['ClientID']) {
-				$yahoo_group['ID'] = $this->security->xss_clean($_POST['YahooID']);
-				$yahoo_group['ClientID'] = $_POST['ClientID'];	
-			}
-			
-			array_push($rep_data,$yahoo_group);
-		}
-		
-		if(isset($_POST['ClientID'])) {
-			$client_id = $_POST['ClientID'];
-			$update = $this->administration->updateClient($client_id,$client_data);
-			if($update && count($rep_data) > 0) {
-				$rep = $this->administration->updateReputations($rep_data);
-				if($rep) {
-					echo '1';	
-				}else {
-					echo '0';	
-				}
-			}elseif($update && count($rep_data) <= 0) {
-				echo '1';	
-			}else {
-				echo '0';	
-			}
-		}elseif(isset($_GET['gid'])) { //were adding
-			$client_data['GROUP_ID'] = $this->user['DropdownDefault']->SelectedGroup;
-			$client_data['CLIENT_Active'] = $this->security->xss_clean($_POST['Status']);
-			$client_data['CLIENT_Created'] = date(FULL_MILITARY_DATETIME);
-			$client = $this->administration->addClient($client_data);
-			if($client) {
-				if(isset($google_group)) {
-					$google_group['ClientID'] = $client;	
-					array_push($rep_data,$google_group);
-				}
-				if(isset($yelp_group)) {
-					$yelp_group['ClientID'] = $client;	
-					array_push($rep_data,$yelp_group);
-				}
-				if(isset($yahoo_group)) {
-					$yahoo_group['ClientID'] = $client;
-					array_push($rep_data,$yahoo_group);	
-				}
-				if(count($rep_data) > 0) {
-					$add_rep = $this->administration->addReputation($rep_data);	
-					if($add_rep) {
-						echo '1';	
-					}else {
-						echo '0';	
-					}
-				}else {
-					echo '1';	
-				}
-			}else {
-				echo '0';	
-			}
-		}else {
-			echo '0';	
-		}
-		
-		*/
 	}
 	
 	public function Add() {
@@ -275,17 +135,65 @@ class Clients extends DOM_Controller {
 		$tags = $this->administration->getAllTags();    
 		$groups = $this->administration->getAllGroupsInAgency($this->user['DropdownDefault']->SelectedAgency);
 
-      $data = array(
-          'client'=>false,
-          'tags'=>$tags,
-		  'groups'=>$groups
-      );
-      $this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);
+		$data = array(
+			'client'=>false,
+			'tags'=>$tags,
+			'groups'=>$groups
+		);
+		
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);
     }
 	
-
-	
 	public function Edit() {
+		$this->load->helper('template');
+		$level = $this->user['DropdownDefault']->LevelType;
+		
+		$html = '';
+	
+		if(isset($_POST['client_id'])) {
+			$client_id = $this->input->post('client_id');
+		}elseif(isset($_GET['cid'])) {
+			$client_id = $this->input->get('cid');
+		}else {
+			$client_id = $this->user['DropdownDefault']->SelectedClient;
+		}
+	
+		 //WE POST WHAT AGENCY WERE EDITING, THIS IS THE ID IN THE DB.
+		//$client_id = ($this->input->post('client_id'))?$this->input->post('client_id'):$this->user['DropdownDefault']->SelectedClient;
+		$this->load->model('administration');
+		$client = $this->administration->getSelectedClient($client_id);
+		$tags = $this->administration->getAllTags();    
+		$groups = $this->administration->getAllGroupsInAgency($this->user['DropdownDefault']->SelectedAgency);
+		
+		
+		if($client) {
+			$client->Address = (isset($client->Address)) ? mod_parser($client->Address) : false;
+			$client->Phone = (isset($client->Phone)) ? mod_parser($client->Phone) : false;
+			$client->Reviews = array(
+				'Google'   => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->URL : FALSE,
+				'GoogleID' => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->ID  : FALSE,
+				'Yelp'     => ($this->administration->getSelectedClientsReviews($client_id,2)) ? $this->administration->getSelectedClientsReviews($client_id,2)->URL : FALSE,
+				'YelpID'   => ($this->administration->getSelectedClientsReviews($client_id,2)) ? $this->administration->getSelectedClientsReviews($client_id,2)->ID  : FALSE,
+				'Yahoo'    => ($this->administration->getSelectedClientsReviews($client_id,3)) ? $this->administration->getSelectedClientsReviews($client_id,3)->URL : FALSE,
+				'YahooID'  => ($this->administration->getSelectedClientsReviews($client_id,3)) ? $this->administration->getSelectedClientsReviews($client_id,3)->ID  : FALSE
+			);
+			$data = array(
+				'groups' => $groups,
+				'client' => $client,
+				'html' => $html,
+				'tags'=>$tags,
+				'websites'=>load_client_websites($client_id),
+			);
+			//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);		
+		}else {
+			//this returns nothing to the ajax call....therefor the ajax call knows to show a popup error.
+			print 0;
+		}
+	}
+	
+	
+	public function View() {		
 		$this->load->helper('template');
 		$level = $this->user['DropdownDefault']->LevelType;
 		
@@ -318,85 +226,23 @@ class Clients extends DOM_Controller {
 				'YahooID'  => ($this->administration->getSelectedClientsReviews($client_id,3)) ? $this->administration->getSelectedClientsReviews($client_id,3)->ID  : FALSE
 			);
 			$data = array(
+				'view'=>true,
 				'groups' => $groups,
 				'client' => $client,
 				'html' => $html,
 				'tags'=>$tags,
-				'websites'=>load_client_websites($client_id)
+				'websites'=>load_client_websites($client_id),
+				'contacts'=>ContactsListingTable($client_id),
+				'users'=>load_client_related_users($client_id),
 			);
-			//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);		
+			
+			//
+      		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);
 		}else {
-			//this returns nothing to the ajax call....therefor the ajax call knows to show a popup error.
-			print 0;
+			//no client found	
 		}
-	}
-	
-	public function Disable($cid) {
-		if(isset($_GET['cid'])) {
-			$client_id = $_GET['cid'];
-		}elseif(isset($_POST['cid'])) {
-			$client_id = $_POST['cid'];	
-		}else {
-			$client_id = $this->user['DropdownDefault']->SelectedClient;	
-		}
+
 		
-		//load administration model
-		$this->load->model('administration');
-		
-		$disable = $this->administration->changeClientStatus($client_id,0);
-		
-		if($disable) {
-			echo 1;	
-		}else {
-			echo 0;	
-		}
-	}
-	
-	public function Enable($cid) {
-		if(isset($_GET['cid'])) {
-			$client_id = $_GET['cid'];
-		}elseif(isset($_POST['cid'])) {
-			$client_id = $_POST['cid'];	
-		}else {
-			$client_id = $this->user['DropdownDefault']->SelectedClient;	
-		}
-		
-		//load administration model
-		$this->load->model('administration');
-		
-		$disable = $this->administration->changeClientStatus($client_id,1);
-		
-		if($disable) {
-			echo 1;	
-		}else {
-			echo 0;	
-		}
-	}
-	
-	public function View() {
-		$this->load->model('administration');
-		$client_id = $_GET['cid'];
-		$client          = $this->administration->getSelectedClient($_GET['cid']);
-		$client->Name    = $client->Name;
-		$client->Address = (isset($client->Address)) ? mod_parser($client->Address) : false;
-		$client->Phone   = (isset($client->Phone)) ? mod_parser($client->Phone) : false;
-		$client->Reviews = array(
-			'Google'   => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->URL : FALSE,
-			'GoogleID' => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->ID  : FALSE,
-			'Yelp'     => ($this->administration->getSelectedClientsReviews($client_id,2)) ? $this->administration->getSelectedClientsReviews($client_id,2)->URL : FALSE,
-			'YelpID'   => ($this->administration->getSelectedClientsReviews($client_id,2)) ? $this->administration->getSelectedClientsReviews($client_id,2)->ID  : FALSE,
-			'Yahoo'    => ($this->administration->getSelectedClientsReviews($client_id,3)) ? $this->administration->getSelectedClientsReviews($client_id,3)->URL : FALSE,
-			'YahooID'  => ($this->administration->getSelectedClientsReviews($client_id,3)) ? $this->administration->getSelectedClientsReviews($client_id,3)->ID  : FALSE
-		);
-		
-		$data = array(
-			'client'   => $client,
-			'websites' => load_client_websites($this->client_id,false),
-			//'contacts' => load_client_contacts($this->client_id),
-			//'users'    => load_client_related_users($this->client_id),
-		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/view_client',$data);
 	}
 
 }
