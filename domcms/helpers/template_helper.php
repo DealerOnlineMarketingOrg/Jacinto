@@ -116,7 +116,7 @@ function GroupsListingTable($groups = false) { ?>
     <?php endif; ?>
 <?php }
 
-function ContactsListingTable($client_id = false,$hide_add = false) { ?>
+function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions = false) { ?>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/contact_popups.js"></script>
     <?php 
 		$ci =& get_instance();
@@ -167,7 +167,9 @@ function ContactsListingTable($client_id = false,$hide_add = false) { ?>
                     <th>Email</th>
                     <th>Phone</th>
                     <?php if($editPriv) { ?>
-                    <th class="actions">Actions</th>
+                    	<?php if(!$hide_actions) { ?>
+                    		<th class="actions">Actions</th>
+                    	<?php } ?>
                     <?php } ?>
                 </tr>
             </thead>
@@ -191,7 +193,7 @@ function ContactsListingTable($client_id = false,$hide_add = false) { ?>
                     <tr class="tagElement <?php echo $contact->Tag; ?>" >
                     	<td class="tags"><div class="<?php echo $contact->Tag; ?>">&nbsp;</div>
                         <?php if($level == 'g' || $level == 'a') { ?>
-                        <th style="width:auto;white-space:no-wrap;text-align:left;"><?php echo $contact->Parent; ?></th>
+                        <td style="width:auto;white-space:no-wrap;text-align:left;"><?php echo $contact->Parent; ?></td>
                         <?php } ?>
                         <td style="text-align:left;"><?= $contact->JobTitle; ?></td>
                         <td><?= $contact->Name; ?></td>
@@ -211,10 +213,12 @@ function ContactsListingTable($client_id = false,$hide_add = false) { ?>
                         <?php } ?>
                         </td>
                         <?php if($editPriv) { ?>
-                        <td class="actionsCol" style="width:75px;text-align:center;">
-                            <a title="Edit Contact" href="javascript:editContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
-                            <a title="View Contact" href="javascript:viewContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
-                        </td>
+                        	<?php if(!$hide_actions) { ?>
+                                <td class="actionsCol" style="width:75px;text-align:center;">
+                                    <a title="Edit Contact" href="javascript:editContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                                    <a title="View Contact" href="javascript:viewContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
+                                </td>
+                            <?php } ?>
                         <?php } ?>
                     </tr>
                 <?php } ?>

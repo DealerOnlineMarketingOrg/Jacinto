@@ -166,19 +166,6 @@ class Clients extends DOM_Controller {
 		
 		
 		if($client) {
-			
-			switch ($this->user['DropdownDefault']->LevelType) {
-				case 'a':
-					$contacts = $this->administration->getAllContactsInAgency($this->user['DropdownDefault']->SelectedAgency);
-					break;
-				case 'g':
-					$contacts = $this->administration->getAllContactsInGroup($this->user['DropdownDefault']->SelectedGroup);
-					break;
-				default:
-					$contacts = $this->administration->getContacts($client->ClientID);
-					break;
-			}
-			
 			$client->Address = (isset($client->Address)) ? mod_parser($client->Address) : false;
 			$client->Phone = (isset($client->Phone)) ? mod_parser($client->Phone) : false;
 			$client->Reviews = array(
@@ -195,8 +182,6 @@ class Clients extends DOM_Controller {
 				'html' => $html,
 				'tags'=>$tags,
 				'websites'=>load_client_websites($client_id),
-				'contacts'=>$contacts,
-				'users'=>load_client_related_users($client_id),
 			);
 			//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);		

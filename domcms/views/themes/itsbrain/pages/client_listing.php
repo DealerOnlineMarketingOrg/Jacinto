@@ -20,5 +20,6 @@
 </style>
 <div id="editClientsForm"></div> 
 <div id="addWebsiteForm"></div>
+<div id="editContactPop"></div>
 <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/client_popups.js"></script>
 <script type="text/javascript"></script>

@@ -9,12 +9,8 @@
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
             		<li class="activeTab"><a href="javascript:void(0);" rel="clientInfo">Client Details</a></li>
-            		<?php if(isset($websites)) { ?>
                     <li><a href="javascript:void(0);" rel="websites">Websites</a></li>
-                    <?php } ?>
-                    <?php if(isset($contacts)) { ?>
             		<li><a href="javascript:void(0);" rel="contacts">Contacts</a></li>
-                    <?php } ?>
             	</ul>
             	<div class="tab_container">
             		<div id="clientInfo" class="tab_content">
@@ -186,7 +182,6 @@
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
-			                
 			                <div class="rowElem noborder">
 			                	<label>Yelp Review</label>
 			                    <div class="formRight">
@@ -258,25 +253,28 @@
 			           </fieldset>
     				<?= form_close(); ?>
     				</div>
-                    <?php if(isset($websites)) { ?>
     				<div id="websites" class="tab_content" style="display:none;">
                     	<?= (isset($websites)) ? $websites : ''; ?>
     				</div>
-                    <?php } ?>
-                    <?php if(isset($contacts)) { ?>
                     <div id="contacts" class="tab_content" style="display:none;">
-                    	<?= ContactsListingTable($client->ClientID,true); ?>
+                    	<?php 
+							if(isset($view)) { 
+								echo ContactsListingTable($client->ClientID,true,true);
+							}else {
+                    			echo ContactsListingTable($client->ClientID,true);
+							}
+						?>
                         <script type="text/javascript">
 							jQuery('.contacts').dataTable({
 								"bJQueryUI": true,
 								"sPaginationType": "full_numbers",
 								"sDom": '<""f>t<"F"lp>',
 								'iDisplayLength':1000,
-								"aLengthMenu": [[-1,10,25,50],['All',10,25,50]]
+								"aLengthMenu": [[-1,10,25,50],['All',10,25,50]],
+								'bFilter':false,
 							});
 						</script>
                     </div>
-                    <?php } ?>
                     <div id="loader" style="display:none;"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
     				<div class="fix"></div>
     			</div>	
@@ -387,7 +385,7 @@
 				{
 					class:'greenBtn',
 					text:"Add New Contact",
-					click:function() { addContactForm('<?= $client->ClientID; ?>')}
+					click:function() { addContact()}
 				}
 				<?php } ?>
 			<?php } ?>
