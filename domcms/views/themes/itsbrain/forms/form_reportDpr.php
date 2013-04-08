@@ -149,18 +149,31 @@
 				</div>
                 <div id="inputInfo"></div>
                 <div id="dynDialog"></div>
+                <div id="addDialog"></div>
 			<?php } ?>
     	</fieldset>
     <?php echo  form_close(); ?>
     
+    <?php $this->load->view($this->theme_settings['ThemeDir'] . '/forms/spreadsheet'); ?>
+	
     <script type="text/javascript">
 		var excelCreated = false;
 		var pdfCreated = false;
 		
 		$('input#add').click(function() {
 			// Go to add report lead page with date range values.
-			jQuery('form#reportDpr').attr('action', '<?= base_url(); ?>dpr/add');
-			$("form#reportDpr").submit();
+			//jQuery('form#reportDpr').attr('action', '<?= base_url(); ?>dpr/add');
+			//$("form#reportDpr").submit();
+			
+			var page = "<?php
+							$page = $this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd','',true);
+							$page = str_replace('"', '\"', $page);
+							$page = str_replace("\r", "", $page);
+							$page = str_replace("\n", "", $page);
+							$page = str_replace("</script>", "<\/script>", $page);
+							echo $page;	?>";
+			$("#addDialog").html($('<div id="dialog" title="Email">' + page + '</div>'));
+			$("#dialog").dialog();
 		});
 
 		function setToBounds(lowerDate, upperDate, date) {
@@ -224,12 +237,13 @@
 				type:'dualList',
 				dataFunc:'<?php base_url(); ?>dpr/eMail',
 				success:function(data) {
-					var namesHtml = '<div id="namesDialog" title="Email Names"<p>Send the DPR report to these people?</p>';
+					var namesHtml = '<div id="namesDialog" title="Email Names"><p>Send the DPR report to these people?</p>';
 					for (var i = 0; i < data.data.length; i=i+2) {
 						if (data.data[i] != '') {
 							namesHtml += '<p>' + data.data[i] + '</p>';
 						}
 					}
+					namesHtml += '</div>';
 					$("#dynDialog").html(namesHtml);
 					$("#namesDialog").dialog({
 						buttons: {
