@@ -1,18 +1,24 @@
 
 	function editClient(id,link) {
 		jQuery('#editClient').remove();
-		jQuery.ajax({
-			type:'GET',
-			url:'/admin/clients/edit?cid=' + id,
-			//data:{client_id:id},
-			success:function(data) {
-				if(data) {
-					jQuery('#editClientsForm').html(data);
-				}else {
-					jAlert('There was a problem finding the client you needed.Please try again.','Edit Client Error');
+		jQuery('#loader_block').slideDown('fast',function() {
+			jQuery.ajax({
+				type:'GET',
+				url:'/admin/clients/edit?cid=' + id,
+				//data:{client_id:id},
+				success:function(data) {
+					if(data) {
+						jQuery('#loader_block').slideUp('fast',function() {
+							jQuery('#editClientsForm').html(data);
+						});
+					}else {
+						jAlert('There was a problem finding the client you needed.Please try again.','Edit Client Error',function() {
+							jQuery('#loader_block').slideUp('fast');	
+						});
+					}
 				}
-			}
-		})
+			})
+		});
 	}
 	
 	function viewClient(id) {
@@ -115,8 +121,8 @@
 			url:'/admin/websites/form?cid='+cid+'&wid='+wid,
 			success:function(data) {
 				if(data){
-					jQuery('#editWebsite').empty();
-					jQuery('#editWebsite').html(data);
+					jQuery('#addWebsiteForm').empty();
+					jQuery('#addWebsiteForm').html(data);
 				}else {
 					jAlert('There was a problem finding the client you needed. Please try again.','Add Website Error');
 				}

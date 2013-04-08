@@ -15,8 +15,6 @@
                     <?php if(isset($contacts)) { ?>
             		<li><a href="javascript:void(0);" rel="contacts">Contacts</a></li>
                     <?php } ?>
-            		<li><a href="#users">Users</a></li>
-            		<!-- <li><a href="#vendors">Vendors</a></li> -->
             	</ul>
             	<div class="tab_container">
             		<div id="clientInfo" class="tab_content">
@@ -26,7 +24,6 @@
 					            'id' => 'valid',
 					            'class' => 'mainForm ' . (($client) ? 'editClient' : 'addClient'),
 					            'style'=>'text-align:left !important;'
-					            
 					        );
 							
 			        		echo (!isset($client)) ? form_open('/admin/clients/form_processor/clients/add',$form) : form_open('/admin/clients/form_processor/clients/edit',$form);
@@ -40,54 +37,82 @@
                                 	<div style="width:25px;border:1px solid #d5d5d5;margin-right:5px;float:left;margin-top:12px;">
                                 		<div id="tagThumb" class="<?= $client->ClassName; ?>" style="float:left;">&nbsp;</div>
                                     </div>
+                                    <?php if(isset($view)) { ?>
+                                    
+                                    <?php }else { ?>
                                     <select id="tagChanger" name="tags" data-placeholder="Link Tags To Client..." class="chzn-select validate[required]" tabindex="1">
 			                            <option value=""></option>
 			                            <?php foreach($tags as $tag) : ?>
 			                            	<option rel="<?= $tag->ClassName; ?>" <?= ($client) ? (($tag->ID == $client->Tag) ? 'selected="selected"' : '') : ''; ?> value="<?= $tag->ID; ?>"><?= $tag->Name; ?></option>
 			                            <?php endforeach; ?>
 			                        </select>
+                                    <?php } ?>
                                 </div>
                             </div>
                             <?php } ?>
 			                <div class="rowElem noborder">
 			                    <label><span class="req">*</span> Client Code</label>
 			                    <div class="formRight">
-			                        <?= form_input(array('maxlength'=>'4','class'=>'required validate[required]','name'=>'ClientCode','id'=>'code','value'=>($client) ? $client->Code : '')); ?>
+                                	<?php if(isset($view)) { ?>
+			                        <?= form_input(array('disabled'=>'disabled','maxlength'=>'4','class'=>'required validate[required]','name'=>'ClientCode','id'=>'code','value'=>($client) ? $client->Code : '')); ?>
+                                    <?php }else { ?>
+									<?= form_input(array('maxlength'=>'4','class'=>'required validate[required]','name'=>'ClientCode','id'=>'code','value'=>($client) ? $client->Code : '')); ?>
+                                    <?php } ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label><span class="req">*</span>Client Name</label>
 			                    <div class="formRight">
-                                	<?= form_input(array('class'=>'required validate[required]','name'=>'ClientName','id'=>'name','value'=>($client) ? $client->Name : '')); ?>
+                                	<?php if(isset($view)) { 
+										echo form_input(array('disabled'=>'disabled','class'=>'required validate[required]','name'=>'ClientName','id'=>'name','value'=>($client) ? $client->Name : ''));
+									}else {
+                                		echo form_input(array('class'=>'required validate[required]','name'=>'ClientName','id'=>'name','value'=>($client) ? $client->Name : '')); 
+									}?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label>Address</label>
 			                    <div class="formRight">
-                                	<?= form_input(array('name'=>'street','id'=>'address','value'=> ((isset($client->Address['street'])) ? $client->Address['street'] : ''))); ?>
+                                	<?php if(isset($view)) { 
+										echo form_input(array('disabled'=>'disabled','name'=>'street','id'=>'address','value'=> ((isset($client->Address['street'])) ? $client->Address['street'] : '')));
+									}else {
+                                		echo form_input(array('name'=>'street','id'=>'address','value'=> ((isset($client->Address['street'])) ? $client->Address['street'] : '')));
+									} ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label>City</label>
 			                    <div class="formRight">
-                                	<?= form_input(array('name'=>'city','id'=>'city','value' => ((isset($client->Address['city'])) ? $client->Address['city'] : ''))); ?>			
+                                	<?php if(isset($view)) {
+										echo form_input(array('disabled'=>'disabled','name'=>'city','id'=>'city','value' => ((isset($client->Address['city'])) ? $client->Address['city'] : '')));
+									}else {
+                                		echo form_input(array('name'=>'city','id'=>'city','value' => ((isset($client->Address['city'])) ? $client->Address['city'] : ''))); 
+									}?>			
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label>State</label>
 			                    <div class="formRight searchDrop noSearch" style="text-align:left;">
-                                	<?php echo showStates(((isset($client->Address['state'])) ? $client->Address['state'] : false));?>
+                                	<?php if(isset($view)) {
+										echo showStates(((isset($client->Address['state'])) ? $client->Address['state'] : false),true);
+									}else {
+                                		echo showStates(((isset($client->Address['state'])) ? $client->Address['state'] : false));
+									} ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label>Zip Code</label>
 			                    <div class="formRight">
-			                        <?= form_input(array('maxlength'=>'6','name'=>'zip','id'=>'zip','value'=>((isset($client->Address['zipcode'])) ? $client->Address['zipcode'] : ''))); ?>
+                                	<?php if(isset($view)) {
+										echo form_input(array('disabled'=>'disabled','maxlength'=>'6','name'=>'zip','id'=>'zip','value'=>((isset($client->Address['zipcode'])) ? $client->Address['zipcode'] : '')));
+									}else {
+			                        	echo form_input(array('maxlength'=>'6','name'=>'zip','id'=>'zip','value'=>((isset($client->Address['zipcode'])) ? $client->Address['zipcode'] : '')));
+									}?>
 			                    </div>
 			                    <div class="fix"></div>
 			
@@ -95,7 +120,11 @@
 			                <div class="rowElem noborder">
 			                    <label><span class="req">*</span> Phone</label>
 			                    <div class="formRight">
-			                        <?= form_input(array('class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value' => ((isset($client->Phone['main'])) ? $client->Phone['main'] : ''))); ?>
+                                	<?php if(isset($view)) { 
+										echo form_input(array('disabled'=>'disabled','class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value' => ((isset($client->Phone['main'])) ? $client->Phone['main'] : '')));
+									}else {
+										echo form_input(array('class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value' => ((isset($client->Phone['main'])) ? $client->Phone['main'] : ''))); 
+									}?>
 			                        <span class="formNote">(999) 999-9999</span>
 			                    </div>
 			                    <div class="fix"></div>
@@ -103,7 +132,11 @@
                             <div class="rowElem noborder">
                             	<label>Member Of</label>
                                 <div class="formRight noSearch">
-                                	<select class="chzn-select validate[required]" name="Group" <?= ($this->user['AccessLevel'] >= 600000) ? '' : 'disabled'; ?> style="width:200px;">
+                                	<?php if(isset($view)) { ?>
+                                		<select class="chzn-select validate[required]" name="Group" disabled style="width:200px;">
+                                    <? }else { ?>
+                                    	<select class="chzn-select validate[required]" name="Group" <?= ($this->user['AccessLevel'] >= 600000) ? '' : 'disabled'; ?> style="width:200px;">
+                                    <? } ?>
                                     	<option value=""></option>
                                         <?php foreach($groups as $group) { ?>
                                         	<?php 
@@ -127,16 +160,29 @@
 			                <div class="rowElem noborder">
 			                    <label>Notes</label>
 			                    <div class="formRight">
-                                	<?= form_textarea(array('rows'=>'8','cols'=>'','class'=>'auto','name'=>'Notes','id'=>'notes','value'=>($client) ? $client->Description : '')); ?>
+                                	<?php if(isset($view)) {
+										echo form_textarea(array('disabled'=>'disabled','rows'=>'8','cols'=>'','class'=>'auto','name'=>'Notes','id'=>'notes','value'=>($client) ? $client->Description : ''));
+									}else {
+                                		echo form_textarea(array('rows'=>'8','cols'=>'','class'=>'auto','name'=>'Notes','id'=>'notes','value'=>($client) ? $client->Description : '')); 
+									}?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                	<label>Google Review</label>
 			                    <div class="formRight">
-			                    	<?= form_input(array('class'=>'validate[custum[url]]','name'=>'GoogleReviewURL','id'=>'GoogleReview','value'=>($client) ? ((isset($client->Reviews['Google'])) ? $client->Reviews['Google'] : '') : '')); ?>
-			                        <?= form_hidden('GoogleID',(isset($client->Reviews['GoogleID'])) ? $client->Reviews['GoogleID'] : 0); ?>
-			                        <p class="formNote">The Web Address for the clients Google Review Page</p>
+                                	<?php if(isset($view)) { ?>
+                                    	<?php if($client->Reviews['Google'] != '') { ?>
+                                    	<a style="margin-top:12px;display:block;float:left;width:100%;" href="<?= $client->Reviews['Google']; ?>" target="_blank"><?= $client->Reviews['Google']; ?></a>
+                                        <?php }else { ?>
+                                        <p>No Google review page found for this client.</p>
+										<?php } ?>
+                                    <?php }else { 
+			                    		echo form_input(array('class'=>'validate[custum[url]]','name'=>'GoogleReviewURL','id'=>'GoogleReview','value'=>($client) ? ((isset($client->Reviews['Google'])) ? $client->Reviews['Google'] : '') : ''));
+			                        	echo form_hidden('GoogleID',(isset($client->Reviews['GoogleID'])) ? $client->Reviews['GoogleID'] : 0); 
+									?>
+			                        	<p class="formNote">The Web Address for the clients Google Review Page</p>
+                                    <?php } ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
@@ -144,43 +190,70 @@
 			                <div class="rowElem noborder">
 			                	<label>Yelp Review</label>
 			                    <div class="formRight">
-			                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YelpReviewURL','id'=>'YelpReview','value'=>($client) ? ((isset($client->Reviews['Yelp'])) ? $client->Reviews['Yelp'] : '') : '')); ?>
-			                        <?= form_hidden('YelpID',(isset($client->Reviews['YelpID'])) ? $client->Reviews['YelpID'] : 0); ?>
-			                        <p class="formNote">The Web Address for the clients Yelp Review Page</p>
+                                	<?php if(isset($view)) { ?>
+                                    	<?php if($client->Reviews['Yelp'] != '') { ?>
+                                    	<a style="margin-top:12px;display:block;float:left;width:100%;" href="<?= $client->Reviews['Yelp']; ?>" target="_blank"><?= $client->Reviews['Yelp']; ?></a>
+                                        <?php }else { ?>
+                                        	<p>No Yelp review page found for this client.</p>
+                                        <?php } ?>
+                                    <?php }else {
+			                    		echo form_input(array('class'=>'validate[custom[url]]','name'=>'YelpReviewURL','id'=>'YelpReview','value'=>($client) ? ((isset($client->Reviews['Yelp'])) ? $client->Reviews['Yelp'] : '') : ''));
+			                        	echo form_hidden('YelpID',(isset($client->Reviews['YelpID'])) ? $client->Reviews['YelpID'] : 0); ?>
+			                        	<p class="formNote">The Web Address for the clients Yelp Review Page</p>
+                                    <?php } ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                	<label>Yahoo Review</label>
 			                    <div class="formRight">
-			                    	<?= form_input(array('class'=>'validate[custom[url]]','name'=>'YahooReviewURL','id'=>'YahooReview','value'=>($client) ? ((isset($client->Reviews['Yahoo'])) ? $client->Reviews['Yahoo'] : '') : '')); ?>
-			                        <?= form_hidden('YahooID',(isset($client->Reviews['YahooID'])) ? $client->Reviews['YahooID'] : 0); ?>
+                                	<?php if(isset($view)) { ?>
+                                    	<?php if($client->Reviews['Yahoo'] != '') { ?>
+                                    		<a style="margin-top:12px;display:block;float:left;width:100%;" href="<?= $client->Reviews['Yahoo']; ?>" target="_blank"><?= $client->Reviews['Yahoo']; ?></a>
+                                        <?php }else { ?>
+                                        	<p>No Yahoo review page found for this client. </p>
+                                        <?php } ?>
+                                    <?php }else { 
+			                    	 echo form_input(array('class'=>'validate[custom[url]]','name'=>'YahooReviewURL','id'=>'YahooReview','value'=>($client) ? ((isset($client->Reviews['Yahoo'])) ? $client->Reviews['Yahoo'] : '') : ''));
+			                         echo form_hidden('YahooID',(isset($client->Reviews['YahooID'])) ? $client->Reviews['YahooID'] : 0); ?>
 			                        <p class="formNote">The Web Address for the clients Yahoo Review Page</p>
+                                    <?php } ?>
 			                    </div>
 			                </div>
                             <div class="rowElem noborder">
+                            	<?php if(isset($view)) { ?>
+                                <label>Client Status</label>
+                                <?php } ?>
                                 <div class="formRight" style="text-align:left;padding-top:15px;">
-                                	<?php if(isset($client->Status)) { ?>
-                                    <input type="radio" id="radio1" name="status" value="1" <?= (($client->Status >= 1) ? 'checked="checked"' : ''); ?> />
-                                    <label style="float:none;display:inline;" for="radio1">Enable</label>
-                                    <input type="radio" id="radio2" name="status" value="0" <?= (($client->Status < 1) ? 'checked="checked"' : ''); ?>  />
-                                    <label style="float:none;display:inline;" for="radio2">Disable</label>
+                                	<?php if(isset($view)) { ?>
+                                    	<?php echo (($client->Status >= 1) ? 'Enabled' : 'Disabled'); ?>
                                     <?php }else { ?>
-                                    <input type="radio" id="radio1" name="status" value="1" checked="checked" />
-                                    <label style="float:none;display:inline;" for="radio1">Enable</label>
-                                    <input type="radio" id="radio2" name="status" value="0" />
-                                    <label style="float:none;display:inline;" for="radio2">Disable</label>
+                                	<?php if(isset($client->Status)) { ?>
+                                        <input type="radio" id="radio1" name="status" value="1" <?= (($client->Status >= 1) ? 'checked="checked"' : ''); ?> />
+                                        <label style="float:none;display:inline;" for="radio1">Enable</label>
+                                        <input type="radio" id="radio2" name="status" value="0" <?= (($client->Status < 1) ? 'checked="checked"' : ''); ?>  />
+                                        <label style="float:none;display:inline;" for="radio2">Disable</label>
+                                        <?php }else { ?>
+                                        <input type="radio" id="radio1" name="status" value="1" checked="checked" />
+                                        <label style="float:none;display:inline;" for="radio1">Enable</label>
+                                        <input type="radio" id="radio2" name="status" value="0" />
+                                        <label style="float:none;display:inline;" for="radio2">Disable</label>
+                                        <?php } ?>
                                     <?php } ?>
                                 </div>
                                 <div class="fix"></div>
                             </div>
 			                <div class="fix"></div>
+                            <?php if(isset($view)) { ?>
+                            
+                            <?php }else { ?>
 			                <div class="submitForm">
                             	<?php if($client) { ?>
 			               			<input type="hidden" name="ClientID" value="<?= $client->ClientID; ?>" />
                                 <?php } ?>
 			                    <input type="submit" value="<?= ((isset($client->Status)) ? 'Save' : 'Add'); ?>" class="<?= ((isset($client->Status)) ? 'redBtn' : 'greenBtn'); ?>" />
 			                </div> 
+                            <?php } ?>
 			                <div class="fix"></div>
 			           </fieldset>
     				<?= form_close(); ?>
@@ -192,7 +265,16 @@
                     <?php } ?>
                     <?php if(isset($contacts)) { ?>
                     <div id="contacts" class="tab_content" style="display:none;">
-                    	<?= (isset($contacts)) ? $contacts : ''; ?>
+                    	<?= ContactsListingTable($client->ClientID,true); ?>
+                        <script type="text/javascript">
+							jQuery('.contacts').dataTable({
+								"bJQueryUI": true,
+								"sPaginationType": "full_numbers",
+								"sDom": '<""f>t<"F"lp>',
+								'iDisplayLength':1000,
+								"aLengthMenu": [[-1,10,25,50],['All',10,25,50]]
+							});
+						</script>
                     </div>
                     <?php } ?>
                     <div id="loader" style="display:none;"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
@@ -207,11 +289,15 @@
 
 	var $ = jQuery;
 	
-	$('#tagChanger').change(function() {
-		var ele = $(this).find('option:selected');
-		var classname = ele.attr('rel');
-		$('#tagThumb').attr('class',classname);
-	});
+	<?php if(isset($view)) { ?>
+	
+	<?php }else { ?>
+		$('#tagChanger').change(function() {
+			var ele = $(this).find('option:selected');
+			var classname = ele.attr('rel');
+			$('#tagThumb').attr('class',classname);
+		});
+	<?php } ?>
 
 	$.mask.definitions['~'] = "[+-]";
 	$(".maskDate").mask("99/99/9999",{completed:function(){alert("Callback when completed");}});
@@ -230,34 +316,37 @@
 	
 	$('form.editClient,form.addClient').submit(function(e) {
 		e.preventDefault();
-		var formData = $(this).serialize();
-		var formType = '<?= ($client) ? 'edit' : 'add'; ?>';
-		$.ajax({
-			type:'POST',
-			data:formData,
-			url:'<?php echo (($client) ? '/admin/clients/form?cid=' . $client->ClientID : '/admin/clients/form?gid=' . $this->user['DropdownDefault']->SelectedGroup); ?>',
-			success:function(resp) {
-				if(resp == '1') {
-					if(formType == 'edit') {
-						jAlert('The client was edited successfully','Success',function() {
-							clientListTable();
-							writeDealerDropdown();
-						});
+		<?php if(isset($view)) { ?>
+		<?php }else { ?>
+			var formData = $(this).serialize();
+			var formType = '<?= ($client) ? 'edit' : 'add'; ?>';
+			$.ajax({
+				type:'POST',
+				data:formData,
+				url:'<?php echo (($client) ? '/admin/clients/form?cid=' . $client->ClientID : '/admin/clients/form?gid=' . $this->user['DropdownDefault']->SelectedGroup); ?>',
+				success:function(resp) {
+					if(resp == '1') {
+						if(formType == 'edit') {
+							jAlert('The client was edited successfully','Success',function() {
+								clientListTable();
+								writeDealerDropdown();
+							});
+						}else {
+							jAlert('The client was added successfully','Success',function() {
+								clientListTable();
+								writeDealerDropdown();
+							});
+						}
 					}else {
-						jAlert('The client was added successfully','Success',function() {
-							clientListTable();
-							writeDealerDropdown();
-						});
-					}
-				}else {
-					if(formType == 'edit') {
-						jAlert('Something went wrong while editing the client. Please try again.','Error');
-					}else {
-						jAlert('Something went wrong while adding the client. Please try again.','Error');
+						if(formType == 'edit') {
+							jAlert('Something went wrong while editing the client. Please try again.','Error');
+						}else {
+							jAlert('Something went wrong while adding the client. Please try again.','Error');
+						}
 					}
 				}
-			}
-		});
+			});
+		<?php } ?>
 	});
 
 	$('ul.tabs li a').live('click',function() {
@@ -285,12 +374,23 @@
 				text:'Close',
 				click:$(this).dialog('close')
 			},
-			<?php if(isset($client->Status)) { ?>
-			{
-				class:'greenBtn',
-				text:"Add New Website",
-				click:function() { addWebsiteForm('<?= $client->ClientID; ?>')}
-			} <?php } ?>
+			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
+				<?php if(isset($client->Status)) { ?>
+				{
+					class:'greenBtn',
+					text:"Add New Website",
+					click:function() { addWebsiteForm('<?= $client->ClientID; ?>')}
+				}, <?php } ?>
+			<?php } ?>
+			<?php if(GateKeeper('Contact_Add',$this->user['AccessLevel'])) { ?>
+				<?php if(isset($client->Status)) { ?>
+				{
+					class:'greenBtn',
+					text:"Add New Contact",
+					click:function() { addContactForm('<?= $client->ClientID; ?>')}
+				}
+				<?php } ?>
+			<?php } ?>
 		] 
 	});
 </script>

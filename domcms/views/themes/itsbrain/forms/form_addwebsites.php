@@ -1,5 +1,5 @@
 <div class="uDialog">
-    <div class="dialog-message" id="addWebsiteForm" title="<?= (($website) ? 'Edit ' . $client->Name . ' Website' : 'Add New Website To ' . $client->Name); ?>">
+    <div class="dialog-message" id="addWebsite" title="<?= (($website) ? 'Edit ' . $client->Name . ' Website' : 'Add New Website To ' . $client->Name); ?>">
         <div class="uiForm">
         	 <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
 				<?= form_open(base_url() . 'admin/clients/add_website',array('id'=>'web','class'=>'valid mainForm','style'=>'text-align:left;')); ?>
@@ -136,7 +136,7 @@
 	jQuery(".chzn-select").chosen();
 	
 	//load the popup by default;
-	jQuery("#addWebsiteForm").dialog({
+	jQuery("#addWebsite").dialog({
 		minWidth:300,
 		width:500,
 		height:550,
