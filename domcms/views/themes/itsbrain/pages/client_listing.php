@@ -19,5 +19,6 @@
     div#dataClient{margin-top:1px;}
 </style>
 <div id="editClientsForm"></div> 
+<div id="addWebsiteForm"></div>
 <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/client_popups.js"></script>
 <script type="text/javascript"></script>

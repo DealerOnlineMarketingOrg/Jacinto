@@ -137,10 +137,11 @@
 	
 	//load the popup by default;
 	jQuery("#addWebsiteForm").dialog({
-		minWidth:600,
-		height:500,
+		minWidth:300,
+		width:500,
+		height:550,
 		autoOpen: true,
-		modal: false
+		modal: true
 	});
 
 </script>

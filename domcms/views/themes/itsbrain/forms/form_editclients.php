@@ -15,8 +15,8 @@
                     <?php if(isset($contacts)) { ?>
             		<li><a href="javascript:void(0);" rel="contacts">Contacts</a></li>
                     <?php } ?>
-            		<!-- <li><a href="#users">Users</a></li>
-            		<li><a href="#vendors">Vendors</a></li> -->
+            		<li><a href="#users">Users</a></li>
+            		<!-- <li><a href="#vendors">Vendors</a></li> -->
             	</ul>
             	<div class="tab_container">
             		<div id="clientInfo" class="tab_content">
@@ -278,6 +278,19 @@
 		width:800,
 		height:500,
 		autoOpen: true,
-		modal: true
+		modal: true,
+		buttons: [
+			{
+				class:'greyBtn',
+				text:'Close',
+				click:$(this).dialog('close')
+			},
+			<?php if(isset($client->Status)) { ?>
+			{
+				class:'greenBtn',
+				text:"Add New Website",
+				click:function() { addWebsiteForm('<?= $client->ClientID; ?>')}
+			} <?php } ?>
+		] 
 	});
 </script>

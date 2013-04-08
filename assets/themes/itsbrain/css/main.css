@@ -113,6 +113,8 @@ input[type=submit], input[type=reset], input[type=button], button, .button { fon
 .btnIconLeft:active { background: #f1f1f1; }
 .btnIconLeft .icon { float: left; border-right: 1px solid #d5d5d5; padding: 8px; }
 .btnIconLeft span { display: block; float: left; padding: 5px 10px; font-weight: bold; }
+button.greenBtn{color:#fff;}
+button.greenBtn:hover{color:#000;}
 /* ========== Pagination ========== */
 .pagination { margin: auto; width: auto; text-align: center; margin-top: 40px; }
 .pages {  }
@@ -924,6 +926,12 @@ ul.thirdparty li a {float:left;margin-right:8px;}
 /* Devices and browsers with min of 800px and max of 979px */
 @media only screen and (min-width: 800px) and (max-width: 979px) {
     .leftNav { width: 24%; }
+	
+}
+@media only screen and (min-width:800px) and (min-height:600px){
+	div.logo,div.leftNav{position:fixed;}
+	div#system_tags,div.content{margin-left:255px;}
+	
 }
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (min-width: 320px) and (max-width: 479px) {
