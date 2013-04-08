@@ -135,12 +135,13 @@ class Clients extends DOM_Controller {
 		$tags = $this->administration->getAllTags();    
 		$groups = $this->administration->getAllGroupsInAgency($this->user['DropdownDefault']->SelectedAgency);
 
-      $data = array(
-          'client'=>false,
-          'tags'=>$tags,
-		  'groups'=>$groups
-      );
-      $this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);
+		$data = array(
+			'client'=>false,
+			'tags'=>$tags,
+			'groups'=>$groups
+		);
+		
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);
     }
 	
 	public function Edit() {

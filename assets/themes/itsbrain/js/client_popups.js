@@ -1,4 +1,25 @@
 
+	function addClient() {
+		jQuery('#editClient').remove();
+		jQuery('#loader_block').slideDown('fast',function() {
+			jQuery.ajax({
+				type:'GET',
+				url:'/admin/clients/add_form',
+				success:function(data) {
+					if(data) {
+						jQuery('#loader_block').slideUp('fast',function() {
+							jQuery('#editClientsForm').html(data);
+						});
+					}else {
+						jAlert('There was an error with your request. Please Try Again.','Error',function() {
+							jQuery('#loader_block').slideUp('fast');	
+						});
+					}
+				}
+			});
+		});
+	}
+	
 	function editClient(id,link) {
 		jQuery('#editClient').remove();
 		jQuery('#loader_block').slideDown('fast',function() {
@@ -241,16 +262,3 @@
 		});					
 	}
 
-function addClient() {
-  jQuery.ajax({
-    type:'GET',
-    url:'/admin/clients/add_form',
-    success:function(data) {
-      if(data) {
-        jQuery('#editClientsForm').html(data);
-      }else {
-        jAlert('There was an error with your request. Please Try Again.','Error');
-      }
-    }
-  });
-}

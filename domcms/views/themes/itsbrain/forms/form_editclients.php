@@ -9,8 +9,13 @@
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
             		<li class="activeTab"><a href="javascript:void(0);" rel="clientInfo">Client Details</a></li>
+                    <?php if(isset($websites)) { ?>
                     <li><a href="javascript:void(0);" rel="websites">Websites</a></li>
+                    <?php } 
+					
+					if(isset($contacts)) { ?>
             		<li><a href="javascript:void(0);" rel="contacts">Contacts</a></li>
+                    <?php } ?>
             	</ul>
             	<div class="tab_container">
             		<div id="clientInfo" class="tab_content">
@@ -152,6 +157,7 @@
                                         <?php } ?>
                                     </select>
                                 </div>
+                                <div class="fix"></div>
                             </div>
 			                <div class="rowElem noborder">
 			                    <label>Notes</label>
@@ -370,7 +376,7 @@
 			{
 				class:'greyBtn',
 				text:'Close',
-				click:$(this).dialog('close')
+				click:function() {$('#editClient').dialog('close')}
 			},
 			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
 				<?php if(isset($client->Status)) { ?>
