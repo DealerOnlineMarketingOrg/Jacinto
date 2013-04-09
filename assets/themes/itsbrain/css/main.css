@@ -101,6 +101,9 @@ input[type=submit], input[type=reset], input[type=button], button, .button { fon
 .greenBtn { background: url(../imgs/ui/greenBtn.png) repeat-x 0 0; border: 1px solid #418d4f; color: #fff; }
 .greenBtn:hover { background-position: 0 -25px; }
 .greenBtn:active { background-position: 0 -50px; }
+.yellowBtn { background: url(../imgs/ui/yellowBtn.png) repeat-x 0 0; border: 1px solid #becb19; color: #fff; }
+.yellowBtn:hover { background-position: 0 -25px; }
+.yellowBtn:active { background-position: 0 -50px; }
 .btn14 { border: 1px solid #d5d5d5; background: url(../imgs/leftNavBg.png) repeat-x 0 0; padding: 6px 8px; display: inline-block; }
 .btn14:hover { background: #f6f6f6; }
 .btn14:active { background: #f1f1f1; }

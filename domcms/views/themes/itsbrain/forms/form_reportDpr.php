@@ -1,7 +1,8 @@
 <!-- Content -->
 <div class="content hideTagFilter" id="container">
     <div class="title"><h5>Reports</h5></div>
-	<script type="text/javascript" src="<?php base_url(); ?>assets/themes/itsbrain/js/input_popups.js"></script>
+	<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/input_popups.js"></script>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/dpr_popups.js"></script>
     <?php notifyError(); ?>
     <?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
     <?php echo  (($html) ? $html : ''); ?>
@@ -21,7 +22,7 @@
 			$lowerStart = '1/1/2000';
 			$upperStart = $endDate;
 			$lowerEnd = $startDate;
-			$upperEnd = date('n/j/Y');
+			$upperEnd = '12/1/' . date('Y');
 
 			function dateToMonth($date) {return date('n',strtotime($date));}
 			function dateToYear($date) {return date('Y',strtotime($date));}
@@ -40,9 +41,15 @@
 			//  lowerDate and upperDate.
 			function dateButtons($lowerDate, $upperDate, $date, $id) {
 				$date = setToBounds($lowerDate, $upperDate, $date);
-
-				$startMonth = (dateToYear($lowerDate) == dateToYear($date)) ? dateToMonth($date) : 1;
-				$endMonth = (dateToYear($upperDate) == dateToYear($date)) ? dateToMonth($date) : 12;
+				
+				if ($id == 'start')
+					$startMonth = 1;
+				else
+					$startMonth = (dateToYear($lowerDate) == dateToYear($date)) ? dateToMonth($lowerDate) : 1;
+				if ($id == 'end')
+					$endMonth = 12;
+				else
+					$endMonth = (dateToYear($upperDate) == dateToYear($date)) ? dateToMonth($upperDate) : 12;
 				monthButton($startMonth,$endMonth,dateToMonth($date),$id.'Month');
 				
 				$startYear = (dateToYear($lowerDate) == dateToYear($date)) ? dateToYear($date) : dateToYear($lowerDate);
@@ -79,7 +86,9 @@
             <?php } else { ?>
             	<div>
                     <div style="width:1;float:left;vertical-align:middle">
-                        <input ID="add" class="greenBtn" type="button" value="Add Leads" />
+                        <input ID="add" class="greenBtn" type="button" value="Add Sources" />
+                        <!-- <input ID="add" class="redBtn" type="button" value="Edit Sources" /> -->
+                        <input ID="import" class="yellowBtn" style="color:black" type="button" value="Bulk Import" />
                     </div>
                     <div style="width:1;float:right;vertical-align:middle">
                         <input ID="excel" class="greyishBtn" type="button" value="Excel" />
@@ -149,12 +158,12 @@
 				</div>
                 <div id="inputInfo"></div>
                 <div id="dynDialog"></div>
-                <div id="addDialog"></div>
+                <div id="dprAddPop"></div>
 			<?php } ?>
     	</fieldset>
     <?php echo  form_close(); ?>
     
-    <?php $this->load->view($this->theme_settings['ThemeDir'] . '/forms/spreadsheet'); ?>
+    <?php //$this->load->view($this->theme_settings['ThemeDir'] . '/forms/spreadsheet'); ?>
 	
     <script type="text/javascript">
 		var excelCreated = false;
@@ -162,19 +171,11 @@
 		
 		$('input#add').click(function() {
 			// Go to add report lead page with date range values.
+			addDpr();
 			//jQuery('form#reportDpr').attr('action', '<?= base_url(); ?>dpr/add');
 			//$("form#reportDpr").submit();
-			
-			var page = "<?php
-							$page = $this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd','',true);
-							$page = str_replace('"', '\"', $page);
-							$page = str_replace("\r", "", $page);
-							$page = str_replace("\n", "", $page);
-							$page = str_replace("</script>", "<\/script>", $page);
-							echo $page;	?>";
-			$("#addDialog").html($('<div id="dialog" title="Email">' + page + '</div>'));
-			$("#dialog").dialog();
 		});
+
 
 		function setToBounds(lowerDate, upperDate, date) {
 			// If date is out of bounds, set it to the closest bounded date.

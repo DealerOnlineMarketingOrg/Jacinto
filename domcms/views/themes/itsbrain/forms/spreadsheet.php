@@ -1,3 +1,32 @@
+<?php
+	// Returns array of (month/year)s in the specified date range.
+	function getMonthYearRange($startDate, $endDate) {
+		$startMonth = date('n', strtotime($startDate));
+		$endMonth = date('n', strtotime($endDate));
+		$startYear = date('y', strtotime($startDate));
+		$endYear = date('y', strtotime($endDate));
+		$range = array();
+		for ($y = $startYear; $y <= $endYear; $y++) {
+			if ($y == $startYear) {
+				$sm = $startMonth;
+				$em = ($y != $endYear) ? 12 : $endMonth;
+			} else {
+				$sm = 1;
+				$em = ($y != $endYear) ? 12 : $endMonth;
+			}
+			for ($m = $sm; $m <= $em; $m++)
+				$range[] = $m . '/' . $y;
+		}
+		return $range;
+	}
+	
+	$startDate = '1/1/2013';
+	$endDate = '12/1/2013';
+	
+	$colNames = getMonthYearRange($startDate, $endDate);
+	$rowNames = array('A','B','C','D','E','F','G');
+?>
+	
 <div id="mutableTable">
     <!-- Generate a table in a scrolling div based on number of columns and rows. -->
     <!-- Table will be editable. -->
@@ -10,7 +39,9 @@
         <div style="border:solid 1px grey; width:50px; height:15px; position:relative; float:left">
             <table>
                 <tr>
-                <td>1/13</td><td>2/13</td><td>3/13</td><td>4/13</td><td>5/13</td><td>6/13</td><td>7/13</td><td>8/13</td><td>9/13</td><td>10/13</td><td>11/13</td><td>12/13</td>
+                	<?php foreach ($colNames as $colName)
+						echo '<td>' . $colName . '</td>';
+					?>
                 </tr>
             </table>
         </div>
@@ -18,31 +49,20 @@
         <!-- Row bar -->
         <div style="border:solid 1px grey; width:15px; height:50px; position:relative; float:left">
         	<table>
-            	<tr><td>AAA</td></tr>
-            	<tr><td>BBB</td></tr>
-            	<tr><td>CCC</td></tr>
-            	<tr><td>DDD</td></tr>
-            	<tr><td>EEE</td></tr>
+                <?php foreach ($rowNames as $rowName)
+					echo '<td><td>' . $rowName . '</td></tr>';
+				?>
             </table>
         </div>
         <!-- Body block -->
         <div style="border:solid 1px grey; width:15px; height:50px; position:relative; float:left">
         	<table>
-            	<tr>
-                	<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
-            	<tr>
-                	<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
-            	<tr>
-                	<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
-            	<tr>
-                	<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
-            	<tr>
-                	<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
+            	<?php foreach ($rowNames as $r) {
+					echo '<tr>';
+					foreach ($colNames as $c)
+						echo '<td>&nbsp;</td>';
+					echo '</tr>';
+				} ?>
             </table>
         </div>
     </div>

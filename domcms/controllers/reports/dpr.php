@@ -27,7 +27,24 @@
 		}
 		
 		public function add() {
-			$this->Load('add');	
+			$report_data = $this->getdpr->get('Provider');
+			$prov_options = $this->getdpr->output_as_options($report_data);
+			$service_list = $this->getdpr->get('Service');
+			$service_options = $this->getdpr->output_as_options($service_list);
+			
+			$data = array(
+				'html' => '',
+				'page' => 'add',
+				'providers' => $prov_options,
+				'services' => $service_options,
+				'report_leads' => '',
+				'report_lineChart' => '',
+				'report_lineChart_script' => '{}'
+			);
+			
+			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
+			//$this->LoadTemplate('forms/form_addDpr',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addDpr',$data);
 		}
 		
 		public function reports() {
@@ -104,23 +121,6 @@
 		
 		public function Load($page, $rdata = FALSE) {
 			$form = $this->input->post();
-				
-			// Processing for dpr entry page.
-			if ($page == 'add') {
-				$report_data = $this->getdpr->get('Provider');
-				$prov_options = $this->getdpr->output_as_options($report_data);
-				$service_list = $this->getdpr->get('Service');
-				$service_options = $this->getdpr->output_as_options($service_list);
-				
-				$data = array(
-					'html' => '',
-					'providers' => $prov_options,
-					'services' => $service_options,
-					'report_leads' => '',
-					'report_lineChart' => '',
-					'report_lineChart_script' => '{}'
-				);
-			}
 			
 			// Processing for dpr report page.
 			if ($page == 'reports' || $page == 'editReport') {
@@ -179,7 +179,6 @@
 			}
 
 			switch ($page) {
-				case 'add':		$this->LoadTemplate('forms/form_addDpr',$data); break;
 				case 'reports': $this->LoadTemplate('forms/form_reportDpr',$data); break;
 				case 'editReport': $this->LoadTemplate('forms/form_reportDpr',$data); break;
 			}	
