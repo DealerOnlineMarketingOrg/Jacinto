@@ -116,7 +116,7 @@ function GroupsListingTable($groups = false) { ?>
     <?php endif; ?>
 <?php }
 
-function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions = false) { ?>
+function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions = false,$from_tab = false) { ?>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/contact_popups.js"></script>
     <?php 
 		$ci =& get_instance();
@@ -158,14 +158,14 @@ function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions
         <table cellpadding="0" cellspacing="0" border="0" class="display contacts" id="example" width="100%;">
             <thead>
                 <tr>
-                    <th>Team</th>
+                    <?php if(!$from_tab) { ?><th>Team</th><?php } ?>
                     <?php if($level == 'g' || $level == 'a') { ?>
-                    <th style="text-align:left;">Dealership</th>
+                    <?php if(!$from_tab) { ?><th style="text-align:left;">Dealership</th><?php } ?>
                     <?php } ?>
-                    <th style="width:10%">Title</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
+                    <th style="width:10%">Title Name</th>
+                    <th>Contact Name</th>
+                    <th><?php if($from_tab) { echo 'Primary'; } ?> Email</th>
+                    <th><?php if($from_tab) { echo 'Primary'; } ?> Phone</th>
                     <?php if($editPriv) { ?>
                     	<?php if(!$hide_actions) { ?>
                     		<th class="actions">Actions</th>
@@ -191,32 +191,37 @@ function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions
 
                 
                     <tr class="tagElement <?php echo $contact->Tag; ?>" >
-                    	<td class="tags"><div class="<?php echo $contact->Tag; ?>">&nbsp;</div>
+                    	<?php if(!$from_tab) { ?><td class="tags"><div class="<?php echo $contact->Tag; ?>">&nbsp;</div></td><?php } ?>
                         <?php if($level == 'g' || $level == 'a') { ?>
-                        <td style="width:auto;white-space:no-wrap;text-align:left;"><?php echo $contact->Parent; ?></td>
+                        <?php if(!$from_tab) { ?><td style="width:auto;white-space:no-wrap;text-align:left;"><?php echo $contact->Parent; ?></td><?php } ?>
                         <?php } ?>
                         <td style="text-align:left;"><?= $contact->JobTitle; ?></td>
                         <td><?= $contact->Name; ?></td>
                         <td>
-                        <span style="font-weight:bold;">Personal Email</span><br /><a href="mailto:'<?php echo $contact->Email["home"]; ?>'"><?php echo $contact->Email['home']; ?></a>
-                        <?php if (isset($contact->Email['work'])) { ?>
-                        <br /><span style="font-weight:bold;">Work Email</span><br /><a href="mailto:'<?php echo $contact->Email["work"]; ?>'"><?php echo $contact->Email['work']; ?></a>
+                        <?php if(!$from_tab) { ?><span style="font-weight:bold;">Personal Email</span><br /><?php } ?><a href="mailto:'<?php echo $contact->Email["home"]; ?>'"><?php echo $contact->Email['home']; ?></a>
+                        <?php if(!$from_tab) { ?>
+							<?php if (isset($contact->Email['work'])) { ?>
+                            <br /><span style="font-weight:bold;">Work Email</span><br /><a href="mailto:'<?php echo $contact->Email["work"]; ?>'"><?php echo $contact->Email['work']; ?></a>
+                            <?php } ?>
                         <?php } ?>
                         </td>
-                        <td>                        
-                        <span style="font-weight:bold;">Direct</span><br /><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["main"]; ?>'"><?php echo $contact->Phone['main']; ?></a></span>
-                        <?php if (isset($contact->Phone['mobile'])) { ?>
-                        <span style="font-weight:bold;">Mobile</span><br /><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["mobile"]; ?>'"><?php echo $contact->Phone['mobile']; ?></a></span>
-                        <?php } ?>
-                        <?php if (isset($contact->Phone['fax'])) { ?>
-                        <span style="font-weight:bold;">Fax</span><br /><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["fax"]; ?>'"><?php echo $contact->Phone['fax']; ?></a></span>
+                        <td> 
+                                               
+                        <?php if(!$from_tab) { ?><span style="font-weight:bold;">Direct</span><br /><?php } ?><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["main"]; ?>'"><?php echo $contact->Phone['main']; ?></a></span>
+                        <?php if(!$from_tab) { ?>
+							<?php if (isset($contact->Phone['mobile'])) { ?>
+                            	<span style="font-weight:bold;">Mobile</span><br /><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["mobile"]; ?>'"><?php echo $contact->Phone['mobile']; ?></a></span>
+                            <?php } ?>
+                            <?php if (isset($contact->Phone['fax'])) { ?>
+                            	<span style="font-weight:bold;">Fax</span><br /><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["fax"]; ?>'"><?php echo $contact->Phone['fax']; ?></a></span>
+                            <?php } ?>
                         <?php } ?>
                         </td>
                         <?php if($editPriv) { ?>
                         	<?php if(!$hide_actions) { ?>
-                                <td class="actionsCol" style="width:75px;text-align:center;">
+                                <td class="actionsCol" style=" <?php if(!$from_tab) { ?>width:75px;<?php }else {?>width:30px;<?php } ?>text-align:center;">
                                     <a title="Edit Contact" href="javascript:editContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
-                                    <a title="View Contact" href="javascript:viewContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
+                                    <?php if(!$from_tab) { ?><a title="View Contact" href="javascript:viewContact('<?= $contact->ContactID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a><?php } ?>
                                 </td>
                             <?php } ?>
                         <?php } ?>

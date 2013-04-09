@@ -265,9 +265,9 @@
                     <div id="contacts" class="tab_content" style="display:none;">
                     	<?php 
 							if(isset($view)) { 
-								echo ContactsListingTable($client->ClientID,true,true);
+								echo ContactsListingTable($client->ClientID,true,true,true);
 							}else {
-                    			echo ContactsListingTable($client->ClientID,true);
+                    			echo ContactsListingTable($client->ClientID,true,false,true);
 							}
 						?>
                         <script type="text/javascript">
@@ -403,7 +403,7 @@
 	$(".chzn-select").chosen();
 	$("#editClient").dialog({
 		minWidth:300,
-		width:800,
+		width:875,
 		height:500,
 		autoOpen: true,
 		modal: true,
