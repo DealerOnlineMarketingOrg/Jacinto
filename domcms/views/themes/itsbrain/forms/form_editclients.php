@@ -365,6 +365,10 @@
 		
 		var activeContent = $(this).attr('rel');
 		
+		<?php if(isset($view)) { ?>
+		
+		<?php }else { ?>
+		
 		if(activeContent == 'contacts') {
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').hasClass('hidden')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').removeClass('hidden');
@@ -391,6 +395,7 @@
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
 			}
 		}
+		<?php } ?>
 		
 		//alert(content);
 	});
