@@ -267,7 +267,7 @@
 							if(isset($view)) { 
 								echo ContactsListingTable($client->ClientID,true,true);
 							}else {
-                    			echo ContactsListingTable($client->ClientID,false);
+                    			echo ContactsListingTable($client->ClientID,true);
 							}
 						?>
                         <script type="text/javascript">
