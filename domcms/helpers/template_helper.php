@@ -321,6 +321,141 @@ function ClientsListingTable($clients = false) { ?>
     <?php endif; ?>
 <?php }
 
+function UserListingTable($client_id = false,$hide_actions = false) { ?>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/user_popups.js"></script>
+    <?php 
+		$ci =& get_instance();
+        $userPermissionLevel = $ci->user['AccessLevel'];
+		$level				 = $ci->user['DropdownDefault']->LevelType;
+        $addPriv     		 = GateKeeper('User_Add',$userPermissionLevel);
+        $editPriv    		 = GateKeeper('User_Edit',$userPermissionLevel);
+        $disablePriv 		 = GateKeeper('User_Disable_Enable',$userPermissionLevel);
+        $listingPriv 		 = GateKeeper('User_List',$userPermissionLevel);
+		
+		//collect users here
+		$users = array();
+		
+		$agency_id = $ci->user['DropdownDefault']->SelectedAgency;
+		$group_id = $ci->user['DropdownDefault']->SelectedGroup;
+		
+		switch($level) {
+			case "a":
+				//get all groups, all users are associated to client level. if were on agency level, we still dont know where all clients are coming from until we know the groups.
+				$groups = $ci->administration->getAllGroupsInAgencyResults($agency_id);
+				//loop through the groups to get the clients so we can get the users.
+				foreach($groups as $group) {
+					//now we know the group info
+					$clients = $ci->administration->getAllClientsInGroup($group->GroupID);
+					foreach($clients as $client) {
+						//get the users in the clients, but we still dont have them in a single level array.
+						$userGrouped = $ci->administration->getUsers(false,$client->ClientID);
+						//check to see if the user group returned data, if so we need to loop through them and push the contents to our collection array
+						if($userGrouped) {
+							foreach($userGrouped as $usersGroup) {
+								//push users to the array
+								array_push($users,$usersGroup);	
+							}
+						}
+
+					}
+				}
+			break;
+			case 1:
+				//get all groups, all users are associated to client level. if were on agency level, we still dont know where all clients are coming from until we know the groups.
+				$groups = $ci->administration->getAllGroupsInAgencyResults($agency_id);
+				//loop through the groups to get the clients so we can get the users.
+				foreach($groups as $group) {
+					//now we know the group info
+					$clients = $ci->administration->getAllClientsInGroup($group->GroupID);
+					foreach($clients as $client) {
+						//get the users in the clients, but we still dont have them in a single level array.
+						$userGrouped = $ci->administration->getUsers(false,$client->ClientID);
+						//check to see if the user group returned data, if so we need to loop through them and push the contents to our collection array
+						if($userGrouped) {
+							foreach($userGrouped as $usersGroup) {
+								//push users to the array
+								array_push($users,$usersGroup);	
+							}
+						}
+
+					}
+				}
+			break;
+			case "g":
+				//grab the clients in the group
+				$clients = $ci->administration->getAllClientsInGroup($group_id);
+				//loop through each client and grab its users, then reformat the return into a 1 level array and push to our collection array.
+				if(count($clients) > 0) {
+					foreach($clients as $client) {
+						$userGrouped = $ci->administration->getUsers(false,$client->ClientID);
+						if($userGrouped) {
+							foreach($userGrouped as $usersGroup) {
+								array_push($users,$usersGroup);	
+							}
+						}
+					}
+				}
+			break;
+			case 2:
+				//grab the clients in the group
+				$clients = $ci->administration->getAllClientsInGroup($group_id);
+				//loop through each client and grab its users, then reformat the return into a 1 level array and push to our collection array.
+				foreach($clients as $client) {
+					$userGrouped = $ci->administration->getUsers(false,$client->ClientID);
+					if($userGrouped) {
+						foreach($userGrouped as $usersGroup) {
+							array_push($users,$usersGroup);	
+						}
+					}
+				}
+			break;
+			default:
+				$client_id = (!$client_id) ? $ci->user['DropdownDefault']->SelectedClient : $client_id;	
+				$users = $ci->administration->getUsers(false,$client_id);
+			break;	
+		}
+		
+		if(count($users) > 0) {
+    ?>
+    <?php if($addPriv) { ?><a href="javascript:addUser();" class="greenBtn floatRight button" style="margin-top:-74px;margin-right:3px;">Add New User</a><?php } ?>
+    <?php if($listingPriv) { ?>
+        <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%;">
+            <thead>
+                <tr>
+                    <th style="width:50px;text-align:center;">Team</th>
+                    <th style="text-align:center;width:50px;">Avatar</th>
+                    <th style="text-align:left;width:30%;">Email Address</th>
+                    <th style="text-align:left;">Name</th>
+                    <th>Status</th>
+                    <?php if($editPriv) { ?>
+                    	<th class="actions">Actions</th>
+                    <?php } ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($users as $user) { $avatar = $ci->members->get_user_avatar($user->ID); ?>
+                    <tr class="tagElement <?= $user->ClassName; ?>">
+                    	<td class="tags" style="vertical-align: middle;"><div class="<?= $user->ClassName; ?>">&nbsp;</div></td>
+                        <td style="text-align:center;vertical-align: middle;"><div style="text-align:center"><img src="<?= $avatar; ?>" style="width:30px;" alt="<?= $user->FirstName . ' ' . $user->LastName; ?>" /></div></td>
+                        <td style="text-align:left;vertical-align: middle;"><a href="mailto:<?= $user->Username; ?>"><?= $user->Username; ?></a></td>
+                        <td style="vertical-align:middle;"><?= $user->FirstName . ' ' . $user->LastName; ?></td>
+                        <td style="width:30px;text-align:center;vertical-align: middle;"><?= (($user->Status) ? 'Active' : 'Disable'); ?></td>
+                        <?php if($editPriv) { ?>
+                        <td class="actionsCol actions" style="width:60px;text-align:center;vertical-align: middle;">
+                            <a title="Edit Client" href="javascript:editUser('<?= $user->ID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                            <a title="View Client" href="javascript:viewUser('<?= $user->ID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
+                        </td>
+                        <?php } ?>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    <?php } ?>
+    <?php if($addPriv) { ?><a href="javascript:addUser();" class="greenBtn floatRight button" style="margin-top:10px;">Add New User</a><?php } ?>
+    <?php }else { ?>
+    	<div class="nNote nFailure" style="margin:0;"><p><strong>Error:</strong> No Users found.</p></div>
+    <?php } ?>
+<?php }
 
 function get_welcome_message() {
     $ci =& get_instance();

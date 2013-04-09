@@ -267,7 +267,7 @@
 							if(isset($view)) { 
 								echo ContactsListingTable($client->ClientID,true,true);
 							}else {
-                    			echo ContactsListingTable($client->ClientID,true);
+                    			echo ContactsListingTable($client->ClientID,false);
 							}
 						?>
                         <script type="text/javascript">
@@ -362,6 +362,36 @@
 		//alert(content);
 		$('#editClient div.tab_container div.tab_content').hide();
 		$('#editClient div.tab_container').find(content).css({'display':'block'});
+		
+		var activeContent = $(this).attr('rel');
+		
+		if(activeContent == 'contacts') {
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').removeClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
+			}
+		}
+		
+		if(activeContent == 'websites') {
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').removeClass('hidden');
+			}
+		}
+		
+		if(activeContent == 'clientInfo') {
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
+			}
+		}
+		
 		//alert(content);
 	});
 	//jQuery("div[class^='widget']").simpleTabs();
@@ -381,7 +411,7 @@
 			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
 				<?php if(isset($client->Status)) { ?>
 				{
-					class:'greenBtn',
+					class:'greenBtn hidden addWebsiteBtn',
 					text:"Add New Website",
 					click:function() { addWebsiteForm('<?= $client->ClientID; ?>')}
 				}, <?php } ?>
@@ -389,12 +419,12 @@
 			<?php if(GateKeeper('Contact_Add',$this->user['AccessLevel'])) { ?>
 				<?php if(isset($client->Status)) { ?>
 				{
-					class:'greenBtn',
+					class:'greenBtn hidden addContactBtn',
 					text:"Add New Contact",
 					click:function() { addContact()}
-				}
-				<?php } ?>
+				}, <?php } ?>
 			<?php } ?>
+
 		] 
 	});
 </script>
