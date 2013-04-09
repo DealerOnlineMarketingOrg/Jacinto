@@ -265,9 +265,9 @@
                     <div id="contacts" class="tab_content" style="display:none;">
                     	<?php 
 							if(isset($view)) { 
-								echo ContactsListingTable($client->ClientID,true,true);
+								echo ContactsListingTable($client->ClientID,true,true,true);
 							}else {
-                    			echo ContactsListingTable($client->ClientID,true);
+                    			echo ContactsListingTable($client->ClientID,true,false,true);
 							}
 						?>
                         <script type="text/javascript">
@@ -362,13 +362,48 @@
 		//alert(content);
 		$('#editClient div.tab_container div.tab_content').hide();
 		$('#editClient div.tab_container').find(content).css({'display':'block'});
+		
+		var activeContent = $(this).attr('rel');
+		
+		<?php if(isset($view)) { ?>
+		
+		<?php }else { ?>
+		
+		if(activeContent == 'contacts') {
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').removeClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
+			}
+		}
+		
+		if(activeContent == 'websites') {
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').removeClass('hidden');
+			}
+		}
+		
+		if(activeContent == 'clientInfo') {
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
+			}
+		}
+		<?php } ?>
+		
 		//alert(content);
 	});
 	//jQuery("div[class^='widget']").simpleTabs();
 	$(".chzn-select").chosen();
 	$("#editClient").dialog({
 		minWidth:300,
-		width:800,
+		width:875,
 		height:500,
 		autoOpen: true,
 		modal: true,
@@ -381,7 +416,7 @@
 			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
 				<?php if(isset($client->Status)) { ?>
 				{
-					class:'greenBtn',
+					class:'greenBtn hidden addWebsiteBtn',
 					text:"Add New Website",
 					click:function() { addWebsiteForm('<?= $client->ClientID; ?>')}
 				}, <?php } ?>
@@ -389,12 +424,12 @@
 			<?php if(GateKeeper('Contact_Add',$this->user['AccessLevel'])) { ?>
 				<?php if(isset($client->Status)) { ?>
 				{
-					class:'greenBtn',
+					class:'greenBtn hidden addContactBtn',
 					text:"Add New Contact",
 					click:function() { addContact()}
-				}
-				<?php } ?>
+				}, <?php } ?>
 			<?php } ?>
+
 		] 
 	});
 </script>
