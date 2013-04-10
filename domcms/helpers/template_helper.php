@@ -133,7 +133,7 @@ function VendorListingTable($hide_actions=false,$hide_add=false) { ?>
     <?php if($addPriv) { ?><?php if(!$hide_add OR !$hide_actions) { ?><a href="javascript:addVendor();" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px;">Add New Vendor</a><?php } ?><?php } ?>
     <?php if($listingPriv) { ?>
     		<?php if($vendors) { ?>
-                <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%;">
+                <table cellpadding="0" cellspacing="0" border="0" class="display vendors" id="example" width="100%;">
                     <thead>
                         <tr>
                             <th style="text-align:left;white-space:nowrap;">Vendor Name</th>
@@ -225,7 +225,7 @@ function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions
     <?php if($addPriv) { ?><a href="javascript:addContact();" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px;">Add New Contact</a><?php } ?>
     <?php if($listingPriv) { ?>
     	<?php if($contacts) { ?>
-        <table cellpadding="0" cellspacing="0" border="0" class="display contacts" id="example" width="100%;">
+        <table cellpadding="0" cellspacing="0" border="0" class="<?php echo ($from_tab) ? 'tableStatic' : 'display contacts'; ?>" id="<?php echo ($from_tab) ? 'contacts' : 'example'; ?>" width="100%;">
             <thead>
                 <tr>
                     <?php if(!$from_tab) { ?><th>Team</th><?php } ?>
@@ -721,7 +721,7 @@ function WebsiteListingTable($cid = false,$actions=true,$isVendor=false) {
 	$websites = (!$isVendor) ? $ci->administration->getClientWebsites($cid) : $ci->administration->getVendorWebsites($cid);
 	
 	if($websites) { ?>
-    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example">
+    <table cellpadding="0" cellspacing="0" border="0" class="tableStatic" style="width:100%;border:1px solid #d5d5d5;" id="website_popup_example">
     	<thead>
         	<tr>
             	<td>Vendor</td>
@@ -736,10 +736,10 @@ function WebsiteListingTable($cid = false,$actions=true,$isVendor=false) {
         	<?php foreach($websites as $website) : ?>
             	<tr>
                 	<td style="white-space:nowrap;"><?= $website->VendorName; ?></td>
-                    <td style="white-space:nowrap;"><a href="<?= $website->URL; ?>" target="_blank"><?= $website->URL; ?></a></td>
+                    <td style="white-space:nowrap;"><a style="color:blue;" href="<?= $website->URL; ?>" target="_blank"><?= $website->URL; ?></a></td>
                     <td class="descCell"><p><?= $website->Description; ?></p></td>
                     <?php if($actions) { ?>
-                    	<td><a href="javascript:editWebsiteForm('<?= $cid ?>','<?= $website->ID; ?>');"><img src="<?= base_url() . THEMEIMGS;?>icons/color/pencil.png" alt="Edit Website" /></a>
+                    	<td style="text-align:center;"><a href="javascript:editWebsiteForm('<?= $cid ?>','<?= $website->ID; ?>');"><img src="<?= base_url() . THEMEIMGS;?>icons/color/pencil.png" alt="Edit Website" /></a></td>
                     <?php } ?>
                 </tr>
             <?php endforeach; ?>

@@ -70,12 +70,12 @@
                                     <div class="formRight">
                                         <?php
 											if(isset($view)) {
-													echo form_input(array('disabled'=>'disabled','id'=>'street1','name'=>'street','class'=>'','value'=>(isset($vendor->Address['street'])) ? $vendor->Address['street'] : ''));
+													echo form_input(array('disabled'=>'disabled','id'=>'street','name'=>'street','class'=>'','value'=>(isset($vendor->Address['street'])) ? $vendor->Address['street'] : ''));
 											}else {
 												if(isset($vendor->Address)) {
-													echo form_input(array('id'=>'phone','name'=>'street1','class'=>'','value'=>(isset($vendor->Address['street'])) ? $vendor->Address['street'] : ''));
+													echo form_input(array('id'=>'phone','name'=>'street','class'=>'','value'=>(isset($vendor->Address['street'])) ? $vendor->Address['street'] : ''));
 												}else {
-													echo form_input(array('id'=>'phone','name'=>'street1','class'=>''));
+													echo form_input(array('id'=>'phone','name'=>'street','class'=>''));
 												}	
 											}
                                         ?>
@@ -87,12 +87,12 @@
                                     <div class="formRight">
                                         <?php
 											if(isset($view)) {
-													echo form_input(array('disabled'=>'disabled','id'=>'state1','name'=>'state','class'=>'','value'=>(isset($vendor->Address['city'])) ? $vendor->Address['city'] : ''));
+													echo form_input(array('disabled'=>'disabled','id'=>'state1','name'=>'city','class'=>'','value'=>(isset($vendor->Address['city'])) ? $vendor->Address['city'] : ''));
 											}else {
 												if(isset($vendor->Address)) {
-													echo form_input(array('id'=>'city1','name'=>'city1','class'=>'','value'=>(isset($vendor->Address['city'])) ? $vendor->Address['city'] : ''));
+													echo form_input(array('id'=>'city1','name'=>'city','class'=>'','value'=>(isset($vendor->Address['city'])) ? $vendor->Address['city'] : ''));
 												}else {
-													echo form_input(array('id'=>'city1','name'=>'city1','class'=>''));
+													echo form_input(array('id'=>'city1','name'=>'city','class'=>''));
 												}	
 											}
                                         ?>
@@ -102,17 +102,11 @@
                                 <div class="rowElem noborder">
                                     <label>State</label>
                                     <div class="formRight">
-                                        <?php
-											if(isset($view)) {
-													echo form_input(array('disabled'=>'disabled','id'=>'state','name'=>'state','class'=>'','value'=>(isset($vendor->Address['state'])) ? $vendor->Address['state'] : ''));
-											}else {
-												if(isset($vendor->Address)) {
-													echo form_input(array('id'=>'city','name'=>'city','class'=>'','value'=>(isset($vendor->Address['state'])) ? $vendor->Address['state'] : ''));
-												}else {
-													echo form_input(array('id'=>'city','name'=>'city','class'=>''));
-												}	
-											}
-                                        ?>
+										<?php if(isset($view)) {
+                                            echo showStates(((isset($vendor->Address['state'])) ? $vendor->Address['state'] : false),true);
+                                        }else {
+                                            echo showStates(((isset($vendor->Address['state'])) ? $vendor->Address['state'] : false));
+                                        } ?>
                                     </div>
                                     <div class="fix"></div>
                                 </div>
@@ -121,12 +115,12 @@
                                     <div class="formRight">
                                         <?php
 											if(isset($view)) {
-													echo form_input(array('disabled'=>'disabled','id'=>'zip','name'=>'zip','class'=>'','value'=>(isset($vendor->Address['zipcode'])) ? $vendor->Address['zipcode'] : ''));
+													echo form_input(array('disabled'=>'disabled','id'=>'zip','name'=>'zipcode','class'=>'','value'=>(isset($vendor->Address['zipcode'])) ? $vendor->Address['zipcode'] : ''));
 											}else {
 												if(isset($vendor->Address)) {
-													echo form_input(array('id'=>'city','name'=>'city','class'=>'','value'=>(isset($vendor->Address['zipcode'])) ? $vendor->Address['zipcode'] : ''));
+													echo form_input(array('maxlength'=>'5','id'=>'city','name'=>'zipcode','class'=>'','value'=>(isset($vendor->Address['zipcode'])) ? $vendor->Address['zipcode'] : ''));
 												}else {
-													echo form_input(array('id'=>'city','name'=>'city','class'=>''));
+													echo form_input(array('maxlength'=>'5','id'=>'city','name'=>'zipcode','class'=>''));
 												}	
 											}
                                         ?>
@@ -163,6 +157,17 @@
 								echo WebsiteListingTable($vendor->ID,true,false,true,true);	
 							}
 						 ?>
+                        <script type="text/javascript">
+							jQuery('.websiteTable').dataTable({
+								"bJQueryUI": true,
+								"sPaginationType": "full_numbers",
+								"sDom": '<""f>t<"F"lp>',
+								'iDisplayLength':1000,
+								"aLengthMenu": [[-1,10,25,50],['All',10,25,50]],
+								'bFilter':false,
+							});
+						</script>
+
                      </div>
                      <div id="contacts" class="tab_content" style="display:none;">
                     	<?php 
@@ -221,7 +226,7 @@
 		$.ajax({
 			type:'POST',
 			data:formData,
-			url:'/admin/vendor/form<?= ((isset($vendor)) ? '?vid=' . $vendor->ID : ''); ?>',
+			url:'/admin/vendors/form<?= ((isset($vendor)) ? '?vid=' . $vendor->ID : ''); ?>',
 			success:function(code) {
 				var msg;
 				if(code == '1') {
@@ -230,7 +235,7 @@
 						vendorTable();
 					}); 
 				}else {
-					msg = '<?= (isset($vendor)) ? 'There was a problem with editing the group requested. Please try again.':'There was a problem adding the group. Please try again.'; ?>';
+					msg = '<?= (isset($vendor)) ? 'There was a problem with editing the vendor requested. Please try again.':'There was a problem adding the vendor. Please try again.'; ?>';
 					jAlert(msg,'Error');
 				}
 			}

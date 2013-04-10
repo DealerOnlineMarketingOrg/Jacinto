@@ -67,19 +67,27 @@ class Vendors extends DOM_Controller {
 			'VENDOR_Address' 	=> $address,
 			'VENDOR_Phone' 		=> $phone,
 			'VENDOR_Notes' 		=> $form['notes'],
-			'VENDOR_Active' 	=> $form['status'],
+			'VENDOR_Active' 	=> 1,
 			'VENDOR_ActiveTS' 	=> date('Y-m-d H:i:s'),
 			'VENDOR_Created' 	=> date('Y-m-d H:i:s')
 		);
 		
 		$vid = isset($form['ID']) ? $form['ID'] : FALSE;
 		
-		$process = $this->administration->vendorForm($vid);
-		
-		if($process) {
-			echo '1';
+		if(!isset($form['ID'])) { 
+			$addVendor = $this->administration->addVendor($data);
+			if($addVendor) {
+				echo '1';	
+			}else {
+				echo '0';	
+			}
 		}else {
-			echo '0';
+			$editVendor = $this->administration->editVendor($vid,$data);	
+			if($editVendor) {
+				echo '1';	
+			}else {
+				echo '0';
+			}
 		}
 	}
 	

@@ -1025,6 +1025,11 @@ class Administration extends CI_Model {
 		return $this->hasVendor($data['VENDOR_Name']);
 	}
 	
+	public function editVendor($vid,$data) {
+		$this->db->where('VENDOR_ID',$vid);
+		return ($this->db->update('Vendors',$data)) ? TRUE : FALSE;	
+	}
+	
 	public function getVendor($id) {
 		$this->db->select('VENDOR_ID as ID,VENDOR_Name as Name,VENDOR_Address as Address,VENDOR_Phone as Phone,VENDOR_Notes as Notes,VENDOR_Active as Status,VENDOR_ActiveTS as LastUpdate,VENDOR_Created as Created');
 		$this->db->from('Vendors');

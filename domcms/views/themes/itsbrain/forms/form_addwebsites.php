@@ -4,7 +4,7 @@
         	 <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
                 	<?= form_open(base_url() . 'admin/websites/add',array('id'=>'web','class'=>'valid mainForm','style'=>'text-align:left;')); ?>
 					<fieldset>
-                    	<?php if(!$selectedVendor) { ?>
+                    	<?php if(!isset($selectedVendor)) { ?>
                             <div class="rowElem noborder noSearch">
                                 <label><span class="req">*</span> Vendor</label>
                                 <div class="formRight">

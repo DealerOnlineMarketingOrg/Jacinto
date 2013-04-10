@@ -68,26 +68,26 @@ function viewVendor(vid) {
 }
 
 function vendorTable() {
-	jQuery('#editVendor').remove();
-	jQuery('#loader_block').slideDown('fast',function() {
-		jQuery.ajax({
+	$('#editVendor').remove();
+	$('#loader_block').slideDown('fast',function() {
+		$.ajax({
 			type:"GET",
 			url:'/admin/vendors/load_table',
 			success:function(data) {
 				if(data) {
-					jQuery('#vendorTable').html(data);
-					jQuery('#loader_block').slideUp('fast',function() {
-						jQuery('#example').dataTable({
+					$('#vendorTable').html(data);
+					$('#loader_block').slideUp('fast',function() {
+						$('#example').dataTable({
 							"bJQueryUI": true,
 							"sPaginationType": "full_numbers",
 							"sDom": '<""f>t<"F"lp>',
 							'iDisplayLength':1000,
 							"aLengthMenu": [[-1,10,25,50],['All',10,25,50]]
 						});
-						jQuery('#vendorTable').slideDown('fast');
+						$('#vendorTable').slideDown('fast');
 					});
 				}else {
-					jQuery('#vendorTable').html('<p>No clients found at this level. Please use the Dealer Dropdown to change to a different group.</p>');
+					$('#vendorTable').html('<p>No vendors found.</p>');
 				}
 			}
 		});
