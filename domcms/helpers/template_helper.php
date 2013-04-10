@@ -65,7 +65,7 @@ function AgencyListingTable($agencies = false) { ?>
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addAgency();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Agency</a><?php } ?>
     <?php else : ?>
-    <div class="nNote nFailure"><p><strong>Error:</strong> No agencies found.</p></div>
+    <p>No agencies found.</p>
     <?php endif; ?>
 <?php }
 
@@ -112,11 +112,69 @@ function GroupsListingTable($groups = false) { ?>
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addGroup();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Group</a><?php } ?>
     <?php else : ?>
-    <div class="nNote nFailure"><p><strong>Error:</strong> No groups found.</p></div>
+    <p>No groups found.</p>
     <?php endif; ?>
 <?php }
 
-function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions = false,$from_tab = false) { ?>
+function VendorListingTable($hide_actions=false,$hide_add=false) { ?>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/vendor_popups.js"></script>
+    <?php 
+		$ci =& get_instance();
+        $userPermissionLevel = $ci->user['AccessLevel'];
+        $addPriv     		 = GateKeeper('Vendor_Add',$userPermissionLevel);
+        $editPriv    		 = GateKeeper('Vendor_Edit',$userPermissionLevel);
+        $disablePriv 		 = GateKeeper('Vendor_Disable_Enable',$userPermissionLevel);
+        $listingPriv 		 = GateKeeper('Vendor_List',$userPermissionLevel);
+		$ci->load->model('administration');
+		
+		$vendors = $ci->administration->getVendors();
+		
+    ?>
+    <?php if($addPriv) { ?><?php if(!$hide_add OR !$hide_actions) { ?><a href="javascript:addVendor();" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px;">Add New Vendor</a><?php } ?><?php } ?>
+    <?php if($listingPriv) { ?>
+    		<?php if($vendors) { ?>
+                <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;white-space:nowrap;">Vendor Name</th>
+                            <th style="text-align:left;white-space:nowrap;">Vendor Address</th>
+                            <th style="white-space:nowrap;">Vendor Phone</th>
+                            <?php if($editPriv) { ?>
+                                <?php if(!$hide_actions) { ?>
+                                    <th class="actions" style="white-space:nowrap;">Actions</th>
+                                <?php } ?>
+                            <?php } ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($vendors as $vendor) { $vendor->Address = ($vendor->Address != '') ? mod_parser($vendor->Address) : FALSE; ?>
+                            <tr>
+                                <td style="text-align:left;white-space:nowrap;"><?= $vendor->Name; ?></td>
+                                <td style="white-space:nowrap;"><?= ($vendor->Address) ? $vendor->Address['street'] . ' ' . $vendor->Address['city'] . ', ' . $vendor->Address['state'] . ' ' . $vendor->Address['zipcode'] : '...'; ?></td>
+                                <td style="text-align:left;white-space:nowrap;"><?= ($vendor->Phone != '') ? $vendor->Phone : '...'; ?></td>
+                                <?php if($editPriv) { ?>
+                                    <?php if(!$hide_actions) { ?>
+                                        <td class="actionsCol" style="width:75px;text-align:center;white-space:nowrap;">
+                                            <a title="Edit Group" href="javascript:editVendor('<?= $vendor->ID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                                            <a title="View Group" href="javascript:viewVendor('<?= $vendor->ID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
+                                        </td>
+                                    <?php } ?>
+                                <?php } ?>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            <?php }else { ?>
+                <p>No Vendors found.</p>
+			<?php } ?>
+    <?php }else { ?>
+    	<p>You dont have access to view vendors.</p>
+    <?php } ?>
+    <?php if($addPriv) { ?><?php if(!$hide_add OR !$hide_actions) { ?><a href="javascript:addVendor();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Vendor</a><?php } ?><?php } ?>
+<?php }
+
+
+function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions = false,$from_tab = false,$type = false) { ?>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/contact_popups.js"></script>
     <?php 
 		$ci =& get_instance();
@@ -132,21 +190,33 @@ function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions
 				if(!$client_id) {
 					$contacts = $ci->administration->getAllContactsInAgency($ci->user['DropdownDefault']->SelectedAgency);
 				}else {
-					$contacts = $ci->administration->getContacts($client_id);
+					if($type) {
+						$contacts = $ci->administration->getContacts($client_id,$type);
+					}else {
+						$contacts = $ci->administration->getContacts($client_id);	
+					}
 				}
 			break;
 			case 'g':
 				if(!$client_id) {
 					$contacts = $ci->administration->getAllContactsInGroup($ci->user['DropdownDefault']->SelectedGroup);
 				}else {
-					$contacts = $ci->administration->getContacts($client_id);
+					if($type) {
+						$contacts = $ci->administration->getContacts($client_id,$type);
+					}else {
+						$contacts = $ci->administration->getContacts($client_id);	
+					}
 				}
 			break;
 			default:
 				if(!$client_id) {
 					$contacts = $ci->administration->getContacts($ci->user['DropdownDefault']->SelectedClient);
 				}else {
-					$contacts = $ci->administration->getContacts($client_id);
+					if($type) {
+						$contacts = $ci->administration->getContacts($client_id,$type);
+					}else {
+						$contacts = $ci->administration->getContacts($client_id);	
+					}
 				}
 			break;
 		}
@@ -160,10 +230,10 @@ function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions
                 <tr>
                     <?php if(!$from_tab) { ?><th>Team</th><?php } ?>
                     <?php if($level == 'g' || $level == 'a') { ?>
-                    <?php if(!$from_tab) { ?><th style="text-align:left;">Dealership</th><?php } ?>
+                    <?php if(!$from_tab) { ?><th style="text-align:left;white-space:nowrap;">Dealership</th><?php } ?>
                     <?php } ?>
-                    <th style="width:10%">Title Name</th>
-                    <th>Contact Name</th>
+                    <th style="width:10%;white-space:nowrap;">Title Name</th>
+                    <th style="white-space:nowrap;">Contact Name</th>
                     <th><?php if($from_tab) { echo 'Primary'; } ?> Email</th>
                     <th><?php if($from_tab) { echo 'Primary'; } ?> Phone</th>
                     <?php if($editPriv) { ?>
@@ -193,9 +263,9 @@ function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions
                     <tr class="tagElement <?php echo $contact->Tag; ?>" >
                     	<?php if(!$from_tab) { ?><td class="tags"><div class="<?php echo $contact->Tag; ?>">&nbsp;</div></td><?php } ?>
                         <?php if($level == 'g' || $level == 'a') { ?>
-                        <?php if(!$from_tab) { ?><td style="width:auto;white-space:no-wrap;text-align:left;"><?php echo $contact->Parent; ?></td><?php } ?>
+                        <?php if(!$from_tab) { ?><td style="width:auto;white-space:no-wrap;text-align:left;white-space:nowrap;"><?php echo $contact->Parent; ?></td><?php } ?>
                         <?php } ?>
-                        <td style="text-align:left;"><?= $contact->JobTitle; ?></td>
+                        <td style="text-align:left;white-space:nowrap;"><?= $contact->JobTitle; ?></td>
                         <td><?= $contact->Name; ?></td>
                         <td>
                         <?php if(!$from_tab) { ?><span style="font-weight:bold;">Personal Email</span><br /><?php } ?><a href="mailto:'<?php echo $contact->Email["home"]; ?>'"><?php echo $contact->Email['home']; ?></a>
@@ -229,14 +299,16 @@ function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions
                 <?php } ?>
             </tbody>
         </table>
-    <?php } ?>
+    <?php }else { ?>
+       <p>No Contacts have been added.</p>
+	<? }?>
     <?php if($addPriv) { ?>
     	<?php if(!$hide_add) { ?>
     	<a href="javascript:addContact();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Contact</a>
         <?php } ?>
 	<?php } ?>
     <?php }else { ?>
-        <div class="nNote nFailure"><p><strong>Error:</strong> No contacts found.</p></div>
+        <p>No contacts found.</p>
 	<?php } ?>
 <?php }
 
@@ -272,7 +344,7 @@ function GroupsClientTable($group_id) {
     </table>
     
 <?php }else { ?>
-	<div class="nNote nWarning"><p><strong>Warning:</strong> No clients have been added to this group.</p></div>
+	<p>No clients have been added to this group.</p>
 <? } }
 
 function ClientsListingTable($clients = false) { ?>
@@ -322,7 +394,7 @@ function ClientsListingTable($clients = false) { ?>
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addClient();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Client</a><?php } ?>
     <?php else : ?>
-    <div class="nNote nFailure"><p><strong>Error:</strong> No clients found.</p></div>
+    <p>No clients found.</p>
     <?php endif; ?>
 <?php }
 
@@ -458,7 +530,7 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addUser();" class="greenBtn floatRight button" style="margin-top:10px;">Add New User</a><?php } ?>
     <?php }else { ?>
-    	<div class="nNote nFailure" style="margin:0;"><p><strong>Error:</strong> No Users found.</p></div>
+    	<p>No Users found.</p>
     <?php } ?>
 <?php }
 
@@ -641,13 +713,50 @@ function getLiveChangesCount() {
 	endif;
 }
 
-function load_client_websites($cid = false, $actions = true) {
+function WebsiteListingTable($cid = false,$actions=true,$isVendor=false) {
+	if(!$cid) {$cid = $ci->user['DropdownDefault']->SelectedClient;}
+	$ci =& get_instance();
+	$ci->load->model('administration');
+	
+	$websites = (!$isVendor) ? $ci->administration->getClientWebsites($cid) : $ci->administration->getVendorWebsites($cid);
+	
+	if($websites) { ?>
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example">
+    	<thead>
+        	<tr>
+            	<td>Vendor</td>
+                <td>Web URL</td>
+                <td>Notes</td>
+                <?php if($actions) { ?>
+                <td>Actions</td>
+                <?php } ?>
+            </tr>
+        </thead>
+        <tbody>
+        	<?php foreach($websites as $website) : ?>
+            	<tr>
+                	<td style="white-space:nowrap;"><?= $website->VendorName; ?></td>
+                    <td style="white-space:nowrap;"><a href="<?= $website->URL; ?>" target="_blank"><?= $website->URL; ?></a></td>
+                    <td class="descCell"><p><?= $website->Description; ?></p></td>
+                    <?php if($actions) { ?>
+                    	<td><a href="javascript:editWebsiteForm('<?= $cid ?>','<?= $website->ID; ?>');"><img src="<?= base_url() . THEMEIMGS;?>icons/color/pencil.png" alt="Edit Website" /></a>
+                    <?php } ?>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+	<?php }else { ?>
+		<p>No websites found for this client.</p>
+	<?php }
+}
+
+function load_client_websites($cid = false, $actions = true,$isVendor = false) {
 	if(!$cid) {$cid = $ci->user['DropdownDefault']->SelectedClient;}
 	
 	$ci =& get_instance();
 	$ci->load->model('administration');
 	
-	$websites = $ci->administration->getClientWebsites($cid);
+	$websites = (!$isVendor) ? $ci->administration->getClientWebsites($cid) : $ci->administration->getVendorWebsites($cid);
 	$html = '';
 	$table = '';
 	if($websites) {
