@@ -5,6 +5,9 @@ class Websites extends DOM_Controller {
 	//should always have this
 	public $client_id;
 	
+	//when working with a vendor, we fill this
+	public $vendor_id;
+	
 	//if were editing we should always have this
 	public $website_id;
 	
@@ -32,12 +35,19 @@ class Websites extends DOM_Controller {
 	}
 	
 	public function add() {
+		$form = $this->input->post();
 		if(isset($_GET['cid'])) {
-			$form = $this->input->post();
 			//var_dump($form);
 			$add = $this->administration->addWebsiteInfo($form);
 			if($add) {
 				print 1;
+			}else {
+				print 0;
+			}
+		}elseif(isset($_GET['vid'])) {
+			$add = $this->administration->addKnownVendorWebsite($form,$_GET['vid']);
+			if($add) {
+				print 1;	
 			}else {
 				print 0;
 			}
@@ -47,14 +57,16 @@ class Websites extends DOM_Controller {
 	}
 	
 	public function edit() {
+		$form = $this->input->post();
 		if(isset($_GET['wid'])) {
-			$form = $this->input->post();
 			$add = $this->administration->editWebsiteInfo($form);
 			if($add) {
 				print 1;
 			}else {
 				print 0;
 			}
+		}elseif(isset($_GET['vid'])) {
+		
 		}else {
 			print 0;
 		}
@@ -101,6 +113,14 @@ class Websites extends DOM_Controller {
 			);
 			//print_object($this->administration->getWebsite($_GET['wid']));
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
+		}elseif(isset($_GET['vid'])) {
+			$this->vendor_id = $_GET['vid'];
+			$vendor = $this->administration->getVendor($_GET['vid']);
+			$data = array(
+				'selectedVendor'=>$vendor->ID,
+				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
+				
+			);
 		}
 	}
 	

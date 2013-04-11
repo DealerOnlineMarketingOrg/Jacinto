@@ -14,7 +14,7 @@ class Administration extends CI_Model {
 	
 	public function disableWebsite($wid) {
 		//we need the client id
-		$this->db->select('CLIENT_ID as ClientID');
+		$this->db->select('ID as ClientID');
 		$this->db->from('Websites');
 		$this->db->where('WEB_ID',$wid);
 		$client_id = $this->db->get();
@@ -34,7 +34,7 @@ class Administration extends CI_Model {
 	
 	public function enableWebsite($wid) {
 		//we need the client id
-		$this->db->select('CLIENT_ID as ClientID');
+		$this->db->select('ID as ClientID');
 		$this->db->from('Websites');
 		$this->db->where('WEB_ID',$wid);
 		$client_id = $this->db->get();
@@ -93,7 +93,7 @@ class Administration extends CI_Model {
 	
 	public function editWebsiteInfo($formdata) {
 		$data = array(
-			'CLIENT_ID' => $formdata['ClientID'],
+			'ID' => $formdata['ClientID'],
 			'WEB_Vendor' => $formdata['vendor'],
 			'WEB_GoogleUACode'=>$formdata['ua_code'],
 			'WEB_GoogleWebToolsMetaCode'=>$formdata['meta_code_number'],
@@ -108,6 +108,45 @@ class Administration extends CI_Model {
 		);
 		$this->db->where('WEB_ID',$formdata['web_id']);
 		return ($this->db->update('Websites',$data) ? TRUE :FALSE);
+	}
+	
+	public function editKnownVendorWebsite($formdata,$vid) {
+		$data = array(
+			'ID' => $vid,
+			'WEB_Vendor' => $vid,
+			'WEB_GoogleUACode'=>$formdata['ua_code'],
+			'WEB_GoogleWebToolsMetaCode'=>$formdata['meta_code_number'],
+			'WEB_GooglePlusCode'=>$formdata['gplus_code'],
+			'WEB_BingCode'=>$formdata['bing_code'],
+			'WEB_YahooCode'=>$formdata['yahoo_code'],
+			'WEB_GlobalScript'=>$formdata['global_code'],
+			'WEB_Url'=>$this->formatUrl($formdata['url']),
+			'WEB_Notes'=>$formdata['notes'],
+			'WEB_ActiveTS'=>date(FULL_MILITARY_DATETIME),
+			//'WEB_Created'=>date(FULL_MILITARY_DATETIME)
+		);
+		$this->db->where('WEB_Type','VID:' . $vid);
+		return ($this->db->update('Websites',$data) ? TRUE :FALSE);
+	}
+	
+	public function addKnownVendorWebsite($formdata,$vid) {
+		$data = array(
+			'ID' => $formdata['VendorID'],
+			'WEB_Vendor' => $vid,
+			'WEB_GoogleUACode'=>$formdata['ua_code'],
+			'WEB_GoogleWebToolsMetaCode'=>$formdata['meta_code_number'],
+			'WEB_GooglePlusCode'=>$formdata['gplus_code'],
+			'WEB_BingCode'=>$formdata['bing_code'],
+			'WEB_YahooCode'=>$formdata['yahoo_code'],
+			'WEB_GlobalScript'=>$formdata['global_code'],
+			'WEB_Type'=>'VID:' . $vid,
+			'WEB_Url'=>$this->formatUrl($formdata['url']),
+			'WEB_Active'=>'1',
+			'WEB_Notes'=>$formdata['notes'],
+			'WEB_ActiveTS'=>date(FULL_MILITARY_DATETIME),
+			'WEB_Created'=>date(FULL_MILITARY_DATETIME)
+		);
+		return ($this->db->insert('Websites',$data) ? TRUE : FALSE);
 	}
 	
 	public function addWebsiteInfo($formdata) {
@@ -131,7 +170,7 @@ class Administration extends CI_Model {
 			}
 		}
 		$data = array(
-			'CLIENT_ID' => $formdata['ClientID'],
+			'ID' => $formdata['ClientID'],
 			'WEB_Vendor' => ($vid) ? $vid : $formdata['vendor'],
 			'WEB_GoogleUACode'=>$formdata['ua_code'],
 			'WEB_GoogleWebToolsMetaCode'=>$formdata['meta_code_number'],
@@ -139,7 +178,7 @@ class Administration extends CI_Model {
 			'WEB_BingCode'=>$formdata['bing_code'],
 			'WEB_YahooCode'=>$formdata['yahoo_code'],
 			'WEB_GlobalScript'=>$formdata['global_code'],
-			'WEB_Type'=>'cid:' . $formdata['ClientID'],
+			'WEB_Type'=>'CID:' . $formdata['ClientID'],
 			'WEB_Url'=>$this->formatUrl($formdata['url']),
 			'WEB_Active'=>'1',
 			'WEB_Notes'=>$formdata['notes'],
@@ -186,7 +225,7 @@ class Administration extends CI_Model {
 		$this->db->select('w.WEB_ID as ID,w.WEB_Vendor as Vendor,w.WEB_GoogleUACode as GoogleUACode,w.WEB_GoogleWebToolsMetaCode as GoogleWebToolsMetaCode,w.WEB_GooglePlusCode as GooglePlusCode,w.WEB_BingCode as BingCode,w.WEB_YahooCode as YahooCode,w.WEB_GlobalScript as GlobalScript,w.WEB_Type as Type,w.WEB_Url as URL,w.WEB_Notes as Description,w.WEB_Active as Status,w.WEB_ActiveTS as LastUpdate,w.WEB_Created as Created,v.VENDOR_Name as VendorName,v.VENDOR_Address as VendorAddress,v.VENDOR_Phone as VendorPhone,v.Vendor_Notes as VendorDescription,v.VENDOR_Active as VendorStatus');
 		$this->db->from('Websites w');
 		$this->db->join('Vendors v','w.WEB_Vendor = v.VENDOR_ID');
-		$this->db->where('w.CLIENT_ID',$cid);
+		$this->db->where('w.ID',$cid);
 		if($wid) {
 			$this->db->where('w.WEB_ID',$wid);
 		}
@@ -194,6 +233,19 @@ class Administration extends CI_Model {
 		
 		return ($website) ? $website->result() : FALSE;
 	}
+	public function getVendorWebsites($vid,$wid=false) {
+		$this->db->select('w.WEB_ID as ID,w.WEB_Vendor as Vendor,w.WEB_GoogleUACode as GoogleUACode,w.WEB_GoogleWebToolsMetaCode as GoogleWebToolsMetaCode,w.WEB_GooglePlusCode as GooglePlusCode,w.WEB_BingCode as BingCode,w.WEB_YahooCode as YahooCode,w.WEB_GlobalScript as GlobalScript,w.WEB_Type as Type,w.WEB_Url as URL,w.WEB_Notes as Description,w.WEB_Active as Status,w.WEB_ActiveTS as LastUpdate,w.WEB_Created as Created,v.VENDOR_Name as VendorName,v.VENDOR_Address as VendorAddress,v.VENDOR_Phone as VendorPhone,v.Vendor_Notes as VendorDescription,v.VENDOR_Active as VendorStatus');
+		$this->db->from('Websites w');
+		$this->db->join('Vendors v','w.WEB_Vendor = v.VENDOR_ID');
+		$this->db->where('w.WEB_Type','VID:'.$vid);
+		if($wid) {
+			$this->db->where('w.WEB_ID',$wid);
+		}
+		$website = $this->db->get();
+		
+		return ($website) ? $website->result() : FALSE;
+	}
+
 	
 	public function getContactTitle($id) {
 		$sql = 'SELECT TITLE_Name as Name FROM xTitles WHERE TITLE_ID = "' . $id . '";';
@@ -760,7 +812,7 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
 	}
     
-    public function getContacts($id) {
+    public function getContacts($id,$byType = false) {
         $sql = 'SELECT 
 				d.DIRECTORY_ID as ContactID,
 				d.TITLE_ID as Title,
@@ -781,9 +833,13 @@ class Administration extends CI_Model {
 				FROM Directories d
 				INNER JOIN Clients c ON c.CLIENT_ID = "' . $id . '"
 				INNER JOIN xTags t on c.CLIENT_Tag = t.TAG_ID
-				INNER JOIN xTitles ti on d.TITLE_ID = ti.TITLE_ID
-				WHERE d.DIRECTORY_Type = "CID:' . $id . '" OR d.DIRECTORY_Type = "VID:' . $id . '" 
-				ORDER BY d.DIRECTORY_LastName,d.DIRECTORY_FirstName,c.CLIENT_Tag ASC';
+				INNER JOIN xTitles ti on d.TITLE_ID = ti.TITLE_ID';
+				if($byType) {
+					$sql .= ' WHERE d.DIRECTORY_Type = "' . $byType . ':' . $id . '"';	
+				}else {
+					$sql .= ' WHERE d.DIRECTORY_Type = "CID:' . $id . '" OR d.DIRECTORY_Type = "VID:' . $id . '"';
+				}
+		$sql .= ' ORDER BY d.DIRECTORY_LastName,d.DIRECTORY_FirstName,c.CLIENT_Tag ASC';
 		$query = $this->db->query($sql);
 		return ($query) ? $query->result() : FALSE;
     }
@@ -942,7 +998,7 @@ class Administration extends CI_Model {
 	}
 	
 	public function getVendors() {
-		$this->db->select('VENDOR_ID as ID,VENDOR_Name as Name,VENDOR_Address as Address,VENDOR_Notes as Notes,VENDOR_Active as Status,VENDOR_ActiveTS as LastUpdate,VENDOR_Created as Created');
+		$this->db->select('VENDOR_ID as ID,VENDOR_Name as Name,VENDOR_Address as Address,VENDOR_Phone as Phone,VENDOR_Notes as Notes,VENDOR_Active as Status,VENDOR_ActiveTS as LastUpdate,VENDOR_Created as Created');
 		$this->db->from('Vendors');
 		$query = $this->db->get();
 		
@@ -969,8 +1025,13 @@ class Administration extends CI_Model {
 		return $this->hasVendor($data['VENDOR_Name']);
 	}
 	
+	public function editVendor($vid,$data) {
+		$this->db->where('VENDOR_ID',$vid);
+		return ($this->db->update('Vendors',$data)) ? TRUE : FALSE;	
+	}
+	
 	public function getVendor($id) {
-		$this->db->select('VENDOR_ID as ID,VENDOR_Name as Name,VENDOR_Address as Address,VENDOR_Notes as Notes,VENDOR_Active as Status,VENDOR_ActiveTS as LastUpdate,VENDOR_Created as Created');
+		$this->db->select('VENDOR_ID as ID,VENDOR_Name as Name,VENDOR_Address as Address,VENDOR_Phone as Phone,VENDOR_Notes as Notes,VENDOR_Active as Status,VENDOR_ActiveTS as LastUpdate,VENDOR_Created as Created');
 		$this->db->from('Vendors');
 		$this->db->where('VENDOR_ID',$id);
 		

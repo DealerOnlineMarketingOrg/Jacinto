@@ -1,34 +1,36 @@
 <div class="uDialog">
-    <div class="dialog-message" id="addWebsite" title="<?= (($website) ? 'Edit ' . $client->Name . ' Website' : 'Add New Website To ' . $client->Name); ?>">
+    <div class="dialog-message" id="addWebsite" title="<?= (($website) ? 'Edit ' . ((!isset($client->Name)) ? 'Vendor' : $client->Name) . ' Website' : 'Add New Website To ' . ((!isset($client->Name)) ? 'Vendor' : $client->Name)); ?>">
         <div class="uiForm">
         	 <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
-				<?= form_open(base_url() . 'admin/clients/add_website',array('id'=>'web','class'=>'valid mainForm','style'=>'text-align:left;')); ?>
+                	<?= form_open(base_url() . 'admin/websites/add',array('id'=>'web','class'=>'valid mainForm','style'=>'text-align:left;')); ?>
 					<fieldset>
-						<div class="rowElem noborder noSearch">
-		                    <label><span class="req">*</span> Vendor</label>
-		                    <div class="formRight">
-		                        <select id="vendors" name="vendor" class="chzn-select validate[required] vendors" style="float:left;">
-                                	<option value="">Choose a Vendor</option>
-		                        	<? foreach($vendors as $vendor) : ?>
-		                        		<?php if($website) { ?>
-		                        			<option <?= ($website->Vendor == $vendor->ID) ? 'selected="selected"' : ''; ?> value="<?= $vendor->ID; ?>"><?= $vendor->Name; ?></option>
-		                        		<?php }else { ?>
-		                        			<option value="<?= $vendor->ID; ?>"><?= $vendor->Name; ?></option>
-		                        		<?php } ?>
-		                        	<? endforeach; ?>
-                                    <option value="custom">Custom</option>
-		                        </select>
-                                <div id="CustomVendor" class="CustomVendor" style="float:left;display:none;">
-                                	<?= form_input(array('name'=>'custom_vendor','id'=>'custom_vendor')); ?>
-                                    <span class="formNote">Type the vendor name here and the vendor will be added to the system.</span>
+                    	<?php if(!isset($selectedVendor)) { ?>
+                            <div class="rowElem noborder noSearch">
+                                <label><span class="req">*</span> Vendor</label>
+                                <div class="formRight">
+                                    <select id="vendors" name="vendor" class="chzn-select validate[required] vendors" style="float:left;">
+                                        <option value="">Choose a Vendor</option>
+                                        <? foreach($vendors as $vendor) : ?>
+                                            <?php if($website) { ?>
+                                                <option <?= ($website->Vendor == $vendor->ID) ? 'selected="selected"' : ''; ?> value="<?= $vendor->ID; ?>"><?= $vendor->Name; ?></option>
+                                            <?php }else { ?>
+                                                <option value="<?= $vendor->ID; ?>"><?= $vendor->Name; ?></option>
+                                            <?php } ?>
+                                        <? endforeach; ?>
+                                        <option value="custom">Custom</option>
+                                    </select>
+                                    <div id="CustomVendor" class="CustomVendor" style="float:left;display:none;">
+                                        <?= form_input(array('name'=>'custom_vendor','id'=>'custom_vendor')); ?>
+                                        <span class="formNote">Type the vendor name here and the vendor will be added to the system.</span>
+                                    </div>
                                 </div>
-		                    </div>
-		                    <div class="fix"></div>
-		                </div>
+                                <div class="fix"></div>
+                            </div>
+                        <?php } ?>
 						<div class="rowElem noborder">
 							<label>URL</label>
 							<div class="formRight">
-								<?= form_input(array('name'=>'url','id'=>'url','value'=>((isset($website->URL)) ? $website->URL : ''))); ?>
+								<?= form_input(array('class'=>'validate[required,custom[url]]','name'=>'url','id'=>'url','value'=>((isset($website->URL)) ? $website->URL : ''))); ?>
 							</div>
 							<div class="fix"></div>
 						</div>
@@ -87,7 +89,11 @@
 		                	<?php if(isset($website->ID)) { ?>
 		                		<input type="hidden" name="web_id" value="<?= $website->ID; ?>" />
 		                	<?php } ?>
-		               		<input type="hidden" name="ClientID" value="<?php echo  $client->ID; ?>" />
+                            <?php if(!isset($selectedVendor)) { ?>
+		               			<input type="hidden" name="ClientID" value="<?= $client->ID; ?>" />
+                            <?php }else { ?>
+                            	<input type="hidden" name="VendorID" value="<?= $selectedVendor; ?>" />
+                            <?php } ?>
 		                    <input type="submit" value="submit" class="redBtn" />
 		                </div> 
 					</fieldset>
