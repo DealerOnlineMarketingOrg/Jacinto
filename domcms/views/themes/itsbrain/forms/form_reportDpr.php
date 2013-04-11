@@ -3,6 +3,7 @@
     <div class="title"><h5>Reports</h5></div>
 	<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/input_popups.js"></script>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/dpr_popups.js"></script>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/wizardDialog.js"></script>
     <?php notifyError(); ?>
     <?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
     <?php echo  (($html) ? $html : ''); ?>
@@ -23,54 +24,6 @@
 			$upperStart = $endDate;
 			$lowerEnd = $startDate;
 			$upperEnd = '12/1/' . date('Y');
-
-			function dateToMonth($date) {return date('n',strtotime($date));}
-			function dateToYear($date) {return date('Y',strtotime($date));}
-			// Returns a date set to the specified bounds.
-			function setToBounds($lowerDate, $upperDate, $date) {
-				// If date is out of bounds, set it to the closest bounded date.
-				if (strtotime($date) < strtotime($lowerDate))
-					$boundDate = $lowerDate;
-				elseif (strtotime($date) > strtotime($upperDate))
-					$boundDate = $upperDate;
-				else
-					$boundDate = $date;
-				return $boundDate;
-			}
-			// Creates a month-year set of date buttons, bounded by
-			//  lowerDate and upperDate.
-			function dateButtons($lowerDate, $upperDate, $date, $id) {
-				$date = setToBounds($lowerDate, $upperDate, $date);
-				
-				if ($id == 'start')
-					$startMonth = 1;
-				else
-					$startMonth = (dateToYear($lowerDate) == dateToYear($date)) ? dateToMonth($lowerDate) : 1;
-				if ($id == 'end')
-					$endMonth = 12;
-				else
-					$endMonth = (dateToYear($upperDate) == dateToYear($date)) ? dateToMonth($upperDate) : 12;
-				monthButton($startMonth,$endMonth,dateToMonth($date),$id.'Month');
-				
-				$startYear = (dateToYear($lowerDate) == dateToYear($date)) ? dateToYear($date) : dateToYear($lowerDate);
-				$endYear = (dateToYear($upperDate) == dateToYear($date)) ? dateToYear($date) : dateToYear($upperDate);
-				yearButton($startYear,$endYear,dateToYear($date),$id.'Year');
-			}
-			
-        	function monthButton($start, $end, $currentMonthNum, $id) {
-				echo '<select id="'.$id.'" name="'.$id.'" class="input chzn-select required validate[required]" style="width:120px" placeholder="Select a month...">';
-				$months = array('January','Febuary','March','April','May','June','July','August','September','October','November','December');
-				for ($i = $start; $i <= $end; $i++)
-					echo '<option value="'.$i.'"' . (($currentMonthNum == $i) ? ' selected' : '') . '>'.$months[$i-1].'</option>';
-				echo '</select>';
-			}
-			
-			function yearButton($start, $end, $currentYear, $id) {
-				echo '<select id="'.$id.'" name="'.$id.'" class="input chzn-select required validate[required]" style="width:120px" placeholder="Select a year...">';
-				for ($i = $start; $i <= $end; $i++)
-					echo '<option value="'.$i.'"' . (($currentYear == $i) ? ' selected' : '') . '>'.$i.'</option>';
-				echo '</select>';
-			}
 		?>
             <!-- Input text fields -->
             <fieldset>
@@ -86,7 +39,7 @@
             <?php } else { ?>
             	<div>
                     <div style="width:1;float:left;vertical-align:middle">
-                        <input ID="add" class="greenBtn" type="button" value="Add Sources" />
+                        <input ID="add" class="greenBtn" type="button" value="Add Source" />
                         <!-- <input ID="add" class="redBtn" type="button" value="Edit Sources" /> -->
                         <input ID="import" class="yellowBtn" style="color:black" type="button" value="Bulk Import" />
                     </div>
@@ -159,11 +112,10 @@
                 <div id="inputInfo"></div>
                 <div id="dynDialog"></div>
                 <div id="dprAddPop"></div>
+                <div id="dprImportPop"></div>
 			<?php } ?>
     	</fieldset>
     <?php echo  form_close(); ?>
-    
-    <?php //$this->load->view($this->theme_settings['ThemeDir'] . '/forms/spreadsheet'); ?>
 	
     <script type="text/javascript">
 		var excelCreated = false;
@@ -176,7 +128,11 @@
 			//$("form#reportDpr").submit();
 		});
 
-
+		$('input#import').click(function() {
+			wizardDialog("#dprImportPop", [ '/dpr/import_step1', '/dpr/import_step2', '/dpr/import_step3', '/dpr/import_step4' ]);
+		});
+		
+		
 		function setToBounds(lowerDate, upperDate, date) {
 			// If date is out of bounds, set it to the closest bounded date.
 			if (date < lowerDate)

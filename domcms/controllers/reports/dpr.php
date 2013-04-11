@@ -6,7 +6,8 @@
 		parent::__construct();
 			//loading the member model here makes it available for any member of the controller.
 			$this->load->model('getdpr');
-			$this->load->helper('charts_helper');
+			$this->load->helper('charts');
+			$this->load->helper('controls');
 			$this->load->model('administration');
 
 			$this->activeNav = 'reports';
@@ -45,6 +46,80 @@
 			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
 			//$this->LoadTemplate('forms/form_addDpr',$data);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addDpr',$data);
+		}
+		
+		public function import_step1() {
+			$report_data = $this->getdpr->get('Provider');
+			$prov_options = $this->getdpr->output_as_options($report_data);
+			
+			$data = array(
+				'sources' => $prov_options,
+			);
+			
+			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
+			//$this->LoadTemplate('forms/form_addDpr',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprImport_step1',$data);
+		}
+		
+		public function import_step2() {
+			$form = $this->input->post();
+			
+			$source = $this->getdpr->get('Provider', $form['source']);
+			$service_list = $this->getdpr->get('Service');
+			$service_options = $this->getdpr->output_as_options($service_list);
+				
+			$data = array(
+				'persistent' => array(
+					'source' => $source,
+				),
+				'source' => $source,
+				'metrics' => $service_options,
+			);
+			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
+			//$this->LoadTemplate('forms/form_addDpr',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprImport_step2',$data);
+		}
+		
+		public function import_step3() {
+			$form = $this->input->post();
+			
+			$provider = $form['provider'];
+			// Generate array of metrics.
+			$metrics = array();
+			$count = $form['metricCount'];
+			for ($i = 0; $i < $count; $i++)
+				$metrics[] = $this->getdpr->get('Service', $form['metrics_'.$i]);
+			
+			$data = array(
+				'persistent' => array(
+					'source' => $form['source'],
+					'metrics' => $metrics,
+				),
+			);
+			
+			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
+			//$this->LoadTemplate('forms/form_addDpr',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprImport_step3',$data);
+		}
+		
+		public function import_step4() {
+			$form = $this->input->post();
+			
+			$spreadsheet = $this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_spreadsheets');
+			
+			$data = array(
+				'persistent' => array(
+					'source' => $form['source'],
+					'metrics' => $form['metrics'],
+				),
+				'provider' => $provider,
+				'metrics' => $metrics,
+				'spreadsheet' => $spreadsheet,
+			);
+			
+			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
+			//$this->LoadTemplate('forms/form_addDpr',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprImport_step4',$data);
 		}
 		
 		public function reports() {

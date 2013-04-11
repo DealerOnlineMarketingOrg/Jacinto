@@ -2,9 +2,7 @@
 var $ = jQuery.noConflict();
 
 function addDpr() {
-	$('#addContact').remove();
-	$('#editContact').remove();
-	$('#viewContact').remove();
+	$('#addMetrics').remove();
 	
 	$.ajax({
 		type:'GET',

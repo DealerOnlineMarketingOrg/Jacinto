@@ -18,6 +18,11 @@
 			return ($query->num_rows) ? $result[0]->ID : FALSE;
 		}
 		
+		public function getProvider($id, $order_col) {
+			$sql = 'SELECT PROVIDER_ID as ID,PROVIDER_Name as Name,PROVIDER_URL as URL FROM DPRProviders WHERE PROVIDER_ID = ' . $id . ' ORDER BY ' . $order_col . ' ASC;';
+			return query_results($this,$sql);
+		}
+		
 		public function getProviders($order_col) {
 			$sql = 'SELECT PROVIDER_ID as ID,PROVIDER_Name as Name,PROVIDER_URL as URL FROM DPRProviders ORDER BY ' . $order_col . ' ASC;';
 			return query_results($this,$sql);
@@ -42,6 +47,12 @@
 			$query = $this->db->query($sql);
 			$result = $query->result();
 			return ($query->num_rows) ? $result[0]->ID : FALSE;
+		}
+		
+		// Get an array of all services.
+		public function getService($id, $order_col ) {
+			$sql = 'SELECT SERVICE_ID as ID,SERVICE_Name as Name FROM DPRReportServices WHERE SERVICE_ID = ' . $id . ' ORDER BY ' . $order_col . ' ASC;';
+			return query_results($this,$sql);
 		}
 		
 		// Get an array of all services.
