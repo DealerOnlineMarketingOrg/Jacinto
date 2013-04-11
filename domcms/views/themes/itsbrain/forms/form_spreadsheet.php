@@ -1,46 +1,97 @@
 <?php
 	class cell {
 		public $name = '';
+		public $value = '';
 		public $selected = false;
+		public $width = '65px';
+		public $height = '15px';
 	}
+	
+	$tableClass = 'mutable-table';
+	$cellClass = 'mutable-table-cell';
+	$editDivClass = 'mutable-table-cell-div';
+
+	// Add a special empty column and row header.
+	$columns = array_merge(array(''), $columns);
+	$rows = array_merge(array(''), $rows);
 	
 	// Create 2D table array.
 	$cells = array();
-	foreach ($rows as $row) {
-		$cells[] = new cell();
-		foreach ($columns as $column) {
-			$cells[][] = new cell();
+	$c = 0;
+	foreach ($columns as $column) {
+		$cells[$c] = array();
+		$r = 0;
+		foreach ($rows as $row) {
+			$cells[$c][$r] = new cell();
+			$r++;
 		}
+		$c++;
 	}
-?>
+	
+	// Fill table array.
+	$c = 0;
+	foreach ($columns as $column) {
+		$r = 0;
+		foreach ($rows as $row) {
+			$cells[$c][$r]->name = $column.':'.$row;
+			$cells[$c][$r]->value = '&nbsp;';
+			$r++;
+		}
+		$c++;
+	}
 
-<div id="mutableTable">
-    <!-- Generate a table in a scrolling div based on number of columns and rows. -->
-    <!-- Table will be editable. -->
-    <!-- Rows and column names will be scrollable, but frozen. -->
-    <table style="border:solid 1px grey">
-        <?php
-        $col = '';
-        $row = 0;
-        foreach ($rowNames as $r) {
-            echo '<tr>';
-            foreach ($colNames as $colName) {
-                if ($row == 0) {
-                    if ($col == '')
-                        echo '<td style="border:solid 1px grey"></td>';								
-                    else
-                        echo '<td style="border:solid 1px grey">'.$colName.'</td>';
-                } else {
-                    if ($col == '')
-                        echo '<td style="border:solid 1px grey">'.$row.'</td>';
-                    else
-                        echo '<td id="'.$col.$row.'" style="border:solid 1px grey">'.$col.$row.'</td>';
-                }
-                $col = ($col == '') ? 'A' : $col+1;
-            }
-            echo '</tr>';
-            $row++;
-            $col = '';
-        } ?>
-    </table>
-</div>
+	// The javascript file for the mutable table.
+	echo '<script type="text/javascript" src="'.base_url().'assets/themes/itsbrain/js/mutableTable.js"></script>';
+
+	// Generate table.
+	$table = '<table class="'.$tableClass.'" style="border:solid 1px black">';
+	$r = 0;
+	foreach ($rows as $row) {
+		$table .= '<tr>';
+		$c = 0;
+		foreach ($columns as $column) {
+			// Common to all cells.
+			$style = 'border:solid 1px grey;text-align:center;padding:0;';
+			$style .= 'height:'.$cells[$c][$r]->height.';';
+			$class = $cellClass;
+			$editable = false;
+			// Upper right cell
+			if ($c.$r == '00') {
+				$class .= '';
+				$value = '&nbsp;';
+				$style .= 'width:auto;';
+				$style .= 'white-space:nowrap;';
+			// Column names
+			} elseif ($r == '0') {
+				$class .= '';
+				$value = $column;
+				$style .= 'min-width:'.$cells[$c][$r]->width.';';
+				$style .= 'font-weight:bold;';
+			// Row names
+			} elseif ($c == '0') {
+				$class .= '';
+				$value = $row;
+				$style .= 'width:auto;';
+				$style .= 'font-weight:bold;';
+				$style .= 'white-space:nowrap;';
+			// All other (body) cells
+			} else {
+				$editable = true;
+				$class .= ' editable';
+				$style .= 'min-width:'.$cells[$c][$r]->width.';';
+				$value = $cells[$c][$r]->value;
+			}
+			$style .= 'padding:3px;';
+			$table .= '<td id="'.$cells[$c][$r]->name.'" name="'.$cells[$c][$r]->name.'" class="'.$class.'" style="'.$style.'">';
+			$table .=  $value;
+			$table .= '</td>';
+			$c++;
+		}
+		$table .= '</tr>';
+		$r++;
+	}
+	$table .= '</table>';
+	
+	// Send table out to view.
+	echo $table;
+?>

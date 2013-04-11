@@ -53,6 +53,9 @@
 			$prov_options = $this->getdpr->output_as_options($report_data);
 			
 			$data = array(
+				'persistent' => array(
+					'test' => 'this is a test',
+				),
 				'sources' => $prov_options,
 			);
 			
@@ -129,10 +132,13 @@
 			$startDate = $form['metricsStartMonth'].'/1/'.$form['metricsStartYear'];
 			$endDate = $form['metricsEndMonth'].'/1/'.$form['metricsEndYear'];
 			
-			$colNames = getMonthYearRange($startDate, $endDate);
-			$rowNames = $form['metrics'];
+			$colNames = $this->getMonthYearRange($startDate, $endDate);
+			$rowNames = array();
+			foreach ($form['metrics'] as $metric)
+				$rowNames[] = $metric['Name'];
 			$rowNames[] = 'Cost';
 			
+			print_object($rowNames);
 			$data = array(
 				'columns' => $colNames,
 				'rows' => $rowNames,
@@ -143,16 +149,57 @@
 			$data = array(
 				'persistent' => array(
 					'source' => $form['source'],
-					'metrics' => $form['metrics'],
+					'dates' => $colNames,
+					'metrics' => $rowNames,
 				),
-				'provider' => $provider,
-				'metrics' => $metrics,
 				'spreadsheet' => $spreadsheet,
 			);
 			
 			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
 			//$this->LoadTemplate('forms/form_addDpr',$data);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprImport_step4',$data);
+		}
+		
+		public function import_stepSubmit() {
+			$form = $this->input->post();
+		
+			$source = $form['source'];
+			$dates = $form['dates'];
+			$metrics = $form['metrics'];
+
+			foreach ($dates as $column) {
+				$tokens = explode("/", $column);
+				$month = $tokens[0];
+				$year = $tokens[1];
+				$date = $year . '/' . $month . '/01';
+				foreach ($metrics as $row) {
+					$metric = $row;
+					$value = trim($form[$column.":".$row]);
+					
+					if ($value != '') {
+						// Add total to report table.
+						$lead_data = array(
+							'providerID' => $source,
+							'serviceID' => $metric,
+							'month' => $month,
+							'year' => $year,
+							'date' => $date,
+							'total' => $value,
+							'cost' => $cost,
+							'clientID' => $this->user['DropdownDefault']->SelectedClient
+						);
+						print_object($lead_data);
+						if (strtolower($metric) == 'cost')
+							$this->rep->addLeadCost($lead_data);
+						else
+							$this->rep->addLeadTotal($lead_data);
+					}
+				}
+			}
+
+			// Throw error and redirect back to DPR.
+			throwError(newError("DPR Sources", $err_level, $err_msg, 0, ''));
+			redirect('dpr','refresh');
 		}
 		
 		public function reports() {

@@ -129,7 +129,7 @@
 		});
 
 		$('input#import').click(function() {
-			wizardDialog("#dprImportPop", [ '/dpr/import_step1', '/dpr/import_step2', '/dpr/import_step3', '/dpr/import_step4' ]);
+			wizardDialog("#dprImportPop", [ '/dpr/import_step1', '/dpr/import_step2', '/dpr/import_step3', '/dpr/import_step4', '/dpr/import_stepSubmit' ]);
 		});
 		
 		

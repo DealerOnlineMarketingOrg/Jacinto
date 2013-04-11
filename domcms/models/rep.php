@@ -101,8 +101,9 @@
 				);
 				$this->db->insert('DPRReports', $data);
 			}
-			
-			
+		}
+		
+		public function addLeadCost($lead_data) {
 			// Update DPRProviderData with the cost data.
 			$where = array(
 				'PROVIDER_ID' => $lead_data['providerID'],

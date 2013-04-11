@@ -84,8 +84,10 @@ function runWizardSteps(wrapper, steps, postData) {
 						nextSteps = new Array();
 						for (i = 1; i < steps.length; i++)
 							nextSteps.push(steps[i]);
+						// returnData.data is also in a JSON state.
+						var data = JSON.parse(returnData.data);
 						// Go onto next step.
-						runWizardSteps(wrapper, nextSteps, returnData.data);
+						runWizardSteps(wrapper, nextSteps, data);
 					}
 					else if (returnData.state == 'error')
 						// Error and drop out.

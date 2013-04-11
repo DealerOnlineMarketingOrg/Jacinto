@@ -6,7 +6,7 @@
                 <div>
                     <span style="white-space:nowrap;font-weight:bold">First step - Enter Lead Source</span><br /><br />
                     <label style="position:relative;float:left;white-space:nowrap"><span class="req">*</span> Source</label>
-                    <select style="position:relative;float:left;margin-left:10px" name="source" id="source">
+                    <select class="chzn-select" style="position:relative;float:left;margin-left:10px" name="source" id="source">
                         <?php echo $sources; ?>
                     </select>
                 </div>
@@ -29,15 +29,43 @@
 		
 	$(".chzn-select").chosen();
 	
+	function getFormObj(rootElementId, type) {
+		var form = {};
+		$("#" + rootElementId).find(type).each(function() {
+			var name = $(this).attr('name');
+			var id = $(this).attr('id');
+			if (typeof name !== 'undefined' && name !== false) {
+				// Get value of control.
+				form[name] = $(this).val();
+			}
+		});
+		return form;
+	}
+	
+	function formJSON(rootElementId) {
+		var form = {};
+		$.extend(form, getFormObj(rootElementId, "input"));
+		$.extend(form, getFormObj(rootElementId, "textarea"));
+		$.extend(form, getFormObj(rootElementId, "select"));
+		return JSON.stringify(form);
+	}
+	
+	function combineJSON(JSON1, JSON2) {
+		newJSON = JSON1.substring(0,JSON1.length-1) + "," + JSON2.substring(1);
+		return newJSON;
+	}
+	
 	$("#next").click(function() {
-		var persistent = "<?= (isset($persistent)) ? http_build_query($persistent) : ''; ?>";
-		var returnData = JSON.stringify({state:"success", data:$("fieldset#wizardPopForm").serialize() + "&" + persistent});
+		var formData = formJSON("wizardPopForm");
+		var persistent = '<?= (isset($persistent)) ? json_encode($persistent) : ""; ?>';
+		newFormData = combineJSON(formData,persistent);
+		var returnData = JSON.stringify({state:"success", data:newFormData});
 		$("#dprImportPop").attr("return",returnData);
 		$("#wizardPop").dialog("destroy").remove();
 	});
 	
 	$("#cancel").click(function() {
-		var persistent = "<?= (isset($persistent)) ? http_build_query($persistent) : ''; ?>";
+		var persistent = '<?= (isset($persistent)) ? json_encode($persistent) : ""; ?>';
 		var returnData = JSON.stringify({state:"error", data:persistent});
 		$("#dprImportPop").attr("return",returnData);
 		$("#wizardPop").dialog("destroy").remove();

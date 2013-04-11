@@ -839,7 +839,7 @@ class DOM_Controller extends CI_Controller {
 						);
 						$pwds = $this->administration->addPasswords($data);
 						
-						// Throw error and redirect back to DPR.
+						// Throw error and redirect back to Passwords.
 						if ($pwds)
 							throwError(newError("Passwords Add", 1, 'Password successfully added!', 0, ''));
 						else
@@ -884,7 +884,7 @@ class DOM_Controller extends CI_Controller {
 						);
 						$pwds = $this->administration->editPassword($data, $form['PasswordsID']);
 						
-						// Throw error and redirect back to DPR.
+						// Throw error and redirect back to Passwords.
 						if ($pwds)
 							throwError(newError("Passwords Edit", 1, 'Password successfully updated!', 0, ''));
 						else
