@@ -71,15 +71,14 @@ function runWizardSteps(wrapper, steps, postData) {
 			if(code == '0') {
 				jAlert('Something went wrong. Please try again','Error');
 			}else {
-				code = code.replace('</script>', wizardScripts())
-				alert(code);
+				/* code = code.replace('</script>', wizardScripts())
+				alert(code); */
 				$(wrapper).html(code);
 				loadInit();
 				
 				function nextStep() {
 					// Convert object back from json object.
 					var returnData = JSON.parse($(wrapper).attr('return'));
-					alert($(wrapper).attr('return'));
 					if (returnData.state == 'success') {
 						// Strip current step from steps.
 						nextSteps = new Array();
@@ -100,42 +99,7 @@ function runWizardSteps(wrapper, steps, postData) {
 }
 
 function wizardScripts() {
-	scripts = ' \
-		var $ = jQuery.noConflict(); \
-		 \
-		function queryStringToJSON(str) { \
-			 \
-		} \
-		 \
-		$("#next").click(function() { \
-			var persistent = {}; \
-			<?php if (isset($persistent)) { ?> \
-				<?php foreach ($persistent as $key => $val) ?> \
-					persistent["<?= $key ?>"] = "<?= $val ?>"; \
-			<?php } ?> \
-			var returnData = JSON.stringify({state:"success", data:$("fieldset#wizardPopForm").serialize() + "&" + $.param(persistent)}); \
-			$("#dprImportPop").attr("return",returnData); \
-			$("#wizardPop").dialog("destroy").remove(); \
-		}); \
-		 \
-		$("#cancel").click(function() { \
-			var persistent = {}; \
-			<?php if (isset($persistent)) { ?> \
-				<?php foreach ($persistent as $key => $val) ?> \
-					persistent["<?= $key ?>"] = "<?= $val ?>"; \
-			<?php } ?> \
-			var returnData = JSON.stringify({state:"error", data:$.param(persistent)}); \
-			$("#dprImportPop").attr("return",returnData); \
-			$("#wizardPop").dialog("destroy").remove(); \
-		}); \
-		 \
-		$("#wizardPop").dialog({ \
-			width:450, \
-			height:300, \
-			autoOpen: true, \
-			modal: true, \
-			title: "Import DPR Lead Source Metrics" \
-		}); \
-		</script>';
+	scripts = ' function queryStringToJSON(str) {}$("#next").click(function() {var persistent = {};<?php if (isset($persistent)) { ?><?php foreach ($persistent as $key => $val) ?>persistent["<?= $key ?>"] = "<?= $val ?>";<?php } ?>var returnData = JSON.stringify({state:"success", data:$("fieldset#wizardPopForm").serialize() + "&" + $.param(persistent)});$("#dprImportPop").attr("return",returnData);$("#wizardPop").dialog("destroy").remove();});$("#cancel").click(function() {var persistent = {};<?php if (isset($persistent)) { ?><?php foreach ($persistent as $key => $val) ?>persistent["<?= $key ?>"] = "<?= $val ?>";<?php } ?>var returnData = JSON.stringify({state:"error", data:$.param(persistent)});$("#dprImportPop").attr("return",returnData);$("#wizardPop").dialog("destroy").remove();});$("#wizardPop").dialog({width:450,height:300,autoOpen: true,modal: true,title: "Import DPR Lead Source Metrics"}); </script>';
+	
 	return scripts;
 }

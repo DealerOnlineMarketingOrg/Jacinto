@@ -102,10 +102,43 @@
 			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprImport_step3',$data);
 		}
 		
+		// Returns array of (month/year)s in the specified date range.
+		function getMonthYearRange($startDate, $endDate) {
+			$startMonth = date('n', strtotime($startDate));
+			$endMonth = date('n', strtotime($endDate));
+			$startYear = date('y', strtotime($startDate));
+			$endYear = date('y', strtotime($endDate));
+			$range = array();
+			for ($y = $startYear; $y <= $endYear; $y++) {
+				if ($y == $startYear) {
+					$sm = $startMonth;
+					$em = ($y != $endYear) ? 12 : $endMonth;
+				} else {
+					$sm = 1;
+					$em = ($y != $endYear) ? 12 : $endMonth;
+				}
+				for ($m = $sm; $m <= $em; $m++)
+					$range[] = $m . '/' . $y;
+			}
+			return $range;
+		}
+		
 		public function import_step4() {
 			$form = $this->input->post();
+		
+			$startDate = $form['metricsStartMonth'].'/1/'.$form['metricsStartYear'];
+			$endDate = $form['metricsEndMonth'].'/1/'.$form['metricsEndYear'];
 			
-			$spreadsheet = $this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_spreadsheets');
+			$colNames = getMonthYearRange($startDate, $endDate);
+			$rowNames = $form['metrics'];
+			$rowNames[] = 'Cost';
+			
+			$data = array(
+				'columns' => $colNames,
+				'rows' => $rowNames,
+			);
+			
+			$spreadsheet = $this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_spreadsheet', $data, true);
 			
 			$data = array(
 				'persistent' => array(

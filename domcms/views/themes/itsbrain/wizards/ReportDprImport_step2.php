@@ -95,26 +95,17 @@
 	$(".chzn-select").chosen();
 	
 	$("#next").click(function() {
-		var persistent = {};
-		<?php if (isset($persistent)) { ?>
-			<?php foreach ($persistent as $key => $val) ?>
-				<?php print_object($key); echo '|'; print_object($val); ?>
-				persistent['<?= $key ?>'] = '<?= $val ?>';
-		<?php } ?>
-		var returnData = JSON.stringify({state:'success', data:$("fieldset#wizardPopForm").serialize() + '&' + $.param(persistent)});
+		var persistent = "<?= (isset($persistent)) ? http_build_query($persistent) : ''; ?>";
+		var returnData = JSON.stringify({state:"success", data:$("fieldset#wizardPopForm").serialize() + "&" + persistent});
 		$("#dprImportPop").attr("return",returnData);
-		$("#wizardPop").dialog('destroy').remove();
+		$("#wizardPop").dialog("destroy").remove();
 	});
 	
 	$("#cancel").click(function() {
-		var persistent = {};
-		<?php if (isset($persistent)) { ?>
-			<?php foreach ($persistent as $key => $val) ?>
-				persistent['<?= $key ?>'] = '<?= $val ?>';
-		<?php } ?>
-		var returnData = JSON.stringify({state:'error', data:$.param(persistent)});
+		var persistent = "<?= (isset($persistent)) ? http_build_query($persistent) : ''; ?>";
+		var returnData = JSON.stringify({state:"error", data:persistent});
 		$("#dprImportPop").attr("return",returnData);
-		$("#wizardPop").dialog('destroy').remove();
+		$("#wizardPop").dialog("destroy").remove();
 	});
 	
 	$("#wizardPop").dialog({
@@ -122,6 +113,6 @@
 		height:300,
 		autoOpen: true,
 		modal: true,
-		title: "Import DPR Lead metric Metrics"
+		title: "Import DPR Lead Source Metrics"
 	});
 </script>
