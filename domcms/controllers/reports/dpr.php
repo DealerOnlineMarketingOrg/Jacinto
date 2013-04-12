@@ -134,11 +134,11 @@
 			
 			$colNames = $this->getMonthYearRange($startDate, $endDate);
 			$rowNames = array();
-			foreach ($form['metrics'] as $metric)
+			$metrics = $form['metrics'];
+			$metrics[] = array('ID' => -1, 'Name' => 'Cost');
+			foreach ($metrics as $metric)
 				$rowNames[] = $metric['Name'];
-			$rowNames[] = 'Cost';
 			
-			print_object($rowNames);
 			$data = array(
 				'columns' => $colNames,
 				'rows' => $rowNames,
@@ -150,7 +150,7 @@
 				'persistent' => array(
 					'source' => $form['source'],
 					'dates' => $colNames,
-					'metrics' => $rowNames,
+					'metrics' => $metrics,
 				),
 				'spreadsheet' => $spreadsheet,
 			);
@@ -166,21 +166,27 @@
 			$source = $form['source'];
 			$dates = $form['dates'];
 			$metrics = $form['metrics'];
-
+			
 			foreach ($dates as $column) {
 				$tokens = explode("/", $column);
 				$month = $tokens[0];
-				$year = $tokens[1];
+				$year = '20'.$tokens[1];
 				$date = $year . '/' . $month . '/01';
 				foreach ($metrics as $row) {
 					$metric = $row;
-					$value = trim($form[$column.":".$row]);
+					// Any keys with spaces on the form keys have been replaced by underscores.
+					$value = trim($form[str_replace(" ", "_", $column.":".$row['Name'])]);
 					
 					if ($value != '') {
+						if ($metric['Name'] == 'Cost')
+							$cost = $value;
+						else
+							$cost = '';
+							
 						// Add total to report table.
 						$lead_data = array(
-							'providerID' => $source,
-							'serviceID' => $metric,
+							'providerID' => $source['ID'],
+							'serviceID' => $metric['ID'],
 							'month' => $month,
 							'year' => $year,
 							'date' => $date,
@@ -188,15 +194,16 @@
 							'cost' => $cost,
 							'clientID' => $this->user['DropdownDefault']->SelectedClient
 						);
-						print_object($lead_data);
-						if (strtolower($metric) == 'cost')
+						if ($metric['Name'] == 'Cost')
 							$this->rep->addLeadCost($lead_data);
 						else
 							$this->rep->addLeadTotal($lead_data);
 					}
 				}
 			}
-
+			
+			$err_level = 1;
+			$err_msg = 'DPR Sources saved!';
 			// Throw error and redirect back to DPR.
 			throwError(newError("DPR Sources", $err_level, $err_msg, 0, ''));
 			redirect('dpr','refresh');

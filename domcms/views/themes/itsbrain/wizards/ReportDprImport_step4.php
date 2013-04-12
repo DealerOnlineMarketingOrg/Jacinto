@@ -47,11 +47,10 @@
 			var name = $(this).attr('name');
 			var id = $(this).attr('id');
 			if (typeof name !== 'undefined' && name !== false) {
-				if (type == 'td') {
-					alert($(this).find('*:not(:has("*"))').html());
+				if (type == 'td')
 					// Get innermost element (text).
-					form[name] = $(this).find('*:not(:has("*"))').val();
-				} else
+					form[name] = $(this).html();
+				else
 					// Get value of control.
 					form[name] = $(this).val();
 			}

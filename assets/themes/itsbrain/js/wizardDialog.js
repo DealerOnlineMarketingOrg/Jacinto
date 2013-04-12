@@ -79,6 +79,7 @@ function runWizardSteps(wrapper, steps, postData) {
 				function nextStep() {
 					// Convert object back from json object.
 					var returnData = JSON.parse($(wrapper).attr('return'));
+					alert($(wrapper).attr('return'));
 					if (returnData.state == 'success') {
 						// Strip current step from steps.
 						nextSteps = new Array();
