@@ -49,7 +49,7 @@ define('SITETITLE','Dealer Online Marketing | Content Manager');
 define('COMPANYNAME','Dealer Online Marketing');
 define('COMPANYURLLINK','<a href="http://www.dealeronlinemarketing.com" target="_blank">www.dealeronlinemarketing.com</a>');
 define('COMPANYURL','http://www.dealeronlinemarketing.com');
-define('THEMEDIR','ReActive');
+define('THEMEDIR','itsbrain');
 define('THEMEIMGS','assets/themes/itsbrain/imgs/');
 define('GLOBALIMGS','assets/themes/global/imgs/');
 define('DOMDIR','Global');

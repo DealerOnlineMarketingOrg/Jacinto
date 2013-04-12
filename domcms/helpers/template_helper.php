@@ -23,9 +23,133 @@ function GateKeeper($mod,$uPerm) {
 	}
 }
 
+function MasterlistTable() { ?>
+	<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/masterlist_popups.js"></script>
+    <?php
+		$ci =& get_instance();
+		$userPermissionLevel = $ci->user['AccessLevel'];
+		$addPriv			 = GateKeeper('Masterlist_Add',$userPermissionLevel);
+		$editPriv			 = GateKeeper('Masterlist_Edit',$userPermissionLevel);
+		$disablePriv		 = GateKeeper('Masterlist_Disable_Enable',$userPermissionLevel);
+		$listingPriv		 = GateKeeper('Masterlist_List',$userPermissionLevel);
+		
+		//load masterlist queries
+		$ci->load->model('mlist');
+		$clients = $ci->mlist->buildMasterList();
+		
+		if($addPriv) { ?>
+    		<!-- <a href="javascript:addMasterlist();" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px;">Add New Entry</a> -->
+<?php 	}
+		
+		if($clients AND $listingPriv) { ?>
+            <table cellpadding="0" cellspacing="0" border="0" class="display masterlistTable" id="example" width="100%">
+                <thead>
+                    <tr>
+                        <th class="tag">Tag</th>
+                        <th class="dealerName">Dealership</th>
+                        <th class="websiteLink">Website</th>
+                        <th class="crazyEgg">Crazy Egg</th>
+                        <th class="cmslist">CMS</th>
+                        <th class="crmlist">CRM</th>
+                        <th class="doclist actions">DOC</th>
+                        <th class="excellist actions">XSL</th>
+                        <?php if($editPriv) { ?>
+                            <th class="actions">Actions</th>
+                        <?php } ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($clients as $client) : ?>
+                        <tr class="tagElement <?= $client->Class; ?>">
+                            <td class="tag"><div class="<?= $client->Class; ?>">&nbsp;</div></td>
+                            <td class="dealerName"><?= $client->Dealership; ?></td>
+                            <td class="websiteLink">
+                                <?php if(isset($client->Websites) AND !empty($client->Websites)) { ?>
+                                    <ul>
+                                        <?php foreach($client->Websites as $website) { ?>
+                                            <li><a href="<?= $website->href; ?>" target="_blank"><?= str_replace('http://','',$website->href); ?></a></li>
+                                        <?php } ?>
+                                    </ul>
+                                <?php }else { ?>
+                                    <span class="fillerString">...</span>
+                                <?php } ?>
+                            </td>
+                            <td class="crazyEgg">
+                                <?php if(isset($client->CrazyEgg) AND !empty($client->CrazyEgg)) { ?>
+                                    <ul>
+                                        <?php foreach($client->CrazyEgg as $crazyegg) { ?>
+                                            <li><a href="http://www.crazyegg.com/login" target="_blank"><?= $crazyegg->title; ?></a></li>
+                                        <?php } ?>
+                                    </li>
+                                <?php }else { ?>
+                                    <span class="fillerString">...</span>
+                                <?php } ?>        
+                            </td>
+                            <td class="cmslist">
+                                <?php if(isset($client->CMS) AND !empty($client->CMS)) { ?>
+                                    <ul>
+                                        <?php foreach($client->CMS as $cms) { ?>
+                                            <li><a href="<?= $cms->href; ?>" target="_blank"><?= $cms->title; ?></a></li>
+                                        <?php } ?>
+                                    </ul>
+                                <?php }else { ?>
+                                    <span class="fillerString">...</span>
+                                <?php } ?>
+                            </td>
+                            <td class="crmlist">
+                                <?php if(isset($client->CRM) AND !empty($client->CRM)) { ?>
+                                    <ul>
+                                        <?php foreach($client->CRM as $crm) { ?>
+                                            <li><a href="<?= $crm->href; ?>" target="_blank"><?= $crm->title; ?></a></li>
+                                        <?php } ?>
+                                    </ul>
+                                <?php }else { ?>
+                                    <span class="fillerString">...</span>
+                                <?php } ?>
+                            </td>
+                            <td class="doclist">
+                                <?php if(isset($client->Docs) AND !empty($client->Docs)) { ?>
+                                    <ul>
+                                        <?php foreach($client->Docs as $doc) { ?>
+                                            <li><a title="Google Doc" href="<?= $doc->href; ?>" target="_blank"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/document-word-text.png" alt="" /></a></li>
+                                        <?php } ?>
+                                    </ul>
+                                <?php }else { ?>
+                                    <span class="fillerString">...</span>
+                                <?php } ?>
+                            </td>
+                            <td class="excellist">
+                                <?php if(isset($client->Spreadsheets) AND !empty($client->Spreadsheets)) { ?>
+                                    <ul>
+                                        <?php foreach($client->Spreadsheets as $excel) { ?>
+                                            <li><a title="Google Doc" href="<?= $excel->href; ?>" target="_blank"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/document-excel.png" alt="" /></a></li>
+                                        <?php } ?>
+                                    </ul>
+                                <?php }else { ?>
+                                    <span class="fillerString">...</span>
+                                <?php } ?>
+                            </td>
+                            <?php //blue-document-excel.png; ?>
+                            <?php if($editPriv) { ?>
+                                <td class="actionsCol actions">
+                                    <a title="Edit Client" href="javascript:editEntry('<?= $client->ClientID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                                </td>
+                            <?php } ?>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+<?php   }else { ?>
+            <p>You don't have access to view this data. Sorry.</p>
+<?php   }
+        if($addPriv) { ?>
+            <!-- <a href="javascript:addMasterlist();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Entry</a> -->
+<?php 	}
+}
+
 function AgencyListingTable($agencies = false) { ?>
 	<?php if($agencies) : ?>
-    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/agency_popups.js"></script>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/masterlist_popups.js"></script>
     <?php 
 		$ci =& get_instance();
         $userPermissionLevel = $ci->user['AccessLevel'];
@@ -55,7 +179,7 @@ function AgencyListingTable($agencies = false) { ?>
                         <td style="width:30px;text-align:center;"><?= (($agency->Status) ? 'Active' : 'Disable'); ?></td>
                         <?php if($editPriv) { ?>
                         <td class="actionsCol" style="width:75px;text-align:center;">
-                            <a title="Edit Agency" href="javascript:editAgency('<?= $agency->ID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                            <a title="Edit Agency" href="javascript:editEntry('<?= $agency->ID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
                         </td>
                         <?php } ?>
                     </tr>

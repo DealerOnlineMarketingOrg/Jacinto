@@ -95,40 +95,40 @@ function vendorTable() {
 }
 
 function addWebsiteForm(vid) {
-	jQuery.ajax({
+	$.ajax({
 		type:'GET',
 		url:'/admin/websites/form?vid='+vid,
 		//data:{client_id:id},
 		success:function(data) {
 			if(data){
-				jQuery('#addWebsiteForm').html(data);
+				$('#addWebsiteForm').html(data);
 			}else {
-				jAlert('There was a problem finding the client you needed. Please try again.','Add Website Error');
+				$('There was a problem finding the client you needed. Please try again.','Add Website Error');
 			}
 		}
 	})
 }
 	
-function editWebsiteForm(cid,wid) {
-	jQuery.ajax({
+function editWebsiteForm(vid,wid) {
+	$.ajax({
 		type:'GET',
-		url:'/admin/websites/form?cid='+cid+'&wid='+wid,
+		url:'/admin/websites/form?vid='+vid+'&wid='+wid,
 		success:function(data) {
 			if(data){
-				jQuery('#addWebsiteForm').empty();
-				jQuery('#addWebsiteForm').html(data);
+				$('#addWebsiteForm').empty();
+				$('#addWebsiteForm').html(data);
 			}else {
-				jAlert('There was a problem finding the client you needed. Please try again.','Add Website Error');
+				$('There was a problem finding the client you needed. Please try again.','Add Website Error');
 			}
 		}
 	})
 }
 
-function editWebsite(cid,wid) {
-	var formData = jQuery('#web').serialize();
-	jQuery.ajax({
+function editWebsite(vid,wid) {
+	var formData = $('#web').serialize();
+	$.ajax({
 		type:'POST',
-		url:'/admin/websites/edit?cid='+cid+'&wid='+wid,
+		url:'/admin/websites/edit?vid='+vid+'&wid='+wid,
 		data:formData,
 		success:function(data) {
 			if(data) {
@@ -145,7 +145,7 @@ function editWebsite(cid,wid) {
 }
 
 function addWebsite(id) {
-	jQuery.ajax({
+	$.ajax({
 		type:'POST',
 		url:'/admin/websites/edit',
 		data:{wid:id},
@@ -164,7 +164,7 @@ function addWebsite(id) {
 }
 
 function submitWebsiteForm(cid,formData,cUrl,msg) {
-	jQuery.ajax({
+	$.ajax({
 		type:'POST',
 		url:cUrl,
 		data:formData,
@@ -172,8 +172,8 @@ function submitWebsiteForm(cid,formData,cUrl,msg) {
 			if(data == '1') {
 				jAlert(msg,'Success',function() {
 					reloadWebsites(cid);	
-					jQuery('#editWebsite').empty();
-					jQuery('#addWebsite').empty();
+					$('#editWebsite').empty();
+					$('#addWebsite').empty();
 				});
 			}else {
 				jAlert('There was a problem with processing your change. Please try again.','Error',function() {
