@@ -1,7 +1,7 @@
 <div id="wizardPop" class="uDialog">
     <div class="dialog-message popper" id="import" title="Import DPR Lead Source Metrics">
         <div class="uiForm">
-            <div class="widget" style="border-top-width:1px !important;margin-top:10px;pEditing-top:0;margin-bottom:10px;">
+            <div class="widget" style="border-top-width:1px !important;margin-top:10px;padding-top:0;margin-bottom:10px;">
                 <fieldset id="wizardPopForm" name="wizardPopForm">
                 <div>
                     <span style="white-space:nowrap;font-weight:bold">First step - Enter Lead Source</span><br /><br />

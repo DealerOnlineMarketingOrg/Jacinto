@@ -1,7 +1,7 @@
 <div id="wizardPop" class="uDialog">
     <div class="dialog-message popper" id="import" title="Import DPR Lead metric Metrics">
         <div class="uiForm">
-            <div class="widget" style="border-top-width:1px !important;margin-top:10px;pEditing-top:0;margin-bottom:10px;">
+            <div class="widget" style="border-top-width:1px !important;margin-top:10px;padding-top:0;margin-bottom:10px;">
             <?php
        			$startDate = '1/1/'.dateToYear(date('m/j/Y'));
                 $endDate = '12/1/'.dateToYear(date('m/j/Y'));

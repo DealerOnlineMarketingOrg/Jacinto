@@ -86,7 +86,7 @@
 		public function import_step3() {
 			$form = $this->input->post();
 			
-			$provider = $form['provider'];
+			$provider = $form['source'];
 			// Generate array of metrics.
 			$metrics = array();
 			$count = $form['metricCount'];
@@ -138,6 +138,49 @@
 			$metrics[] = array('ID' => -1, 'Name' => 'Cost');
 			foreach ($metrics as $metric)
 				$rowNames[] = $metric['Name'];
+			
+			$dbStartDate = $form['metricsStartYear'].'/'.$form['metricsStartMonth'].'/1';
+			$dbEndDate = $form['metricsEndYear'].'/'.$form['metricsEndMonth'].'/1';
+			$sql = 'SELECT MONTH(r.REPORT_Date) as Month, YEAR(r.REPORT_Date) as Year, r.REPORT_Value as Value, s.SERVICE_Name as ServiceName, p.PROVIDERDATA_Cost as Cost ' .
+				   'FROM DPRReportServices s, DPRReports r ' .
+				   'LEFT OUTER JOIN DPRProviderData p on r.REPORT_Provider = p.PROVIDER_ID ' .
+				   'WHERE r.REPORT_Date >= "' . $dbStartDate . '" ' .
+				   '  AND r.REPORT_Date <= "' . $dbEndDate . '" ' .
+				   '  AND r.REPORT_Provider = ' . $form['source']['ID'].' ' .
+				   '  AND r.REPORT_Service = s.SERVICE_ID ' .
+				   'ORDER BY s.SERVICE_Name';
+			$query = $this->db->query($sql);
+			$results = $query->result();
+			print_object($sql);
+			
+			$c = 0;
+			$values = array();
+			foreach ($colNames as $col) {
+				$tokens = explode("/", $col);
+				$month = $tokens[0];
+				$year = '20'.$tokens[1];
+				$values[$c] = array();
+				$r = 0;
+				foreach ($rowNames as $row) {
+					$values[$c][] = '';
+					if ($query->num_rows() > 0) {
+						if ($row == 'Cost') {
+							$values[$c][$r] = $results[0]->Cost;
+						} else {
+							foreach ($results as $item) {
+								if ($item->Month == $month && $item->Year == $year && $item->ServiceName == $row) {
+									$values[$c][$r] = $query->Value;
+									break;
+								}
+							}
+						}
+					}
+					$r++;
+				}
+				$c++;
+			}
+			
+			print_object($values);
 			
 			$data = array(
 				'columns' => $colNames,

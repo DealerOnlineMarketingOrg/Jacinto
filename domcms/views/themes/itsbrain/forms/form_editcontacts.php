@@ -14,6 +14,7 @@
                         <select class="validate[required] styled" name="type">
                             <option value="CID" <?php echo  (($contact->Type == 'CID') ? 'selected="selected"' : ''); ?>>Client</option>
                             <option value="VID" <?php echo  (($contact->Type == 'VID') ? 'selected="selected"' : ''); ?>>Vendor</option>
+                            <option value="GID" <?php echo  (($contact->Type == 'GID') ? 'selected="selected"' : ''); ?>>General</option>
                         </select>
                     </div>
                     <div class="fix"></div>

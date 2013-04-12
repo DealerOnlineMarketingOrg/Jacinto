@@ -34,7 +34,10 @@
 		$r = 0;
 		foreach ($rows as $row) {
 			$cells[$c][$r]->name = $column.':'.$row;
-			$cells[$c][$r]->value = '&nbsp;';
+			if (isset($values))
+				$cells[$c][$r]->value = $values[$c][$r]->value;
+			else
+				$cells[$c][$r]->value = '&nbsp;';
 			$r++;
 		}
 		$c++;

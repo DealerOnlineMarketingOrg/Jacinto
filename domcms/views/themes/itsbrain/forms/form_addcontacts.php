@@ -16,6 +16,7 @@
                             <select class="validate[required]" name="type">
                                 <option value="CID">Client</option>
                                 <option value="VID">Vendor</option>
+                                <option value="GID">General</option>
                             </select>
                             </div>
                             <div class="fix"></div>

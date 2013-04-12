@@ -19,7 +19,11 @@
                             <?php } ?>
                             <div class="rowElem noborder">
 			                    <label>Contact Type</label>
-			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>(($contact->TypeCode == 'CID') ? 'Client' : 'Vendor'),'style'=>'margin:0')); ?></div>
+                                <?php if ($contact->TypeCode == 'CID') $type = 'Client';
+									elseif ($contact->TypeCode == 'VID') $type = 'Vendor';
+									elseif ($contact->TypeCode == 'GID') $type = 'General';
+								?>
+			                    <div class="formRight"><?= form_input(array('disabled'=>'disabled','value'=>$type,'style'=>'margin:0')); ?></div>
 			                    <div class="fix"></div>
 			                </div>
                             <div class="rowElem noborder">

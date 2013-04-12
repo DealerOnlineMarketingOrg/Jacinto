@@ -837,7 +837,7 @@ class Administration extends CI_Model {
 				if($byType) {
 					$sql .= ' WHERE d.DIRECTORY_Type = "' . $byType . ':' . $id . '"';	
 				}else {
-					$sql .= ' WHERE d.DIRECTORY_Type = "CID:' . $id . '" OR d.DIRECTORY_Type = "VID:' . $id . '"';
+					$sql .= ' WHERE d.DIRECTORY_Type = "CID:' . $id . '" OR d.DIRECTORY_Type = "VID:' . $id . '" OR d.DIRECTORY_Type = "GID:' . $id . '"';
 				}
 		$sql .= ' ORDER BY d.DIRECTORY_LastName,d.DIRECTORY_FirstName,c.CLIENT_Tag ASC';
 		$query = $this->db->query($sql);

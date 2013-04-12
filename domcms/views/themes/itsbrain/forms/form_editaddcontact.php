@@ -32,6 +32,7 @@
                                 <select class="chzn-select validate[required]" style="width:350px" name="type">
                                     <option value="CID" <?= (($contact->Type == 'CID') ? 'selected="selected"' : ''); ?>>Client</option>
                                     <option value="VID" <?= (($contact->Type == 'VID') ? 'selected="selected"' : ''); ?>>Vendor</option>
+                                    <option value="GID" <?= (($contact->Type == 'GID') ? 'selected="selected"' : ''); ?>>General</option>
                                 </select>
                             </div>
                             <div class="fix"></div>
