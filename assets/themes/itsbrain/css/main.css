@@ -1004,3 +1004,21 @@ ul.thirdparty li a {float:left;margin-right:8px;}
 	div.dealerDropdowns,div#system_tags{display:none;}
 	
 }
+
+
+/*We need to add this to the media queries down the road */
+table.masterlistTable th.dealerName,table.masterlistTable th.websiteLink{text-align:left;}
+table.masterlistTable td {vertical-align:middle !important;}
+table.masterlistTable td.tag {width:50px;}
+table.masterlistTable td.dealerName{white-space:nowrap;}
+table.masterlistTable td.actions,table.masterlistTable td.doclist,table.masterlistTable td.excellist{width:25px;text-align:center;}
+table.masterlistTable td.crmlist,table.masterlistTable td.cmslist,table.masterlistTable td.crazyEgg{width:100px;text-align:center;}
+
+div.masterlistPop ul.optionsList li {display:inline;float:left;width:50%;}
+div.masterlistPop ul.optionsList li.full{display:block;float:none;width:auto;}
+div.ui-dialog div.masterlistPop td input[type="text"] { margin-top:0;padding-top:6px;padding-bottom:6px;}
+div.masterlistPop td {vertical-align:top !important;}
+div.masterlistPop div.chzn-container-single{margin-top:0px !important;float:left;}
+div.masterlistPop h5.website {text-transform:uppercase;border-bottom:1px solid #d5d5d5;margin-bottom:5px;}
+div.masterlistPop h5.website a {color:#364d65}
+div.masterlistPop h5.website a:hover{color:#666;}
