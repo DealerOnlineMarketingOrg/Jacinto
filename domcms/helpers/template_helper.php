@@ -46,6 +46,7 @@ function MasterlistTable() { ?>
                 <thead>
                     <tr>
                         <th class="tag">Tag</th>
+                        <th class="code">Code</th>
                         <th class="dealerName">Dealership</th>
                         <th class="websiteLink">Website</th>
                         <th class="crazyEgg">Crazy Egg</th>
@@ -62,6 +63,7 @@ function MasterlistTable() { ?>
                     <?php foreach($clients as $client) : ?>
                         <tr class="tagElement <?= $client->Class; ?>">
                             <td class="tag"><div class="<?= $client->Class; ?>">&nbsp;</div></td>
+                            <td class="code"><?= $client->Code; ?></td>
                             <td class="dealerName"><?= $client->Dealership; ?></td>
                             <td class="websiteLink">
                                 <?php if(isset($client->Websites) AND !empty($client->Websites)) { ?>

@@ -4,8 +4,9 @@
             <div class="widget masterlistPop" style="margin-top:5px;">
             	<div class="head"><h5 class="iCompanies"><?= $client->Dealership; ?></h5></div>
             	<?php echo form_open('/admin/masterlist/form',array('id'=>'editMasterlistForm','class'=>'validate mainForm formPop','style'=>'text-align:left;'));	?>
+                	<? //print_object($client); ?>
                     <fieldset>
-                        <div class="rowElem noborder">
+                        <div class="rowElem noborder noSearch">
                         <table width="100%">
                         	<tr>
                             	<td style="width:33%;">DOC</td>
@@ -13,11 +14,14 @@
                                 <td style="width:33%;">CRM</td>
                             </tr>
                             <tr>
-                            	<td><input type="text" value="http://" name="doc" id="Doc" /></td>
-                                <td><input type="text" value="http://" name="xsl" id="xsl" /></td>
+                            	<td><input type="text" value="<?= $client->Docs[0]->href; ?>" name="doc" id="Doc" /></td>
+                                <td><input type="text" value="<?= $client->Spreadsheets[0]->href; ?>" name="xsl" id="xsl" /></td>
                                 <td>
                                     <select class="chzn-select" name="crm" id="crm_name" style="margin:12px 0;width:50%;">
-                                        <option value="">Choose Crazy Egg</option>
+                                        <option value="">Choose A CRM</option>
+                                        <?php foreach($vendorOptions as $option) { ?>
+                                        	<option <?= (($client->CRM[0]->title == $option->Name) ? 'selected="selected"':''); ?> value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
+                                        <?php } ?>
                                     </select>
 								</td>
                             </tr>
@@ -25,7 +29,7 @@
                         </div>
                         <div class="fix"></div>
                     	<?php foreach($client->Websites as $website) { ?>
-                            <div class="rowElem">
+                            <div class="rowElem noSearch">
                                 <h5 class="website"><a href="<?= $website->href;?>" target="_blank"><?= str_replace('http://','',$website->href); ?></a></h5>
                                 <table width="100%">
                                     <tr>
@@ -36,11 +40,17 @@
                                         <td>
                                             <select class="chzn-select" style="float:left;width:48%" name="cms" id="web_<?= $website->ID; ?>_cms">
                                                 <option value="">Choose a CMS</option>
+												<?php foreach($vendorOptions as $option) { ?>
+                                                    <option value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
+                                                <?php } ?>
                                             </select>
                                         </td>
                                         <td>
-                                            <select class="chzn-select" style="float:left;width:48%" name="crazyEgg" id="web_<?= $website->ID; ?>_crazyegg">
+                                            <select class="chzn-select" style="float:left;width:48%" name="crazyEgg<?= $website->ID; ?>" id="web_<?= $website->ID; ?>_crazyegg">
                                                 <option value="">Choose Crazy Egg</option>
+												<?php foreach($crazyEggOptions as $option) { ?>
+                                                    <option <? (($option->ID == $website->CrazyEggLabelID) ? 'selected="selected"' : ''); ?> value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
+                                                <?php } ?>
                                             </select>
                                         </td>
                                     </tr>

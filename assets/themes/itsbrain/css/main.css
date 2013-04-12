@@ -1008,11 +1008,14 @@ ul.thirdparty li a {float:left;margin-right:8px;}
 
 /*We need to add this to the media queries down the road */
 table.masterlistTable th.dealerName,table.masterlistTable th.websiteLink{text-align:left;}
+table.masterlistTable th.crazyEgg{white-space:nowrap;}
 table.masterlistTable td {vertical-align:middle !important;}
 table.masterlistTable td.tag {width:50px;}
+table.masterlistTable td.code{width:75px;text-align:center;}
 table.masterlistTable td.dealerName{white-space:nowrap;}
+
 table.masterlistTable td.actions,table.masterlistTable td.doclist,table.masterlistTable td.excellist{width:25px;text-align:center;}
-table.masterlistTable td.crmlist,table.masterlistTable td.cmslist,table.masterlistTable td.crazyEgg{width:100px;text-align:center;}
+table.masterlistTable td.crmlist,table.masterlistTable td.cmslist,table.masterlistTable td.crazyEgg{width:125px;text-align:center;}
 
 div.masterlistPop ul.optionsList li {display:inline;float:left;width:50%;}
 div.masterlistPop ul.optionsList li.full{display:block;float:none;width:auto;}
