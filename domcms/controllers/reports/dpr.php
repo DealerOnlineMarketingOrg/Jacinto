@@ -54,7 +54,7 @@
 			
 			$data = array(
 				'persistent' => array(
-					'test' => 'this is a test',
+					'empty' => '',
 				),
 				'sources' => $prov_options,
 			);
@@ -199,6 +199,237 @@
 						else
 							$this->rep->addLeadTotal($lead_data);
 					}
+				}
+			}
+			
+			$err_level = 1;
+			$err_msg = 'DPR Sources saved!';
+			// Throw error and redirect back to DPR.
+			throwError(newError("DPR Sources", $err_level, $err_msg, 0, ''));
+			redirect('dpr','refresh');
+		}
+		
+		public function add_step1() {
+			$report_data = $this->getdpr->get('Provider');
+			$prov_options = $this->getdpr->output_as_options($report_data);
+			
+			$data = array(
+				'persistent' => array(
+					'empty' => '',
+				),
+				'sources' => $prov_options,
+			);
+			
+			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
+			//$this->LoadTemplate('forms/form_addDpr',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd_step1',$data);
+		}
+		
+		public function add_step2() {
+			$form = $this->input->post();
+			
+			$data = array(
+				'persistent' => array(
+					'source' => $form['source'],
+				),
+			);
+			
+			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
+			//$this->LoadTemplate('forms/form_addDpr',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd_step2',$data);
+		}
+		
+		public function add_step3() {
+			$form = $this->input->post();
+			
+			$date = $form['metricsStartYear'].'/'.$form['metricsStartMonth'].'/1';
+			
+			$source = $this->getdpr->get('Provider', $form['source']);
+			$sql = 'SELECT s.SERVICE_ID as ID,s.SERVICE_Name as Name,p.PROVIDERDATA_Cost as Cost ' .
+				   'FROM DPRReportServices s, DPRProviderData p, DPRSourceMetrics sm ' .
+				   'WHERE ( ' .
+				   		'SELECT COUNT(*) ' .
+						'FROM DPRReports dr ' .
+						'WHERE dr.REPORT_Date = "'.$date.'" ' .
+						'  AND s.SERVICE_ID = dr.REPORT_Service ' .
+						'  AND dr.REPORT_Provider = '.$source->ID.' ' .
+						'  AND dr.CLIENT_ID = ' . $this->user['DropdownDefault']->SelectedClient.' ' .
+				   		') = 0 ' .
+					'  AND (p.PROVIDERDATA_ID = sm.SOURCEMETRICS_SourceID AND s.SERVICE_ID = sm.SOURCEMETRICS_MetricID) ' .
+				   'GROUP BY s.SERVICE_ID ' .
+				   'ORDER BY s.SERVICE_Name ASC';
+			$query = $this->db->query($sql);
+			$service_list = $query->result();
+			$service_options = $this->getdpr->output_as_options($service_list);
+			
+			$data = array(
+				'persistent' => array(
+					'source' => $source,
+					'date' => $date,
+					'month' => $form['metricsStartMonth'],
+					'year' => $form['metricsStartYear'],
+				),
+				'source' => $source,
+				'metrics' => $service_options,
+				'cost' => (isset($service_list[0]->Cost)) ? $service_list[0]->Cost : '',
+			);
+			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
+			//$this->LoadTemplate('forms/form_addDpr',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd_step3',$data);
+		}
+		
+		public function add_stepSubmit() {
+			$form = $this->input->post();
+		
+			$source = $form['source'];
+			$date = $form['date'];
+			$count = $form['metricCount'];
+			
+			for ($i = 0; $i < $count; $i++) {
+				$m['ID'] = $form['metrics_'.$i];
+				$m['Total'] = $form['total_'.$i];
+				$metric = $m;
+				
+				$total = $metric['Total'];
+				
+				if ($total != '') {
+					$cost = $form['cost'];
+					
+					// Add total to report table.
+					$lead_data = array(
+						'providerID' => $source['ID'],
+						'serviceID' => $metric['ID'],
+						'month' => $form['month'],
+						'year' => $form['year'],
+						'date' => $date,
+						'total' => $total,
+						'cost' => $cost,
+						'clientID' => $this->user['DropdownDefault']->SelectedClient
+					);
+					$this->rep->addLeadCost($lead_data);
+					$this->rep->addLeadTotal($lead_data);
+				}
+			}
+			
+			$err_level = 1;
+			$err_msg = 'DPR Sources saved!';
+			// Throw error and redirect back to DPR.
+			throwError(newError("DPR Sources", $err_level, $err_msg, 0, ''));
+			redirect('dpr','refresh');
+		}
+		
+		public function edit_step1() {
+			$report_data = $this->getdpr->get('Provider');
+			$prov_options = $this->getdpr->output_as_options($report_data);
+			
+			$data = array(
+				'persistent' => array(
+					'empty' => '',
+				),
+				'sources' => $prov_options,
+			);
+			
+			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
+			//$this->LoadTemplate('forms/form_addDpr',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprEdit_step1',$data);
+		}
+		
+		public function edit_step2() {
+			$form = $this->input->post();
+			
+			$data = array(
+				'persistent' => array(
+					'source' => $form['source'],
+				),
+			);
+			
+			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
+			//$this->LoadTemplate('forms/form_addDpr',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprEdit_step2',$data);
+		}
+		
+		public function edit_step3() {
+			$form = $this->input->post();
+			
+			$date = $form['metricsStartYear'].'/'.$form['metricsStartMonth'].'/1';
+			
+			$source = $this->getdpr->get('Provider', $form['source']);
+			$sql = 'SELECT s.SERVICE_ID as ID,s.SERVICE_Name as Name,r.REPORT_Value as Value,p.PROVIDERDATA_Cost as Cost ' .
+				   'FROM DPRReportServices s, DPRReports r, DPRProviderData p ' .
+				   'WHERE ( ' .
+				   		'SELECT COUNT(*) ' .
+						'FROM DPRReports dr ' .
+						'WHERE dr.REPORT_Date = "'.$date.'" ' .
+						'  AND s.SERVICE_ID = dr.REPORT_Service ' .
+						'  AND dr.REPORT_Provider = '.$source->ID.' ' .
+						'  AND dr.CLIENT_ID = ' . $this->user['DropdownDefault']->SelectedClient.' ' .
+				   		') > 0 ' .
+					'  AND s.SERVICE_ID = r.REPORT_Service ' .
+					'  AND r.CLIENT_ID = ' . $this->user['DropdownDefault']->SelectedClient.' ' .
+					'  AND p.PROVIDERDATA_ID = r.REPORT_Provider ' .
+				   'GROUP BY s.SERVICE_ID ' . 
+				   'ORDER BY s.SERVICE_Name ASC';
+			$query = $this->db->query($sql);
+			$service_list = $query->result();
+			//$service_options = $this->getdpr->output_as_options($service_list);
+			$names = array();
+			$values = array();
+			$ids = array();
+			foreach ($service_list as $s) {
+				$names[] = $s->Name;
+				$values[] = $s->Value;
+				$ids[] = $s->ID;
+			}
+			
+			$data = array(
+				'persistent' => array(
+					'source' => $source,
+					'date' => $date,
+					'month' => $form['metricsStartMonth'],
+					'year' => $form['metricsStartYear'],
+				),
+				'source' => $source,
+				'cost' => (isset($service_list[0]->Cost)) ? $service_list[0]->Cost : '',
+				'names' => $names,
+				'values' => $values,
+				'ids' => $ids,
+			);
+			//$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprAdd',$data);
+			//$this->LoadTemplate('forms/form_addDpr',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/wizards/ReportDprEdit_step3',$data);
+		}
+		
+		public function edit_stepSubmit() {
+			$form = $this->input->post();
+		
+			$source = $form['source'];
+			$date = $form['date'];
+			$count = $form['metricCount'];
+			
+			for ($i = 0; $i < $count; $i++) {
+				$m['ID'] = $form['metrics_'.$i];
+				$m['Total'] = $form['total_'.$i];
+				$metric = $m;
+				
+				$total = $metric['Total'];
+				
+				if ($total != '') {
+					$cost = $form['cost'];
+					
+					// Add total to report table.
+					$lead_data = array(
+						'providerID' => $source['ID'],
+						'serviceID' => $metric['ID'],
+						'month' => $form['month'],
+						'year' => $form['year'],
+						'date' => $date,
+						'total' => $total,
+						'cost' => $cost,
+						'clientID' => $this->user['DropdownDefault']->SelectedClient
+					);
+					print_object($lead_data);
+					$this->rep->addLeadCost($lead_data);
+					$this->rep->addLeadTotal($lead_data);
 				}
 			}
 			

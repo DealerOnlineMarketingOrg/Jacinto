@@ -7,9 +7,9 @@ var $ = jQuery.noConflict();
 //  for selector change.
 function watchChange(selector, attribute, callback) {
    var input = $(selector);
-   var oldvalue = input.attr(attribute); 
+   var oldvalue = input.attr(attribute);
    // Lock is to control timing.
-   // Race condition is still possible if interval is fast enough.
+   // Race condition is still possible if interval is short enough.
    // Lock has two stages:
    //  1 - after initialization.
    //  2 - after value has been changed.
@@ -79,7 +79,7 @@ function runWizardSteps(wrapper, steps, postData) {
 				function nextStep() {
 					// Convert object back from json object.
 					var returnData = JSON.parse($(wrapper).attr('return'));
-					alert($(wrapper).attr('return'));
+					//alert($(wrapper).attr('return'));
 					if (returnData.state == 'success') {
 						// Strip current step from steps.
 						nextSteps = new Array();
