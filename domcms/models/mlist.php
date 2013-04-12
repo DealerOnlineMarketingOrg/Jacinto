@@ -214,7 +214,7 @@ class Mlist extends CI_Model {
 	}
 	
 	private function getCRMNameAndLink($cid) {
-		$this->db->select('m.CRM_Vendor_Link as href,v.VENDOR_Name as title');
+		$this->db->select('m.ASSETS_ID as AssetsID,m.CRM_Vendor_Link as href,v.VENDOR_Name as title');
 		 $this->db->from('MasterListAssets m');
 		 $this->db->join('Vendors v','m.CRM_Vendor_ID = v.VENDOR_ID');
 		 $this->db->where('m.CLIENT_ID',$cid);
@@ -225,7 +225,7 @@ class Mlist extends CI_Model {
 	}
 	
 	private function getCMSNameAndLink($cid) {
-		$query = $this->db->select('w.WEB_Url as href, v.VENDOR_Name as title')->
+		$query = $this->db->select('m.MASTER_ID as MID,w.WEB_Url as href, v.VENDOR_Name as title')->
 				 join('Vendors v','m.CMS_Vendor_ID = v.VENDOR_ID')->
 				 join('Websites w','w.WEB_Type = CONCAT("VID:",v.VENDOR_ID)')->
 				 get_where('MasterList m',array('m.CLIENT_ID'=>$cid));
@@ -287,5 +287,26 @@ class Mlist extends CI_Model {
 		//collection array to hold all data after were done formating it.
 		$clients_collection = $this->buildMasterList($client);	
 		return $clients_collection[0];
+	}
+	
+	public function updateCms($id,$value) {
+		$data = array(
+			'CMS_Vendor_ID'=>$value
+		);
+		$this->db->where('MASTER_ID',$id);
+		return ($this->db->update('MasterList',$data)) ? TRUE : FALSE;
+	}
+	
+	public function updateCrazyEgg($id,$value) {
+		$data = array(
+			'CrazyEggStatusID'=>$value
+		);	
+		$this->db->where('WEB_ID',$id);
+		return ($this->db->update('WebsiteOptions',$data)) ? TRUE : FALSE;
+	}
+	
+	public function updateDocExcelCRM($id,$data) {
+		$this->db->where('ASSETS_ID',$id);
+		return ($this->db->update('MasterListAssets',$data)) ? TRUE : FALSE;
 	}
 }
