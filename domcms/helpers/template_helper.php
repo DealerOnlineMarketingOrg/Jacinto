@@ -300,7 +300,7 @@ function VendorListingTable($hide_actions=false,$hide_add=false) { ?>
 <?php }
 
 
-function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions = false,$from_tab = false,$type = false) { ?>
+function ContactsListingTable($id = false,$hide_add = false,$hide_actions = false,$from_tab = false,$type = false) { ?>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/contact_popups.js"></script>
     <?php 
 		$ci =& get_instance();
@@ -313,35 +313,35 @@ function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions
 				
 		switch ($level) {
 			case 'a':
-				if(!$client_id) {
+				if(!$id) {
 					$contacts = $ci->administration->getAllContactsInAgency($ci->user['DropdownDefault']->SelectedAgency);
 				}else {
 					if($type) {
-						$contacts = $ci->administration->getContacts($client_id,$type);
+						$contacts = $ci->administration->getContactsByType($id,$type);
 					}else {
-						$contacts = $ci->administration->getContacts($client_id);	
+						$contacts = $ci->administration->getAllContacts();	
 					}
 				}
 			break;
 			case 'g':
-				if(!$client_id) {
+				if(!$id) {
 					$contacts = $ci->administration->getAllContactsInGroup($ci->user['DropdownDefault']->SelectedGroup);
 				}else {
 					if($type) {
-						$contacts = $ci->administration->getContacts($client_id,$type);
+						$contacts = $ci->administration->getContactsByType($id,$type);
 					}else {
-						$contacts = $ci->administration->getContacts($client_id);	
+						$contacts = $ci->administration->getAllContacts();	
 					}
 				}
 			break;
 			default:
-				if(!$client_id) {
-					$contacts = $ci->administration->getContacts($ci->user['DropdownDefault']->SelectedClient);
+				if(!$id) {
+					$contacts = $ci->administration->getContactsByType($ci->user['DropdownDefault']->SelectedClient, 'CID');
 				}else {
 					if($type) {
-						$contacts = $ci->administration->getContacts($client_id,$type);
+						$contacts = $ci->administration->getContactsByType($id,$type);
 					}else {
-						$contacts = $ci->administration->getContacts($client_id);	
+						$contacts = $ci->administration->getAllContacts();	
 					}
 				}
 			break;
@@ -355,16 +355,17 @@ function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions
             <thead>
                 <tr>
                     <?php if(!$from_tab) { ?><th>Team</th><?php } ?>
+                    <?php if(!$from_tab) { ?><th style="text-align:left;">Type</th><?php } ?>
                     <?php if($level == 'g' || $level == 'a') { ?>
-                    <?php if(!$from_tab) { ?><th style="text-align:left;white-space:nowrap;">Dealership</th><?php } ?>
+                    <?php if(!$from_tab) { ?><th style="text-align:left;">Client/Vendor Name</th><?php } ?>
                     <?php } ?>
-                    <th style="width:10%;white-space:nowrap;">Title Name</th>
-                    <th style="white-space:nowrap;">Contact Name</th>
-                    <th><?php if($from_tab) { echo 'Primary'; } ?> Email</th>
-                    <th><?php if($from_tab) { echo 'Primary'; } ?> Phone</th>
+                    <th style="text-align:left;">Title Name</th>
+                    <th style="text-align:left;">Contact Name</th>
+                    <th style="text-align:left;"><?php if($from_tab) { echo 'Primary'; } ?> Primary Email</th>
+                    <th style="text-align:left;"><?php if($from_tab) { echo 'Primary'; } ?> Primary Phone</th>
                     <?php if($editPriv) { ?>
                     	<?php if(!$hide_actions) { ?>
-                    		<th class="actions">Actions</th>
+                    		<th class="actions" style="text-align:left;">Actions</th>
                     	<?php } ?>
                     <?php } ?>
                 </tr>
@@ -388,6 +389,7 @@ function ContactsListingTable($client_id = false,$hide_add = false,$hide_actions
                 
                     <tr class="tagElement <?php echo $contact->Tag; ?>" >
                     	<?php if(!$from_tab) { ?><td class="tags"><div class="<?php echo $contact->Tag; ?>">&nbsp;</div></td><?php } ?>
+                        <?php if(!$from_tab) { ?><td><?php switch($contact->TypeCode){case 'CID':echo 'Client';break;case 'VID':echo 'Vendor';break;case 'GID':echo 'General';} ?></td><?php } ?>
                         <?php if($level == 'g' || $level == 'a') { ?>
                         <?php if(!$from_tab) { ?><td style="width:auto;white-space:no-wrap;text-align:left;white-space:nowrap;"><?php echo $contact->Parent; ?></td><?php } ?>
                         <?php } ?>
@@ -913,7 +915,7 @@ function load_client_contacts($cid) {
 	$ci =& get_instance();
 	$ci->load->helper('string_parser');
 	$ci->load->model('administration');
-	$contacts = $ci->administration->getContacts($cid);
+	$contacts = $ci->administration->getContactsByType($cid, 'CID');
 	$html = '';
 	$table = '';
 	if($contacts) {
@@ -1158,6 +1160,39 @@ function get_client_name() {
         $name = '';
     endif;
     return $name;
+}
+
+function load_contact_websites($cid, $actions = true) {
+	if(!$cid) {$cid = $ci->user['DropdownDefault']->SelectedClient;}
+	
+	$ci =& get_instance();
+	$ci->load->model('administration');
+	
+	$websites = $ci->administration->getContactWebsites($cid);
+	$html = '';
+	$table = '';
+	if($websites) {
+		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
+		$table .= '<thead><tr><td>Contact</td><td>Web URL</td><td>Notes</td>' . (($actions) ? '<td class="actions">Actions</td>' : '') . '</tr></thead>';
+		$table .= '<tbody>';
+		foreach($websites as $website) :
+			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $cid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/pencil.png" alt="Edit Website" /></a>';
+			$table .= '<tr>';
+			$table .= '<td><p>' . $website->VendorName . '</p></td>';
+			$table .= '<td><a href="' . $website->URL . '" target="_blank">' . $website->URL . '</a></td>';
+			$table .= '<td class="descCell"><p id="web_' . $website->ID . '">' . $website->Description . '</p></td>';
+			if($actions) {
+				$table .= '<td style="text-align:center;">' . $edit_img . '</td>';
+			}
+			$table .= '</tr>';
+		endforeach;
+		$table .= '</tbody></table>';
+		                                    
+		$html = $table;
+	}else {
+		$html .= '<p>No websites found for this contact.</p>'; // . (($actions) ? ' You can add one by clicking the add website button below.' : '') . '</p>';
+	}
+	return $html;
 }
 
 function get_user_modules($level) {

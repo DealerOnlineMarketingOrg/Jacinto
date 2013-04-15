@@ -60,7 +60,7 @@
 		$c = 0;
 		foreach ($columns as $column) {
 			// Common to all cells.
-			$style = 'border:solid 1px grey;text-align:center;padding:0;';
+			$style = 'position:relative;border:solid 1px grey;text-align:center;padding:0;';
 			$style .= 'height:'.$cells[$c][$r]->height.';';
 			$class = $cellClass;
 			$editable = false;

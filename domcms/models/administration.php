@@ -245,7 +245,17 @@ class Administration extends CI_Model {
 		
 		return ($website) ? $website->result() : FALSE;
 	}
-
+	public function getContactWebsites($gid,$wid=false) {
+		$this->db->select('w.WEB_ID as ID,w.WEB_Vendor as Vendor,w.WEB_GoogleUACode as GoogleUACode,w.WEB_GoogleWebToolsMetaCode as GoogleWebToolsMetaCode,w.WEB_GooglePlusCode as GooglePlusCode,w.WEB_BingCode as BingCode,w.WEB_YahooCode as YahooCode,w.WEB_GlobalScript as GlobalScript,w.WEB_Type as Type,w.WEB_Url as URL,w.WEB_Notes as Description,w.WEB_Active as Status,w.WEB_ActiveTS as LastUpdate,w.WEB_Created as Created');
+		$this->db->from('Websites w');
+		$this->db->where('w.WEB_Type','GID:'.$gid);
+		if($wid) {
+			$this->db->where('w.WEB_ID',$wid);
+		}
+		$website = $this->db->get();
+		
+		return ($website) ? $website->result() : FALSE;
+	}
 	
 	public function getContactTitle($id) {
 		$sql = 'SELECT TITLE_Name as Name FROM xTitles WHERE TITLE_ID = "' . $id . '";';
@@ -287,7 +297,7 @@ class Administration extends CI_Model {
 				$clients = $this->db->query($csql)->result();
 				
 				foreach($clients as $client) :
-					$contacts = $this->getContacts($client->CID);
+					$contacts = $this->getContactsByType($client->CID, 'CID');
 					foreach($contacts as $contact) {
 						array_push($all_contacts, $contact);
 					}
@@ -307,7 +317,7 @@ class Administration extends CI_Model {
 		$clients = $this->db->query($csql)->result();
 		
 		foreach($clients as $client) :
-			$contacts = $this->getContacts($client->CID);
+			$contacts = $this->getContactsByType($client->CID, 'CID');
 			foreach($contacts as $contact) {
 				// Add client code to the contact.
 				$contact->ClientCode = $client->ClientCode;
@@ -812,40 +822,23 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
 	}
     
-    public function getContacts($id,$byType = false) {
-        $sql = 'SELECT 
-				d.DIRECTORY_ID as ContactID,
-				d.TITLE_ID as Title,
-				ti.TITLE_Name as TitleName,
-				d.JobTitle as JobTitle,
-				d.DIRECTORY_Type as Type,
-				d.DIRECTORY_FirstName as FirstName,
-				d.DIRECTORY_LastName as LastName,
-				d.DIRECTORY_Address as Address,
-				d.DIRECTORY_Email as Email,
-				d.DIRECTORY_Phone as Phone,
-				c.CLIENT_Tag as TagID,
-				c.CLIENT_Name as Dealership,
-				t.TAG_Name as TagName,
-				t.TAG_Color as TagColor,
-				t.TAG_ClassName as Tag,
-				d.DIRECTORY_Notes as Notes 
-				FROM Directories d
-				INNER JOIN Clients c ON c.CLIENT_ID = "' . $id . '"
-				INNER JOIN xTags t on c.CLIENT_Tag = t.TAG_ID
-				INNER JOIN xTitles ti on d.TITLE_ID = ti.TITLE_ID';
-				if($byType) {
-					$sql .= ' WHERE d.DIRECTORY_Type = "' . $byType . ':' . $id . '"';	
-				}else {
-					$sql .= ' WHERE d.DIRECTORY_Type = "CID:' . $id . '" OR d.DIRECTORY_Type = "VID:' . $id . '" OR d.DIRECTORY_Type = "GID:' . $id . '"';
-				}
-		$sql .= ' ORDER BY d.DIRECTORY_LastName,d.DIRECTORY_FirstName,c.CLIENT_Tag ASC';
-		$query = $this->db->query($sql);
+    public function getContactsByType($typeID, $type) {
+		$query = $this->getContacts($typeID, $type, false);
 		return ($query) ? $query->result() : FALSE;
     }
 	
-	public function getContact($id) {
-        $sql = 'SELECT 
+	public function getContactByID($id) {
+        $query = $this->getContacts(false, false, $id);
+		return ($query) ? $query->row() : FALSE;
+	}
+    
+	public function getAllContacts() {
+		$query = $this->getContacts(false, false, false);
+		return ($query) ? $query->result() : FALSE;
+	}
+	
+	private function getContacts($typeID = false, $type = false, $id = false) {
+		$sql = 'SELECT 
 				d.DIRECTORY_ID as ContactID,
 				d.TITLE_ID as Title,
 				ti.TITLE_Name as TitleName,
@@ -856,22 +849,28 @@ class Administration extends CI_Model {
 				d.DIRECTORY_Address as Address,
 				d.DIRECTORY_Email as Email,
 				d.DIRECTORY_Phone as Phone,
-				d.DIRECTORY_Notes as Notes,
 				c.CLIENT_Tag as TagID,
 				c.CLIENT_Name as Dealership,
 				c.CLIENT_ID as DealershipID,
+				v.VENDOR_Name as VendorName,
+				v.VENDOR_ID as VendorID,
 				t.TAG_Name as TagName,
 				t.TAG_Color as TagColor,
-				t.TAG_ClassName as Tag
+				t.TAG_ClassName as Tag,
+				d.DIRECTORY_Notes as Notes
 				FROM Directories d
-				INNER JOIN Clients c ON c.CLIENT_ID = d.CLIENT_Owner
-				INNER JOIN xTags t ON c.CLIENT_Tag = t.TAG_ID
-				INNER JOIN xTitles ti on d.TITLE_ID = ti.TITLE_ID
-				WHERE DIRECTORY_ID = "' . $id . '"';
-		$query = $this->db->query($sql);
-		return ($query) ? $query->row() : FALSE;
+				LEFT OUTER JOIN Clients c ON c.CLIENT_ID = '.(($type == 'CID') ? $typeID : 'd.CLIENT_Owner').'
+				LEFT OUTER JOIN xTags t on c.CLIENT_Tag = t.TAG_ID
+				LEFT OUTER JOIN Vendors v ON v.VENDOR_ID = '.(($type == 'VID') ? $typeID : 'd.DIRECTORY_Type').'
+				INNER JOIN xTitles ti on d.TITLE_ID = ti.TITLE_ID';
+				if ($typeID)
+					$sql .= ' WHERE d.DIRECTORY_Type = "'.$type.':'.$typeID.'"';	
+				elseif ($id)
+					$sql .= ' WHERE d.DIRECTORY_ID = "' . $id . '"';
+		$sql .= ' ORDER BY d.DIRECTORY_LastName,d.DIRECTORY_FirstName,c.CLIENT_Tag ASC';
+		return $this->db->query($sql);
 	}
-    
+	
     public function addContact($data) {
         return $this->db->insert('Directories', $data); 
     }

@@ -257,7 +257,7 @@ class Passwords extends DOM_Controller {
 	}
 	
 	public function View($msg=false) {
-		$contact = $this->administration->getContact($this->input->post('view_id'));
+		$contact = $this->administration->getContactByID($this->input->post('view_id'));
 		$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
 		$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
 		$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;

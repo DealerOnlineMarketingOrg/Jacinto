@@ -31,7 +31,7 @@ class Contacts extends DOM_Controller {
     }
 	
 	public function load_table() {
-		$contacts = $this->administration->getContacts($this->agency_id);
+		$contacts = $this->administration->getAllContactsInAgency($this->agency_id);
 		$data = array(
 			'contacts'=>$contacts
 		);
@@ -45,13 +45,14 @@ class Contacts extends DOM_Controller {
 			$contact_id = $this->user['DropdownDefault']->SelectedContact;
 		}
 		
-		$contact = $this->administration->getContact($contact_id);
+		$contact = $this->administration->getContactByID($contact_id);
 		$this->formatContactInfo($contact);
-
+		
 		if($contact) {
 			$data = array(
 				'contact' => $contact,
-				'level' => $this->user['DropdownDefault']->LevelType
+				'level' => $this->user['DropdownDefault']->LevelType,
+				'websites'=>load_contact_websites($contact_id),
 			);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/view_contact',$data);
 		}
@@ -77,7 +78,7 @@ class Contacts extends DOM_Controller {
 				'TITLE_ID' => $contact_data['jobTitleType'],
 				'JobTitle' => $contact_data['JobTitle'],
 				'DIRECTORY_Type' => $type,
-				'CLIENT_Owner' => $contact_data['parent'],
+				'CLIENT_Owner' => ($type == 'CID') ? $contact_data['parentClient'] : ($type == 'VID') ? $contact_data['ParentVendor'] : NULL,
 				'DIRECTORY_FirstName' => $firstname,
 				'DIRECTORY_LastName' => $lastname,
 				'DIRECTORY_Address' => $address,
@@ -85,7 +86,6 @@ class Contacts extends DOM_Controller {
 				'DIRECTORY_Phone' => $phone,
 				'DIRECTORY_Notes' => $notes,
 				'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME),
-				'DIRECTORY_Tag' => $contact_data['tags']
 			);
 			
 			$update = $this->administration->updateContact($contact_id,$edit_data);
@@ -115,7 +115,7 @@ class Contacts extends DOM_Controller {
 				'TITLE_ID' => $contact_data['jobTitleType'],
 				'JobTitle' => $contact_data['JobTitle'],
 				'DIRECTORY_Type' => $type,
-				'CLIENT_Owner' => $contact_data['parent'],
+				'CLIENT_Owner' => ($type == 'CID') ? $contact_data['parentClient'] : ($type == 'VID') ? $contact_data['ParentVendor'] : NULL,
 				'DIRECTORY_FirstName' => $firstname,
 				'DIRECTORY_LastName' => $lastname,
 				'DIRECTORY_Address' => $address,
@@ -123,7 +123,6 @@ class Contacts extends DOM_Controller {
 				'DIRECTORY_Phone' => $phone,
 				'DIRECTORY_Notes' => $notes,
 				'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME),
-				'DIRECTORY_Tag' => $contact_data['tags']
 			);
 			
 			$add = $this->administration->addContact($add_data);
@@ -141,6 +140,7 @@ class Contacts extends DOM_Controller {
 		// Create an empty contact.
 		$contact = array (
 			'Type' => '',
+			'Title' => '',
 			'FirstName' => '',
 			'LastName' => '',
 			'street' => '',
@@ -162,12 +162,16 @@ class Contacts extends DOM_Controller {
 		$contact = (object)$contact;
 		
 		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
+		$vendors = $this->administration->getAllVendors();
+		$types = $this->administration->getTypeList();
 		$tags = $this->administration->getAllTags();  
 
 		$data = array(
 			'page'=>'add',
 			'contact'=>$contact,
 			'clients'=>$clients,
+			'vendors'=>$vendors,
+			'types'=>$types,
 			'tags'=>$tags
 		);
 		
@@ -179,9 +183,10 @@ class Contacts extends DOM_Controller {
 			$contact_id = $_GET['cid'];
 		}
 		
-		$contact = $this->administration->getContact($contact_id);
+		$contact = $this->administration->getContactByID($contact_id);
 		$this->formatContactInfo($contact);
 		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
+		$vendors = $this->administration->getAllVendors();
 		$types = $this->administration->getTypeList();
 		$tags = $this->administration->getAllTags();  
 
@@ -190,6 +195,7 @@ class Contacts extends DOM_Controller {
 				'page'=>'edit',
 				'contact'=>$contact,
 				'clients'=>$clients,
+				'vendors'=>$vendors,
 				'types'=>$types,
 				'tags'=>$tags
 			);	
