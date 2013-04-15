@@ -15,6 +15,7 @@ function editEntry(id) {
 
 function refreshTable() {
 	  jQuery('#editMasterList').remove();
+	  jQuery('#editEntry').empty();
 	  jQuery('#loader_block').slideDown('fast',function() {
 		jQuery.ajax({
 		  type:"GET",

@@ -174,10 +174,19 @@ class Mlist extends CI_Model {
 	}
 	
 	//this returns the clients website url along with the crazy egg status and link to crazy egg url
-	private function getWebsites($cid) {
-		$query = $this->db->select('w.WEB_ID as ID,w.WEB_Url as href,wo.CrazyEggStatusID as CrazyEggLabelID')
-				 ->join('WebsiteOptions wo','wo.WEB_ID = w.WEB_ID')
-				 ->get_where('Websites w',array('w.WEB_Type'=>'CID:'.$cid));
+	public function getWebsites($cid) {
+		$sql = 'SELECT w.WEB_ID as ID,w.WEB_Url as href,m.MASTER_ID as MID,m.CMS_Vendor_Link as CMSLink,v.VENDOR_Name as VendorName,ce.Name as CrazyEggLabel FROM Websites w
+				RIGHT JOIN MasterList m ON w.WEB_ID = m.WEB_ID
+				RIGHT JOIN Vendors v ON v.VENDOR_ID = m.CMS_Vendor_ID
+				RIGHT JOIN WebsiteOptions wo ON w.WEB_ID = wo.WEB_ID
+				RIGHT JOIN xCrazyEgg ce ON wo.CrazyEggStatusID = ce.ID
+				WHERE w.WEB_Type = CONCAT("CID:",' . $cid . ');';
+		$query = $this->db->query($sql);
+		return ($query) ? $query->result() : FALSE;
+	}
+	
+	public function returnOnlyWebsite($cid) {
+		$query = $this->db->select('WEB_ID as ID,WEB_Url as href')->get_where('Websites',array('WEB_Type'=>'CID:'.$cid));
 		return ($query) ? $query->result() : FALSE;
 	}
 	
@@ -191,46 +200,10 @@ class Mlist extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
 	}
 	
-	private function getCrazyEgg($wid) {
-		$query = $this->db->select('ce.Name as title')
-				 ->join('xCrazyEgg ce','ce.ID = wo.CrazyEggStatusID')
-				 ->get_where('WebsiteOptions wo',array('wo.WEB_ID'=>$wid));
-				 
-		return ($query) ? $query->result() : FALSE;
-	}
-	
-	//get all doc files for clients from master list table
-	private function getDocLinks($cid) {
-		$query = $this->db->select('DOC_Link as href')->
-				 get_where('MasterListAssets',array('CLIENT_ID'=>$cid));
-				 
-		return ($query) ? $query->result() : FALSE;	
-	}
-	
-	private function getExcelLinks($cid) {
-		$query = $this->db->select('XLS_Link as href')->
-				 get_where('MasterListAssets',array('CLIENT_ID'=>$cid));	
-		return ($query) ? $query->result() : FALSE;
-	}
-	
-	private function getCRMNameAndLink($cid) {
-		$this->db->select('m.ASSETS_ID as AssetsID,m.CRM_Vendor_Link as href,v.VENDOR_Name as title');
-		 $this->db->from('MasterListAssets m');
-		 $this->db->join('Vendors v','m.CRM_Vendor_ID = v.VENDOR_ID');
-		 $this->db->where('m.CLIENT_ID',$cid);
-		 
-		 $query = $this->db->get();
-				 
-		return ($query) ? $query->result() : FALSE;
-	}
-	
-	private function getCMSNameAndLink($cid) {
-		$query = $this->db->select('m.MASTER_ID as MID,w.WEB_Url as href, v.VENDOR_Name as title')->
-				 join('Vendors v','m.CMS_Vendor_ID = v.VENDOR_ID')->
-				 join('Websites w','w.WEB_Type = CONCAT("VID:",v.VENDOR_ID)')->
-				 get_where('MasterList m',array('m.CLIENT_ID'=>$cid));
-
-		
+	private function getClientAssets($cid) {
+		$query = $this->db->select('m.ASSETS_ID as AssetsID,m.DOC_Link as DOCLink,m.XLS_Link as ExcelLink,m.CRM_Vendor_link as CRMLink,v.VENDOR_Name as VendorName')->
+				 join('Vendors v','m.CRM_Vendor_ID = v.VENDOR_ID')->
+				 get_where('MasterListAssets m',array('CLIENT_ID'=>$cid));
 		return ($query) ? $query->result() : FALSE;
 	}
 	
@@ -250,22 +223,8 @@ class Mlist extends CI_Model {
 		//loop through clients
 		if($clients) {
 			foreach($clients as $client) :
-				$client->Docs = 		$this->getDocLinks($client->ClientID);
-				$client->Spreadsheets = $this->getExcelLinks($client->ClientID);
-				$client->CRM = 			$this->getCRMNameAndLink($client->ClientID);
-				$client->CMS = 			$this->getCMSNameAndLink($client->ClientID);
-				$client->Websites = 	$this->getWebsites($client->ClientID);
-				$client->CrazyEgg = array();
-				
-				if(!empty($client->Websites)) {
-					foreach($client->Websites as $website) {
-						$ce = $this->getCrazyEgg($website->ID);	
-						foreach($ce as $cet) {
-							array_push($client->CrazyEgg,$cet);	
-						}
-					}
-				}
-				
+				$client->Assets = 		($this->getClientAssets($client->ClientID)) ? $this->getClientAssets($client->ClientID) : FALSE;
+				$client->Websites = 	($this->getWebsites($client->ClientID)) ? $this->getWebsites($client->ClientID) : (($this->returnOnlyWebsite($client->ClientID)) ? $this->returnOnlyWebsite($client->ClientID) : FALSE);
 				//push data to collection
 				array_push($masterlist,$client);
 			endforeach;
@@ -297,6 +256,42 @@ class Mlist extends CI_Model {
 		return ($this->db->update('MasterList',$data)) ? TRUE : FALSE;
 	}
 	
+	public function addAssets($cid,$data) {
+		$isRowsql = 'SELECT CLIENT_ID FROM MasterListAssets WHERE CLIENT_ID = "' . $cid . '";';
+		$isRow = $this->db->query($isRowsql);
+		
+		if($isRow) {
+			$this->db->where('CLIENT_ID',$cid);
+			return ($this->db->update('MasterListAssets',$data)) ? TRUE : FALSE;	
+		}else {
+			return ($this->db->insert('MasterListAssets',$data)) ? TRUE : FALSE;	
+		}
+	}
+	
+	public function addCMS($web_id,$data) {
+		$isRowsql = 'SELECT WEB_ID FROM MasterList WHERE WEB_ID = "' . $web_id . '";';
+		$isRow = $this->db->query($isRowsql);
+		
+		if($isRow) {
+			$this->db->where('WEB_ID',$web_id);
+			return ($this->db->update('MasterList',$data)) ? TRUE :FALSE;	
+		}else {
+			return ($this->db->insert('MasterList',$data)) ? TRUE : FALSE;	
+		}
+	}
+	
+	public function addCrazyEgg($web_id,$data) {
+		$isRowsql = 'SELECT WEB_ID FROM WebsiteOptions WHERE WEB_ID = "' . $web_id . '";';
+		$isRow = $this->db->query($isRowsql);
+		
+		if($isRow) {
+			$this->db->where('WEB_ID',$web_id);
+			return ($this->db->update('WebsiteOptions',$data)) ? TRUE : FALSE;	
+		}else {
+			return ($this->db->insert('WebsiteOptions',$data)) ? TRUE : FALSE;
+		}
+	}
+	
 	public function updateCrazyEgg($id,$value) {
 		$data = array(
 			'CrazyEggStatusID'=>$value
@@ -308,5 +303,9 @@ class Mlist extends CI_Model {
 	public function updateDocExcelCRM($id,$data) {
 		$this->db->where('ASSETS_ID',$id);
 		return ($this->db->update('MasterListAssets',$data)) ? TRUE : FALSE;
+	}
+	
+	public function addDocExcelCRM($data) {
+		return ($this->db->insert('MasterListAssets',$data)) ? TRUE : FALSE;
 	}
 }
