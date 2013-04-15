@@ -69,7 +69,11 @@ function MasterlistTable() { ?>
                                 <?php if(isset($client->Websites) AND !empty($client->Websites)) { ?>
                                     <ul>
                                         <?php foreach($client->Websites as $website) { ?>
-                                            <li><a href="<?= $website->href; ?>" target="_blank"><?= str_replace('http://','',$website->href); ?></a></li>
+                                        	<?php if(isset($website->href)) { ?>
+                                            	<li><a href="<?= $website->href; ?>" target="_blank"><?= str_replace('http://','',$website->href); ?></a></li>
+                                            <?php }else { ?>
+                                            	<li><span class="fillerString">...</span></li>
+                                            <?php } ?>
                                         <?php } ?>
                                     </ul>
                                 <?php }else { ?>
@@ -77,21 +81,29 @@ function MasterlistTable() { ?>
                                 <?php } ?>
                             </td>
                             <td class="crazyEgg">
-                                <?php if(isset($client->CrazyEgg) AND !empty($client->CrazyEgg)) { ?>
+                                <?php if(isset($client->Websites) AND !empty($client->Websites)) { ?>
                                     <ul>
-                                        <?php foreach($client->CrazyEgg as $crazyegg) { ?>
-                                            <li><a href="http://www.crazyegg.com/login" target="_blank"><?= $crazyegg->title; ?></a></li>
+										<?php foreach($client->Websites as $website) { ?>
+                                            <?php if(isset($website->CrazyEggLabel)) { ?>
+                                            	<li><a href="http://www.crazyegg.com/login" target="_blank"><?= $website->CrazyEggLabel; ?></a></li>
+                                            <?php }else { ?>
+												<li><span class="fillerString">...</span></li>
+											<?php }?>
                                         <?php } ?>
-                                    </li>
+                                    </ul>
                                 <?php }else { ?>
                                     <span class="fillerString">...</span>
                                 <?php } ?>        
                             </td>
                             <td class="cmslist">
-                                <?php if(isset($client->CMS) AND !empty($client->CMS)) { ?>
+                                <?php if(isset($client->Websites) AND !empty($client->Websites)) { ?>
                                     <ul>
-                                        <?php foreach($client->CMS as $cms) { ?>
-                                            <li><a href="<?= $cms->href; ?>" target="_blank"><?= $cms->title; ?></a></li>
+                                        <?php foreach($client->Websites as $website) { ?>
+                                        	<?php if(isset($website->CMSLink) AND isset($website->VendorName)) { ?>
+                                            	<li><a href="<?= $website->CMSLink; ?>" target="_blank"><?= $website->VendorName; ?></a></li>
+                                            <?php }else { ?>
+                                            	<li><span class="fillerString">...</span></li>
+                                            <?php } ?>
                                         <?php } ?>
                                     </ul>
                                 <?php }else { ?>
@@ -99,10 +111,14 @@ function MasterlistTable() { ?>
                                 <?php } ?>
                             </td>
                             <td class="crmlist">
-                                <?php if(isset($client->CRM) AND !empty($client->CRM)) { ?>
+                                <?php if(isset($client->Assets) AND !empty($client->Assets)) { ?>
                                     <ul>
-                                        <?php foreach($client->CRM as $crm) { ?>
-                                            <li><a href="<?= $crm->href; ?>" target="_blank"><?= $crm->title; ?></a></li>
+                                        <?php foreach($client->Assets as $asset) { ?>
+                                        	<?php if(isset($asset->CRMLink) && isset($asset->VendorName)) { ?>
+                                            	<li><a href="<?= $asset->CRMLink; ?>" target="_blank"><?= $asset->VendorName; ?></a></li>
+                                            <?php }else { ?>
+                                            	<li><span class="fillerString">...</span></li>
+                                            <?php } ?>
                                         <?php } ?>
                                     </ul>
                                 <?php }else { ?>
@@ -110,10 +126,14 @@ function MasterlistTable() { ?>
                                 <?php } ?>
                             </td>
                             <td class="doclist">
-                                <?php if(isset($client->Docs) AND !empty($client->Docs)) { ?>
+                                <?php if(isset($client->Assets) AND !empty($client->Assets)) { ?>
                                     <ul>
-                                        <?php foreach($client->Docs as $doc) { ?>
-                                            <li><a title="Google Doc" href="<?= $doc->href; ?>" target="_blank"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/document-word-text.png" alt="" /></a></li>
+                                        <?php foreach($client->Assets as $asset) { ?>
+                                        	<?php if(isset($asset->DOCLink)) { ?>
+                                            	<li><a title="Google Doc" href="<?= $asset->DOCLink; ?>" target="_blank"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/document-word-text.png" alt="" /></a></li>
+                                            <?php }else { ?>
+                                            	<li><span class="fillerString">...</span></li>
+                                            <?php } ?>
                                         <?php } ?>
                                     </ul>
                                 <?php }else { ?>
@@ -121,10 +141,14 @@ function MasterlistTable() { ?>
                                 <?php } ?>
                             </td>
                             <td class="excellist">
-                                <?php if(isset($client->Spreadsheets) AND !empty($client->Spreadsheets)) { ?>
+                                <?php if(isset($client->Assets) AND !empty($client->Assets)) { ?>
                                     <ul>
-                                        <?php foreach($client->Spreadsheets as $excel) { ?>
-                                            <li><a title="Google Doc" href="<?= $excel->href; ?>" target="_blank"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/document-excel.png" alt="" /></a></li>
+                                        <?php foreach($client->Assets as $asset) { ?>
+                                        	<?php if(isset($asset->ExcelLink)) { ?>
+                                            	<li><a title="Google Doc" href="<?= $asset->ExcelLink; ?>" target="_blank"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/document-excel.png" alt="" /></a></li>
+                                            <?php }else { ?>
+                                            	<li><span class="fillerString">...</span></li>
+                                            <?php } ?>
                                         <?php } ?>
                                     </ul>
                                 <?php }else { ?>

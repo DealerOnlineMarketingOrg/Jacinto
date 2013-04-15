@@ -7,60 +7,123 @@
                 	<? //print_object($client); ?>
                     <fieldset>
                         <div class="rowElem noborder noSearch">
-                        <table width="100%">
-                        	<tr>
-                            	<td style="width:33%;">DOC</td>
-                                <td style="width:33%;">XSL</td>
-                                <td style="width:33%;">CRM Name and Link</td>
-                            </tr>
-                            <tr>
-                            	<td><input class="enableCopy" type="text" value="<?= (isset($client->Docs[0]->href)) ? $client->Docs[0]->href : ''; ?>" name="doc" id="Doc" /><p class="formNote hidden">Ctrl/Command C to copy</p></td>
-                                <td><input class="enableCopy" type="text" value="<?= (isset($client->Spreadsheets[0]->href)) ? $client->Spreadsheets[0]->href : ''; ?>" name="xsl" id="xsl" /><p class="formNote hidden">Ctrl/Command C to copy</p></td>
-                                <td>
-                                    <select class="chzn-select" name="crm" id="crm_name" style="margin:12px 0;width:50%;">
-                                        <option value="">Choose A CRM</option>
-                                        <?php foreach($vendorOptions as $option) { ?>
-                                        	<option <?= ((isset($client->CRM[0]->title)) ? (($client->CRM[0]->title == $option->Name) ? 'selected="selected"':'') : ''); ?> value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
+                            <table width="100%">
+                                <tr>
+                                    <td style="width:50%;">DOC And XSL Links</td>
+                                    <td style="width:50%;">CRM Name and Link</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    	<?php if(isset($client->Assets) AND !empty($client->Assets)) { ?>
+                                        	<?php foreach($client->Assets as $asset) { ?>
+                                                <input type="text" value="<?= (isset($asset->DOCLink)) ? $asset->DOCLink : ''; ?>" name="doc" class="enableCopy" />
+                                            <?php } ?>
+                                        <?php }else { ?>
+                                    		<input type="text" name="doc" id="Doc" />
                                         <?php } ?>
-                                    </select>
-                                    <input id="crm_link" style="margin-top:5px;" class="enableCopy" type="text" value="<?= (isset($client->CRM[0]->href)) ? $client->CRM[0]->href : ''; ?>" name="crm_link" />
-                                    <p class="formNote hidden">Ctrl/Command C to copy</p>
-                                    <input type="hidden" name="assets_id" value="<?= ((isset($client->CRM[0]->AssetsID)) ? $client->CRM[0]->AssetsID : '') ; ?>" />
-								</td>
-                            </tr>
-                         </table>
+                                    </td>
+                                    <td>
+                                    	<?php if(isset($client->Assets) AND !empty($client->Assets)) { ?>
+                                        	<?php foreach($client->Assets as $asset) { ?>
+                                                <select class="chzn-select crm" name="crm" style="margin:12px 0 0 0;width:43%;" id="crm_<?= $asset->AssetsID; ?>" onChange="javascript:addValidation('crm_<?= $asset->AssetsID; ?>','crm_link_<?= $asset->AssetsID; ?>')">
+                                                    <option value="">Choose A CRM</option>
+                                                    <?php foreach($vendorOptions as $option) { ?>
+                                                        <option <?= ((isset($asset->VendorName)) ? (($asset->VendorName == $option->Name) ? 'selected="selected"':'') : ''); ?> value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            <?php } ?>
+                                        <?php }else { ?>
+                                                <select class="chzn-select" name="crm" style="margin:12px 0;width:43%;" id="crm_<?= $asset->AssetsID; ?>" onChange="javascript:addValidation('crm_<?= $asset->AssetsID; ?>','crm_link_<?= $asset->AssetsID; ?>')">
+                                                    <option value="">Choose A CRM</option>
+                                                    <?php foreach($vendorOptions as $option) { ?>
+                                                        <option value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                        <?php } ?>
+                                    </td>
+                                    
+                                </tr>
+                                <tr>
+                                	<td><p class="formNote">Full URL To the Google Doc file</p></td>
+                                    <td><p class="formNote">Select a CRM Vendor</p></td>
+                                </tr>
+                                <tr>
+                                	<td>
+									<?php if(isset($client->Assets) AND !empty($client->Assets)) { ?>
+                                        <?php foreach($client->Assets as $asset) { ?>
+                                            <input type="text" value="<?= (isset($asset->ExcelLink)) ? $asset->ExcelLink : ''; ?>" name="xsl" id="xsl" class="enableCopy" />
+                                        <?php } ?>
+                                    <?php }else { ?>
+                                        <input type="text" name="xsl" id="Doc" />
+                                    <?php } ?>
+                                    </td>
+                                    	<td>
+                                        	<?php if(isset($client->Assets) AND !empty($client->Assets)) { ?>
+                                            	<?php foreach($client->Assets as $assets) { ?>
+                                        			<input style="margin-top:0px;width:330px !important;" id="crm_link_<?= $asset->AssetsID; ?>"  class="enableCopy" type="text" value="<?= (isset($asset->CRMLink)) ? $asset->CRMLink : ''; ?>" name="crm_link" />
+                                                <?php } ?>
+                                            <?php }else { ?>
+                                                <input style="margin-top:0px;width:330px !important;" id="crm_link_<?= $asset->AssetsID; ?>" type="text" value="" placeholder="CRM Url" name="crm_link" />
+                                            <?php } ?>
+                                        </td>
+                                    <td>
+                                </tr>
+                                <tr>
+                                	<td><p class="formNote">Full URL to Google Spreadsheet</p></td>
+                                    <td><p class="formNote">Full URL to CRM Vendor</p></td>
+                                </tr>
+                             </table>
                         </div>
                         <div class="fix"></div>
-                        <?php if(isset($client->Websites)) { ?>
+                        <?php if(!empty($client->Websites)) { ?>
 							<?php $i = 0; foreach($client->Websites as $website) { ?>
                                 <div class="rowElem noSearch">
-                                    
-                                    <table style="margin:0 auto;width:99%" cellpadding="0" cellspacing="0">
+                                    <table style="margin:0 auto;width:100%" cellpadding="0" cellspacing="0">
                                     	<tr>
                                         	<td colspan="2"><h5 class="website"><a href="<?= $website->href;?>" target="_blank"><?= str_replace('http://','',$website->href); ?></a></h5></td>
                                         </tr>
                                         <tr>
-                                            <td style="width:50%;">CMS</td>
+                                            <td style="width:50%;">CMS Name and Link</td>
                                             <td style="width:50%;">Crazy Egg</td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <select class="chzn-select" style="float:left;width:38%" name="cms[<?= $client->CMS[$i]->MID; ?>]" id="web_<?= $website->ID; ?>_cms">
-                                                    <option value="">Choose a CMS</option>
-                                                    <?php foreach($vendorOptions as $option) { ?>
-                                                        <option <?= ((isset($client->CMS[$i]->title)) ? (($client->CMS[$i]->title == $option->Name) ? 'selected="selected"' : '') : ''); ?> value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                                <input type="hidden" name="master_id[<?= $client->CMS[$i]->MID; ?>]" value="<?= $client->CMS[$i]->MID; ?>" />
-                                                <input type="hidden" name="website_id[<?= $website->ID; ?>]" value="<?= $website->ID; ?>" />
+                                            	<?php if(isset($website->VendorName) AND isset($website->CMSLink)) { ?>
+                                                        <select class="chzn-select cms" style="float:left;width:43%" name="cms[<?= $website->ID ?>][id]" id="cms_<?= $website->ID; ?>_cms" onChange="javascript:addValidation('cms_<?= $website->ID; ?>','cms_link_<?= $website->ID; ?>')">
+                                                            <option value="">Choose a CMS</option>
+                                                            <?php foreach($vendorOptions as $option) { ?>
+                                                                <option <?= (($website->VendorName == $option->Name) ? 'selected="selected"' : ''); ?> value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                        
+                                                        <input id="cms_link_<?= $website->ID; ?>" style="margin-top:5px;width:330px !important;" class="enableCopy" type="text" value="<?= $website->CMSLink; ?>" name="cms[<?= $website->ID; ?>][link]" />
+
+                                                <?php }else { ?>
+                                                    <select class="chzn-select" style="float:left;width:43%" name="cms[<?= $website->ID; ?>][id]" id="cms_<?= $website->ID; ?>_cms" onChange="javascript:addValidation('cms_<?= $website->ID; ?>','cms_link_<?= $website->ID; ?>')">
+                                                        <option value="">Choose a CMS</option>
+                                                        <?php foreach($vendorOptions as $option) { ?>
+                                                            <option value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                    <input id="cms_link_<?= $website->ID; ?>" style="margin-top:5px;width:330px !important;" class="enableCopy" placeholder="CMS Url" type="text" value="" name="cms[<?= $website->ID; ?>][link]" />
+                                                <?php } ?>
                                             </td>
                                             <td>
-                                                <select class="chzn-select" style="float:left;width:38%" name="crazyegg[<?= $website->ID; ?>]" id="web_<?= $website->ID; ?>_crazyegg">
-                                                    <option value="">Choose Crazy Egg</option>
-                                                    <?php foreach($crazyEggOptions as $option) { ?>
-                                                        <option <?= (($option->ID == $website->CrazyEggLabelID) ? 'selected="selected"' : ''); ?> value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
-                                                    <?php } ?>
-                                                </select>
+                                            	<?php if(isset($website->CrazyEggLabel)) { ?>
+                                                        <select class="chzn-select" style="float:left;width:43%" name="crazyegg[<?= $website->ID; ?>]" id="web_<?= $website->ID; ?>_crazyegg">
+                                                            <option value="">Choose Crazy Egg</option>
+                                                            <?php foreach($crazyEggOptions as $option) { ?>
+                                                                <option <?= (($option->Name == $website->CrazyEggLabel) ? 'selected="selected"' : ''); ?> value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                <?php }else { ?>
+                                                        <select class="chzn-select" style="float:left;width:43%" name="crazyegg[<?= $website->ID; ?>]" id="web_<?= $website->ID; ?>_crazyegg">
+                                                            <option value="">Choose Crazy Egg</option>
+                                                            <?php foreach($crazyEggOptions as $option) { ?>
+                                                                <option value="<?= $option->ID; ?>"><?= $option->Name; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                <?php } ?>
                                             </td>
                                         </tr>
                                      </table>
@@ -72,7 +135,7 @@
                             	<p>No websites added for this client.</p>
                             </div>
                         <?php } ?>
-                        <div class="submitForm">
+                        <div class="submitForm" style="margin-top:10px;border-top:1px solid #d5d5d5;">
                             <input type="hidden" name="client_id" value="<?= $client->ClientID; ?>" />
                             <input type="submit" value="Save" class="redBtn" />
                         </div>
@@ -86,10 +149,22 @@
 <style type="text/css">
 .rowElem > label {padding:0;}
 	.ui-datepicker-append{float:left;}
+	.rowElem > input {margin-bottom:0;margin-top:0;}
+	div.formError{z-index:2000;}
 </style>
 <script type="text/javascript">
 	//re initialize jQuery
 	var $ = jQuery;
+
+	function addValidation(drop,inp) {
+		if($('#'+drop).val() != '') {
+			$('#'+inp).addClass('required');	
+		}else{
+			$('#'+inp).removeClass('required');	
+		}
+	}
+
+	$("#editMasterlistForm").validationEngine({promptPosition : "right", scroll: true});
 	
 	var crm_name_width = $('#crm_name_chzn').width() + 10;
 	$('div#editMasterList .mainForm input#crm_link').css({'width':crm_name_width + 'px'});
@@ -99,42 +174,41 @@
 	
 	$('input.enableCopy').click(function() {
 		$(this).select();
-		$(this).next().slideDown('fast');
 	});
 	
 	$('input.enableCopy').blur(function() {
 		$(this).next().slideUp('fast');
 	});
 	
+		
 	$('#editMasterlistForm').submit(function(e) {
-		e.preventDefault();
-		var formData = $(this).serialize();
-		$.ajax({
-			type:'POST',
-			data:formData,
-			url:'/admin/masterlist/form',
-			success:function(code) {
-				if(code == '1') {
-					jAlert('The clients data was successfully updated.','Success',function() {
-						refreshTable();
-					});	
-				}else {
-					alert(code);	
+		
+		if($('input.required').val() == '') {
+			jAlert('The CRM and CMS Links are required when a vendor is chosen. Please copy and paste the URL to these into the link box','Validation Error');
+		}else {
+			
+			e.preventDefault();
+			var formData = $(this).serialize();
+			$.ajax({
+				type:'POST',
+				data:formData,
+				url:'/admin/masterlist/form?cid=<?= $client->ClientID; ?>',
+				success:function(code) {
+					if(code == '1') {
+						jAlert('The clients data was successfully updated.','Success',function() {
+							refreshTable();
+						});	
+					}else {
+						jAlert('There was an issue updating the clients assets.','Error',function() {
+							$('#editMasterList').dialog('close');
+						});
+					}
 				}
-			}
-		});
+			});
+		}
 	});
 	
 	$(".chzn-select").chosen();
-	
-	$('ul.tabs li a').live('click',function() {
-		//remove all activetabs
-		$('ul.tabs').find('li.activeTab').removeClass('activeTab');
-		$(this).parent().addClass('activeTab');
-		var content = 'div#' + $(this).attr('rel');
-		$('#editMasterList div.tab_container div.tab_content').hide();
-		$('#editMasterList div.tab_container').find(content).css({'display':'block'});
-	});
 	
 	$("#editMasterList").dialog({
 		minWidth:750,

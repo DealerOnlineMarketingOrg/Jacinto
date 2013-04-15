@@ -4,9 +4,9 @@
             <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
             	<?php
 					if(isset($group)) :
-						echo form_open('/admin/groups/edit',array('id'=>'editGroupForm','class' => 'validate mainForm formPop'));
+						echo form_open('/admin/groups/edit',array('id'=>'editGroupForm','class' => 'validate mainForm formPop','style'=>'text-align:left'));
 					else :
-						echo form_open('/admin/groups/add',array('id'=>'addGroupForm','class'=>'validate mainForm formPop'));				
+						echo form_open('/admin/groups/add',array('id'=>'addGroupForm','class'=>'validate mainForm formPop','style'=>'text-align:left'));				
 					endif;
 				?>
                     <fieldset>
