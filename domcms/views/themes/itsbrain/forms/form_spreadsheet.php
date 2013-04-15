@@ -34,10 +34,16 @@
 		$r = 0;
 		foreach ($rows as $row) {
 			$cells[$c][$r]->name = $column.':'.$row;
-			if (isset($values))
-				$cells[$c][$r]->value = $values[$c][$r]->value;
-			else
+			// $values is for the body.
+			if ($c == 0 || $r == 0) {
 				$cells[$c][$r]->value = '&nbsp;';
+			} else {
+				if (isset($values))
+					// $values is offset by the column and row headers.
+					$cells[$c][$r]->value = $values[$c-1][$r-1]->value;
+				else
+					$cells[$c][$r]->value = '&nbsp;';
+			}
 			$r++;
 		}
 		$c++;

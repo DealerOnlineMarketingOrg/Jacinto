@@ -142,16 +142,17 @@
 			$dbStartDate = $form['metricsStartYear'].'/'.$form['metricsStartMonth'].'/1';
 			$dbEndDate = $form['metricsEndYear'].'/'.$form['metricsEndMonth'].'/1';
 			$sql = 'SELECT MONTH(r.REPORT_Date) as Month, YEAR(r.REPORT_Date) as Year, r.REPORT_Value as Value, s.SERVICE_Name as ServiceName, p.PROVIDERDATA_Cost as Cost ' .
-				   'FROM DPRReportServices s, DPRReports r ' .
-				   'LEFT OUTER JOIN DPRProviderData p on r.REPORT_Provider = p.PROVIDER_ID ' .
+				   'FROM DPRReports r ' .
+				   'LEFT JOIN DPRProviderData p ON (r.REPORT_Provider = p.PROVIDER_ID ' .
+				   '  AND p.PROVIDERDATA_Month = MONTH(r.REPORT_Date) ' .
+				   '  AND p.PROVIDERDATA_Year = YEAR(r.REPORT_Date)) ' .
+				   'LEFT JOIN DPRReportServices s ON r.REPORT_Service = s.SERVICE_ID ' .
 				   'WHERE r.REPORT_Date >= "' . $dbStartDate . '" ' .
 				   '  AND r.REPORT_Date <= "' . $dbEndDate . '" ' .
 				   '  AND r.REPORT_Provider = ' . $form['source']['ID'].' ' .
-				   '  AND r.REPORT_Service = s.SERVICE_ID ' .
 				   'ORDER BY s.SERVICE_Name';
 			$query = $this->db->query($sql);
 			$results = $query->result();
-			print_object($sql);
 			
 			$c = 0;
 			$values = array();
@@ -165,11 +166,11 @@
 					$values[$c][] = '';
 					if ($query->num_rows() > 0) {
 						if ($row == 'Cost') {
-							$values[$c][$r] = $results[0]->Cost;
+							$values[$c][$r]->value = $results[0]->Cost;
 						} else {
 							foreach ($results as $item) {
 								if ($item->Month == $month && $item->Year == $year && $item->ServiceName == $row) {
-									$values[$c][$r] = $query->Value;
+									$values[$c][$r]->value = $item->Value;
 									break;
 								}
 							}
@@ -180,11 +181,10 @@
 				$c++;
 			}
 			
-			print_object($values);
-			
 			$data = array(
 				'columns' => $colNames,
 				'rows' => $rowNames,
+				'values' => $values,
 			);
 			
 			$spreadsheet = $this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_spreadsheet', $data, true);
