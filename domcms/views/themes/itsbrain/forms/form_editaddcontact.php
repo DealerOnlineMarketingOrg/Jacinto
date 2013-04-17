@@ -101,7 +101,10 @@
                                 </div>
                                 <div class="rowElem noborder">
                                     <label style="white-space:nowrap"><span class="req">*</span> Main Email</label>
-                                    <div class="formRight"><?= form_input(array('class'=>'validate[custom[email]]','name'=>'WorkEmailAddress','id'=>'email','value'=>((isset($contact->Email['work'])) ? $contact->Email['work'] : ''),'style'=>'margin:0')); ?></div><div class="fix"></div>
+                                    <?php foreach ($contact->Email as $type => $email) {
+                                    	if ($type == $contact->PrimaryEmailType) { ?>
+											<div class="formRight"><?= form_input(array('class'=>'validate[custom[email]]','name'=>'WorkEmailAddress','id'=>'email','value'=>$email,'style'=>'margin:0')); ?></div><div class="fix"></div>
+                                    <?php } ?>
                                 </div>
                                 <div class="rowElem noborder">
                                     <label>Address</label>
@@ -115,7 +118,10 @@
                                 </div>
                                 <div class="rowElem noborder">
                                     <label><span class="req">*</span> Main Phone</label>
-                                    <div class="formRight"><?= form_input(array('name'=>'DirectPhone','id'=>'phone','class'=>'maskPhone validate[required,custom[phone]]','value'=>((isset($contact->Phone['main'])) ? $contact->Phone['main'] : ''),'style'=>'margin:0')); ?><span class="formNote">(999) 999-9999</span></div>
+									<?php foreach ($contact->Phone as $type => $phone) {
+                                    	if ($type == $contact->PrimaryPhoneType) { ?>
+											<div class="formRight"><?= form_input(array('name'=>'DirectPhone','id'=>'phone','class'=>'maskPhone validate[required,custom[phone]]','value'=>$phone,'style'=>'margin:0')); ?><span class="formNote">(999) 999-9999</span></div>
+                                    <?php } ?>
                                     <div class="fix"></div>
                                 </div>
                                 <div class="rowElem noborder"><label>Notes</label><div class="formRight"><?= form_textarea(array('class'=>'validate[custom[onlyLetterNumberSpAndPunctuation]]','name'=>'notes','id'=>'notes','value'=>(($contact) ? $contact->Notes : ''))); ?></div><div class="fix"></div></div>

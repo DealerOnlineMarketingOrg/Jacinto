@@ -977,8 +977,51 @@ function load_client_contacts($cid) {
 			$table .= '<tr>';
 				$table .= '<td>' . $contact->JobTitle . '</td>';
 				$table .= '<td>' . $contact->FirstName . ' ' . $contact->LastName . '</td>';
-				$table .= '<td>' . '<span style="font-weight:bold;">Personal Email</span><br /><a href="mailto:' . $contact->Email["home"] . '">' . $contact->Email['home'] . '</a></span>' . ((isset($contact->Email['work'])) ? '<br /><span style="font-weight:bold;">Work Email</span><br /><a href="mailto:' . $contact->Email["work"] . '">' . $contact->Email['work'] . '</a></span>' : '') . '</td>';
-				$table .= '<td>'  . '<span style="font-weight:bold;">Direct</span><br /><span style="white-space:nowrap;"><a href="tel:' . $contact->Phone['main'] . '">' . $contact->Phone['main'] . '</a></span>' . ((isset($contact->Phone['mobile'])) ? '<br /><span style="font-weight:bold;">Mobile</span><br /><span style="white-space:nowrap;"><a href="tel:' . $contact->Phone['mobile'] . '">' . $contact->Phone['mobile'] . '</a></span>' : '') . ((isset($contact->Phone['fax'])) ? '<br /><span style="font-weight:bold;">Fax</span><br /><span style="white-space:nowrap;"><a href="tel:' . $contact->Phone['fax'] . '">' . $contact->Phone['fax'] . '</a></span>' : '') . '<td>';
+				$table .= '<td>';
+				$count = count($contact->Email);
+				$c = 1;
+				// Locate primary.
+				foreach ($contact->Email as $type => $email) {
+					if ($type == $contact->PrimaryEmailType) {
+						$table .= '<span style="font-weight:bold;">Personal Email</span><br /><a href="mailto:' . $email . '">' . $email . '</a></span>';
+						if ($c != $count) $table .= '<br />';
+						break;
+					}
+					$c++;
+				}
+				$c = 1;
+				// Locate others.
+				foreach ($contact->Email as $type => $email) {
+					if ($type != $contact->PrimaryEmailType) {
+						$table .= '<span style="font-weight:bold;">'.$type.'</span><br /><a href="mailto:' . $email . '">' . $email . '</a></span>';
+						if ($c != $count) $table .= '<br />';
+						$c++;
+					}
+					$c++;
+				}
+				$table .= '</td><td>';
+				$count = count($contact->Phone);
+				$c = 1;
+				// Locate primary.
+				foreach ($contact->Phone as $type => $phone) {
+					if ($type == $contact->PrimaryPhoneType) {
+						$table .= '<span style="font-weight:bold;">Direct</span><br /><a href="tel:' . $phone . '">' . $phone . '</a></span>';
+						if ($c != $count) $table .= '<br />';
+						break;
+					}
+					$c++;
+				}
+				$c = 1;
+				// Locate others.
+				foreach ($contact->Phone as $type => $phone) {
+					if ($type != $contact->PrimaryPhoneType) {
+						$table .= '<span style="font-weight:bold;">'.$type.'</span><br /><a href="tel:' . $phone . '">' . $phone . '</a></span>';
+						if ($c != $count) $table .= '<br />';
+					}
+					$c++;
+				}
+				$table .= '</td>';
+
 			$table .= '</tr>';	
 		}
 		$table .= '</tbody></table>';

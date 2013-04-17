@@ -64,8 +64,22 @@
                         </div>
                         <div class="rowElem noborder">
                             <label><span class="req">*</span> Personal Email</label>
-                            <div class="formRight"><label style="margin:0;color:red">Home:</label><?= form_input(array('class'=>'required validate[required,custom[email]]','name'=>'PersonalEmailAddress','id'=>'email','value'=>((isset($masterlist->Email['home'])) ? $masterlist->Email['home'] : ''),'style'=>'margin:0')); ?></div><div class="fix"></div>
-                            <div class="formRight"><label style="margin:0;color:red">Work:</label><?= form_input(array('class'=>'validate[custom[email]]','name'=>'WorkEmailAddress','id'=>'email','value'=>((isset($masterlist->Email['work'])) ? $masterlist->Email['work'] : ''),'style'=>'margin:0')); ?></div><div class="fix"></div>
+                            <?php
+								// Locate primary.
+								foreach ($contact->Email as $type => $email) {
+									if ($type == $contact->PrimaryEmailType) { ?>
+										<div class="formRight"><label style="margin:0;color:red">Personal Email:</label><?= form_input(array('class'=>'required validate[required,custom[email]]','name'=>$type.'EmailAddress','id'=>'email','value'=>$email,'style'=>'margin:0')); ?></div><div class="fix"></div>
+									<?php }
+								}
+							?>
+                            <?php
+								// Locate others.
+								foreach ($contact->Email as $type => $email) {
+									if ($type != $contact->PrimaryEmailType) { ?>
+										<div class="formRight"><label style="margin:0;color:red"><?= $type.' Email'; ?>:</label><?= form_input(array('class'=>'required validate[required,custom[email]]','name'=>$type.'EmailAddress','id'=>'email','value'=>$email,'style'=>'margin:0')); ?></div><div class="fix"></div>
+									<?php }
+								}
+							?>
                         </div>
                         <div class="rowElem noborder">
                         	<label>Address</label>
@@ -79,6 +93,22 @@
                         </div>
                         <div class="rowElem noborder">
                             <label><span class="req">*</span> Phone</label>
+                            <?php
+								// Locate primary.
+								foreach ($contact->Phone as $type => $phone) {
+									if ($type == $contact->PrimaryPhoneType) { ?>
+										<div class="formRight"><label style="margin:0;color:red">Main/Direct:</label><?= form_input(array('class'=>'required validate[required,custom[email]]','name'=>$type.'phone','id'=>'phone','value'=>$phone,'style'=>'margin:0')); ?></div><div class="fix"></div>
+									<?php }
+								}
+							?>
+                            <?php
+								// Locate others.
+								foreach ($contact->Phone as $type => $phone) {
+									if ($type == $contact->PrimaryPhoneType) { ?>
+										<div class="formRight"><label style="margin:0;color:red">Main/Direct:</label><?= form_input(array('class'=>'required validate[required,custom[email]]','name'=>$type.'phone','id'=>'phone','value'=>$phone,'style'=>'margin:0')); ?></div><div class="fix"></div>
+									<?php }
+								}
+							?>
                             <div class="formRight"><label style="margin:0;color:red">Main/Direct:</label><?= form_input(array('name'=>'DirectPhone','id'=>'phone','class'=>'maskPhone validate[required,custom[phone]]','value'=>((isset($masterlist->Phone['main'])) ? $masterlist->Phone['main'] : ''),'style'=>'margin:0')); ?><span class="formNote">(999) 999-9999</span></div>
                             <div class="formRight"><label style="margin:0;color:red">Mobile:</label><?= form_input(array('name'=>'MobilePhone','id'=>'phone','class'=>'maskPhone validate[custom[phone]]','value'=>((isset($masterlist->Phone['mobile'])) ? $masterlist->Phone['mobile'] : ''),'style'=>'margin:0')); ?><span class="formNote">(999) 999-9999</span></div>
                             <div class="formRight"><label style="margin:0;color:red">Fax:</label><?= form_input(array('name'=>'FaxPhone','id'=>'phone','class'=>'maskPhone validate[custom[phone]]','value'=>((isset($masterlist->Phone['fax'])) ? $masterlist->Phone['fax'] : ''),'style'=>'margin:0')); ?><span class="formNote">(999) 999-9999</span></div>

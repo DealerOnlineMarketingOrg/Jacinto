@@ -43,7 +43,7 @@ class Profile extends DOM_Controller {
 		$user->viewCompanyAddress   = ArrayWithTextIndexToString($user->CompanyAddress, true);
 		$user->Emails				= mod_parser($user->Emails, 'home,work');
 		$user->viewEmails 		    = OrderArrayForTableDisplay($user->Emails);
-		$user->Phones				= mod_parser($user->Phones, 'main,mobile,fax');
+		$user->Phones				= mod_parser($user->Phones, 'home,mobile,work,fax');
 		$user->viewPhones 			= OrderArrayForTableDisplay($user->Phones);
 		$user->viewUserModules 		= ParseModulesInReadableArray($user->Modules);
 		
