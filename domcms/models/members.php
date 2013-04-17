@@ -50,29 +50,28 @@ class Members extends CI_Model {
 	
 	public function get_user_avatar($user_id = false) {
 		$this->load->helper('url');
-		$this->load->library('gravatar');
 		if($user_id) {
-			$a_sql = 'SELECT Google_Avatar, USER_Avatar as Avatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
-			$a_query = $this->db->query($a_sql);
-			$customAvatar = $a_query->row();
-			if($customAvatar->Google_Avatar != 1) {
-				if($customAvatar->Avatar != NULL) {
-					return ((file_exists(base_url() . 'assets/uploads/avatars/' . $customAvatar->Avatar)) ? base_url() . 'assets/uploads/avatars/' . $customAvatar->Avatar : base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png');
-				}else {
-					$g_sql = 'SELECT USER_GravatarEmail as Gravatar FROM Users_Info WHERE USER_ID = "' . $user_id . '";';
-					$g_query = $this->db->query($g_sql);
-					$gravatar = $g_query->row();
-					if($gravatar->Gravatar) {
-						return $this->gravatar->get_gravatar($gravatar->Gravatar);
+			$query = $this->db->select('Google_Avatar,USER_Avatar as Avatar')->get_where('Users_Info',array('USER_ID'=>$user_id));
+			if($query) {
+				$user_info = $query->row();
+				if($user_info->Google_Avatar) {
+					$google_query = $this->db->select('Avatar')->get_where('GoogleAvatars',array('USER_ID'=>$user_id));
+					if($google_query) {
+						$google_avatar = $google_query->row()->Avatar;
+						return $google_avatar;
 					}else {
-						return base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png';
+						return base_url() . 'assets/themes/itsbrain/imgs/icons/middlenav/user2.png';	
+					}
+				}else {
+					if(file_exists('/assets/uploads/avatars/' . $user_info->Avatar)) {
+						return base_url() . 'assets/uploads/avatars/' . $user_info->Avatar;	
+					}else {
+						return base_url() . 'assets/themes/itsbrain/imgs/icons/middlenav/user2.png';
 					}
 				}
-			}else {
-				return $customAvatar->Avatar;	
 			}
 		}else {
-			return base_url() . 'assets/themes/itsbrain/imgs/icons/color/users.png';
+			return base_url() . 'assets/themes/itsbrain/imgs/icons/middlenav/user2.png';
 		}
 	}
     
@@ -259,23 +258,27 @@ class Members extends CI_Model {
    	}
    }
 
-   public function save_google_avatar($email,$avatar) {
-   	 $this->db->select('USER_ID');
-	 $this->db->from('Users');
-	 $this->db->where('USER_Name',$email);
-	 $uid = $this->db->get();
-	 $uid = $uid->row()->USER_ID;
-	 
-	 if($uid && $avatar) {
-	 	$data = array(
-			'USER_Avatar' => $avatar,
-			'Google_Avatar' => 1
-		);
-		$this->db->where('USER_ID',$uid);
-		return ($this->db->update('Users_Info',$data) ? TRUE : FALSE);
+   public function Save_google_avatar($email,$avatar) {
+   	 $uid = $this->db->select('USER_ID')->get_where('Users',array('USER_Name'=>$email));
+	 //find if user has a avatar already set
+	 if($uid) {
+		$uid = $uid->row()->USER_ID;
+		$isGoogleAvatar = $this->db->select('ID')->get_where('GoogleAvatars',array('USER_ID'=>$uid));
+		if($isGoogleAvatar) { //yes there is an instance for the user. 
+			//check to see if the avatar is the same as the one we have.
+			$ifGoogleAvatarIsSame = $this->db->select('Avatar')->get_where('GoogleAvatars',array('USER_ID'=>$uid,'Avatar'=>$avatar));
+			if(!$ifGoogleAvatarIsSame) {
+				//if the avatar is different we update it
+				$this->db->where('USER_ID',$uid);
+				return ($this->db->update('GoogleAvatars',array('Avatar'=>$avatar))) ? TRUE : FALSE;
+			}
+			//if the avatar is the same as we have, then we dont need to do anything so just tell the system it was a success
+			return TRUE;
+		}else {
+			//no google avatar found so insert one	
+			return ($this->db->insert('GoogleAvatars',array('USER_ID'=>$uid,'Avatar'=>$avatar))) ? TRUE : FALSE;
+		}
 	 }
-
-	return FALSE;
    }
    
    public function checkPasswordGeneration($email) {
@@ -339,6 +342,48 @@ class Members extends CI_Model {
 		}
    }
    
+   //function only works with one column in the db. doesnt have to search by email because the controller already knew the users id.
+   //this function will email the given email address the new password to this given account.
+   /*
+   	@email = the users account that is being changed.
+	@uid = the users USER_ID 
+	@pass = the random string created by the system
+   */
+   public function simple_reset_pass($email,$uid,$pass) {
+	    //prepare the data for the update
+		$data = array(
+			'USER_Password'=>encrypt_password($pass),
+			'USER_Generated'=>1
+		);   
+		
+		//THE Active Record where clause 'WHERE USER_ID = "$uid"'
+		$this->db->where('USER_ID',$uid);
+		
+		//This returns true or false if the update failed or passed.
+		$reset = $this->db->update('Users_Info',$data);
+		
+		//if the reset is true email the new password to the user.
+		if($reset) {
+			//this is the email subject
+			$subject = 'Password Reset';
+			//this is the email message. this comes from the  msg_helper.php in /domcms/helpers folder
+			$msg = email_reset_msg($pass);	
+			
+			//run the email function in this file that emails the password with the given message
+			$emailed = $this->email_results($email,$subject,$msg);
+			
+			//if the email was sent succesfully, return true back to the system
+			if($emailed) {
+				return TRUE;	
+			}else { //if the email failed to send, return false to the system
+				return FALSE;	
+			}
+		}else {
+			//if the update failed, return false to the system.
+			return FALSE;	
+		}
+   }
+   
    public function reset_password($email, $password = false) {
 		$this->load->helper('msg_helper');
 		$email = $this->security->xss_clean($this->input->post('email'));
@@ -389,6 +434,15 @@ class Members extends CI_Model {
 			return FALSE;
 		endif;
 				
+	}
+	
+	public function simple_pass_change($uid,$pass) {
+		$data = array(
+			'USER_Password'=>encrypt_password($pass)
+		);
+		$new_pass = encrypt_password($pass);
+		$this->db->where('USER_ID',$uid);
+		return ($this->db->update('Users_Info',$data)) ? TRUE : FALSE;
 	}
 	
 	public function change_password($email, $oldPass, $newPass) {

@@ -513,7 +513,7 @@ function ClientsListingTable($clients = false) { ?>
                     <th style="text-align:left;">Group</th>
                     <th>Status</th>
                     <?php if($editPriv) { ?>
-                    <th class="noSort">Actions</th>
+                    <th class="actions">Actions</th>
                     <?php } ?>
                 </tr>
             </thead>
@@ -657,7 +657,11 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
                 <?php foreach($users as $user) { $avatar = $ci->members->get_user_avatar($user->ID); ?>
                     <tr class="tagElement <?= $user->ClassName; ?>">
                     	<td class="tags" style="vertical-align: middle;"><div class="<?= $user->ClassName; ?>">&nbsp;</div></td>
+                        <td style="text-align:center;vertical-align: middle;">
+                        	<div style="text-align:center">
                         <td style="text-align:center;vertical-align: middle;"><div style="text-align:center"><img src="<?= $avatar; ?>" style="width:30px;" alt="<?= $user->FirstName . ' ' . $user->LastName; ?>" /></div></td>
+                            </div>
+                        </td>
                         <td style="text-align:left;vertical-align: middle;"><a href="mailto:<?= $user->Username; ?>"><?= $user->Username; ?></a></td>
                         <td style="vertical-align:middle;"><?= $user->FirstName . ' ' . $user->LastName; ?></td>
                         <td style="width:30px;text-align:center;vertical-align: middle;"><?= (($user->Status) ? 'Active' : 'Disable'); ?></td>

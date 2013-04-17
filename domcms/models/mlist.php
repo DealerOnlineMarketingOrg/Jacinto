@@ -8,7 +8,7 @@ class Mlist extends CI_Model {
     }
 	
 	//RETURNS Object of clients.
-	private function getClients() {
+	public function getClients() {
 		//1 = agency, 2=group, 3=client
 		$level = $this->getLevelType();
 		//check out if we have a selected client or not.

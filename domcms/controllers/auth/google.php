@@ -55,7 +55,7 @@ class Google extends CI_Controller {
 		  
 		  if(isset($_SESSION['token'])) {
 		  	$login_user = $this->members->AuthenticateGoogleUser($user['email'],$user['id']);
-			  
+			
 			if(isset($user['picture'])) {
 				$avatar = $this->members->save_google_avatar($user['email'],$user['picture']); 
 			} 
