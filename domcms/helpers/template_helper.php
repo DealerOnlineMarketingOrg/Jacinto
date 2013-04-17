@@ -657,11 +657,7 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
                 <?php foreach($users as $user) { $avatar = $ci->members->get_user_avatar($user->ID); ?>
                     <tr class="tagElement <?= $user->ClassName; ?>">
                     	<td class="tags" style="vertical-align: middle;"><div class="<?= $user->ClassName; ?>">&nbsp;</div></td>
-                        <td style="text-align:center;vertical-align: middle;">
-                        	<div style="text-align:center">
                         <td style="text-align:center;vertical-align: middle;"><div style="text-align:center"><img src="<?= $avatar; ?>" style="width:30px;" alt="<?= $user->FirstName . ' ' . $user->LastName; ?>" /></div></td>
-                            </div>
-                        </td>
                         <td style="text-align:left;vertical-align: middle;"><a href="mailto:<?= $user->Username; ?>"><?= $user->Username; ?></a></td>
                         <td style="vertical-align:middle;"><?= $user->FirstName . ' ' . $user->LastName; ?></td>
                         <td style="width:30px;text-align:center;vertical-align: middle;"><?= (($user->Status) ? 'Active' : 'Disable'); ?></td>
@@ -780,37 +776,64 @@ function OrderArrayForTableDisplay($array, $removeEmpty = FALSE) {
 }
 
 function ModulesToEvenlyDesignedTable($mods) {
-	$table = '<table class="tableStatic" cellpadding="0" cellspacing="0" width="100%" style="margin-top:-1px;">';
-			$cols = 7;
-			$i = 1;
-			$count = 0;
-			foreach($mods as $module) {
-				// start the table row;
-				if($i == 1) {$table .= '<tr>';}
-				//if the module is active show it, if not dont
-				if($module->MODULE_Active == 1 AND strtotime($module->MODULE_Created) <= strtotime(date('Y-m-d H:i:s'))) {
-					// the table will always have 7 columns, even if the modules only have one value
-					$table .= '<td>' . $module->MODULE_Title . '</td>';
-					// increment the count so we know when to start a new row
-					$i++;
-					$count++;
-					if($count == count($mods)) {
-						if($i < $cols) {
-							$cellAdd = $cols - $i;
-							for($c = 0; $c < $cellAdd; $c++) {
-								$table .= '<td>&nbsp;</td>';	
-							}
-						}
-					}
-				}
-				//end the row and start the count over to start a new row
-				if($i == $cols) {
-					$table .= '</tr>';
-					$i = 1;
-				}
-				
-			} 
-	$table .= '</table>';
+	$table = '';
+	$cols = 4;
+	$i = 0;
+	$m = 1;
+			
+	foreach($mods as $module) {
+		
+		if($i >= $cols) {
+			$i = 0;	
+		}
+		
+		if($i == 0) {
+			$table .= '<ul class="modulesTable">';
+		}
+		
+		if($i <= $cols) {
+			$table .= '<li><span class="label">' . $module->MODULE_Title . '</span></li>';
+		}
+		// increment the count so we know when to start a new row
+		$m++;
+		$i++;
+		if($i == $cols) {
+			$table .= '</ul>';	
+		}
+		
+		
+	} 
+	echo $table;
+}
+
+function ModulesToEvenlyDesignedTableWithForm($mods,$user_id,$allMods) {
+	$table = '';
+	$cols = 4;
+	$i = 0;
+	$m = 1;
+			
+	foreach($allMods as $module) {
+		
+		if($i >= $cols) {
+			$i = 0;	
+		}
+		
+		if($i == 0) {
+			$table .= '<ul class="modulesTable">';
+		}
+		
+		if($i <= $cols) {
+			$table .= '<li><span class="label">' . $module->MODULE_Title . '</span><span class="check"><input value="' . ((isset($mods[$m])) ? (($mods[$m]->MODULE_Active==1) ? '1' : '0') : '0') . '" type="hidden" name="modules[' . $module->MODULE_ID . ']" class="ms" /><input class="mod" name="mods[' . $module->MODULE_ID . ']" type="checkbox" value="' . ((isset($mods[$m])) ? (($mods[$m]->MODULE_Active==1) ? '1' : '0') : '0') . '" ' . ((isset($mods[$m])) ? (($mods[$m]->MODULE_Active==1) ? 'checked' : '') : '') . '/></span></li>';
+		}
+		// increment the count so we know when to start a new row
+		$m++;
+		$i++;
+		if($i == $cols) {
+			$table .= '</ul>';	
+		}
+		
+		
+	} 
 	echo $table;
 }
 

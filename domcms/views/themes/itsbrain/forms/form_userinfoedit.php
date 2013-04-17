@@ -48,7 +48,7 @@
                         <div class="rowElem noborder">
                         	<label>Address</label>
                             <div class="formRight">
-                            	<?= form_input(array('name'=>'address','id'=>'address','class'=>'','value'=>$user->Address['street'])); ?>
+                            	<?= form_input(array('name'=>'street','id'=>'street','class'=>'','value'=>$user->Address['street'])); ?>
                             </div>
                             <div class="fix"></div>
                         </div>
@@ -63,6 +63,13 @@
                         	<label>State</label>
                             <div class="formRight">
                             	<?= showStates($user->Address['state']); ?>
+                            </div>
+                            <div class="fix"></div>
+                        </div>
+                        <div class="rowElem noborder">
+                        	<label>Zip</label>
+                            <div class="formRight">
+                            	<?= form_input(array('name'=>'zipcode','id'=>'zipcode','class'=>'','value'=>$user->Address['zipcode'])); ?>
                             </div>
                             <div class="fix"></div>
                         </div>
@@ -86,8 +93,25 @@
 		$.ajax({
 			type:'POST',
 			data:formData,
-			url:'/admin/users/',
+			url:'/admin/users/submit_user_details_form?uid=<?= $user->ID; ?>',
 			success:function(resp) {
+				if(resp == '1') {
+					jAlert('The users info has been updated.','Success',function() {
+						$('#editUserInfo').dialog('close');	
+					});
+				}else if(resp == '2') {
+					jAlert('The users info was updated, however, the username was not! Please check to see if you have the correct permissions to change usernames.','Success Error',function() {
+						$('#editUserInfo').dialog('close');
+					});
+				}else if(resp == '3') {
+					jAlert('The username was updated however, the users details did not update correctly. Please try again!.','Success Error',function() {
+						$('#editUserInfo').dialog('close');
+					});
+				}else{
+					jAlert('There was a problem updating the users information. Please try again.','Error',function() {
+						$('#editUserInfo').dialog('close');
+					});
+				}
 			}
 		});
 	});
@@ -96,15 +120,15 @@
 	
 	$("#editUserInfo").dialog({
 		minWidth:300,
-		width:600,
-		height:365,
+		width:650,
+		height:465,
 		autoOpen: true,
 		modal: true,
 		buttons: [
 			{
 				class:'redBtn',
 				text:'Save',
-				click:function() {$(this).dialog('close')}
+				click:function() {$('#userDetailsForm').submit();}
 			},
 		] 
 	});

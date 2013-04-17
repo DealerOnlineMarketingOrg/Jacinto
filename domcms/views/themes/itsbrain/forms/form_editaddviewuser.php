@@ -19,6 +19,17 @@
 				div#userInfo a.actions_link{float:right;margin-top:-19px;margin-right:3px;}
 				div.password_buttons{text-align:right;margin-top:10px;}
 				div.password_buttons a {color:#fff;}
+				div.tab_content table.mods {}
+				div.tab_content table.mods td,div.tab_content table.mods tr {border:none;}
+				div.tab_content table.mods {overflow:visible !important;}
+				div.tab_content#modules{overflow:auto}
+				ul.modulesTable{min-width:709px !important;width:100%;display:block;border-bottom:1px solid #d5d5d5;height:30px;border-left:1px solid #d5d5d5;border-right:1px solid #d5d5d5;}
+				ul.modulesTable li {display:inline;float:left;width:23%;padding:5px;border-right:1px solid #d5d5d5;}
+				ul.modulesTable li span.check{float:left;margin-right:5px;}
+				ul.modulesTable li:last-child{border-right:none;}
+				ul.modulesTable.first{border-top:1px solid #d5d5d5 !important;margin-top:0 !important;}
+				ul.odd{background-color:#E2E4FF;}
+				div.submitForm{margin-top:10px;}
 			</style>
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
@@ -58,14 +69,6 @@
                                     <td class="icon"><img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/icons/dark/dayCalendar.png" alt="" /></td>
                                     <td class="info"><span>Member Since:</span> <?= date('m/d/Y',strtotime($user->JoinDate)); ?></td>
                                 </td>
-                                <tr class="even">
-                                    <td class="icon"><img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/icons/dark/mail.png" alt="" /></td>
-                                    <td class="info"><span>Primary Email:</span> <a href="mailto:<?= $user->Emails[$user->PrimaryEmail]; ?>"><?= $user->Emails[$user->PrimaryEmail]; ?></a></td>
-                                </td>
-                                <tr class="odd">
-                                    <td class="icon"><img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/icons/dark/phone.png" alt="" /></td>
-                                    <td class="info"><span>Primary Phone:</span> <?= $user->Phones[$user->PrimaryPhone]; ?></td>
-                                </td>
                             </table>
                             <div class="fix"></div>
                         </div>
@@ -83,7 +86,52 @@
                     <div id="contacts" class="tab_content" style="display:none;">
                     </div>
                     <div id="modules" class="tab_content" style="display:none;">
-                    
+                    	<?php if(isset($view)) { ?>
+                        	<?= ModulesToEvenlyDesignedTable($user->Modules); ?>
+                            <script type="text/javascript">
+								jQuery('ul.modulesTable:even').addClass('even');
+								jQuery('ul.modulesTable:odd').addClass('odd');
+								jQuery('ul.modulesTable:first').addClass('first');
+							</script>
+                        <?php }else { ?>
+                        	<?= form_open('/admin/users/edit_user_modules?uid=' . $user->ID,array('name'=>'userMods','id'=>'userMods','style'=>'text-align:left;')); ?>
+                    			<?= ModulesToEvenlyDesignedTableWithForm($user->Modules,$user->ID,$allMods); ?>
+                                <div class="fix"></div>
+                                <div class="submitForm">
+                                    <input type="submit" value="submit" class="redBtn" />
+                                </div>
+                            <?= form_close(); ?>
+                            <script type="text/javascript">
+								jQuery('ul.modulesTable:even').addClass('even');
+								jQuery('ul.modulesTable:odd').addClass('odd');
+								jQuery('ul.modulesTable:first').addClass('first');
+								jQuery('input.mod').change(function() {
+									if(jQuery(this).is(':checked')) {
+										jQuery(this).prev().val('1');
+										jQuery(this).val('1');	
+									}else {
+										jQuery(this).prev().val('0');
+										jQuery(this).val('0');	
+									}
+								});
+								jQuery('#userMods').submit(function(e) {
+									e.preventDefault();
+									var formData = jQuery(this).serialize();
+									jQuery.ajax({
+										type:'POST',
+										url:'/admin/users/submit_user_edit_modules?uid=<?= $user->ID; ?>',
+										data:formData,
+										success:function(data) {
+											if(data == '1') {
+												jAlert('Module edits made successfully.','Success');
+											}else {
+												jAlert('Something went wrong!. Try Again.','Error');	
+											}
+										}
+									});
+								});
+							</script>
+                        <?php } ?>
                     </div>
                     <div id="loader" style="display:none;"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
     				<div class="fix"></div>
@@ -96,32 +144,7 @@
 <script type="text/javascript">
 
 	var $ = jQuery;
-	
-	<?php if(isset($view)) { ?>
-	
-	<?php }else { ?>
-		$('#tagChanger').change(function() {
-			var ele = $(this).find('option:selected');
-			var classname = ele.attr('rel');
-			$('#tagThumb').attr('class',classname);
-		});
-	<?php } ?>
-
-	$.mask.definitions['~'] = "[+-]";
-	$(".maskDate").mask("99/99/9999",{completed:function(){alert("Callback when completed");}});
-	$(".maskPhone").mask("(999) 999-9999");
-	$(".maskPhoneExt").mask("(999) 999-9999? x99999");
-	$(".maskIntPhone").mask("+33 999 999 999");
-	$(".maskTin").mask("99-9999999");
-	$(".maskSsn").mask("999-99-9999");
-	$(".maskProd").mask("a*-999-a999", { placeholder: " " });
-	$(".maskEye").mask("~9.99 ~9.99 999");
-	$(".maskPo").mask("PO: aaa-999-***");
-	$(".maskPct").mask("99%");
-
-	//reinitialize the validation plugin
-	$("#valid,.valid").validationEngine({promptPosition : "right", scroll: true});
-	
+		
 	$('form.editClient,form.addClient').submit(function(e) {
 		e.preventDefault();
 		<?php if(isset($view)) { ?>
@@ -162,7 +185,7 @@
 	$("#editUser").dialog({
 		minWidth:300,
 		width:875,
-		height:500,
+		height:575,
 		autoOpen: true,
 		modal: true,
 		buttons: [
