@@ -19,7 +19,8 @@
     div#dataClient{margin-top:1px;}
 </style>
 <div id="editUsersForm"></div> 
-<div id="addUserForm"></div>
+<div id="editUserDetailsForm"></div>
+<div id="passwordForms"></div>
 <div id="editAvatarForm"></div>
 <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/user_popups.js"></script>
 <script type="text/javascript"></script>
