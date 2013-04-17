@@ -385,8 +385,8 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
                     <?php } ?>
                     <th style="display:none;text-align:left;">Title Name</th>
                     <th style="text-align:left;">Contact Name</th>
-                    <th style="text-align:left;"><?php if($from_tab) { echo 'Primary'; } ?> Primary Email</th>
-                    <th style="text-align:left;"><?php if($from_tab) { echo 'Primary'; } ?> Primary Phone</th>
+                    <th style="text-align:left;"><?php if($from_tab) { echo ''; } ?> Primary Email</th>
+                    <th style="text-align:left;"><?php if($from_tab) { echo ''; } ?> Primary Phone</th>
                     <?php if($editPriv) { ?>
                     	<?php if(!$hide_actions) { ?>
                     		<th class="noSort" style="text-align:left;">Actions</th>
@@ -404,9 +404,21 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
 						$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
 						$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
 						$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;
-						$contact->PrimaryPhone = (isset($contact->Phone[$contact->PrimaryPhoneType])) ? $contact->Phone[$contact->PrimaryPhoneType] : false;
+						// Locate primary.
+						foreach ($contact->Phone as $type => $phone) {
+							if ($phone == $contact->PrimaryPhoneType) {
+								$contact->PrimaryPhone = $phone;
+								break;
+							}
+						}
 						$contact->Email = mod_parser($contact->Email);
-						$contact->PrimaryEmail = (isset($contact->Email[$contact->PrimaryEmailType])) ? $contact->Email[$contact->PrimaryEmailType] : false;
+						// Locate primary.
+						foreach ($contact->Email as $type => $email) {
+							if ($email == $contact->PrimaryEmailType) {
+								$contact->PrimaryEmail = $email;
+								break;
+							}
+						}
 						$contact->Parent = $ci->administration->getClient(substr($contact->Type,4))->Name;
 						$contact->TypeCode = substr($contact->Type,0,3);
 						$contact->TypeID = substr($contact->Type,4);
@@ -422,14 +434,26 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
                         <td style="display:none;text-align:left;white-space:nowrap;"><?= $contact->JobTitle; ?></td>
                         <td><?= $contact->Name; ?></td>
                         <td>
-                        <?php if(!$from_tab) { ?>
-                            <span style="white-space:nowrap;"><a href="mailto:'<?= ($contact->PrimaryEmail) ? $contact->PrimaryEmail : ''; ?>'"><?= ($contact->PrimaryEmail) ? $contact->PrimaryEmail : ''; ?></a></span>
-                        <?php } ?>
+                        	<?php
+								// Locate primary.
+								foreach ($contact->Email as $type => $email) {
+									if ($email == $contact->PrimaryEmailType) {
+										echo '<span style="white-space:nowrap;"><a href="mailto:'.$email.'">'.$email.'</a></span>';
+										break;
+									}
+								}
+							?>
                         </td>
                         <td>
-                        <?php if(!$from_tab) { ?>
-                        	<span style="white-space:nowrap;"><a href="tel:'<?= ($contact->PrimaryPhone) ? $contact->PrimaryPhone : ''; ?>'"><?= ($contact->PrimaryPhone) ? $contact->PrimaryPhone : ''; ?></a></span>
-                        <?php } ?>
+							<?php
+                                // Locate primary.
+                                foreach ($contact->Phone as $type => $phone) {
+                                    if ($phone == $contact->PrimaryPhoneType) {
+                                        echo '<span style="white-space:nowrap;"><a href="tel:'.$phone.'">'.$phone.'</a></span>';
+                                        break;
+                                    }
+                                }
+                            ?>
                         </td>
                         <?php if($editPriv) { ?>
                         	<?php if(!$hide_actions) { ?>
@@ -982,47 +1006,32 @@ function load_client_contacts($cid) {
 				$table .= '<td>' . $contact->JobTitle . '</td>';
 				$table .= '<td>' . $contact->FirstName . ' ' . $contact->LastName . '</td>';
 				$table .= '<td>';
-				$count = count($contact->Email);
-				$c = 1;
 				// Locate primary.
 				foreach ($contact->Email as $type => $email) {
 					if ($type == $contact->PrimaryEmailType) {
 						$table .= '<span style="font-weight:bold;">Personal Email</span><br /><a href="mailto:' . $email . '">' . $email . '</a></span>';
-						if ($c != $count) $table .= '<br />';
 						break;
 					}
-					$c++;
 				}
-				$c = 1;
 				// Locate others.
 				foreach ($contact->Email as $type => $email) {
 					if ($type != $contact->PrimaryEmailType) {
-						$table .= '<span style="font-weight:bold;">'.$type.'</span><br /><a href="mailto:' . $email . '">' . $email . '</a></span>';
-						if ($c != $count) $table .= '<br />';
-						$c++;
+						$table .= '<br /><span style="font-weight:bold;">'.$type.'</span><br /><a href="mailto:' . $email . '">' . $email . '</a></span>';
 					}
-					$c++;
 				}
 				$table .= '</td><td>';
-				$count = count($contact->Phone);
-				$c = 1;
 				// Locate primary.
 				foreach ($contact->Phone as $type => $phone) {
 					if ($type == $contact->PrimaryPhoneType) {
 						$table .= '<span style="font-weight:bold;">Direct</span><br /><a href="tel:' . $phone . '">' . $phone . '</a></span>';
-						if ($c != $count) $table .= '<br />';
 						break;
 					}
-					$c++;
 				}
-				$c = 1;
 				// Locate others.
 				foreach ($contact->Phone as $type => $phone) {
 					if ($type != $contact->PrimaryPhoneType) {
-						$table .= '<span style="font-weight:bold;">'.$type.'</span><br /><a href="tel:' . $phone . '">' . $phone . '</a></span>';
-						if ($c != $count) $table .= '<br />';
+						$table .= '<br /><span style="font-weight:bold;">'.$type.'</span><br /><a href="tel:' . $phone . '">' . $phone . '</a></span>';
 					}
-					$c++;
 				}
 				$table .= '</td>';
 

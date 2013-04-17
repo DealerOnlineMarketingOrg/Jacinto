@@ -60,11 +60,31 @@
                                 </td>
                                 <tr class="even">
                                     <td class="icon"><img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/icons/dark/mail.png" alt="" /></td>
-                                    <td class="info"><span>Primary Email:</span> <a href="mailto:<?= $user->Emails[$user->PrimaryEmail]; ?>"><?= $user->Emails[$user->PrimaryEmail]; ?></a></td>
+                                    <td class="info">
+										<?php
+                                            // Locate primary.
+                                            foreach ($user->Emails as $type => $email) {
+                                                if ($email == $user->PrimaryEmailType) {
+                                                    echo '<span>Primary Email:</span><a href="mailto:'.$email.'">'.$email.'</a>';
+                                                    break;
+                                                }
+                                            }
+                                        ?>
+                                     </td>
                                 </td>
                                 <tr class="odd">
                                     <td class="icon"><img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/icons/dark/phone.png" alt="" /></td>
-                                    <td class="info"><span>Primary Phone:</span> <?= $user->Phones[$user->PrimaryPhone]; ?></td>
+                                    <td class="info">
+                                    	<?php
+                                            // Locate primary.
+                                            foreach ($user->Phones as $type => $phone) {
+                                                if ($phone == $user->PrimaryPhoneType) {
+                                                    echo '<span>Primary Phone:</span><a href="mailto:'.$phone.'">'.$phone.'</a>';
+                                                    break;
+                                                }
+                                            }
+                                        ?>
+                                	</td>
                                 </td>
                             </table>
                             <div class="fix"></div>

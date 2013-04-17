@@ -124,8 +124,14 @@ class Users extends DOM_Controller {
 		$this->load->helper('pass');
 		$user = $this->administration->getMyUser($this->user_id);
 		//set the users primary email address
-		$user->Emails = mod_parser($user->Emails);
-		$primaryEmail = $user->Emails[$user->PrimaryEmail];
+		$user->Emails = mod_parser($user->Emails);		
+		// Locate primary.
+		foreach ($user->Emails as $type => $email) {
+			if ($email == $user->PrimaryEmailType) {
+				$primaryEmail = $email;
+				break;
+			}
+		}
 		//generate a new password
 		$newPass = createRandomString();
 		//this will also email the user their email address, this is sent to the users PRIMARY email, which could differ from the email they are logging in with.

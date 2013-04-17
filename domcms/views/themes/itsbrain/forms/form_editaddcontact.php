@@ -19,14 +19,21 @@
             		<div id="contactDetails" class="tab_content">
 						<?php
                             if($page == 'edit') :
-                                echo form_open('/admin/contacts/edit',array('id'=>'editContactForm','class' => 'validate mainForm formPop','style' => 'text-align:left'));
+                                echo form_open('/admin/contacts/edit',array('id'=>'editContactForm','class'=>'validate mainForm formPop','style'=>'text-align:left'));
                             else :
-                                echo form_open('/admin/contacts/add',array('id'=>'addContactForm','class'=>'validate mainForm formPop','style' => 'text-align:left'));				
+                                echo form_open('/admin/contacts/add',array('id'=>'addContactForm','class'=>'validate mainForm formPop','style'=>'text-align:left'));				
                             endif;
                         ?>
                             <fieldset>
+								<div class="rowElem noborder">
+                                    <label style="white-space:nowrap"><span class="req">*</span> Name</label>
+                                    <div class="formRight">
+										<div style="position:relative;float:left"><?= form_input(array('class'=>'required validate[required,custom[onlyLetterSp]]','name'=>'firstname','id'=>'firstname','value'=>(($contact) ? $contact->FirstName : ''),'style'=>'margin:0','style'=>'width:22em !important','placeholder'=>'Enter First Name')); ?><span class="formNote">First Name</span></div>
+                                    	<div style="position:relative;float:left"><?= form_input(array('class'=>'required validate[required,custom[onlyLetterSp]]','name'=>'lastname','id'=>'lastname','value'=>(($contact) ? $contact->LastName : ''),'style'=>'margin:0','style'=>'width:22em !important','placeholder'=>'Enter Last Name')); ?><span class="formNote">Last Name</span></div>
+                                </div>
+                                <div class="fix"></div>
                                 <div class="rowElem noborder">
-                                    <label><span class="req">*</span> Contact Type</label>
+                                    <label><span class="req">*</span> Type</label>
                                     <div class="formRight searchDrop">
                                         <select id="contactType" class="chzn-select validate[required]" style="width:350px" name="type">
                                             <option value="CID" <?= ($contact) ? (($contact->TypeCode == 'CID') ? 'selected="selected"' : '') : ''; ?>>Client</option>
@@ -74,7 +81,7 @@
                                     <div class="fix"></div>
                                 </div>
                                 <div class="rowElem noborder">
-                                    <label><span class="req">*</span> Job Title Type</label>
+                                    <label><span class="req">*</span> Title</label>
                                     <div class="formRight">
                                         <select class="chzn-select validate[required]" style="width:350px" name="jobTitleType">
                                             <?php
@@ -86,47 +93,60 @@
                                     </div>
                                     <div class="fix"></div>
                                 </div>
-                                <div class="rowElem noborder" style="display:none">
-                                    <label><span class="req">*</span> Job Title</label>
+                                <div class="rowElem noborder">
+                                    <label>Address</label>
                                     <div class="formRight">
-                                        <?= form_input(array('class'=>'validate[required]','name'=>'JobTitle','id'=>'JobTitle','value'=>(($contact) ? $contact->JobTitle : ''))); ?>
+										<?= form_input(array('class'=>'validate[custom[onlyLetterNumberSp]]','name'=>'street','id'=>'address','value' => ((isset($contact->Address['street'])) ? $contact->Address['street'] : ''),'style'=>'margin:0','placeholder'=>'Enter Street')); ?>
+                                    </div>
+                                    <div class="fix"></div>
+                                    <div class="formRight">
+										<?= form_input(array('class'=>'validate[custom[onlyLetterNumberSp]]','name'=>'city','id'=>'city','value'=>((isset($contact->Address['city'])) ? $contact->Address['city'] : ''),'style'=>'margin:0','placeholder'=>'Enter City')); ?>
+                                    </div>
+                                    <div class="fix"></div>
+                                    <div class="formRight searchDrop" style="margin-top:15px;margin-bottom:10px">
+                                        <?= showStates(((isset($contact->Address['state'])) ? $contact->Address['state'] : false)); ?>
+                                        <?php //((isset($contact->Address['state'])) ? '' : '<span class="formNote">No state found for user</span>'); ?>
+                                    </div>
+                                    <div class="fix"></div>
+                                    <div class="formRight">
+										<?= form_input(array('class'=>'validate[custom[onlyNumber]]','name'=>'zip','id'=>'zip','value' => ((isset($contact->Address['zipcode'])) ? $contact->Address['zipcode'] : ''),'style'=>'margin:0','placeholder'=>'Enter Zip Code')); ?>
                                     </div>
                                     <div class="fix"></div>
                                 </div>
+                                <?php if ($page == 'add') { ?>
                                 <div class="rowElem noborder">
-                                    <label style="white-space:nowrap"><span class="req">*</span> First / Last Name</label>
-                                    <div class="formRight"><?= form_input(array('class'=>'required validate[required,custom[onlyLetterSp]]','name'=>'firstname','id'=>'firstname','value'=>(($contact) ? $contact->FirstName : ''),'style'=>'margin:0','style'=>'width:22em !important')); ?>
-                                    &nbsp;/&nbsp;
-                                    <?= form_input(array('class'=>'required validate[required,custom[onlyLetterSp]]','name'=>'lastname','id'=>'lastname','value'=>(($contact) ? $contact->LastName : ''),'style'=>'margin:0','style'=>'width:22em !important')); ?></div>
-                                </div>
-                                <div class="rowElem noborder">
-                                    <label style="white-space:nowrap"><span class="req">*</span> Main Email</label>
-                                    <?php foreach ($contact->Email as $type => $email) {
-                                    	if ($type == $contact->PrimaryEmailType) { ?>
-											<div class="formRight"><?= form_input(array('class'=>'validate[custom[email]]','name'=>'WorkEmailAddress','id'=>'email','value'=>$email,'style'=>'margin:0')); ?></div><div class="fix"></div>
-                                    <?php } ?>
-                                </div>
-                                <div class="rowElem noborder">
-                                    <label>Address</label>
-                                    <div class="formRight"><?= form_input(array('class'=>'validate[custom[onlyLetterNumberSp]]','name'=>'street','id'=>'address','value' => ((isset($contact->Address['street'])) ? $contact->Address['street'] : ''),'style'=>'margin:0','placeholder'=>'Enter Street')); ?></div><div class="fix"></div>
-                                    <div class="formRight"><?= form_input(array('class'=>'validate[custom[onlyLetterNumberSp]]','name'=>'city','id'=>'city','value'=>((isset($contact->Address['city'])) ? $contact->Address['city'] : ''),'style'=>'margin:0','placeholder'=>'Enter Street')); ?></div><div class="fix"></div>
-                                    <div class="formRight searchDrop"><div class="fix"></div>
-                                        <?= showStates(((isset($contact->Address['state'])) ? $contact->Address['state'] : false)); ?>
-                                        <?= ((isset($contact->Address['state'])) ? '' : '<span class="formNote">No state found for user</span>'); ?>
-                                    </div><div class="fix"></div>
-                                    <div class="formRight"><?= form_input(array('class'=>'validate[custom[onlyNumber]]','name'=>'zip','id'=>'zip','value' => ((isset($contact->Address['zipcode'])) ? $contact->Address['zipcode'] : ''),'style'=>'margin:0','placeholder'=>'Enter Zip Code')); ?></div><div class="fix"></div>
-                                </div>
-                                <div class="rowElem noborder">
-                                    <label><span class="req">*</span> Main Phone</label>
-									<?php foreach ($contact->Phone as $type => $phone) {
-                                    	if ($type == $contact->PrimaryPhoneType) { ?>
-											<div class="formRight"><?= form_input(array('name'=>'DirectPhone','id'=>'phone','class'=>'maskPhone validate[required,custom[phone]]','value'=>$phone,'style'=>'margin:0')); ?><span class="formNote">(999) 999-9999</span></div>
-                                    <?php } ?>
+                                    <label style="white-space:nowrap"><span class="req">*</span> Primary Email</label>
+                                    <?php $currentEmail = '';
+									if (isset($contact->Email)) {
+										foreach ($contact->Email as $type => $email) {
+											if ($type == $contact->PrimaryEmailType) {
+												$currentEmail = $email;
+                                                break;
+											}
+										}
+                                	} ?>
+									<div class="formRight"><?= form_input(array('class'=>'validate[custom[email]]','name'=>'email','id'=>'email','value'=>$currentEmail,'style'=>'margin:0','placeholder'=>'Enter Work Email')); ?></div>
                                     <div class="fix"></div>
                                 </div>
+                                <div class="rowElem noborder">
+                                    <label><span class="req">*</span> Primary Phone</label>
+									<?php $currentPhone = '';
+									if (isset($contact->Phone)) {
+										foreach ($contact->Phone as $type => $phone) {
+											if ($type == $contact->PrimaryPhoneType) {
+												$currentPhone = $phone;
+                                                break;
+											}
+										}
+									} ?>
+									<div class="formRight">
+										<div style="position:relative;float:left"><?= form_input(array('name'=>'phone','id'=>'phone','class'=>'maskPhoneExt validate[required,custom[phone]]','value'=>$currentPhone,'style'=>'margin:0','placeholder'=>'Enter Work Phone','style'=>'width:25em !important')); ?><span class="formNote">(999) 999-9999 x99999</span></div>
+                                </div>
+								<div class="fix"></div>
+                                <?php } ?>
                                 <div class="rowElem noborder"><label>Notes</label><div class="formRight"><?= form_textarea(array('class'=>'validate[custom[onlyLetterNumberSpAndPunctuation]]','name'=>'notes','id'=>'notes','value'=>(($contact) ? $contact->Notes : ''))); ?></div><div class="fix"></div></div>
                                 
-                                <div class="submitForm">               
+                                <div class="submitForm">
                                     <input type="hidden" name="contact_id" value="<?= (($contact) ? $contact->ContactID : ''); ?>" />
                                     <input type="submit" value="submit" class="redBtn" />
                                 </div>
@@ -151,9 +171,9 @@
                                 <tbody>
                                     <?php if ($contact) foreach ($contact->Phone as $type => $phone) { ?>
                                     <tr>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" name="phonePrimary" value="<?= $type; ?>" <?= (($contact->PrimaryPhoneType) == $type) ? 'checked' : ''; ?> /></div></td>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" name="phonePrimary" value="<?= $phone; ?>" <?= ($phone == $contact->PrimaryPhoneType) ? 'checked' : ''; ?> /></div></td>
                                         <td width="80%"><?= (($contact) ? $contact->Phone[$type] : ''); ?></td>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Phone Number" href="javascript:editPhone('<?= (($contact) ? $contact->ContactID : ''); ?>','<?= (($contact) ? $type : ''); ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Phone Number" href="javascript:editPhone('<?= $contact->ContactID; ?>','<?= $type; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
                                     </tr>
                                     <?php } ?>
                                 </tbody>
@@ -174,9 +194,9 @@
                                 <tbody>
                                     <?php if ($contact) foreach ($contact->Email as $type => $email) { ?>
                                     <tr>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" name="emailPrimary" value="<?= $type; ?>" <?php if ($contact) echo (($contact->PrimaryEmailType == $type) ? 'checked' : ''); ?> /></div></td>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" name="emailPrimary" value="<?= $email; ?>" <?= ($email == $contact->PrimaryEmailType) ? 'checked' : ''; ?> /></div></td>
                                         <td width="80%"><?= (($contact) ? $contact->Email[$type] : ''); ?></td>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Email" href="javascript:editEmail('<?= $contact->ContactID; ?>','<?= (($contact) ? $type : ''); ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Email" href="javascript:editEmail('<?= $contact->ContactID; ?>','<?= $type; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
                                     </tr>
                                     <?php } ?>
                                 </tbody>
@@ -204,6 +224,9 @@
 	//re initialize jQuery
 	var $ = jQuery.noConflict();
 	
+	$.mask.definitions['~'] = "[+-]";
+	$(".maskPhoneExt").mask("(999) 999-9999? x99999");
+	
 	$('#contactType').change(function(e) {
 		$('#contactParentClient').css('display',(($(this).val()) == 'CID' ? '' : 'none'));
 		$('#contactParentVendor').css('display',(($(this).val()) == 'VID' ? '' : 'none'));
@@ -217,7 +240,7 @@
 		$.ajax({
 			type:'POST',
 			data:formData,
-			url:'/admin/contacts/form<?= (($page == 'edit') ? '?cid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
+			url:'/admin/contacts/form<?= (($page == 'edit') ? '?uid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
 			success:function(code) {
 				var msg;
 				if(code == '1') {
@@ -258,6 +281,9 @@
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
 			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').addClass('hidden');
+			}
 		}
 		
 		if(activeContent == 'websites') {
@@ -267,6 +293,9 @@
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').hasClass('hidden')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').removeClass('hidden');
 			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').addClass('hidden');
+			}
 		}
 		
 		if(activeContent == 'contactInfo') {
@@ -275,6 +304,9 @@
 			}
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').removeClass('hidden');
 			}
 		}
 		<?php } ?>
@@ -301,6 +333,11 @@
 					click:function() { addWebsiteForm('<?= $contact->ContactID; ?>')}
 				},
 			<?php } ?>
+				{
+					class:'redBtn hidden savePrimariesBtn',
+					text:"Save Primary Phone & Email",
+					click:function() { updatePrimaries('<?= $contact->ContactID; ?>',$("#phonePrimary").val(),$("#emailPrimary").val())}
+				},
 
 		]
 	});
@@ -323,6 +360,11 @@
 					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>')}
 				},
 			<?php } ?>
+				{
+					class:'redBtn hidden savePrimariesBtn',
+					text:"Save Primary Phone & Email",
+					click:function() { updatePrimaries('<?= $contact->ContactID; ?>',$("#phonePrimary").val(),$("#emailPrimary").val())}
+				},
 		]
 	});
 	<?php } ?>

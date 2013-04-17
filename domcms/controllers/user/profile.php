@@ -161,8 +161,8 @@ class Profile extends DOM_Controller {
 		if ($form['home_email']) $emails['home'] = 'home:'.$form['home_email'];
 		if ($form['work_email']) $emails['work'] = 'work:'.$form['work_email'];
 		$phones = array();
-		if ($form['main_phone']) $phones['main'] = 'main:'.$form['main_phone'];
-		if ($form['mobile_phone']) $phones['mobile'] = 'mobile:'.$form['mobile_phone'];
+		if ($form['work_phone']) $phones['work'] = 'work:'.$form['work_phone'];
+		if ($form['cell_phone']) $phones['cell'] = 'cell:'.$form['cell_phone'];
 		if ($form['fax_phone']) $phones['fax'] = 'fax:'.$form['fax_phone'];
 			
 		$update = array(

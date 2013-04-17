@@ -23,9 +23,21 @@
                     <tr>
                     	<td width="10%" style="vertical-align:top;">Phone:</td>
                         <td>
-                        	<span class="red"><strong>Direct:</strong></span><br /><?php echo  $display->Phone['main']; ?>
-                            <?php if(isset($display->Phone['home'])) { ?><br /><span class="red"><strong>Personal:</strong></span><br /><?php echo  $display->Phone['home']; ?><?php } ?>
-                            <?php if(isset($display->Phone['fax'])) { ?><br /><span class="red"><strong>Fax:</strong></span><br /><?php echo  $display->Phone['fax']; ?><?php } ?>
+	                        <?php
+								// Locate primary.
+								foreach ($contact->Phone as $type => $phone) {
+									if ($phone == $contact->PrimaryPhoneType) {
+										echo '<span class="red"><strong>Direct:</strong></span><br />'.$phone;
+										break;
+									}
+								}
+                                // Locate others.
+                                foreach ($contact->Phone as $type => $phone) {
+                                    if ($phone != $contact->PrimaryPhoneType) {
+										echo '<br /><span class="red"><strong>'.$type.':</strong></span><br />'.$phone;
+                                    }
+                                }
+							?>
                         </td>
                     </tr>
                     <?php } ?>

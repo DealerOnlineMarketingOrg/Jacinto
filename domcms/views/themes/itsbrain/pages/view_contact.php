@@ -65,7 +65,7 @@
                                     <tr>
                                         <td width="10%"><?= ucwords($type); ?></td>
                                         <td width="80%"><?= $contact->Phone[$type]; ?></td>
-                                        <td width="10%"><?= (($contact->PrimaryPhoneType) == $type) ? 'Primary' : ''; ?></td>
+                                        <td width="10%"><?= (($contact->PrimaryPhoneType) == $phone) ? 'Primary' : ''; ?></td>
                                     </tr>
                                     <?php } ?>
                                 </tbody>
@@ -86,7 +86,7 @@
                                     <tr>
                                         <td width="10%"><?= ucwords($type); ?></td>
                                         <td width="80%"><?= $contact->Email[$type]; ?></td>
-                                        <td width="10%"><?= (($contact->PrimaryEmailType) == $type) ? 'Primary' : ''; ?></td>
+                                        <td width="10%"><?= (($contact->PrimaryEmailType) == $email) ? 'Primary' : ''; ?></td>
                                     </tr>
                                     <?php } ?>
                                 </tbody>

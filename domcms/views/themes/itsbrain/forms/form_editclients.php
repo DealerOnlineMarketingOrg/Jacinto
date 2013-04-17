@@ -121,10 +121,20 @@
 			                <div class="rowElem noborder">
 			                    <label><span class="req">*</span> Phone</label>
 			                    <div class="formRight">
-                                	<?php if(isset($view)) { 
-										echo form_input(array('disabled'=>'disabled','class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value' => ((isset($client->Phone['main'])) ? $client->Phone['main'] : '')));
-									}else {
-										echo form_input(array('class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value' => ((isset($client->Phone['main'])) ? $client->Phone['main'] : ''))); 
+                                	<?php if (isset($client->Phone)) {
+										// Locate primary.
+										foreach ($client->Phone as $type => $phone) {
+											if ($phone == $client->PrimaryPhoneType) {
+												if(isset($view)) { 
+													echo form_input(array('disabled'=>'disabled','class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value'=>$phone));
+												}else {
+													echo form_input(array('class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value'=>$phone)); 
+												}
+												break;
+											}
+										}
+									} else {
+										echo form_input(array('disabled'=>'disabled','class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value'=>''));
 									}?>
 			                        <span class="formNote">(999) 999-9999</span>
 			                    </div>

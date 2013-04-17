@@ -23,8 +23,23 @@
                     <tr>
                       	<td width="10%" style="vertical-align:top;">Emails:</td>
                         <td>
-                        	<span class="red"><strong>Personal:</strong></span><br /><a href="mailto:<?= $display->Email['home']; ?>"><?= $display->Email['home']; ?></a><br />
-                        	<?php if(isset($display->Email['work'])) { ?><span class="red"><strong>Work:</strong></span><br /><a href="mailto:<?= $display->Email['work']; ?>"><?= $display->Email['work']; ?></a><?php } ?>
+                        	<?php
+                  				// Locate primary.
+                                foreach ($contact->Email as $type => $email) {
+                                    if ($email == $contact->PrimaryEmailType) { ?>
+	                                    <span class="red"><strong>Personal:</strong></span><br />
+                                        <a href="mailto:<?= $email; ?>"><?= $email; ?></a>
+                                        <?php break;
+                                    }
+                                }
+                                // Locate others.
+                                foreach ($contact->Email as $type => $email) {
+                                    if ($email != $contact->PrimaryEmailType) { ?>
+	                                    <span class="red"><strong><?= $type; ?>:</strong></span><br />
+                                        <a href="mailto:<?= $email; ?>"><?= $email; ?></a>
+                                    <?php }
+                                }
+							?>
                         </td>
                     </td>
                     <?php if($display->Address) { ?>
@@ -37,13 +52,23 @@
                     <tr>
                     	<td width="10%" style="vertical-align:top;">Phone:</td>
                         <td>
-                        	<span class="red"><strong>Direct:</strong></span><br /><?= $display->Phone['main']; ?>
-                            <?php if(isset($display->Phone['home'])) { ?><br />
-                            	<span class="red"><strong>Personal:</strong></span><br /><?= $display->Phone['home']; ?>
-							<?php } ?>
-                            <?php if(isset($display->Phone['fax'])) { ?><br />
-                            	<span class="red"><strong>Fax:</strong></span><br /><?= $display->Phone['fax']; ?>
-							<?php } ?>
+							<?php
+								// Locate primary.
+								foreach ($contact->Email as $type => $phone) {
+									if ($phone == $contact->PrimaryPhoneType) { ?>
+										<span class="red"><strong>Direct:</strong></span><br />
+										<a href="tel:<?= $phone; ?>"><?= $phone; ?></a>
+										<?php break;
+									}
+								}
+								// Locate others.
+								foreach ($contact->Email as $type => $phone) {
+									if ($phone != $contact->PrimaryPhoneType) { ?>
+										<span class="red"><strong><?= $type; ?>:</strong></span><br />
+										<a href="tel:<?= $phone; ?>"><?= $phone; ?></a>
+									<?php }
+								}
+                            ?>                            
                         </td>
                     </tr>
                     <?php } ?>

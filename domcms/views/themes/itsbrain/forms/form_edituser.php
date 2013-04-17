@@ -85,23 +85,31 @@
                 <div class="rowElem noborder">
                     <label><span class="req">*</span> Direct Number</label>
                     <div class="formRight">
-						<?=  form_input(array('name'=>'DirectPhone','id'=>'phone','class'=>'maskPhone validate[required,custom[phone]]','value'=>((isset($user->Phone['main'])) ? $user->Phone['main'] : ''))); ?>
-                        <span class="formNote">(999) 999-9999</span>
+                    	<?php
+							// Locate primary.
+							foreach ($contact->Phone as $type => $phone) {
+								if ($phone == $contact->PrimaryPhoneType) { ?>
+									<?=  form_input(array('name'=>'DirectPhone','id'=>'phone','class'=>'maskPhone validate[required,custom[phone]]','value'=>$phone)); ?>
+			                        <span class="formNote">(999) 999-9999</span>
+									<?php break;
+								}
+							}
+						?>
                     </div>
                     <div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">
-                    <label>Mobile Number</label>
-                    <div class="formRight">
-						<?=  form_input(array('name'=>'MobilePhone','id'=>'phone','class'=>'maskPhone validate[custom[phone]]','value'=>((isset($user->Phone['mobile'])) ? $user->Phone['mobile'] : ''))); ?>
-                        <span class="formNote">(999) 999-9999</span></div>
-                    <div class="fix"></div>
-                </div>
-                <div class="rowElem noborder">
-                    <label>Fax Number</label>
-                    <div class="formRight">
-						<?= form_input(array('name'=>'FaxPhone','id'=>'phone','class'=>'maskPhone validate[custom[phone]]','value'=>((isset($user->Phone['fax'])) ? $user->Phone['fax'] : ''))); ?>
-                        <span class="formNote">(999) 999-9999</span></div>
+					 <?php
+                        // Locate primary.
+                        foreach ($contact->Phone as $type => $phone) {
+                            if ($phone == $contact->PrimaryPhoneType) { ?>
+			                    <label><?= $type; ?> Number</label>
+                                <?=  form_input(array('name'=>$type.'Phone','id'=>'phone','class'=>'maskPhone validate[required,custom[phone]]','value'=>$phone)); ?>
+                                <span class="formNote">(999) 999-9999</span>
+                                <?php break;
+                            }
+                        }
+                    ?>
                     <div class="fix"></div>
                 </div>
                 <div class="rowElem noborder">

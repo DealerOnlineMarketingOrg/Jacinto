@@ -20,9 +20,21 @@ class Contacts extends DOM_Controller {
 		$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
 		$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
 		$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;
-		$contact->PrimaryPhone = (isset($contact->Phone[$contact->PrimaryPhoneType])) ? $contact->Phone[$contact->PrimaryPhoneType] : false;
+		// Locate primary.
+		foreach ($contact->Phone as $type => $phone) {
+			if ($phone == $contact->PrimaryPhoneType) {
+				$contact->PrimaryPhone = $phone;
+				break;
+			}
+		}
 		$contact->Email = mod_parser($contact->Email);
-		$contact->PrimaryEmail = (isset($contact->Email[$contact->PrimaryEmailType])) ? $contact->Email[$contact->PrimaryEmailType] : false;
+		// Locate primary.
+		foreach ($contact->Email as $type => $email) {
+			if ($email == $contact->PrimaryEmailType) {
+				$contact->PrimaryEmail = $email;
+				break;
+			}
+		}
 		$contact->Parent = $this->administration->getClient(substr($contact->Type,4))->Name;
 		$contact->TypeCode = substr($contact->Type,0,3);
 		$contact->TypeID = substr($contact->Type,4);
@@ -63,79 +75,113 @@ class Contacts extends DOM_Controller {
 	public function Form() {
 		$contact_data = $this->security->xss_clean($this->input->post());
 		
+		if(isset($_GET['uid']))
+			$contact_id = $_GET['uid'];
+		else
+			$contact_id = '';
+		
+		$type      = $contact_data['type'] .':' . $this->user['DropdownDefault']->SelectedClient;
+		$firstname = $contact_data['firstname'];
+		$lastname  = $contact_data['lastname'];
+		$address   = 'street:' . $contact_data['street'] . ',city:' . $contact_data['city'] . ',state:' . $contact_data['state'] . ',zipcode:' . $contact_data['zip'];
+		$notes     = $contact_data['notes'];
+
+		//prepare the add/update
+		$data = array(
+			'TITLE_ID' => $contact_data['jobTitleType'],
+			'DIRECTORY_Type' => $type,
+			'CLIENT_Owner' => ($type == 'CID') ? $contact_data['parentClient'] : ($type == 'VID') ? $contact_data['ParentVendor'] : NULL,
+			'DIRECTORY_FirstName' => $firstname,
+			'DIRECTORY_LastName' => $lastname,
+			'DIRECTORY_Address' => $address,
+			'DIRECTORY_Notes' => $notes,
+		);
+		if ($contact_id) {
+			$contact = $this->administration->updateContact($contact_id,$data);
+		} else {
+			$primaryEmail = $contact_data['email'];
+			$email     = 'work:' . $primaryEmail;
+			$primaryPhone = $contact_data['phone'];
+			$phone     = 'work:' . $primaryPhone;
+
+			$data['DIRECTORY_Created'] = date(FULL_MILITARY_DATETIME);
+			$data['DIRECTORY_Email'] = $email;
+			$data['DIRECTORY_Primary_Email'] = $primaryEmail;
+			$data['DIRECTORY_Phone'] = $phone;
+			$data['DIRECTORY_Primary_Phone'] = $primaryPhone;
+			$contact = $this->administration->addContact($data);
+		}
+		
+		if($contact) {
+			echo '1';	
+		}else {
+			echo '0';
+		}
+	}
+	
+	public function FormPhone() {
+		$contact_data = $this->security->xss_clean($this->input->post());
+		
+		if(isset($_GET['uid']))
+			$contact_id = $_GET['uid'];
+		else
+			$contact_id = '';
+			
+		$type = $form['type'];
+		$phone = $form['phone'];
+		$old = $form['old'];
+		
+		if ($contact_id)
+			$this->administation->editContactPhone($contact_id, $old, $type.':'.$phone);
+		else
+			$this->administation->addContactPhone($contact_id, $type.':'.$phone);
+		
+		if($contact_id) {
+			echo '1';	
+		}else {
+			echo '0';
+		}
+	}
+	
+	public function FormEmail() {
+		$contact_data = $this->security->xss_clean($this->input->post());
+		
+		if(isset($_GET['uid']))
+			$contact_id = $_GET['uid'];
+		else
+			$contact_id = '';
+			
+		$type = $form['type'];
+		$email = $form['email'];
+		$old = $form['old'];
+		
+		if ($contact_id)
+			$this->administation->editContactEmail($contact_id, $old, $type.':'.$email);
+		else
+			$this->administation->addContactEmail($contact_id, $type.':'.$email);
+			
+		if($contact_id) {
+			echo '1';	
+		}else {
+			echo '0';
+		}
+
+	}
+	
+	public function FormPrimary() {
+		
 		if(isset($_GET['uid'])) {
 			$contact_id = $_GET['uid'];
-			$contact_data = $this->security->xss_clean($this->input->post());
+			$phonePrimary = $_GET['phone'];
+			$emailPrimary = $_GET['email'];
+		} else
+			$contact_id = '';
 			
-			$email     = 'home:' . $contact_data['PersonalEmailAddress'] . (($contact_data['WorkEmailAddress']) ? ',work:' . $contact_data['WorkEmailAddress'] : '');
-			$phone     = 'main:' . $contact_data['DirectPhone'] . (($contact_data['MobilePhone']) ? ',mobile:' . $contact_data['MobilePhone'] : '') . (($contact_data['FaxPhone']) ? ',fax:' . $contact_data['FaxPhone'] : '');
-			$type      = $contact_data['type'] .':' . $this->user['DropdownDefault']->SelectedClient;
-			$firstname = $contact_data['firstname'];
-			$lastname  =  $contact_data['lastname'];
-			$address   = 'street:' . $contact_data['street'] . ',city:' . $contact_data['city'] . ',state:' . $contact_data['state'] . ',zipcode:' . $contact_data['zip'];
-			$notes     = $contact_data['notes'];
-
-			//prepare the update
-			$edit_data = array(
-				'TITLE_ID' => $contact_data['jobTitleType'],
-				'JobTitle' => $contact_data['JobTitle'],
-				'DIRECTORY_Type' => $type,
-				'CLIENT_Owner' => ($type == 'CID') ? $contact_data['parentClient'] : ($type == 'VID') ? $contact_data['ParentVendor'] : NULL,
-				'DIRECTORY_FirstName' => $firstname,
-				'DIRECTORY_LastName' => $lastname,
-				'DIRECTORY_Address' => $address,
-				'DIRECTORY_Email' => $email,
-				'DIRECTORY_Phone' => $phone,
-				'DIRECTORY_Notes' => $notes,
-				'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME),
-			);
-			
-			$update = $this->administration->updateContact($contact_id,$edit_data);
-			
-			if($update) {
-				echo '1';	
-			}else {
-				echo '0';
-			}
-			
-		}else {
-			$type = $contact_data['type'] .':' . $this->user['DropdownDefault']->SelectedClient;
-			$firstname = $contact_data['firstname'];
-			$lastname =  $contact_data['lastname'];
-			$address = 'street:' . $contact_data['street'] . ',city:' . $contact_data['city'] . ',state:' . $contact_data['state'] . ',zipcode:' . $contact_data['zip'];
-			$notes = $contact_data['notes'];
-			
-			$email  = 'home:' . $contact_data['PersonalEmailAddress'] . 
-			  (($contact_data['WorkEmailAddress']) ? 
-				',work:' . $contact_data['WorkEmailAddress'] : 
-			  '');
-			  
-			$phone  = 'main:' . $contact_data['DirectPhone'] . (($contact_data['MobilePhone']) ? ',mobile:' . $contact_data['MobilePhone'] : '') . (($contact_data['FaxPhone']) ? ',fax:' . $contact_data['FaxPhone'] : '');
-			
-			//prepare the add
-			$add_data = array(
-				'TITLE_ID' => $contact_data['jobTitleType'],
-				'JobTitle' => $contact_data['JobTitle'],
-				'DIRECTORY_Type' => $type,
-				'CLIENT_Owner' => ($type == 'CID') ? $contact_data['parentClient'] : ($type == 'VID') ? $contact_data['ParentVendor'] : NULL,
-				'DIRECTORY_FirstName' => $firstname,
-				'DIRECTORY_LastName' => $lastname,
-				'DIRECTORY_Address' => $address,
-				'DIRECTORY_Email' => $email,
-				'DIRECTORY_Phone' => $phone,
-				'DIRECTORY_Notes' => $notes,
-				'DIRECTORY_Created' => date(FULL_MILITARY_DATETIME),
-			);
-			
-			$add = $this->administration->addContact($add_data);
-			
-			if($add) {
-				echo '1';	
-			}else {
-				echo '0';	
-			}
-			
-		}
+		if ($contact_id)
+			$this->administation->editContactEmail($contact_id, $old, $type.':'.$email);
+		else
+			$this->administation->addContactEmail($contact_id, $type.':'.$email);
+				
 	}
 	
 	public function Add() {

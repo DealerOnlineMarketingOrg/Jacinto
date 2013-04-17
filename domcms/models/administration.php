@@ -345,8 +345,10 @@ class Administration extends CI_Model {
 					d.DIRECTORY_FirstName as FirstName,
 					d.DIRECTORY_LastName as LastName,
 					d.DIRECTORY_Address as Address,
-					d.DIRECTORY_EMAIL as Emails,
+					d.DIRECTORY_Email as Emails,
+					d.DIRECTORY_Primary_Email as PrimaryEmailType,
 					d.DIRECTORY_Phone as Phones,
+					d.DIRECTORY_Primary_Phone as PrimaryPhoneType,
 					d.DIRECTORY_Notes as Notes,
 					d.TITLE_ID as TitleID,
 					a.ACCESS_NAME as AccessName,
@@ -358,9 +360,7 @@ class Administration extends CI_Model {
 					t.TAG_ID as TagID,
 					t.TAG_Name as TeamName,
 					t.TAG_ClassName as ClassName,
-					t.TAG_Color as Color,
-					d.DIRECTORY_Primary_Email as PrimaryEmail,
-					d.DIRECTORY_Primary_Phone as PrimaryPhone";
+					t.TAG_Color as Color";
 		
 		$query = $this->db->select($selects)
 			 	 ->from('Users u')
@@ -468,7 +468,7 @@ class Administration extends CI_Model {
 	 * Will return a single client if the id is found, else it will return false
 	 */
     public function getClient($id) {
-    	$this->db->select('CLIENT_ID as ID, CLIENT_Name as Name, CLIENT_Address as Address, CLIENT_Phone as Phone, CLIENT_Notes as Notes, GROUP_ID as GroupdID');
+    	$this->db->select('CLIENT_ID as ID, CLIENT_Name as Name, CLIENT_Address as Address, CLIENT_Phone as Phone, CLIENT_Primary_Phone as PrimaryPhoneType, CLIENT_Notes as Notes, GROUP_ID as GroupdID');
 		$this->db->from('Clients');
 		$this->db->where('CLIENT_ID',$id);
 		$query = $this->db->get();
@@ -476,7 +476,7 @@ class Administration extends CI_Model {
     }
 	
 	public function getAllVendors() {
-		$this->db->select('VENDOR_ID as ID,VENDOR_Name as Name,VENDOR_Address as Address,VENDOR_Phone as Phone,VENDOR_Notes as Description');
+		$this->db->select('VENDOR_ID as ID,VENDOR_Name as Name,VENDOR_Address as Address,VENDOR_Phone as Phone,VENDOR_Primary_Phone as PrimaryPhoneType,VENDOR_Notes as Description');
 		$this->db->from('Vendors');
 		$this->db->where('VENDOR_Active','1');
 		$vendors = $this->db->get();
@@ -595,6 +595,7 @@ class Administration extends CI_Model {
 						   c.CLIENT_Name as Name,
 						   c.CLIENT_Address as Address,
 						   c.CLIENT_Phone as Phone,
+						   c.CLIENT_Primary_Phone as PrimaryPhoneType,
 						   c.CLIENT_Notes as Description,
 						   c.CLIENT_Code as Code,
 						   c.CLIENT_Tag as Tag,
@@ -1103,5 +1104,47 @@ class Administration extends CI_Model {
 		$query = $this->db->get();
 		return ($query) ? $query->row()->Signature : FALSE;
 	}
+	
+	public function editContactPhone($uid, $oldPhone, $newPhone) {
+		$data = array(
+			'DIRECTORY_Phone' => 'REPLACE(DIRECTORY_Phone,"'.$oldPhone.'","'.$newPhone.'")',
+		);
+		$this->db->where('DIRECTORY_ID',$uid);
+		$this->db->update('Directories', $data);
+	}
 
+	public function addContactPhone($uid, $newPhone) {
+		$data = array(
+			'DIRECTORY_Phone' => 'CONCAT(DIRECTORY_Phone,",'.$newPhone.'")',
+		);
+		$this->db->where('DIRECTORY_ID',$uid);
+		$this->db->update('Directories', $data);
+	}
+
+	public function editContactEmail($uid, $oldEmail, $newEmail) {
+		$data = array(
+			'DIRECTORY_Email' => 'REPLACE(DIRECTORY_Email,"'.$oldEmail.'","'.$newEmail.'")',
+		);
+		$this->db->where('DIRECTORY_ID',$uid);
+		$this->db->update('Directories', $data);
+	}
+
+	public function addContactEmail($uid, $newEmail) {
+		$data = array(
+			'DIRECTORY_Email' => 'CONCAT(DIRECTORY_Email,",'.$newEmail.'")',
+		);
+		$this->db->where('DIRECTORY_ID',$uid);
+		$this->db->update('Directories', $data);
+	}
+	
+	public function editPrimaryPhoneEmail($uid, $phonePrimary, $emailPrimary) {
+		$data = array(
+			'DIRECTORY_Primary_Email' => $emailPrimary,
+			'DIRECTORY_Primary_Phone' => $phonePrimary,
+		);
+		$this->db->where('DIRECTORY_ID',$uid);
+		$this->db->update('Directories', $data);
+			
+	}
+	
 }

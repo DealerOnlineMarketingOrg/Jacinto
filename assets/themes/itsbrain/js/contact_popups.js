@@ -141,6 +141,23 @@ function editEmail(uid, type) {
 	});
 }
 
+function updatePrimaries(uid, phonePrimary, emailPrimary) {
+	$('#addContactEmail').remove();
+	$('#editContactEmail').remove();
+	
+	$.ajax({
+		type:'GET',
+		url:'/admin/contacts/FormPrimary?uid='+uid+'&phone='+phonePrimary+'&email='+emailPrimary,
+		success:function(code) {
+			if(code == '0') {
+				jAlert('The Contact can not be found. Please try again','Error');
+			}else {
+				jAlert('The primary phone and email have been saved.','Primary');
+			}
+		}
+	});
+}
+
 function disableWebsite(wid) {
 	jConfirm('Are you sure you would like to disable this website?','Disable Confirmation',function(r) {
 		if(r) {

@@ -60,12 +60,14 @@ class Vendors extends DOM_Controller {
 		$form = $this->input->post();
 
 		$address = 'street:' . $this->security->xss_clean($form['street']) . ',city:' . $this->security->xss_clean($form['city']) . ',state:' . $this->security->xss_clean($form['state']) . ',zipcode:' . $this->security->xss_clean($form['zipcode']);
-		$phone   = $form['phone'];
+		$primaryPhone = $form['phone'];
+		$phone   = $primaryPhone;
 		 
 		$data = array(
 			'VENDOR_Name' 		=> $form['name'],
 			'VENDOR_Address' 	=> $address,
 			'VENDOR_Phone' 		=> $phone,
+			'VENDOR_Primary_Phone' => $primaryPhone,
 			'VENDOR_Notes' 		=> $form['notes'],
 			'VENDOR_Active' 	=> 1,
 			'VENDOR_ActiveTS' 	=> date('Y-m-d H:i:s'),

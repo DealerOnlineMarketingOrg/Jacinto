@@ -1,23 +1,22 @@
 <div class="uDialog">
-	<?php $pageID = (($page == 'edit') ? 'editContactPhone' : 'addContactPhone'); ?>
-    <div class="dialog-message popper" id="<?= $pageID; ?>" title="<?= (($page == 'edit') ? 'Edit' : 'Add'); ?> Phone">
+	<?php $pageID = (($page == 'edit') ? 'editContactEmail' : 'addContactEmail'); ?>
+    <div class="dialog-message popper" id="<?= $pageID; ?>" title="<?= (($page == 'edit') ? 'Edit' : 'Add'); ?> Email">
         <div class="uiForm">
             <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
                 <div class="tab_container">
-            		<div id="contactPhone" class="tab_content">
+            		<div id="contactEmail" class="tab_content">
 						<?php
                             if($page == 'edit') :
-                                echo form_open('/admin/contacts/editPhone',array('id'=>'editContactPhoneForm','class' => 'validate mainForm formPop','style' => 'text-align:left'));
+                                echo form_open('/admin/contacts/editEmail',array('id'=>'editContactEmailForm','class' => 'validate mainForm formPop','style' => 'text-align:left'));
                             else :
-                                echo form_open('/admin/contacts/addPhone',array('id'=>'addContactPhoneForm','class'=>'validate mainForm formPop','style' => 'text-align:left'));				
+                                echo form_open('/admin/contacts/addEmail',array('id'=>'addContactEmailForm','class'=>'validate mainForm formPop','style' => 'text-align:left'));				
                             endif;
                         ?>
                             <fieldset>
                                 <div class="rowElem noborder">
                                     <label><span class="req">*</span> Type</label>
                                     <div class="formRight searchDrop">
-                                        <select id="contactPhoneType" class="chzn-select validate[required]" style="width:350px" name="type">
-                                            <option value="Mobile" <?= ($contact) ? (($type == 'cell') ? 'selected="selected"' : '') : ''; ?>>Cell</option>
+                                        <select id="contactEmailType" class="chzn-select validate[required]" style="width:350px" name="type">
                                             <option value="Home" <?= ($contact) ? (($type == 'home') ? 'selected="selected"' : '') : ''; ?>>Home</option>
                                             <option value="Work" <?= ($contact) ?
 												(($type == 'work' || $type == 'main') ? 'selected="selected"' : '') : 'selected="selected"'; ?>>Work</option>
@@ -26,16 +25,14 @@
                                 </div>
                                 <div class="fix"></div>
                                 <div class="rowElem noborder">
-                                    <label><span class="req">*</span> Phone</label>
+                                    <label><span class="req">*</span> Email</label>
                                     <div class="formRight">
-                                        <div style="position:relative;float:left"><?= form_input(array('class'=>'maskPhoneExt validate[required]','name'=>'phone','id'=>'phone','value'=>($contact) ? $contact->Phone[$type] : '','style'=>'width:25em !important','placeholder'=>'Enter Phone Number')); ?>
-                                        <span class="formNote">(999) 999-9999 x99999</span></div>
+                                        <?= form_input(array('class'=>'validate[required]','name'=>'EmailNumber','id'=>'EmailNumber','value'=>($contact) ? $contact->Email[$type] : '')); ?>
                                     </div>
                                 </div>    
                                 <div class="fix"></div>
                                 <div class="submitForm">               
                                     <input type="hidden" name="contact_id" value="<?= ($contact) ? $contact->ContactID : ''; ?>" />
-                                    <input type="hidden" name="old" value="<?= ($contact) ? $type.':'.$contact->Phone[$type] : ''; ?>" />
                                     <input type="submit" value="submit" class="redBtn" />
                                 </div>
                             </fieldset>
@@ -55,9 +52,6 @@
 	//re initialize jQuery
 	var $ = jQuery.noConflict();
 	
-	$.mask.definitions['~'] = "[+-]";
-	$(".maskPhoneExt").mask("(999) 999-9999? x99999");
-	
 	$('#contactType').change(function(e) {
 		$('#contactParentClient').css('display',(($(this).val()) == 'CID' ? '' : 'none'));
 		$('#contactParentVendor').css('display',(($(this).val()) == 'VID' ? '' : 'none'));
@@ -71,7 +65,7 @@
 		$.ajax({
 			type:'POST',
 			data:formData,
-			url:'/admin/contacts/form<?= (($page == 'edit') ? '?uid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
+			url:'/admin/contacts/form<?= (($page == 'edit') ? '?cid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
 			success:function(code) {
 				var msg;
 				if(code == '1') {
@@ -137,7 +131,7 @@
 	});
 	
 	<?php if($page != 'edit') { ?>
-	$("#addContactPhone").dialog({
+	$("#addContactEmail").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,
@@ -148,10 +142,17 @@
 				text:'Close',
 				click:function() {$('#<?= $pageID; ?>').dialog('close')}
 			},
+			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
+				{
+					class:'greenBtn hidden',
+					text:"Add Email Number",
+					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>')}
+				},
+			<?php } ?>
 		]
 	});
 	<?php }else { ?>
-	$("#editContactPhone").dialog({
+	$("#editContactEmail").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,
@@ -162,6 +163,13 @@
 				text:'Close',
 				click:function() {$('#<?= $pageID; ?>').dialog('close')}
 			},
+			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
+				{
+					class:'redBtn hidden',
+					text:"Save Email Number",
+					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>')}
+				},
+			<?php } ?>
 		]
 	});
 	<?php } ?>

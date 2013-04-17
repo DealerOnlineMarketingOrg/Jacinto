@@ -102,16 +102,28 @@
     <div class="dialog-message" id="editUserContact" title="Edit User Contact Info">
         <div class="uiForm">
                 <?= form_open(base_url().'profile/update/userContactInfo', array('id' => 'UpdateUserContactInfo','class'=>'valid'));
-	            echo '<p style="margin-left:15px !important;">Home Email</p>';
-	            echo form_input(array('id' => 'home_email','name'=>'home_email','placeHolder'=>'Your Home Email','value'=>$user->Emails['home'],'class'=>'validate[required]','style'=>'margin-top:5px;'));
-    	        echo '<p style="margin-left:15px !important;">Work Email</p>';
-                echo form_input(array('id' => 'work_email','name'=>'work_email','placeHolder'=>'Your Work Email','value'=>$user->Emails['work'],'class'=>'validate[required]','style'=>'margin-top:5px;'));
-    	        echo '<p style="margin-left:15px !important;">Main Phone</p>';
-				echo form_input(array('id' => 'main_phone','name'=>'main_phone','placeHolder'=>'Your Main Phone Number','value'=>$user->Phones['main'],'class'=>'validate[required]','style'=>'margin-top:5px;'));
-    	        echo '<p style="margin-left:15px !important;">Mobile Phone</p>';
-				echo form_input(array('id' => 'mobile_phone','name'=>'mobile_phone','placeHolder'=>'Your Mobile Phone Number','value'=>$user->Phones['mobile'],'class'=>'','style'=>'margin-top:5px;'));
-    	        echo '<p style="margin-left:15px !important;">Fax Number</p>';
-				echo form_input(array('id' => 'fax_phone','name'=>'fax_phone','placeHolder'=>'Your Fax Phone Number','value'=>$user->Phones['fax'],'class'=>'','style'=>'margin-top:5px;'));
+	            
+				foreach ($contact->Email as $type => $email) {
+					echo '<p style="margin-left:15px !important;">'.$type.' Email</p>';
+					echo form_input(array('id' => $type.'_email','name'=>$type.'_email','placeHolder'=>'Your '.$type.' Email','value'=>$email,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+				}
+				
+				// Locate primary.
+				foreach ($contact->Phone as $type => $phone) {
+					if ($phone == $contact->PrimaryPhoneType) {
+						echo '<p style="margin-left:15px !important;">Main Phone</p>';
+						echo form_input(array('id' => $type.'_phone','name'=>$type.'_phone','placeHolder'=>'Your '.$type.' Phone Number','value'=>$phone,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+						break;
+					}
+				}
+				// Locate others.
+				foreach ($contact->Phone as $type => $phone) {
+					if ($phone != $contact->PrimaryPhoneType) {
+						echo '<p style="margin-left:15px !important;">'.$type.' Phone</p>';
+						echo form_input(array('id' => $type.'_phone','name'=>$type.'_phone','placeHolder'=>'Your '.$type.' Phone Number','value'=>$phone,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+					}
+				}
+				
 				echo '</form>'; ?>
         </div>
     </div>

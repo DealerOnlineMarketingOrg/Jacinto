@@ -29,7 +29,15 @@
 			                <div class="rowElem noborder">
 			                    <label>Phone</label>
 			                    <div class="formRight">
-									<?= $client->Phone['main']; ?>
+                                	<?php
+										// Locate primary.
+										foreach ($client->Phone as $type => $phone) {
+											if ($phone == $client->PrimaryPhoneType) {
+												echo $phone;
+												break;
+											}
+										}
+									?>
                                     <span class="formNote">Primary Number</span>
 			                    </div>
 			                    <div class="fix"></div>

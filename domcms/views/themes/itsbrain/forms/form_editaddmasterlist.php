@@ -104,15 +104,11 @@
                             <?php
 								// Locate others.
 								foreach ($contact->Phone as $type => $phone) {
-									if ($type == $contact->PrimaryPhoneType) { ?>
-										<div class="formRight"><label style="margin:0;color:red">Main/Direct:</label><?= form_input(array('class'=>'required validate[required,custom[email]]','name'=>$type.'phone','id'=>'phone','value'=>$phone,'style'=>'margin:0')); ?></div><div class="fix"></div>
+									if ($type != $contact->PrimaryPhoneType) { ?>
+										<div class="formRight"><label style="margin:0;color:red"><?= $type.' Phone'; ?>:</label><?= form_input(array('class'=>'required validate[required,custom[email]]','name'=>$type.'phone','id'=>'phone','value'=>$phone,'style'=>'margin:0')); ?></div><div class="fix"></div>
 									<?php }
 								}
 							?>
-                            <div class="formRight"><label style="margin:0;color:red">Main/Direct:</label><?= form_input(array('name'=>'DirectPhone','id'=>'phone','class'=>'maskPhone validate[required,custom[phone]]','value'=>((isset($masterlist->Phone['main'])) ? $masterlist->Phone['main'] : ''),'style'=>'margin:0')); ?><span class="formNote">(999) 999-9999</span></div>
-                            <div class="formRight"><label style="margin:0;color:red">Mobile:</label><?= form_input(array('name'=>'MobilePhone','id'=>'phone','class'=>'maskPhone validate[custom[phone]]','value'=>((isset($masterlist->Phone['mobile'])) ? $masterlist->Phone['mobile'] : ''),'style'=>'margin:0')); ?><span class="formNote">(999) 999-9999</span></div>
-                            <div class="formRight"><label style="margin:0;color:red">Fax:</label><?= form_input(array('name'=>'FaxPhone','id'=>'phone','class'=>'maskPhone validate[custom[phone]]','value'=>((isset($masterlist->Phone['fax'])) ? $masterlist->Phone['fax'] : ''),'style'=>'margin:0')); ?><span class="formNote">(999) 999-9999</span></div>
-                            <div class="fix"></div>
                         </div>
                         <div class="rowElem noborder"><label>Notes</label><div class="formRight"><?= form_textarea(array('class'=>'validate[custom[onlyLetterNumberSpAndPunctuation]]','name'=>'notes','id'=>'notes', 'value' => $masterlist->Notes)); ?></div><div class="fix"></div></div>
                             

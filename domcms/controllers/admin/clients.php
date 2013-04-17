@@ -80,7 +80,8 @@ class Clients extends DOM_Controller {
 	
 	public function form() {
 		//build the phone string
-		$phone = 'main:' . $this->security->xss_clean($this->input->post('phone'));
+		$primaryPhone =  $this->security->xss_clean($this->input->post('phone'));
+		$phone = 'work:' . $primaryPhone;
 		//build the address string
 		$address = 'street:' . $this->security->xss_clean($this->input->post('street')) . ',city:' . $this->security->xss_clean($this->input->post('city')) . ',state:' . $this->security->xss_clean($this->input->post('state')) . ',zipcode:' . $this->security->xss_clean($this->input->post('zip'));
 		
@@ -88,6 +89,7 @@ class Clients extends DOM_Controller {
 			'CLIENT_Name'=>$this->security->xss_clean($this->input->post('ClientName')),
 			'CLIENT_Address'=>$address,
 			'CLIENT_Phone'=>$phone,
+			'CLIENT_Primary_Phone'=>$primaryPhone,
 			'CLIENT_Notes'=>$this->security->xss_clean($this->input->post('Notes')),
 			'CLIENT_Code'=>$this->security->xss_clean($this->input->post('ClientCode')),
 			'CLIENT_Tag'=>$this->security->xss_clean($this->input->post('tags')),
