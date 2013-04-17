@@ -20,7 +20,9 @@ class Contacts extends DOM_Controller {
 		$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
 		$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
 		$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;
+		$contact->PrimaryPhone = (isset($contact->Phone[$contact->PrimaryPhoneType])) ? $contact->Phone[$contact->PrimaryPhoneType] : false;
 		$contact->Email = mod_parser($contact->Email);
+		$contact->PrimaryEmail = (isset($contact->Email[$contact->PrimaryEmailType])) ? $contact->Email[$contact->PrimaryEmailType] : false;
 		$contact->Parent = $this->administration->getClient(substr($contact->Type,4))->Name;
 		$contact->TypeCode = substr($contact->Type,0,3);
 		$contact->TypeID = substr($contact->Type,4);
@@ -39,13 +41,13 @@ class Contacts extends DOM_Controller {
 	}
 	
 	public function View() {
-		if(isset($_GET['cid'])) {
-			$contact_id = $_GET['cid'];	
+		if(isset($_GET['uid'])) {
+			$contact_id = $_GET['uid'];	
 		}else {
 			$contact_id = $this->user['DropdownDefault']->SelectedContact;
 		}
 		
-		$contact = $this->administration->getContactByID($contact_id);
+		$contact = $this->administration->getContact($contact_id);
 		$this->formatContactInfo($contact);
 		
 		if($contact) {
@@ -61,8 +63,8 @@ class Contacts extends DOM_Controller {
 	public function Form() {
 		$contact_data = $this->security->xss_clean($this->input->post());
 		
-		if(isset($_GET['cid'])) {
-			$contact_id = $_GET['cid'];
+		if(isset($_GET['uid'])) {
+			$contact_id = $_GET['uid'];
 			$contact_data = $this->security->xss_clean($this->input->post());
 			
 			$email     = 'home:' . $contact_data['PersonalEmailAddress'] . (($contact_data['WorkEmailAddress']) ? ',work:' . $contact_data['WorkEmailAddress'] : '');
@@ -137,30 +139,6 @@ class Contacts extends DOM_Controller {
 	}
 	
 	public function Add() {
-		// Create an empty contact.
-		$contact = array (
-			'Type' => '',
-			'Title' => '',
-			'FirstName' => '',
-			'LastName' => '',
-			'street' => '',
-			'city' => '',
-			'zip' => '',
-			'Notes' => '',
-			'PersonalEmailAddress' => '',
-			'WorkEmailAddress' => '',
-			'DirectPhone' => '',
-			'MobilePhone' => '',
-			'FaxPhone' => '',
-			'jobTitleType' => '',
-			'JobTitle' => '',
-			'parent' => '',
-			'DealershipID' => '',
-			'ContactID' => '',
-			'TagID' => ''
-		);
-		$contact = (object)$contact;
-		
 		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
 		$vendors = $this->administration->getAllVendors();
 		$types = $this->administration->getTypeList();
@@ -168,22 +146,23 @@ class Contacts extends DOM_Controller {
 
 		$data = array(
 			'page'=>'add',
-			'contact'=>$contact,
+			'contact'=>false,
 			'clients'=>$clients,
 			'vendors'=>$vendors,
 			'types'=>$types,
-			'tags'=>$tags
+			'tags'=>$tags,
+			'websites'=>'',
 		);
 		
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddcontact',$data);
 	}
 	
 	public function Edit() {
-		if(isset($_GET['cid'])) {
-			$contact_id = $_GET['cid'];
+		if(isset($_GET['uid'])) {
+			$contact_id = $_GET['uid'];
 		}
 		
-		$contact = $this->administration->getContactByID($contact_id);
+		$contact = $this->administration->getContact($contact_id);
 		$this->formatContactInfo($contact);
 		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
 		$vendors = $this->administration->getAllVendors();
@@ -197,12 +176,75 @@ class Contacts extends DOM_Controller {
 				'clients'=>$clients,
 				'vendors'=>$vendors,
 				'types'=>$types,
-				'tags'=>$tags
+				'tags'=>$tags,
+				'websites'=>load_contact_websites($contact_id),
 			);	
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddcontact',$data);
 		}else {
 			echo '0';	
 		}
+	}
+	
+	public function PhoneAdd() {
+
+		$data = array(
+			'page'=>'add',
+			'contact'=>false,
+		);
+		
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddphone',$data);
+	}
+	
+	public function PhoneEdit() {
+		if(isset($_GET['uid'])) {
+			$contact_id = $_GET['uid'];
+			$type = $_GET['type'];
+		}
+		
+		$contact = $this->administration->getContact($contact_id);
+		$this->formatContactInfo($contact);
+
+		if($contact) {
+			$data = array(
+				'page'=>'edit',
+				'contact'=>$contact,
+				'type'=>$type,
+			);	
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddphone',$data);
+		}else {
+			echo '0';	
+		}		
+	}
+	
+	public function EmailAdd() {
+
+		$data = array(
+			'page'=>'add',
+			'contact'=>false,
+		);
+		
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddemail',$data);
+	}
+	
+	public function EmailEdit() {
+		if(isset($_GET['uid'])) {
+			$contact_id = $_GET['uid'];
+			$type = $_GET['type'];
+		}
+		
+		$contact = $this->administration->getContact($contact_id);
+		$this->formatContactInfo($contact);
+
+		if($contact) {
+			$data = array(
+				'page'=>'edit',
+				'contact'=>$contact,
+				'type'=>$type,
+			);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddemail',$data);
+		}else {
+			echo '0';	
+		}		
 	}
 
 }

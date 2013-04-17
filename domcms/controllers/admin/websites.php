@@ -8,8 +8,11 @@ class Websites extends DOM_Controller {
 	//when working with a vendor, we fill this
 	public $vendor_id;
 	
-	//if were editing we should always have this
+	//if we're editing we should always have this
 	public $website_id;
+	
+	//when working with a contact, we use this
+	public $contact_id;
 	
     public function __construct() {
         parent::__construct();
@@ -26,11 +29,19 @@ class Websites extends DOM_Controller {
 		}elseif(isset($_GET['wid'])) {
 			$this->website_id = $_GET['wid'];
 		}
+		if(isset($_POST['uid'])) {
+			$this->contact_id = $_POST['uid'];
+		}elseif(isset($_GET['uid'])) {
+			$this->contact_id = $_GET['uid'];
+		}
 	}
 	
 	public function Load_table() {
 		$this->load->helper('template');
-		$table = load_client_websites($this->client_id);
+		if (isset($this->client_id))
+			$table = load_client_websites($this->client_id);
+		if (isset($this->contact_id))
+			$table = load_contact_websites($this->contact_id);
 		print $table;
 	}
 	
@@ -46,6 +57,13 @@ class Websites extends DOM_Controller {
 			}
 		}elseif(isset($_GET['vid'])) {
 			$add = $this->administration->addKnownVendorWebsite($form,$_GET['vid']);
+			if($add) {
+				print 1;	
+			}else {
+				print 0;
+			}
+		}elseif(isset($_GET['uid'])) {
+			$add = $this->administration->addKnownVendorWebsite($form,$_GET['uid']);
 			if($add) {
 				print 1;	
 			}else {
@@ -107,7 +125,8 @@ class Websites extends DOM_Controller {
 			$vendors = $this->administration->getAllVendors();
 			//prepare the array
 			$data = array(
-				'client'=>$client,
+				'caller'=>$client,
+				'type'=>'cid',
 				'vendors'=>$vendors,
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE),
 			);
@@ -118,9 +137,23 @@ class Websites extends DOM_Controller {
 			$vendor = $this->administration->getVendor($_GET['vid']);
 			$data = array(
 				'selectedVendor'=>$vendor->ID,
+				'type'=>'vid',
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
-				
 			);
+		}elseif(isset($_GET['uid'])) {
+			$this->contact_id = $_GET['uid'];
+			$contact = $this->administration->getContact($_GET['uid']);
+			// ID property on add websites page.
+			$contact->ID = $contact->ContactID;
+			//vendors are not associated per contact
+			$vendors = $this->administration->getAllVendors();
+			$data = array(
+				'caller'=>$contact,
+				'type'=>'uid',
+				'vendors'=>$vendors,
+				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
+			);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
 		}
 	}
 	

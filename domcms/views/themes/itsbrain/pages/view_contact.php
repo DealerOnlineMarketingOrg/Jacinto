@@ -12,35 +12,35 @@
                         <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
                             <thead>
                                 <tr>
-                                    <td width="1%"></td>
-                                    <td width="99%"></td>
+                                    <td width="37px"></td>
+                                    <td width=""></td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td></td>
+                                    <td class="iUser"></td>
                                     <td>Name: <?= $contact->Name; ?></td>
                                 </tr>
-                                    <td></td>
+                                    <td class="iVcard"></td>
                                     <td>Title: <?= $contact->JobTitle; ?></td>
                                 </tr>
                                 <tr>
-                                    <td></td>
+                                    <td class="iHome"></td>
                                     <td>Address: <?= $contact->Address['street'].'  '.$contact->Address['city'].', '.$contact->Address['state'].' '.$contact->Address['zipcode']; ?></td>
                                 </tr>
                                 <tr>
-                                	<td></td>
-                                    <td>Primary Email: <?= $contact->Email['work']; ?></td>
+                                	<td class="iMail"></td>
+                                    <td>Primary Email: <span style="white-space:nowrap;"><a href="tel:'<?= ($contact->PrimaryPhone) ? $contact->PrimaryPhone : ''; ?>'"><?= ($contact->PrimaryPhone) ? $contact->PrimaryPhone : ''; ?></a></span></td>
                                 <tr>
-                                    <td></td>
-                                    <td>Primary Phone: <?= $contact->Phone['main']; ?></td>
+                                    <td class="iPhone"></td>
+                                    <td>Primary Phone: <span style="white-space:nowrap;"><a href="mailto:'<?= ($contact->PrimaryEmail) ? $contact->PrimaryEmail : ''; ?>'"><?= ($contact->PrimaryEmail) ? $contact->PrimaryEmail : ''; ?></a></span></td>
                                 </tr>
                                 <tr>
-                                    <td></td>
+                                    <td class="iCompanies"></td>
                                     <td>Member of: <?= $contact->Dealership; ?></td>
                                 </tr>
                                 <tr>
-                                    <td></td>
+                                    <td class="iClipboard"></td>
                                     <td>Notes: <?= $contact->Notes; ?></td>
                                 </tr>
                             </tbody>
@@ -51,59 +51,47 @@
                         <?= $websites; ?>
     				</div>
             		<div id="ContactInfo" class="tab_content" style="display:none;padding:0;">
-                    	<div style="text-align:center"><label>Phone Numbers</label></div>
-                        <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
-                            <thead>
-                                <tr>
-                                    <td width="10%">Type</td>
-                                    <td width="80%">Phone Number</td>
-                                    <td width="10%"></td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Cell</td>
-                                    <td><?= $contact->Phone['main']; ?></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>Home</td>
-                                    <td><?= isset($contact->Phone['mobile']) ? $contact->Phone['mobile'] : ''; ?></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>Office</td>
-                                    <td><?= isset($contact->Phone['fax']) ? $contact->Phone['fax'] : ''; ?></td>
-                                    <td></td>
-                                </tr>                                
-                            </tbody>
-                        </table>
+                    	<div style="margin-top:10px;margin-bottom:60px;">
+                            <div style="text-align:center;"><label><div class="iPhone" style="width:14em;margin:0 auto;">Phone Numbers</div></label></div>
+                            <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
+                                <thead>
+                                    <tr>
+                                        <td width="10%" style="text-align:left;padding-left:10px;">Type</td>
+                                        <td width="90%" colspan="2" style="text-align:left;padding-left:10px;">Phone Number</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($contact->Phone as $type => $phone) { ?>
+                                    <tr>
+                                        <td width="10%"><?= ucwords($type); ?></td>
+                                        <td width="80%"><?= $contact->Phone[$type]; ?></td>
+                                        <td width="10%"><?= (($contact->PrimaryPhoneType) == $type) ? 'Primary' : ''; ?></td>
+                                    </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
                         
-                        <p></p>
-                        <p></p>
-                        
-						<div style="text-align:center"><label>Email Addresses</label></div>
-                        <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
-                            <thead>
-                                <tr>
-                                    <td width="10%">Type</td>
-                                    <td width="80%">Email Address</td>
-                                    <td width="10%"></td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Personal</td>
-                                    <td><?= $contact->Email['home']; ?></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>Work</td>
-                                    <td><?= isset($contact->Email['work']) ? $contact->Email['work'] : ''; ?></td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                        </table>
+						<div style="margin-top:10px;">
+                            <div style="text-align:center;"><label class="iMail"><div class="iMail" style="width:14em;margin:0 auto;">Email Addresses</div></label></div>
+                            <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
+                                <thead>
+                                    <tr>
+                                        <td width="10%" style="text-align:left;padding-left:10px;">Type</td>
+                                        <td width="90%" colspan="2" style="text-align:left;padding-left:10px;">Email Address</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($contact->Email as $type => $email) { ?>
+                                    <tr>
+                                        <td width="10%"><?= ucwords($type); ?></td>
+                                        <td width="80%"><?= $contact->Email[$type]; ?></td>
+                                        <td width="10%"><?= (($contact->PrimaryEmailType) == $type) ? 'Primary' : ''; ?></td>
+                                    </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
     				</div>
     				<div class="fix"></div>
     			</div>	

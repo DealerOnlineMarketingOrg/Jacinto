@@ -52,10 +52,10 @@ function MasterlistTable() { ?>
                         <th class="crazyEgg">Crazy Egg</th>
                         <th class="cmslist">CMS</th>
                         <th class="crmlist">CRM</th>
-                        <th class="doclist actions">DOC</th>
-                        <th class="excellist actions">XSL</th>
+                        <th class="doclist noSort">DOC</th>
+                        <th class="excellist noSort">XSL</th>
                         <?php if($editPriv) { ?>
-                            <th class="actions">Actions</th>
+                            <th class="noSort">Actions</th>
                         <?php } ?>
                     </tr>
                 </thead>
@@ -157,7 +157,7 @@ function MasterlistTable() { ?>
                             </td>
                             <?php //blue-document-excel.png; ?>
                             <?php if($editPriv) { ?>
-                                <td class="actionsCol actions">
+                                <td class="actionsCol noSort">
                                     <a title="Edit Client" href="javascript:editEntry('<?= $client->ClientID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
                                 </td>
                             <?php } ?>
@@ -193,7 +193,7 @@ function AgencyListingTable($agencies = false) { ?>
                     <th style="text-align:left;">Description</th>
                     <th>Status</th>
                     <?php if($editPriv) { ?>
-                    <th class="actions">Actions</th>
+                    <th class="noSort">Actions</th>
                     <?php } ?>
                 </tr>
             </thead>
@@ -239,7 +239,7 @@ function GroupsListingTable($groups = false) { ?>
                     <th style="text-align:left;">Member Of</th>
                     <th class="status">Status</th>
                     <?php if($editPriv) { ?>
-                    <th class="actions">Actions</th>
+                    <th class="noSort">Actions</th>
                     <?php } ?>
                 </tr>
             </thead>
@@ -291,7 +291,7 @@ function VendorListingTable($hide_actions=false,$hide_add=false) { ?>
                             <th style="white-space:nowrap;">Vendor Phone</th>
                             <?php if($editPriv) { ?>
                                 <?php if(!$hide_actions) { ?>
-                                    <th class="actions" style="white-space:nowrap;">Actions</th>
+                                    <th class="noSort" style="white-space:nowrap;">Actions</th>
                                 <?php } ?>
                             <?php } ?>
                         </tr>
@@ -334,7 +334,7 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
         $editPriv    		 = GateKeeper('Contact_Edit',$userPermissionLevel);
         $disablePriv 		 = GateKeeper('Contact_Disable_Enable',$userPermissionLevel);
         $listingPriv 		 = GateKeeper('Contact_List',$userPermissionLevel);
-				
+		
 		switch ($level) {
 			case 'a':
 				if(!$id) {
@@ -383,13 +383,13 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
                     <?php if($level == 'g' || $level == 'a') { ?>
                     <?php if(!$from_tab) { ?><th style="text-align:left;">Client/Vendor Name</th><?php } ?>
                     <?php } ?>
-                    <th style="text-align:left;">Title Name</th>
+                    <th style="display:none;text-align:left;">Title Name</th>
                     <th style="text-align:left;">Contact Name</th>
                     <th style="text-align:left;"><?php if($from_tab) { echo 'Primary'; } ?> Primary Email</th>
                     <th style="text-align:left;"><?php if($from_tab) { echo 'Primary'; } ?> Primary Phone</th>
                     <?php if($editPriv) { ?>
                     	<?php if(!$hide_actions) { ?>
-                    		<th class="actions" style="text-align:left;">Actions</th>
+                    		<th class="noSort" style="text-align:left;">Actions</th>
                     	<?php } ?>
                     <?php } ?>
                 </tr>
@@ -404,7 +404,9 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
 						$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
 						$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
 						$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;
+						$contact->PrimaryPhone = (isset($contact->Phone[$contact->PrimaryPhoneType])) ? $contact->Phone[$contact->PrimaryPhoneType] : false;
 						$contact->Email = mod_parser($contact->Email);
+						$contact->PrimaryEmail = (isset($contact->Email[$contact->PrimaryEmailType])) ? $contact->Email[$contact->PrimaryEmailType] : false;
 						$contact->Parent = $ci->administration->getClient(substr($contact->Type,4))->Name;
 						$contact->TypeCode = substr($contact->Type,0,3);
 						$contact->TypeID = substr($contact->Type,4);
@@ -417,26 +419,16 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
                         <?php if($level == 'g' || $level == 'a') { ?>
                         <?php if(!$from_tab) { ?><td style="width:auto;white-space:no-wrap;text-align:left;white-space:nowrap;"><?php echo $contact->Parent; ?></td><?php } ?>
                         <?php } ?>
-                        <td style="text-align:left;white-space:nowrap;"><?= $contact->JobTitle; ?></td>
+                        <td style="display:none;text-align:left;white-space:nowrap;"><?= $contact->JobTitle; ?></td>
                         <td><?= $contact->Name; ?></td>
                         <td>
-                        <?php if(!$from_tab) { ?><span style="font-weight:bold;">Personal Email</span><br /><?php } ?><a href="mailto:'<?php echo $contact->Email["home"]; ?>'"><?php echo $contact->Email['home']; ?></a>
                         <?php if(!$from_tab) { ?>
-							<?php if (isset($contact->Email['work'])) { ?>
-                            <br /><span style="font-weight:bold;">Work Email</span><br /><a href="mailto:'<?php echo $contact->Email["work"]; ?>'"><?php echo $contact->Email['work']; ?></a>
-                            <?php } ?>
+                            <span style="white-space:nowrap;"><a href="mailto:'<?= ($contact->PrimaryEmail) ? $contact->PrimaryEmail : ''; ?>'"><?= ($contact->PrimaryEmail) ? $contact->PrimaryEmail : ''; ?></a></span>
                         <?php } ?>
                         </td>
-                        <td> 
-                                               
-                        <?php if(!$from_tab) { ?><span style="font-weight:bold;">Direct</span><br /><?php } ?><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["main"]; ?>'"><?php echo $contact->Phone['main']; ?></a></span>
+                        <td>
                         <?php if(!$from_tab) { ?>
-							<?php if (isset($contact->Phone['mobile'])) { ?>
-                            	<span style="font-weight:bold;">Mobile</span><br /><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["mobile"]; ?>'"><?php echo $contact->Phone['mobile']; ?></a></span>
-                            <?php } ?>
-                            <?php if (isset($contact->Phone['fax'])) { ?>
-                            	<span style="font-weight:bold;">Fax</span><br /><span style="white-space:nowrap;"><a href="tel:'<?php echo $contact->Phone["fax"]; ?>'"><?php echo $contact->Phone['fax']; ?></a></span>
-                            <?php } ?>
+                        	<span style="white-space:nowrap;"><a href="tel:'<?= ($contact->PrimaryPhone) ? $contact->PrimaryPhone : ''; ?>'"><?= ($contact->PrimaryPhone) ? $contact->PrimaryPhone : ''; ?></a></span>
                         <?php } ?>
                         </td>
                         <?php if($editPriv) { ?>
@@ -521,7 +513,7 @@ function ClientsListingTable($clients = false) { ?>
                     <th style="text-align:left;">Group</th>
                     <th>Status</th>
                     <?php if($editPriv) { ?>
-                    <th class="actions">Actions</th>
+                    <th class="noSort">Actions</th>
                     <?php } ?>
                 </tr>
             </thead>
@@ -534,7 +526,7 @@ function ClientsListingTable($clients = false) { ?>
                         <td><?= $client->GroupName; ?></td>
                         <td style="width:30px;text-align:center;"><?= (($client->Status) ? 'Active' : 'Disable'); ?></td>
                         <?php if($editPriv) { ?>
-                        <td class="actionsCol actions" style="width:60px;text-align:center;">
+                        <td class="actionsCol noSort" style="width:60px;text-align:center;">
                             <a title="Edit Client" href="javascript:editClient('<?= $client->ClientID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
                             <a title="View Client" href="javascript:viewClient('<?= $client->ClientID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
                         </td>
@@ -657,7 +649,7 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
                     <th style="text-align:left;">Name</th>
                     <th>Status</th>
                     <?php if($editPriv) { ?>
-                    	<th class="actions">Actions</th>
+                    	<th class="noSort">Actions</th>
                     <?php } ?>
                 </tr>
             </thead>
@@ -670,7 +662,7 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
                         <td style="vertical-align:middle;"><?= $user->FirstName . ' ' . $user->LastName; ?></td>
                         <td style="width:30px;text-align:center;vertical-align: middle;"><?= (($user->Status) ? 'Active' : 'Disable'); ?></td>
                         <?php if($editPriv) { ?>
-                        <td class="actionsCol actions" style="width:60px;text-align:center;vertical-align: middle;">
+                        <td class="actionsCol noSort" style="width:60px;text-align:center;vertical-align: middle;">
                             <a title="Edit Client" href="javascript:editUser('<?= $user->ID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
                             <a title="View Client" href="javascript:viewUser('<?= $user->ID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/cards-address.png" alt="" /></a>
                         </td>
@@ -913,7 +905,7 @@ function load_client_websites($cid = false, $actions = true,$isVendor = false) {
 	$table = '';
 	if($websites) {
 		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
-		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td>' . (($actions) ? '<td class="actions">Actions</td>' : '') . '</tr></thead>';
+		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td>' . (($actions) ? '<td class="noSort">Actions</td>' : '') . '</tr></thead>';
 		$table .= '<tbody>';
 		foreach($websites as $website) :
 			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $cid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/pencil.png" alt="Edit Website" /></a>';
@@ -931,6 +923,38 @@ function load_client_websites($cid = false, $actions = true,$isVendor = false) {
 		$html = $table;
 	}else {
 		$html .= '<p>No websites found for this client.' . (($actions) ? ' You can add one by clicking the add website button below.' : '') . '</p>';
+	}
+	return $html;
+}
+
+function load_contact_websites($uid, $actions = true) {
+	
+	$ci =& get_instance();
+	$ci->load->model('administration');
+	
+	$websites = $ci->administration->getContactWebsites($uid);
+	$html = '';
+	$table = '';
+	if($websites) {
+		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
+		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td>' . (($actions) ? '<td class="noSort">Actions</td>' : '') . '</tr></thead>';
+		$table .= '<tbody>';
+		foreach($websites as $website) :
+			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $uid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/pencil.png" alt="Edit Website" /></a>';
+			$table .= '<tr>';
+			$table .= '<td><p>' . $website->VendorName . '</p></td>';
+			$table .= '<td><a href="' . $website->URL . '" target="_blank">' . $website->URL . '</a></td>';
+			$table .= '<td class="descCell"><p id="web_' . $website->ID . '">' . $website->Description . '</p></td>';
+			if($actions) {
+				$table .= '<td style="text-align:center;">' . $edit_img . '</td>';
+			}
+			$table .= '</tr>';
+		endforeach;
+		$table .= '</tbody></table>';
+		                                    
+		$html = $table;
+	}else {
+		$html .= '<p>No websites found for this contact.' . (($actions) ? ' You can add one by clicking the add website button below.' : '') . '</p>';
 	}
 	return $html;
 }
@@ -1184,39 +1208,6 @@ function get_client_name() {
         $name = '';
     endif;
     return $name;
-}
-
-function load_contact_websites($cid, $actions = true) {
-	if(!$cid) {$cid = $ci->user['DropdownDefault']->SelectedClient;}
-	
-	$ci =& get_instance();
-	$ci->load->model('administration');
-	
-	$websites = $ci->administration->getContactWebsites($cid);
-	$html = '';
-	$table = '';
-	if($websites) {
-		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
-		$table .= '<thead><tr><td>Contact</td><td>Web URL</td><td>Notes</td>' . (($actions) ? '<td class="actions">Actions</td>' : '') . '</tr></thead>';
-		$table .= '<tbody>';
-		foreach($websites as $website) :
-			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $cid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/pencil.png" alt="Edit Website" /></a>';
-			$table .= '<tr>';
-			$table .= '<td><p>' . $website->VendorName . '</p></td>';
-			$table .= '<td><a href="' . $website->URL . '" target="_blank">' . $website->URL . '</a></td>';
-			$table .= '<td class="descCell"><p id="web_' . $website->ID . '">' . $website->Description . '</p></td>';
-			if($actions) {
-				$table .= '<td style="text-align:center;">' . $edit_img . '</td>';
-			}
-			$table .= '</tr>';
-		endforeach;
-		$table .= '</tbody></table>';
-		                                    
-		$html = $table;
-	}else {
-		$html .= '<p>No websites found for this contact.</p>'; // . (($actions) ? ' You can add one by clicking the add website button below.' : '') . '</p>';
-	}
-	return $html;
 }
 
 function get_user_modules($level) {

@@ -38,7 +38,7 @@ class Masterlist extends DOM_Controller {
 			if($this->accessLevel >= 500000) {
 				$masterlist = $this->master->getMasterlist();
 				$table  = '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">';
-				$table .= '<thead><tr><th>Team</th><th>Code</th><th>Dealership</th><th>Website</th><th>CMS</th><th>CRM</th><th class="actions">DOC</th><th class="actions">XLS</th><th>Crazy Egg</th><th class="actions">Actions</th></tr></thead>';
+				$table .= '<thead><tr><th>Team</th><th>Code</th><th>Dealership</th><th>Website</th><th>CMS</th><th>CRM</th><th class="noSort">DOC</th><th class="noSort">XLS</th><th>Crazy Egg</th><th class="noSort">Actions</th></tr></thead>';
 				$table .= '<tbody>';
 				foreach($masterlist as $client) :
 					$table .= '<tr class="tagElement ' . $client->Class . '">';

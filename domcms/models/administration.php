@@ -190,7 +190,6 @@ class Administration extends CI_Model {
 	}
 	
 	public function getWebsite($wid) {
-		
 		$get = 'w.WEB_ID as ID,
 				w.WEB_Vendor as Vendor,
 				w.WEB_GoogleUACode as GoogleUACode,
@@ -245,10 +244,11 @@ class Administration extends CI_Model {
 		
 		return ($website) ? $website->result() : FALSE;
 	}
-	public function getContactWebsites($gid,$wid=false) {
-		$this->db->select('w.WEB_ID as ID,w.WEB_Vendor as Vendor,w.WEB_GoogleUACode as GoogleUACode,w.WEB_GoogleWebToolsMetaCode as GoogleWebToolsMetaCode,w.WEB_GooglePlusCode as GooglePlusCode,w.WEB_BingCode as BingCode,w.WEB_YahooCode as YahooCode,w.WEB_GlobalScript as GlobalScript,w.WEB_Type as Type,w.WEB_Url as URL,w.WEB_Notes as Description,w.WEB_Active as Status,w.WEB_ActiveTS as LastUpdate,w.WEB_Created as Created');
+	public function getContactWebsites($uid,$wid=false) {
+		$this->db->select('w.WEB_ID as ID,w.WEB_Vendor as Vendor,w.WEB_GoogleUACode as GoogleUACode,w.WEB_GoogleWebToolsMetaCode as GoogleWebToolsMetaCode,w.WEB_GooglePlusCode as GooglePlusCode,w.WEB_BingCode as BingCode,w.WEB_YahooCode as YahooCode,w.WEB_GlobalScript as GlobalScript,w.WEB_Type as Type,w.WEB_Url as URL,w.WEB_Notes as Description,w.WEB_Active as Status,w.WEB_ActiveTS as LastUpdate,w.WEB_Created as Created,v.VENDOR_Name as VendorName,v.VENDOR_Address as VendorAddress,v.VENDOR_Phone as VendorPhone,v.Vendor_Notes as VendorDescription,v.VENDOR_Active as VendorStatus');
 		$this->db->from('Websites w');
-		$this->db->where('w.WEB_Type','GID:'.$gid);
+		$this->db->join('Vendors v','w.WEB_Vendor = v.VENDOR_ID','left outer');
+		$this->db->where('w.WEB_Type','UID:'.$uid);
 		if($wid) {
 			$this->db->where('w.WEB_ID',$wid);
 		}
@@ -827,7 +827,7 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
     }
 	
-	public function getContactByID($id) {
+	public function getContact($id) {
         $query = $this->getContacts(false, false, $id);
 		return ($query) ? $query->row() : FALSE;
 	}
@@ -848,7 +848,9 @@ class Administration extends CI_Model {
 				d.DIRECTORY_LastName as LastName,
 				d.DIRECTORY_Address as Address,
 				d.DIRECTORY_Email as Email,
+				d.DIRECTORY_Primary_Email as PrimaryEmailType,
 				d.DIRECTORY_Phone as Phone,
+				d.DIRECTORY_Primary_Phone as PrimaryPhoneType,
 				c.CLIENT_Tag as TagID,
 				c.CLIENT_Name as Dealership,
 				c.CLIENT_ID as DealershipID,

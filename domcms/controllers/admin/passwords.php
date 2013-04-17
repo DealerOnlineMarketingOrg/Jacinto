@@ -47,7 +47,7 @@ class Passwords extends DOM_Controller {
 
 		$counter = 0;
 		if($passwords) :
-			$table .= '<thead><tr><th>Team</th><th>Type</th><th>Vendor</th><th>Login Address</th><th>Username</th><th>Password</th><th>Notes</th><th class="actions" style="text-align:center">Actions</th></thead>';
+			$table .= '<thead><tr><th>Team</th><th>Type</th><th>Vendor</th><th>Login Address</th><th>Username</th><th>Password</th><th>Notes</th><th class="noSort" style="text-align:center">Actions</th></thead>';
 			$table .= '<tbody>';
 			foreach($passwords as $password) {
 				//edit button
@@ -257,7 +257,7 @@ class Passwords extends DOM_Controller {
 	}
 	
 	public function View($msg=false) {
-		$contact = $this->administration->getContactByID($this->input->post('view_id'));
+		$contact = $this->administration->getContact($this->input->post('view_id'));
 		$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
 		$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
 		$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;

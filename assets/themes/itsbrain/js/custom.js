@@ -701,7 +701,7 @@ $(function() {
 		'iDisplayLength':1000,
 		"aLengthMenu": [[-1,10,25,50],['All',10,25,50]],
 		"aoColumnDefs": [
-			{ "bSortable": false, "aTargets": [ "actions" ] }
+			{ "bSortable": false, "aTargets": [ "noSort" ] }
 		],
 	});
 	
