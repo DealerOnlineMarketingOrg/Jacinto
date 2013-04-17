@@ -12,6 +12,36 @@ class Administration extends CI_Model {
         $this->load->helper('string_parser');
     }
 	
+	public function getAllModules() {
+		$query = $this->db->select('*')->from('xModules')->where('MODULE_Active',1)->get();
+		return ($query) ? $query->result() : FALSE;	
+	}
+	
+	public function getDirectoryID($uid) {
+		$sql = 'SELECT d.DIRECTORY_ID as ID FROM Directories d INNER JOIN Users_Info ui ON ui.DIRECTORY_ID = d.DIRECTORY_ID WHERE ui.USER_ID = "' . $uid . '"';
+		$query = $this->db->query($sql);
+		return ($query) ? $query->row()->ID : FALSE;
+	}
+	
+	public function updateDirectory($did,$data) {
+		$this->db->where('DIRECTORY_ID',$did);
+		return ($this->db->update('Directories',$data)) ? TRUE : FALSE;
+	}
+	
+	public function udpateUserName($uid,$data) {
+		$this->db->where('USER_ID',$uid);
+		return ($this->db->update('Users',$data)) ? TRUE : FALSE;	
+	}
+	
+	public function updateUserModules($uid,$modules) {
+		$data = array(
+			'USER_Modules'=>$modules
+		);
+		
+		$this->db->where('USER_ID',$uid);
+		return ($this->db->update('Users_Info',$data)) ? TRUE : FALSE;
+	}
+	
 	public function disableWebsite($wid) {
 		//we need the client id
 		$this->db->select('ID as ClientID');

@@ -19,6 +19,17 @@
 				div#userInfo a.actions_link{float:right;margin-top:-19px;margin-right:3px;}
 				div.password_buttons{text-align:right;margin-top:10px;}
 				div.password_buttons a {color:#fff;}
+				div.tab_content table.mods {}
+				div.tab_content table.mods td,div.tab_content table.mods tr {border:none;}
+				div.tab_content table.mods {overflow:visible !important;}
+				div.tab_content#modules{overflow:auto}
+				ul.modulesTable{min-width:709px !important;width:100%;display:block;border-bottom:1px solid #d5d5d5;height:30px;border-left:1px solid #d5d5d5;border-right:1px solid #d5d5d5;}
+				ul.modulesTable li {display:inline;float:left;width:23%;padding:5px;border-right:1px solid #d5d5d5;}
+				ul.modulesTable li span.check{float:left;margin-right:5px;}
+				ul.modulesTable li:last-child{border-right:none;}
+				ul.modulesTable.first{border-top:1px solid #d5d5d5 !important;margin-top:0 !important;}
+				ul.odd{background-color:#E2E4FF;}
+				div.submitForm{margin-top:10px;}
 			</style>
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
@@ -103,7 +114,52 @@
                     <div id="contacts" class="tab_content" style="display:none;">
                     </div>
                     <div id="modules" class="tab_content" style="display:none;">
-                    
+                    	<?php if(isset($view)) { ?>
+                        	<?= ModulesToEvenlyDesignedTable($user->Modules); ?>
+                            <script type="text/javascript">
+								jQuery('ul.modulesTable:even').addClass('even');
+								jQuery('ul.modulesTable:odd').addClass('odd');
+								jQuery('ul.modulesTable:first').addClass('first');
+							</script>
+                        <?php }else { ?>
+                        	<?= form_open('/admin/users/edit_user_modules?uid=' . $user->ID,array('name'=>'userMods','id'=>'userMods','style'=>'text-align:left;')); ?>
+                    			<?= ModulesToEvenlyDesignedTableWithForm($user->Modules,$user->ID,$allMods); ?>
+                                <div class="fix"></div>
+                                <div class="submitForm">
+                                    <input type="submit" value="submit" class="redBtn" />
+                                </div>
+                            <?= form_close(); ?>
+                            <script type="text/javascript">
+								jQuery('ul.modulesTable:even').addClass('even');
+								jQuery('ul.modulesTable:odd').addClass('odd');
+								jQuery('ul.modulesTable:first').addClass('first');
+								jQuery('input.mod').change(function() {
+									if(jQuery(this).is(':checked')) {
+										jQuery(this).prev().val('1');
+										jQuery(this).val('1');	
+									}else {
+										jQuery(this).prev().val('0');
+										jQuery(this).val('0');	
+									}
+								});
+								jQuery('#userMods').submit(function(e) {
+									e.preventDefault();
+									var formData = jQuery(this).serialize();
+									jQuery.ajax({
+										type:'POST',
+										url:'/admin/users/submit_user_edit_modules?uid=<?= $user->ID; ?>',
+										data:formData,
+										success:function(data) {
+											if(data == '1') {
+												jAlert('Module edits made successfully.','Success');
+											}else {
+												jAlert('Something went wrong!. Try Again.','Error');	
+											}
+										}
+									});
+								});
+							</script>
+                        <?php } ?>
                     </div>
                     <div id="loader" style="display:none;"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
     				<div class="fix"></div>

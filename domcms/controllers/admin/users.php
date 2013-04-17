@@ -41,10 +41,12 @@ class Users extends DOM_Controller {
 		$user->CompanyAddress = mod_parser($user->CompanyAddress);
 		$user->Emails = mod_parser($user->Emails);
 		$user->Phones = mod_parser($user->Phones);
+		$user->Modules = ParseModulesInReadableArray($user->Modules);
 		$avatar = $this->members->get_user_avatar($user->ID);
 		$data = array(
 			'user'=>$user,
-			'avatar'=>$avatar
+			'avatar'=>$avatar,
+			'allMods'=>$this->administration->getAllModules()
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddviewuser',$data);
 	}
@@ -65,17 +67,71 @@ class Users extends DOM_Controller {
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_userinfoedit',$data);
 	}
 	
+	public function Submit_user_details_form() {
+		$form = $this->input->post();
+		
+		$did = $this->administration->getDirectoryID($this->user_id);
+		
+		if($did) {
+			$directory_data = array(
+				'DIRECTORY_FirstName' => $form['first_name'],
+				'DIRECTORY_LastName'=>$form['last_name'],
+				'DIRECTORY_Address'=>'street:' . $form['street'] . ',city:' . $form['city'] . ',state:' . $form['state'] . ',zipcode:' . $form['zipcode']
+			);	
+			
+			$user_data = array(
+				'USER_Name'=>$form['username']
+			);
+			
+			$update_directory = $this->administration->updateDirectory($did,$directory_data);
+			$update_users = $this->administration->udpateUserName($this->user_id,$user_data);
+			
+			if($update_directory AND $update_users) {
+				echo '1';	
+			}elseif($update_directory AND !$update_users) {
+				echo '2';	
+			}elseif(!$update_directory AND $update_users) {
+				echo '3';	
+			}else {
+				echo '0';	
+			}
+		}
+	}
+	
+	public function Submit_user_edit_modules() {
+		$form = $this->input->post();
+		$modules = '';
+		$i = 1;
+		$count = count($form['modules']);
+		
+		foreach($form['modules'] as $key => $value) {
+			$modules .= $key . ':' . $value . (($i < $count) ? ',' : '');
+			$i++;
+		}
+		
+		$update_mods = $this->administration->updateUserModules($this->user_id,$modules);
+		
+		if($update_mods) {
+			echo '1';	
+		}else {
+			echo '0';	
+		}
+	}
+	
 	public function View_popup() {
 		$user = $this->administration->getMyUser($this->user_id);
 		$user->Address = mod_parser($user->Address);
 		$user->CompanyAddress = mod_parser($user->CompanyAddress);
 		$user->Emails = mod_parser($user->Emails);
 		$user->Phones = mod_parser($user->Phones);
+		$user->Modules = ParseModulesInReadableArray($user->Modules);
 		$avatar = $this->members->get_user_avatar($user->ID);
+		
 		$data = array(
 			'user'=>$user,
 			'view'=>TRUE,
-			'avatar'=>$avatar
+			'avatar'=>$avatar,
+			'allMods'=>$this->administration->getAllModules()
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddviewuser',$data);
 	}
