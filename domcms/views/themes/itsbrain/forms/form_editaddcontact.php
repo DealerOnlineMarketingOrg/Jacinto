@@ -26,7 +26,7 @@
                         ?>
                             <fieldset>
 								<div class="rowElem noborder">
-                                    <label style="white-space:nowrap"><span class="req">*</span> Name</label>
+                                    <label><span class="req">*</span> Name</label>
                                     <div class="formRight">
 										<div style="position:relative;float:left"><?= form_input(array('class'=>'required validate[required,custom[onlyLetterSp]]','name'=>'firstname','id'=>'firstname','value'=>(($contact) ? $contact->FirstName : ''),'style'=>'margin:0','style'=>'width:22em !important','placeholder'=>'Enter First Name')); ?><span class="formNote">First Name</span></div>
                                     	<div style="position:relative;float:left"><?= form_input(array('class'=>'required validate[required,custom[onlyLetterSp]]','name'=>'lastname','id'=>'lastname','value'=>(($contact) ? $contact->LastName : ''),'style'=>'margin:0','style'=>'width:22em !important','placeholder'=>'Enter Last Name')); ?><span class="formNote">Last Name</span></div>
@@ -81,7 +81,7 @@
                                     <div class="fix"></div>
                                 </div>
                                 <div class="rowElem noborder">
-                                    <label><span class="req">*</span> Title</label>
+                                    <label>Title</label>
                                     <div class="formRight">
                                         <select class="chzn-select validate[required]" style="width:350px" name="jobTitleType">
                                             <?php
@@ -99,56 +99,63 @@
 										<?= form_input(array('class'=>'validate[custom[onlyLetterNumberSp]]','name'=>'street','id'=>'address','value' => ((isset($contact->Address['street'])) ? $contact->Address['street'] : ''),'style'=>'margin:0','placeholder'=>'Enter Street')); ?>
                                     </div>
                                     <div class="fix"></div>
+                                    <label>City</label>
                                     <div class="formRight">
 										<?= form_input(array('class'=>'validate[custom[onlyLetterNumberSp]]','name'=>'city','id'=>'city','value'=>((isset($contact->Address['city'])) ? $contact->Address['city'] : ''),'style'=>'margin:0','placeholder'=>'Enter City')); ?>
                                     </div>
                                     <div class="fix"></div>
+                                    <label>State</label>
                                     <div class="formRight searchDrop" style="margin-top:15px;margin-bottom:10px">
                                         <?= showStates(((isset($contact->Address['state'])) ? $contact->Address['state'] : false)); ?>
                                         <?php //((isset($contact->Address['state'])) ? '' : '<span class="formNote">No state found for user</span>'); ?>
                                     </div>
                                     <div class="fix"></div>
+                                    <label>Zip</label>
                                     <div class="formRight">
 										<?= form_input(array('class'=>'validate[custom[onlyNumber]]','name'=>'zip','id'=>'zip','value' => ((isset($contact->Address['zipcode'])) ? $contact->Address['zipcode'] : ''),'style'=>'margin:0','placeholder'=>'Enter Zip Code')); ?>
                                     </div>
                                     <div class="fix"></div>
                                 </div>
                                 <?php if ($page == 'add') { ?>
-                                <div class="rowElem noborder">
-                                    <label style="white-space:nowrap"><span class="req">*</span> Primary Email</label>
-                                    <?php $currentEmail = '';
-									if (isset($contact->Email)) {
-										foreach ($contact->Email as $type => $email) {
-											if ($type == $contact->PrimaryEmailType) {
-												$currentEmail = $email;
-                                                break;
-											}
-										}
-                                	} ?>
-									<div class="formRight"><?= form_input(array('class'=>'validate[custom[email]]','name'=>'email','id'=>'email','value'=>$currentEmail,'style'=>'margin:0','placeholder'=>'Enter Work Email')); ?></div>
+                                    <div class="rowElem noborder">
+                                        <label>Primary Email</label>
+                                        <?php $currentEmail = '';
+                                        if (isset($contact->Email)) {
+                                            foreach ($contact->Email as $type => $email) {
+                                                if ($type == $contact->PrimaryEmailType) {
+                                                    $currentEmail = $email;
+                                                    break;
+                                                }
+                                            }
+                                        } ?>
+                                        <div class="formRight"><?= form_input(array('class'=>'validate[custom[email]]','name'=>'email','id'=>'email','value'=>$currentEmail,'style'=>'margin:0','placeholder'=>'Enter Work Email')); ?></div>
+                                        <div class="fix"></div>
+                                    </div>
+                                    <div class="rowElem noborder">
+                                        <label>Primary Phone</label>
+                                        <?php $currentPhone = '';
+                                        if (isset($contact->Phone)) {
+                                            foreach ($contact->Phone as $type => $phone) {
+                                                if ($type == $contact->PrimaryPhoneType) {
+                                                    $currentPhone = $phone;
+                                                    break;
+                                                }
+                                            }
+                                        } ?>
+                                        <div class="formRight">
+                                            <div style="position:relative;float:left"><?= form_input(array('name'=>'phone','id'=>'phone','class'=>'maskPhoneExt validate[required,custom[phone]]','value'=>$currentPhone,'style'=>'margin:0','placeholder'=>'Enter Work Phone','style'=>'width:25em !important')); ?><span class="formNote">(999) 999-9999 x99999</span></div>
+                                    </div>
                                     <div class="fix"></div>
-                                </div>
-                                <div class="rowElem noborder">
-                                    <label><span class="req">*</span> Primary Phone</label>
-									<?php $currentPhone = '';
-									if (isset($contact->Phone)) {
-										foreach ($contact->Phone as $type => $phone) {
-											if ($type == $contact->PrimaryPhoneType) {
-												$currentPhone = $phone;
-                                                break;
-											}
-										}
-									} ?>
-									<div class="formRight">
-										<div style="position:relative;float:left"><?= form_input(array('name'=>'phone','id'=>'phone','class'=>'maskPhoneExt validate[required,custom[phone]]','value'=>$currentPhone,'style'=>'margin:0','placeholder'=>'Enter Work Phone','style'=>'width:25em !important')); ?><span class="formNote">(999) 999-9999 x99999</span></div>
-                                </div>
-								<div class="fix"></div>
                                 <?php } ?>
-                                <div class="rowElem noborder"><label>Notes</label><div class="formRight"><?= form_textarea(array('class'=>'validate[custom[onlyLetterNumberSpAndPunctuation]]','name'=>'notes','id'=>'notes','value'=>(($contact) ? $contact->Notes : ''))); ?></div><div class="fix"></div></div>
-                                
+                                <div class="rowElem noborder">
+                                	<label>Notes</label>
+                                    <div class="formRight">
+										<?= form_textarea(array('class'=>'validate[custom[onlyLetterNumberSpAndPunctuation]]','name'=>'notes','id'=>'notes','value'=>(($contact) ? $contact->Notes : ''))); ?>
+                                	</div>
+                                	<div class="fix"></div>
+                                </div>
                                 <div class="submitForm">
                                     <input type="hidden" name="contact_id" value="<?= (($contact) ? $contact->ContactID : ''); ?>" />
-                                    <input type="submit" value="submit" class="redBtn" />
                                 </div>
                             </fieldset>
                         <?= form_close(); ?>
@@ -275,8 +282,8 @@
 		<?php }else { ?>
 		
 		if(activeContent == 'contactDetails') {
-			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').hasClass('hidden')) {
-				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').removeClass('hidden');
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveContactBtn').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveContactBtn').removeClass('hidden');
 			}
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
@@ -287,8 +294,8 @@
 		}
 		
 		if(activeContent == 'websites') {
-			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').is(':visible')) {
-				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').addClass('hidden');
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveContactBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveContactBtn').addClass('hidden');
 			}
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').hasClass('hidden')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').removeClass('hidden');
@@ -299,8 +306,8 @@
 		}
 		
 		if(activeContent == 'contactInfo') {
-			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').is(':visible')) {
-				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').addClass('hidden');
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveContactBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveContactBtn').addClass('hidden');
 			}
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
@@ -326,17 +333,22 @@
 				text:'Close',
 				click:function() {$('#<?= $pageID; ?>').dialog('close')}
 			},
+				{
+					class:'redBtn saveContactBtn',
+					text:"Save",
+					click:function() { $('.formPop').submit(); }
+				},
 			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
 				{
 					class:'greenBtn hidden addWebsiteBtn',
 					text:"Add New Website",
-					click:function() { addWebsiteForm('<?= $contact->ContactID; ?>')}
+					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>')}
 				},
 			<?php } ?>
 				{
 					class:'redBtn hidden savePrimariesBtn',
-					text:"Save Primary Phone & Email",
-					click:function() { updatePrimaries('<?= $contact->ContactID; ?>',$("#phonePrimary").val(),$("#emailPrimary").val())}
+					text:"Save",
+					click:function() { updatePrimaries('<?= ($contact) ? $contact->ContactID : ''; ?>',$("#phonePrimary").val(),$("#emailPrimary").val())}
 				},
 
 		]
@@ -353,17 +365,10 @@
 				text:'Close',
 				click:function() {$('#<?= $pageID; ?>').dialog('close')}
 			},
-			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
 				{
-					class:'greenBtn hidden addWebsiteBtn',
-					text:"Add New Website",
-					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>')}
-				},
-			<?php } ?>
-				{
-					class:'redBtn hidden savePrimariesBtn',
-					text:"Save Primary Phone & Email",
-					click:function() { updatePrimaries('<?= $contact->ContactID; ?>',$("#phonePrimary").val(),$("#emailPrimary").val())}
+					class:'greenBtn addContactBtn',
+					text:"Add",
+					click:function() { $('.formPop').submit(); }
 				},
 		]
 	});

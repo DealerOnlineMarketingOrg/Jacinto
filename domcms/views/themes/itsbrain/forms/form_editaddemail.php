@@ -28,12 +28,12 @@
                                     <label><span class="req">*</span> Email</label>
                                     <div class="formRight">
                                         <?= form_input(array('class'=>'validate[required]','name'=>'EmailNumber','id'=>'EmailNumber','value'=>($contact) ? $contact->Email[$type] : '')); ?>
+										<span class="formNote">example@example.com</span></div>
                                     </div>
                                 </div>    
                                 <div class="fix"></div>
                                 <div class="submitForm">               
                                     <input type="hidden" name="contact_id" value="<?= ($contact) ? $contact->ContactID : ''; ?>" />
-                                    <input type="submit" value="submit" class="redBtn" />
                                 </div>
                             </fieldset>
                         <?= form_close(); ?>
@@ -65,7 +65,7 @@
 		$.ajax({
 			type:'POST',
 			data:formData,
-			url:'/admin/contacts/form<?= (($page == 'edit') ? '?cid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
+			url:'/admin/contacts/formEmail<?= (($page == 'edit') ? '?cid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
 			success:function(code) {
 				var msg;
 				if(code == '1') {
@@ -142,13 +142,12 @@
 				text:'Close',
 				click:function() {$('#<?= $pageID; ?>').dialog('close')}
 			},
-			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
 				{
-					class:'greenBtn hidden',
-					text:"Add Email Number",
-					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>')}
+					class:'greenBtn saveEmailBtn',
+					text:"Add",
+					click:function() { $('.formPop').submit(); }
 				},
-			<?php } ?>
+
 		]
 	});
 	<?php }else { ?>
@@ -163,13 +162,11 @@
 				text:'Close',
 				click:function() {$('#<?= $pageID; ?>').dialog('close')}
 			},
-			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
 				{
-					class:'redBtn hidden',
-					text:"Save Email Number",
-					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>')}
+					class:'redBtn saveEmailBtn',
+					text:"Save",
+					click:function() { $('.formPop').submit(); }
 				},
-			<?php } ?>
 		]
 	});
 	<?php } ?>

@@ -36,7 +36,6 @@
                                 <div class="submitForm">               
                                     <input type="hidden" name="contact_id" value="<?= ($contact) ? $contact->ContactID : ''; ?>" />
                                     <input type="hidden" name="old" value="<?= ($contact) ? $type.':'.$contact->Phone[$type] : ''; ?>" />
-                                    <input type="submit" value="submit" class="redBtn" />
                                 </div>
                             </fieldset>
                         <?= form_close(); ?>
@@ -71,14 +70,14 @@
 		$.ajax({
 			type:'POST',
 			data:formData,
-			url:'/admin/contacts/form<?= (($page == 'edit') ? '?uid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
+			url:'/admin/contacts/formPhone<?= (($page == 'edit') ? '?uid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
 			success:function(code) {
 				var msg;
 				if(code == '1') {
 					msg = '<?= ($page == 'edit') ? 'Your edit was made succesfully.' : 'Your add was made successfully'; ?>';
 					jAlert(msg,'Success',function() {
 						contactListTable();
-					}); 
+					});
 				}else {
 					msg = '<?= ($page == 'edit') ? 'There was a problem with editing the contact requested. Please try again.':'There was a problem adding the contact. Please try again.'; ?>';
 					jAlert(msg,'Error');
@@ -148,6 +147,11 @@
 				text:'Close',
 				click:function() {$('#<?= $pageID; ?>').dialog('close')}
 			},
+				{
+					class:'greenBtn addPhoneBtn',
+					text:"Add",
+					click:function() { $('.formPop').submit(); }
+				},
 		]
 	});
 	<?php }else { ?>
@@ -162,6 +166,11 @@
 				text:'Close',
 				click:function() {$('#<?= $pageID; ?>').dialog('close')}
 			},
+				{
+					class:'redBtn savePhoneBtn',
+					text:"Save",
+					click:function() { $('.formPop').submit(); }
+				},
 		]
 	});
 	<?php } ?>

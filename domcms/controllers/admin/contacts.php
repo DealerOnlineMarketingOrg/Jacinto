@@ -66,7 +66,7 @@ class Contacts extends DOM_Controller {
 			$data = array(
 				'contact' => $contact,
 				'level' => $this->user['DropdownDefault']->LevelType,
-				'websites'=>load_contact_websites($contact_id),
+				'websites'=>load_contact_websites($contact_id, false),
 			);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/view_contact',$data);
 		}
@@ -120,7 +120,7 @@ class Contacts extends DOM_Controller {
 	}
 	
 	public function FormPhone() {
-		$contact_data = $this->security->xss_clean($this->input->post());
+		$form = $this->security->xss_clean($this->input->post());
 		
 		if(isset($_GET['uid']))
 			$contact_id = $_GET['uid'];
@@ -129,12 +129,14 @@ class Contacts extends DOM_Controller {
 			
 		$type = $form['type'];
 		$phone = $form['phone'];
+		$new = $type.':'.$phone;
 		$old = $form['old'];
 		
+		echo 'msg:'.$contact_id.','.$old.','.$new;
 		if ($contact_id)
-			$this->administation->editContactPhone($contact_id, $old, $type.':'.$phone);
+			$this->administration->editContactPhone($contact_id, $old, $new);
 		else
-			$this->administation->addContactPhone($contact_id, $type.':'.$phone);
+			$this->administration->addContactPhone($contact_id, $new);
 		
 		if($contact_id) {
 			echo '1';	
@@ -144,7 +146,7 @@ class Contacts extends DOM_Controller {
 	}
 	
 	public function FormEmail() {
-		$contact_data = $this->security->xss_clean($this->input->post());
+		$form = $this->security->xss_clean($this->input->post());
 		
 		if(isset($_GET['uid']))
 			$contact_id = $_GET['uid'];
