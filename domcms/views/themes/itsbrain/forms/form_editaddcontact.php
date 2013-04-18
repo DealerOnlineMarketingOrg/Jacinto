@@ -8,13 +8,13 @@
 				#editClient .chzn-container,textarea{margin-top:12px;}
 			</style>
             <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
-                <?php if ($page == 'edit') { ?>
                 <ul class="tabs">
 	                    <li class="activeTab"><a href="javascript:void(0);" rel="contactDetails">Contact Details</a></li>
+		                <?php if ($page == 'edit') { ?>
                     	<li><a href="javascript:void(0);" rel="websites">Websites</a></li>
 	                    <li><a href="javascript:void(0);" rel="contactInfo">Contact Info</a></li>
+        		     	<?php } ?>
                 </ul>
-             	<?php } ?>
                 <div class="tab_container">
             		<div id="contactDetails" class="tab_content">
 						<?php
@@ -161,6 +161,7 @@
                         <?= form_close(); ?>
                         <div class="fix"></div>
                     </div>
+                    <?php if ($page == 'edit') { ?>
                     <div id="websites" class="tab_content" style="display:none;">
                         <?= $websites; ?>
                     </div>
@@ -178,14 +179,14 @@
                                 <tbody>
                                     <?php if ($contact) foreach ($contact->Phone as $type => $phone) { ?>
                                     <tr>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" name="phonePrimary" value="<?= $phone; ?>" <?= ($phone == $contact->PrimaryPhoneType) ? 'checked' : ''; ?> /></div></td>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="phonePrimary" name="phonePrimary" value="<?= $phone; ?>" <?= ($phone == $contact->PrimaryPhoneType) ? 'checked' : ''; ?> /></div></td>
                                         <td width="80%"><?= (($contact) ? $contact->Phone[$type] : ''); ?></td>
                                         <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Phone Number" href="javascript:editPhone('<?= $contact->ContactID; ?>','<?= $type; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
                                     </tr>
                                     <?php } ?>
                                 </tbody>
                             </table>
-                            <a href="javascript:addPhone();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Phone</a>
+                            <a href="javascript:addPhone('<?= $contact->ContactID; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Phone</a>
                         </div>
                         
                         <div style="margin-top:10px;">
@@ -201,17 +202,18 @@
                                 <tbody>
                                     <?php if ($contact) foreach ($contact->Email as $type => $email) { ?>
                                     <tr>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" name="emailPrimary" value="<?= $email; ?>" <?= ($email == $contact->PrimaryEmailType) ? 'checked' : ''; ?> /></div></td>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="emailPrimary" name="emailPrimary" value="<?= $email; ?>" <?= ($email == $contact->PrimaryEmailType) ? 'checked' : ''; ?> /></div></td>
                                         <td width="80%"><?= (($contact) ? $contact->Email[$type] : ''); ?></td>
                                         <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Email" href="javascript:editEmail('<?= $contact->ContactID; ?>','<?= $type; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
                                     </tr>
                                     <?php } ?>
                                 </tbody>
                             </table>
-                            <a href="javascript:addEmail();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Email</a>
+                            <a href="javascript:addEmail('<?= $contact->ContactID; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Email</a>
                         </div>
                     <div class="fix"></div>
                     </div>
+                    <?php } ?>
 				</div> 
         	</div> <? //end widget ?>
 		</div>
@@ -348,7 +350,7 @@
 				{
 					class:'redBtn hidden savePrimariesBtn',
 					text:"Save",
-					click:function() { updatePrimaries('<?= ($contact) ? $contact->ContactID : ''; ?>',$("#phonePrimary").val(),$("#emailPrimary").val())}
+					click:function() { updatePrimaries('<?= ($contact) ? $contact->ContactID : ''; ?>',$(".phonePrimary:checked").val(),$(".emailPrimary:checked").val())}
 				},
 
 		]

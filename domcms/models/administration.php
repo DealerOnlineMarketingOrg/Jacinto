@@ -1138,25 +1138,25 @@ class Administration extends CI_Model {
 	public function editContactPhone($uid, $oldPhone, $newPhone) {
 		$this->db->set('DIRECTORY_Phone','REPLACE(DIRECTORY_Phone,"'.$oldPhone.'","'.$newPhone.'")',false);
 		$this->db->where('DIRECTORY_ID',$uid);
-		$this->db->update('Directories', $data);
+		return $this->db->update('Directories');
 	}
 
 	public function addContactPhone($uid, $newPhone) {
 		$this->db->set('DIRECTORY_Phone','CONCAT(DIRECTORY_Phone,",'.$newPhone.'")',false);
 		$this->db->where('DIRECTORY_ID',$uid);
-		$this->db->update('Directories', $data);
+		return $this->db->update('Directories');
 	}
 
 	public function editContactEmail($uid, $oldEmail, $newEmail) {
 		$this->db->set('DIRECTORY_Email','REPLACE(DIRECTORY_Email,"'.$oldEmail.'","'.$newEmail.'")',false);
 		$this->db->where('DIRECTORY_ID',$uid);
-		$this->db->update('Directories', $data);
+		return $this->db->update('Directories');
 	}
 
 	public function addContactEmail($uid, $newEmail) {
 		$this->db->set('DIRECTORY_Email','CONCAT(DIRECTORY_Email,",'.$newEmail.'")',false);
 		$this->db->where('DIRECTORY_ID',$uid);
-		$this->db->update('Directories', $data);
+		return $this->db->update('Directories');
 	}
 	
 	public function editPrimaryPhoneEmail($uid, $phonePrimary, $emailPrimary) {
@@ -1164,9 +1164,9 @@ class Administration extends CI_Model {
 			'DIRECTORY_Primary_Email' => $emailPrimary,
 			'DIRECTORY_Primary_Phone' => $phonePrimary,
 		);
+		$this->db->set($data);
 		$this->db->where('DIRECTORY_ID',$uid);
-		$this->db->update('Directories', $data);
-			
+		return $this->db->update('Directories');
 	}
 	
 }

@@ -7,9 +7,9 @@
             		<div id="contactEmail" class="tab_content">
 						<?php
                             if($page == 'edit') :
-                                echo form_open('/admin/contacts/editEmail',array('id'=>'editContactEmailForm','class' => 'validate mainForm formPop','style' => 'text-align:left'));
+                                echo form_open('/admin/contacts/editEmail',array('id'=>$pageID.'Form','class' => 'validate mainForm formPop','style' => 'text-align:left'));
                             else :
-                                echo form_open('/admin/contacts/addEmail',array('id'=>'addContactEmailForm','class'=>'validate mainForm formPop','style' => 'text-align:left'));				
+                                echo form_open('/admin/contacts/addEmail',array('id'=>$pageID.'Form','class'=>'validate mainForm formPop','style' => 'text-align:left'));				
                             endif;
                         ?>
                             <fieldset>
@@ -17,8 +17,8 @@
                                     <label><span class="req">*</span> Type</label>
                                     <div class="formRight searchDrop">
                                         <select id="contactEmailType" class="chzn-select validate[required]" style="width:350px" name="type">
-                                            <option value="Home" <?= ($contact) ? (($type == 'home') ? 'selected="selected"' : '') : ''; ?>>Home</option>
-                                            <option value="Work" <?= ($contact) ?
+                                            <option value="home" <?= ($contact) ? (($type == 'home') ? 'selected="selected"' : '') : ''; ?>>Home</option>
+                                            <option value="work" <?= ($contact) ?
 												(($type == 'work' || $type == 'main') ? 'selected="selected"' : '') : 'selected="selected"'; ?>>Work</option>
                                         </select>
                                     </div>
@@ -27,13 +27,14 @@
                                 <div class="rowElem noborder">
                                     <label><span class="req">*</span> Email</label>
                                     <div class="formRight">
-                                        <?= form_input(array('class'=>'validate[required]','name'=>'EmailNumber','id'=>'EmailNumber','value'=>($contact) ? $contact->Email[$type] : '')); ?>
-										<span class="formNote">example@example.com</span></div>
+                                        <?= form_input(array('class'=>'validate[required]','name'=>'email','id'=>'email','value'=>($type) ? $contact->Email[$type] : '')); ?>
+										<span class="formNote">example@example.com</span>
                                     </div>
-                                </div>    
-                                <div class="fix"></div>
-                                <div class="submitForm">               
-                                    <input type="hidden" name="contact_id" value="<?= ($contact) ? $contact->ContactID : ''; ?>" />
+                                </div>
+                                <div class="fix"></div>          
+                                <div class="submitForm">
+                                    <input type="hidden" name="contact_id" value="<?= ($type) ? $contact->ContactID : ''; ?>" />
+									<input type="hidden" name="old" value="<?= ($type) ? $type.':'.$contact->Email[$type] : ''; ?>" />
                                 </div>
                             </fieldset>
                         <?= form_close(); ?>
@@ -52,27 +53,30 @@
 	//re initialize jQuery
 	var $ = jQuery.noConflict();
 	
+	$.mask.definitions['~'] = "[+-]";
+	$(".maskEmailExt").mask("(999) 999-9999? x99999");
+	
 	$('#contactType').change(function(e) {
 		$('#contactParentClient').css('display',(($(this).val()) == 'CID' ? '' : 'none'));
 		$('#contactParentVendor').css('display',(($(this).val()) == 'VID' ? '' : 'none'));
 		$('#contactParentGeneral').css('display',(($(this).val()) == 'GID' ? '' : 'none'));
 	});
 	
-	$('.formPop').submit(function(e) {
+	$('#<?= $pageID; ?>Form').submit(function(e) {
 		e.preventDefault();
 		var formData = $(this).serialize();
 		
 		$.ajax({
 			type:'POST',
 			data:formData,
-			url:'/admin/contacts/formEmail<?= (($page == 'edit') ? '?cid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
+			url:'/admin/contacts/formEmail?uid=<?= (($contact) ? $contact->ContactID : ''); ?>&page=<?= $page; ?>',
 			success:function(code) {
 				var msg;
 				if(code == '1') {
 					msg = '<?= ($page == 'edit') ? 'Your edit was made succesfully.' : 'Your add was made successfully'; ?>';
 					jAlert(msg,'Success',function() {
 						contactListTable();
-					}); 
+					});
 				}else {
 					msg = '<?= ($page == 'edit') ? 'There was a problem with editing the contact requested. Please try again.':'There was a problem adding the contact. Please try again.'; ?>';
 					jAlert(msg,'Error');
@@ -143,11 +147,10 @@
 				click:function() {$('#<?= $pageID; ?>').dialog('close')}
 			},
 				{
-					class:'greenBtn saveEmailBtn',
+					class:'greenBtn addEmailBtn',
 					text:"Add",
-					click:function() { $('.formPop').submit(); }
+					click:function() { $('#<?= $pageID; ?>Form').submit(); }
 				},
-
 		]
 	});
 	<?php }else { ?>
@@ -165,7 +168,7 @@
 				{
 					class:'redBtn saveEmailBtn',
 					text:"Save",
-					click:function() { $('.formPop').submit(); }
+					click:function() { $('#<?= $pageID; ?>Form').submit(); }
 				},
 		]
 	});

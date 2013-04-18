@@ -7,9 +7,9 @@
             		<div id="contactPhone" class="tab_content">
 						<?php
                             if($page == 'edit') :
-                                echo form_open('/admin/contacts/editPhone',array('id'=>'editContactPhoneForm','class' => 'validate mainForm formPop','style' => 'text-align:left'));
+                                echo form_open('/admin/contacts/editPhone',array('id'=>$pageID.'Form','class' => 'validate mainForm formPop','style' => 'text-align:left'));
                             else :
-                                echo form_open('/admin/contacts/addPhone',array('id'=>'addContactPhoneForm','class'=>'validate mainForm formPop','style' => 'text-align:left'));				
+                                echo form_open('/admin/contacts/addPhone',array('id'=>$pageID.'Form','class'=>'validate mainForm formPop','style' => 'text-align:left'));				
                             endif;
                         ?>
                             <fieldset>
@@ -17,9 +17,9 @@
                                     <label><span class="req">*</span> Type</label>
                                     <div class="formRight searchDrop">
                                         <select id="contactPhoneType" class="chzn-select validate[required]" style="width:350px" name="type">
-                                            <option value="Mobile" <?= ($contact) ? (($type == 'cell') ? 'selected="selected"' : '') : ''; ?>>Cell</option>
-                                            <option value="Home" <?= ($contact) ? (($type == 'home') ? 'selected="selected"' : '') : ''; ?>>Home</option>
-                                            <option value="Work" <?= ($contact) ?
+                                            <option value="cell" <?= ($contact) ? (($type == 'cell') ? 'selected="selected"' : '') : ''; ?>>Cell</option>
+                                            <option value="home" <?= ($contact) ? (($type == 'home') ? 'selected="selected"' : '') : ''; ?>>Home</option>
+                                            <option value="work" <?= ($contact) ?
 												(($type == 'work' || $type == 'main') ? 'selected="selected"' : '') : 'selected="selected"'; ?>>Work</option>
                                         </select>
                                     </div>
@@ -28,14 +28,14 @@
                                 <div class="rowElem noborder">
                                     <label><span class="req">*</span> Phone</label>
                                     <div class="formRight">
-                                        <div style="position:relative;float:left"><?= form_input(array('class'=>'maskPhoneExt validate[required]','name'=>'phone','id'=>'phone','value'=>($contact) ? $contact->Phone[$type] : '','style'=>'width:25em !important','placeholder'=>'Enter Phone Number')); ?>
+                                        <div style="position:relative;float:left"><?= form_input(array('class'=>'maskPhoneExt validate[required]','name'=>'phone','id'=>'phone','value'=>($type) ? $contact->Phone[$type] : '','style'=>'width:25em !important','placeholder'=>'Enter Phone Number')); ?>
                                         <span class="formNote">(999) 999-9999 x99999</span></div>
                                     </div>
                                 </div>    
                                 <div class="fix"></div>
                                 <div class="submitForm">               
                                     <input type="hidden" name="contact_id" value="<?= ($contact) ? $contact->ContactID : ''; ?>" />
-                                    <input type="hidden" name="old" value="<?= ($contact) ? $type.':'.$contact->Phone[$type] : ''; ?>" />
+                                    <input type="hidden" name="old" value="<?= ($type) ? $type.':'.$contact->Phone[$type] : ''; ?>" />
                                 </div>
                             </fieldset>
                         <?= form_close(); ?>
@@ -63,14 +63,14 @@
 		$('#contactParentGeneral').css('display',(($(this).val()) == 'GID' ? '' : 'none'));
 	});
 	
-	$('.formPop').submit(function(e) {
+	$('#<?= $pageID; ?>Form').submit(function(e) {
 		e.preventDefault();
 		var formData = $(this).serialize();
 		
 		$.ajax({
 			type:'POST',
 			data:formData,
-			url:'/admin/contacts/formPhone<?= (($page == 'edit') ? '?uid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
+			url:'/admin/contacts/formPhone?uid=<?= (($contact) ? $contact->ContactID : ''); ?>&page=<?= $page; ?>',
 			success:function(code) {
 				var msg;
 				if(code == '1') {
@@ -150,7 +150,7 @@
 				{
 					class:'greenBtn addPhoneBtn',
 					text:"Add",
-					click:function() { $('.formPop').submit(); }
+					click:function() { $('#<?= $pageID; ?>Form').submit(); }
 				},
 		]
 	});
@@ -169,7 +169,7 @@
 				{
 					class:'redBtn savePhoneBtn',
 					text:"Save",
-					click:function() { $('.formPop').submit(); }
+					click:function() { $('#<?= $pageID; ?>Form').submit(); }
 				},
 		]
 	});

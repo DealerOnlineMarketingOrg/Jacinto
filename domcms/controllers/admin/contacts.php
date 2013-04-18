@@ -90,7 +90,7 @@ class Contacts extends DOM_Controller {
 		$data = array(
 			'TITLE_ID' => $contact_data['jobTitleType'],
 			'DIRECTORY_Type' => $type,
-			'CLIENT_Owner' => ($type == 'CID') ? $contact_data['parentClient'] : ($type == 'VID') ? $contact_data['ParentVendor'] : NULL,
+			'CLIENT_Owner' => ($contact_data['type'] == 'CID') ? $contact_data['parentClient'] : (($contact_data['type'] == 'VID') ? $contact_data['parentVendor'] : NULL),
 			'DIRECTORY_FirstName' => $firstname,
 			'DIRECTORY_LastName' => $lastname,
 			'DIRECTORY_Address' => $address,
@@ -122,9 +122,10 @@ class Contacts extends DOM_Controller {
 	public function FormPhone() {
 		$form = $this->security->xss_clean($this->input->post());
 		
-		if(isset($_GET['uid']))
+		if(isset($_GET['uid'])) {
 			$contact_id = $_GET['uid'];
-		else
+			$page = $_GET['page'];
+		} else
 			$contact_id = '';
 			
 		$type = $form['type'];
@@ -132,14 +133,13 @@ class Contacts extends DOM_Controller {
 		$new = $type.':'.$phone;
 		$old = $form['old'];
 		
-		echo 'msg:'.$contact_id.','.$old.','.$new;
-		if ($contact_id)
-			$this->administration->editContactPhone($contact_id, $old, $new);
+		if ($page == 'edit')
+			$ret = $this->administration->editContactPhone($contact_id, $old, $new);
 		else
-			$this->administration->addContactPhone($contact_id, $new);
+			$ret = $this->administration->addContactPhone($contact_id, $new);
 		
-		if($contact_id) {
-			echo '1';	
+		if($contact_id && $ret) {
+			echo '1';
 		}else {
 			echo '0';
 		}
@@ -148,21 +148,23 @@ class Contacts extends DOM_Controller {
 	public function FormEmail() {
 		$form = $this->security->xss_clean($this->input->post());
 		
-		if(isset($_GET['uid']))
+		if(isset($_GET['uid'])) {
 			$contact_id = $_GET['uid'];
-		else
+			$page = $_GET['page'];
+		} else
 			$contact_id = '';
 			
 		$type = $form['type'];
 		$email = $form['email'];
+		$new = $type.':'.$email;
 		$old = $form['old'];
 		
-		if ($contact_id)
-			$this->administation->editContactEmail($contact_id, $old, $type.':'.$email);
+		if ($page == 'edit')
+			$ret = $this->administration->editContactEmail($contact_id, $old, $new);
 		else
-			$this->administation->addContactEmail($contact_id, $type.':'.$email);
-			
-		if($contact_id) {
+			$ret = $this->administration->addContactEmail($contact_id, $new);
+		
+		if($contact_id && $ret) {
 			echo '1';	
 		}else {
 			echo '0';
@@ -179,11 +181,13 @@ class Contacts extends DOM_Controller {
 		} else
 			$contact_id = '';
 			
-		if ($contact_id)
-			$this->administation->editContactEmail($contact_id, $old, $type.':'.$email);
-		else
-			$this->administation->addContactEmail($contact_id, $type.':'.$email);
-				
+		$ret = $this->administration->editPrimaryPhoneEmail($contact_id, $phonePrimary, $emailPrimary);
+		
+		if($contact_id && $ret) {
+			echo '1';	
+		}else {
+			echo '0';
+		}
 	}
 	
 	public function Add() {
@@ -234,10 +238,17 @@ class Contacts extends DOM_Controller {
 	}
 	
 	public function PhoneAdd() {
+		if(isset($_GET['uid'])) {
+			$contact_id = $_GET['uid'];
+		}
+		
+		$contact = $this->administration->getContact($contact_id);
+		$this->formatContactInfo($contact);
 
 		$data = array(
 			'page'=>'add',
-			'contact'=>false,
+			'contact'=>$contact,
+			'type'=>'',
 		);
 		
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddphone',$data);
@@ -265,10 +276,17 @@ class Contacts extends DOM_Controller {
 	}
 	
 	public function EmailAdd() {
+		if(isset($_GET['uid'])) {
+			$contact_id = $_GET['uid'];
+		}
+		
+		$contact = $this->administration->getContact($contact_id);
+		$this->formatContactInfo($contact);
 
 		$data = array(
 			'page'=>'add',
-			'contact'=>false,
+			'contact'=>$contact,
+			'type'=>'',
 		);
 		
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddemail',$data);

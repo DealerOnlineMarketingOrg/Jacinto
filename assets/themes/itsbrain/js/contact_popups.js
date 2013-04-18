@@ -73,13 +73,13 @@ function contactListTable() {
 	});
 }
 
-function addPhone() {
+function addPhone(uid) {
 	$('#addContactPhone').remove();
 	$('#editContactPhone').remove();
 	
 	$.ajax({
 		type:'GET',
-		url:'/admin/contacts/PhoneAdd',
+		url:'/admin/contacts/PhoneAdd?uid='+uid,
 		success:function(code) {
 			if(code == '0') {
 				jAlert('The Contact can not be found. Please try again','Error');
@@ -107,13 +107,13 @@ function editPhone(uid, type) {
 	});
 }
 
-function addEmail() {
+function addEmail(uid) {
 	$('#addContactEmail').remove();
 	$('#editContactEmail').remove();
 	
 	$.ajax({
 		type:'GET',
-		url:'/admin/contacts/EmailAdd',
+		url:'/admin/contacts/EmailAdd?uid='+uid,
 		success:function(code) {
 			if(code == '0') {
 				jAlert('The Contact can not be found. Please try again','Error');

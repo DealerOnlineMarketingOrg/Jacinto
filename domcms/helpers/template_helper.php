@@ -403,7 +403,7 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
 						*/
 						$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
 						$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
-						$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;
+						$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : new stdClass();
 						// Locate primary.
 						foreach ($contact->Phone as $type => $phone) {
 							if ($phone == $contact->PrimaryPhoneType) {
@@ -411,7 +411,7 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
 								break;
 							}
 						}
-						$contact->Email = mod_parser($contact->Email);
+						$contact->Email = (isset($contact->Email)) ? mod_parser($contact->Email) : new stdClass();
 						// Locate primary.
 						foreach ($contact->Email as $type => $email) {
 							if ($email == $contact->PrimaryEmailType) {
