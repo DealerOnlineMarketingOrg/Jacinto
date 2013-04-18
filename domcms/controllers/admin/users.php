@@ -35,6 +35,10 @@ class Users extends DOM_Controller {
 		$this->LoadTemplate('forms/form_adduser',$data);
 	}
 	
+	public function Add_user_Form() {
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_adduser',$data);	
+	}
+	
 	public function Edit() {
 		$user = $this->administration->getMyUser($this->user_id);
 		$user->Address = mod_parser($user->Address);
