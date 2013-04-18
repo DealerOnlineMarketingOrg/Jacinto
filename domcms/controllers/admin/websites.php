@@ -21,27 +21,33 @@ class Websites extends DOM_Controller {
 		
 		if(isset($_POST['cid'])) {
 			$this->client_id = $_POST['cid'];
+			$type = 'cid';
 		}elseif(isset($_GET['cid'])) {
 			$this->client_id = $_GET['cid'];
+			$type = 'cid';
 		}
 		if(isset($_POST['wid'])) {
 			$this->website_id = $_POST['wid'];
+			$type = 'wid';
 		}elseif(isset($_GET['wid'])) {
 			$this->website_id = $_GET['wid'];
+			$type = 'wid';
 		}
 		if(isset($_POST['uid'])) {
 			$this->contact_id = $_POST['uid'];
+			$type = 'uid';
 		}elseif(isset($_GET['uid'])) {
 			$this->contact_id = $_GET['uid'];
+			$type = 'uid';
 		}
 	}
 	
 	public function Load_table() {
 		$this->load->helper('template');
 		if (isset($this->client_id))
-			$table = load_client_websites($this->client_id);
+			$table = load_websites($this->client_id,$type);
 		if (isset($this->contact_id))
-			$table = load_contact_websites($this->contact_id);
+			$table = load_websites($this->contact_id,$type);
 		print $table;
 	}
 	
@@ -126,7 +132,7 @@ class Websites extends DOM_Controller {
 			//prepare the array
 			$data = array(
 				'caller'=>$client,
-				'type'=>'cid',
+				'type'=>$type,
 				'vendors'=>$vendors,
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE),
 			);
@@ -137,7 +143,7 @@ class Websites extends DOM_Controller {
 			$vendor = $this->administration->getVendor($_GET['vid']);
 			$data = array(
 				'selectedVendor'=>$vendor->ID,
-				'type'=>'vid',
+				'type'=>$type,
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
 			);
 		}elseif(isset($_GET['uid'])) {
@@ -149,7 +155,7 @@ class Websites extends DOM_Controller {
 			$vendors = $this->administration->getAllVendors();
 			$data = array(
 				'caller'=>$contact,
-				'type'=>'uid',
+				'type'=>$type,
 				'vendors'=>$vendors,
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
 			);

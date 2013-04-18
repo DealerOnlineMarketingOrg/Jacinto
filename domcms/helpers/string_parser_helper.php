@@ -4,9 +4,13 @@
  * simple string of elements passed from the database in var:int,var:int format
  * $required is a comma-delimited list of required keys. If key is not found,
  *   creates one with an empty string.
+ * $allowDuplicates parses out the string if there's potential duplicates in
+ *   key names. Format of returned data for allowDuplicates is a number-indexed
+ *   array in the form:
+ *   [0] { key = 'keyName', value = 'value' }
  * @param	string
  */
-function mod_parser($str, $required = FALSE) {
+function mod_parser($str, $required = FALSE, $allowDuplicates = FALSE) {
     //expload string into array and split on comma
     $str = explode(',', $str);
 
@@ -16,18 +20,39 @@ function mod_parser($str, $required = FALSE) {
     foreach ($str as $item) {
         //expload the array values and create an array with keys that make sense to the app
         $mod = explode(':', $item);
-        $simple[trim($mod[0])] = (isset($mod[1])) ? trim($mod[1]) : '';
+		if (!$allowDuplicates)
+	        $simple[trim($mod[0])] = (isset($mod[1])) ? trim($mod[1]) : '';
+		else
+	        $simple[][trim($mod[0])] = (isset($mod[1])) ? trim($mod[1]) : '';
     }
 	
 	//iterate through the required list and check to make sure all required items exist.
 	if ($required) {
-		$str = explode(',', $required);
-		foreach ($str as $sitem) {
-			$s = trim($sitem);
-			// If item doesn't exist yet..
-			if (!array_key_exists($s, $simple))
-				// ..create it.
-				$simple[$s] = '';
+		if (!$allowDuplicates) {
+			$str = explode(',', $required);
+			foreach ($str as $sitem) {
+				$s = trim($sitem);
+				// If item doesn't exist yet..
+				if (!array_key_exists($s, $simple))
+					// ..create it.
+					$simple[$s] = '';
+			}
+		} else {
+			$str = explode(',', $required);
+			foreach ($str as $sitem) {
+				$s = trim($sitem);
+				// Locate item if exists.
+				$exists = false;
+				foreach ($simple as $key => $value)
+					if ($key == $s) {
+						$exists = true;
+						break;
+					}
+				// If item doesn't exist yet..
+				if (!$exists)
+					// ..create it.
+					$simple[][$s] = '';
+			}
 		}
 	}
 

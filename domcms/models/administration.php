@@ -428,8 +428,8 @@ class Administration extends CI_Model {
         if ($id) {
 			$users = $users->row();
             $users->Address = isset($users->Address) ? mod_parser($users->Address) : '';
-            $users->Email   = isset($users->Emails)  ? mod_parser($users->Emails)  : '';
-            $users->Phone   = isset($users->Phones)  ? mod_parser($users->Phones)  : '';
+            $users->Email   = isset($users->Emails)  ? mod_parser($users->Emails,false,true)  : '';
+            $users->Phone   = isset($users->Phones)  ? mod_parser($users->Phones,false,true)  : '';
         }else {
 			$users = $users->result();	
 		}

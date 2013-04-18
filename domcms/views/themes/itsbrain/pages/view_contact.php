@@ -61,10 +61,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($contact->Phone as $type => $phone) { ?>
+                                    <?php foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) { ?>
                                     <tr>
                                         <td width="10%"><?= ucwords($type); ?></td>
-                                        <td width="80%"><?= $contact->Phone[$type]; ?></td>
+                                        <td width="80%"><?= $phone; ?></td>
                                         <td width="10%"><?= (($contact->PrimaryPhoneType) == $phone) ? 'Primary' : ''; ?></td>
                                     </tr>
                                     <?php } ?>
@@ -82,10 +82,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($contact->Email as $type => $email) { ?>
+                                    <?php foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) { ?>
                                     <tr>
                                         <td width="10%"><?= ucwords($type); ?></td>
-                                        <td width="80%"><?= $contact->Email[$type]; ?></td>
+                                        <td width="80%"><?= $email; ?></td>
                                         <td width="10%"><?= (($contact->PrimaryEmailType) == $email) ? 'Primary' : ''; ?></td>
                                     </tr>
                                     <?php } ?>

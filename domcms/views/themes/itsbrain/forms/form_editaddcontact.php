@@ -119,31 +119,13 @@
                                 <?php if ($page == 'add') { ?>
                                     <div class="rowElem noborder">
                                         <label>Primary Email</label>
-                                        <?php $currentEmail = '';
-                                        if (isset($contact->Email)) {
-                                            foreach ($contact->Email as $type => $email) {
-                                                if ($type == $contact->PrimaryEmailType) {
-                                                    $currentEmail = $email;
-                                                    break;
-                                                }
-                                            }
-                                        } ?>
-                                        <div class="formRight"><?= form_input(array('class'=>'validate[custom[email]]','name'=>'email','id'=>'email','value'=>$currentEmail,'style'=>'margin:0','placeholder'=>'Enter Work Email')); ?></div>
+                                        <div class="formRight"><?= form_input(array('class'=>'validate[custom[email]]','name'=>'email','id'=>'email','value'=>$contact->PrimaryEmail,'style'=>'margin:0','placeholder'=>'Enter Work Email')); ?></div>
                                         <div class="fix"></div>
                                     </div>
                                     <div class="rowElem noborder">
                                         <label>Primary Phone</label>
-                                        <?php $currentPhone = '';
-                                        if (isset($contact->Phone)) {
-                                            foreach ($contact->Phone as $type => $phone) {
-                                                if ($type == $contact->PrimaryPhoneType) {
-                                                    $currentPhone = $phone;
-                                                    break;
-                                                }
-                                            }
-                                        } ?>
                                         <div class="formRight">
-                                            <div style="position:relative;float:left"><?= form_input(array('name'=>'phone','id'=>'phone','class'=>'maskPhoneExt validate[required,custom[phone]]','value'=>$currentPhone,'style'=>'margin:0','placeholder'=>'Enter Work Phone','style'=>'width:25em !important')); ?><span class="formNote">(999) 999-9999 x99999</span></div>
+                                            <div style="position:relative;float:left"><?= form_input(array('name'=>'phone','id'=>'phone','class'=>'maskPhoneExt validate[required,custom[phone]]','value'=>$contact->PrimaryPhone,'style'=>'margin:0','placeholder'=>'Enter Work Phone','style'=>'width:25em !important')); ?><span class="formNote">(999) 999-9999 x99999</span></div>
                                     </div>
                                     <div class="fix"></div>
                                 <?php } ?>
@@ -177,11 +159,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if ($contact) foreach ($contact->Phone as $type => $phone) { ?>
+                                    <?php if ($contact) foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) { ?>
                                     <tr>
                                         <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="phonePrimary" name="phonePrimary" value="<?= $phone; ?>" <?= ($phone == $contact->PrimaryPhoneType) ? 'checked' : ''; ?> /></div></td>
-                                        <td width="80%"><?= (($contact) ? $contact->Phone[$type] : ''); ?></td>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Phone Number" href="javascript:editPhone('<?= $contact->ContactID; ?>','<?= $type; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
+                                        <td width="80%"><?= (($contact) ? $phone : ''); ?></td>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Phone Number" href="javascript:editPhone('<?= $contact->ContactID; ?>','<?= $type; ?>','<?= $phone; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
                                     </tr>
                                     <?php } ?>
                                 </tbody>
@@ -200,11 +182,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if ($contact) foreach ($contact->Email as $type => $email) { ?>
+                                    <?php if ($contact) foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) { ?>
                                     <tr>
                                         <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="emailPrimary" name="emailPrimary" value="<?= $email; ?>" <?= ($email == $contact->PrimaryEmailType) ? 'checked' : ''; ?> /></div></td>
-                                        <td width="80%"><?= (($contact) ? $contact->Email[$type] : ''); ?></td>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Email" href="javascript:editEmail('<?= $contact->ContactID; ?>','<?= $type; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
+                                        <td width="80%"><?= (($contact) ? $email : ''); ?></td>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Email" href="javascript:editEmail('<?= $contact->ContactID; ?>','<?= $type; ?>',,'<?= $email; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
                                     </tr>
                                     <?php } ?>
                                 </tbody>
@@ -344,7 +326,7 @@
 				{
 					class:'greenBtn hidden addWebsiteBtn',
 					text:"Add New Website",
-					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>')}
+					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>','uid')}
 				},
 			<?php } ?>
 				{

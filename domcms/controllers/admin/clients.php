@@ -170,7 +170,7 @@ class Clients extends DOM_Controller {
 		
 		if($client) {
 			$client->Address = (isset($client->Address)) ? mod_parser($client->Address) : false;
-			$client->Phone = (isset($client->Phone)) ? mod_parser($client->Phone) : false;
+			$client->Phone = (isset($client->Phone)) ? mod_parser($client->Phone,false,true) : false;
 			$client->Reviews = array(
 				'Google'   => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->URL : FALSE,
 				'GoogleID' => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->ID  : FALSE,
@@ -184,7 +184,7 @@ class Clients extends DOM_Controller {
 				'client' => $client,
 				'html' => $html,
 				'tags'=>$tags,
-				'websites'=>load_client_websites($client_id),
+				'websites'=>load_websites($client_id,'cid'),
 				'contacts'=>true
 			);
 			//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
@@ -219,7 +219,7 @@ class Clients extends DOM_Controller {
 		
 		if($client) {
 			$client->Address = (isset($client->Address)) ? mod_parser($client->Address) : false;
-			$client->Phone = (isset($client->Phone)) ? mod_parser($client->Phone) : false;
+			$client->Phone = (isset($client->Phone)) ? mod_parser($client->Phone,false,true) : false;
 			$client->Reviews = array(
 				'Google'   => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->URL : FALSE,
 				'GoogleID' => ($this->administration->getSelectedClientsReviews($client_id,1)) ? $this->administration->getSelectedClientsReviews($client_id,1)->ID  : FALSE,
@@ -234,7 +234,7 @@ class Clients extends DOM_Controller {
 				'client' => $client,
 				'html' => $html,
 				'tags'=>$tags,
-				'websites'=>load_client_websites($client_id),
+				'websites'=>load_websites($client_id,'cid'),
 				'contacts'=>true,
 			);
 			

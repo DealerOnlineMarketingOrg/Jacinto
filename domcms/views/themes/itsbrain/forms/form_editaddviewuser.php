@@ -74,7 +74,7 @@
                                     <td class="info">
 										<?php
                                             // Locate primary.
-                                            foreach ($user->Emails as $type => $email) {
+                                            foreach ($user->Emails as $userEmails) foreach ($userEmails as $type => $email) {
                                                 if ($email == $user->PrimaryEmailType) {
                                                     echo '<span>Primary Email:</span><a href="mailto:'.$email.'">'.$email.'</a>';
                                                     break;
@@ -88,7 +88,7 @@
                                     <td class="info">
                                     	<?php
                                             // Locate primary.
-                                            foreach ($user->Phones as $type => $phone) {
+                                            foreach ($user->Phones as $userPhones) foreach ($userPhones as $type => $phone) {
                                                 if ($phone == $user->PrimaryPhoneType) {
                                                     echo '<span>Primary Phone:</span><a href="mailto:'.$phone.'">'.$phone.'</a>';
                                                     break;

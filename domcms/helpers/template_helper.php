@@ -268,6 +268,7 @@ function GroupsListingTable($groups = false) { ?>
 
 function VendorListingTable($hide_actions=false,$hide_add=false) { ?>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/vendor_popups.js"></script>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/websites_popups.js"></script>
     <?php 
 		$ci =& get_instance();
         $userPermissionLevel = $ci->user['AccessLevel'];
@@ -326,6 +327,7 @@ function VendorListingTable($hide_actions=false,$hide_add=false) { ?>
 
 function ContactsListingTable($id = false,$hide_add = false,$hide_actions = false,$from_tab = false,$type = false) { ?>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/contact_popups.js"></script>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/websites_popups.js"></script>
     <?php 
 		$ci =& get_instance();
 		$level				 = $ci->user['DropdownDefault']->LevelType;
@@ -403,17 +405,17 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
 						*/
 						$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
 						$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
-						$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : new stdClass();
+						$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone,false,true) : new stdClass();
 						// Locate primary.
-						foreach ($contact->Phone as $type => $phone) {
+						foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) {
 							if ($phone == $contact->PrimaryPhoneType) {
 								$contact->PrimaryPhone = $phone;
 								break;
 							}
 						}
-						$contact->Email = (isset($contact->Email)) ? mod_parser($contact->Email) : new stdClass();
+						$contact->Email = (isset($contact->Email)) ? mod_parser($contact->Email,false,true) : new stdClass();
 						// Locate primary.
-						foreach ($contact->Email as $type => $email) {
+						foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) {
 							if ($email == $contact->PrimaryEmailType) {
 								$contact->PrimaryEmail = $email;
 								break;
@@ -435,24 +437,12 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
                         <td><?= $contact->Name; ?></td>
                         <td>
                         	<?php
-								// Locate primary.
-								foreach ($contact->Email as $type => $email) {
-									if ($email == $contact->PrimaryEmailType) {
-										echo '<span style="white-space:nowrap;"><a href="mailto:'.$email.'">'.$email.'</a></span>';
-										break;
-									}
-								}
+								echo '<span style="white-space:nowrap;"><a href="mailto:'.$contact->PrimaryEmail.'">'.$contact->PrimaryEmail.'</a></span>';
 							?>
                         </td>
                         <td>
 							<?php
-                                // Locate primary.
-                                foreach ($contact->Phone as $type => $phone) {
-                                    if ($phone == $contact->PrimaryPhoneType) {
-                                        echo '<span style="white-space:nowrap;"><a href="tel:'.$phone.'">'.$phone.'</a></span>';
-                                        break;
-                                    }
-                                }
+								echo '<span style="white-space:nowrap;"><a href="tel:'.$contact->PrimaryPhone.'">'.$contact->PrimaryPhone.'</a></span>';
                             ?>
                         </td>
                         <?php if($editPriv) { ?>
@@ -518,6 +508,7 @@ function GroupsClientTable($group_id) {
 function ClientsListingTable($clients = false) { ?>
 	<?php if($clients) : ?>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/client_popups.js"></script>
+    <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/websites_popups.js"></script>
     <?php 
 		$ci =& get_instance();
         $userPermissionLevel = $ci->user['AccessLevel'];
@@ -537,7 +528,7 @@ function ClientsListingTable($clients = false) { ?>
                     <th style="text-align:left;">Group</th>
                     <th>Status</th>
                     <?php if($editPriv) { ?>
-                    <th class="actions">Actions</th>
+                    <th class="noSort">Actions</th>
                     <?php } ?>
                 </tr>
             </thead>
@@ -740,7 +731,9 @@ function ArrayWithTextIndexToString($array, $type = false) {
 }
 
 /* removeEmpty removes any empty-string key=>value from array */
-function OrderArrayForTableDisplay($array, $removeEmpty = FALSE) {
+/* deepArray is for arrays where the key->value pair is set one array level */
+/*   deeper, for purposes of allowing duplicate keys. */
+function OrderArrayForTableDisplay($array, $removeEmpty = FALSE, $deepArray = FALSE) {
 		/* 
 		|  We need to reorder our content so we can lay it out in order to view it in a table correctly 
 		|  Create three emty arrays to hold data. 
@@ -756,10 +749,20 @@ function OrderArrayForTableDisplay($array, $removeEmpty = FALSE) {
 		$tableorder = array();
 		
 		//looped through the array passed and push the keys and values into seperate arrays.
-		foreach($array as $key => $value) {
-			if (!($removeEmpty && $value == '')) {
-				array_push($headers,$key);
-				array_push($contents,$value);
+		if (!$deepArray) {
+			foreach($array as $key => $value) {
+				if (!($removeEmpty && $value == '')) {
+					array_push($headers,$key);
+					array_push($contents,$value);
+				}
+			}
+		} else {
+			foreach($array as $arrayItem)
+			foreach($arrayItem as $key => $value) {
+				if (!($removeEmpty && $value == '')) {
+					array_push($headers,$key);
+					array_push($contents,$value);
+				}
 			}
 		}
 		
@@ -908,12 +911,17 @@ function getLiveChangesCount() {
 	endif;
 }
 
-function WebsiteListingTable($cid = false,$actions=true,$isVendor=false) {
-	if(!$cid) {$cid = $ci->user['DropdownDefault']->SelectedClient;}
+function WebsiteListingTable($id = false,$type = false,$actions=true,$isVendor=false) {
+	if(!$id) {$id = $ci->user['DropdownDefault']->SelectedClient;}
 	$ci =& get_instance();
 	$ci->load->model('administration');
 	
-	$websites = (!$isVendor) ? $ci->administration->getClientWebsites($cid) : $ci->administration->getVendorWebsites($cid);
+	if ($type == 'cid')
+		$websites = $ci->administration->getClientWebsites($id);
+	if ($type == 'uid')
+		$websites = $ci->administration->getContactWebsites($id);
+	if ($type == 'vid' || $isVendor)
+		$websites = $ci->administration->getVendorWebsites($id);
 	
 	if($websites) { ?>
     <table cellpadding="0" cellspacing="0" border="0" class="tableStatic" style="width:100%;border:1px solid #d5d5d5;" id="website_popup_example">
@@ -934,7 +942,7 @@ function WebsiteListingTable($cid = false,$actions=true,$isVendor=false) {
                     <td style="white-space:nowrap;"><a style="color:blue;" href="<?= $website->URL; ?>" target="_blank"><?= $website->URL; ?></a></td>
                     <td class="descCell"><p><?= $website->Description; ?></p></td>
                     <?php if($actions) { ?>
-                    	<td style="text-align:center;"><a href="javascript:editWebsiteForm('<?= $cid ?>','<?= $website->ID; ?>');"><img src="<?= base_url() . THEMEIMGS;?>icons/color/pencil.png" alt="Edit Website" /></a></td>
+                    	<td style="text-align:center;"><a href="javascript:editWebsiteForm('<?= $id ?>','<?= $type; ?>','<?= $website->ID; ?>');"><img src="<?= base_url() . THEMEIMGS;?>icons/color/pencil.png" alt="Edit Website" /></a></td>
                     <?php } ?>
                 </tr>
             <?php endforeach; ?>
@@ -945,13 +953,19 @@ function WebsiteListingTable($cid = false,$actions=true,$isVendor=false) {
 	<?php }
 }
 
-function load_client_websites($cid = false, $actions = true,$isVendor = false) {
-	if(!$cid) {$cid = $ci->user['DropdownDefault']->SelectedClient;}
+function load_websites($id = false, $type = false, $actions = true,$isVendor = false) {
+	if(!$id) {$id = $ci->user['DropdownDefault']->SelectedClient;}
 	
 	$ci =& get_instance();
 	$ci->load->model('administration');
 	
-	$websites = (!$isVendor) ? $ci->administration->getClientWebsites($cid) : $ci->administration->getVendorWebsites($cid);
+	if ($type == 'cid')
+		$websites = $ci->administration->getClientWebsites($id);
+	if ($type == 'uid')
+		$websites = $ci->administration->getContactWebsites($id);
+	if ($type == 'vid' || $isVendor)
+		$websites = $ci->administration->getVendorWebsites($id);
+		
 	$html = '';
 	$table = '';
 	if($websites) {
@@ -959,7 +973,7 @@ function load_client_websites($cid = false, $actions = true,$isVendor = false) {
 		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td>' . (($actions) ? '<td class="noSort">Actions</td>' : '') . '</tr></thead>';
 		$table .= '<tbody>';
 		foreach($websites as $website) :
-			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $cid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/pencil.png" alt="Edit Website" /></a>';
+			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $id . '\',\'' . $type . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/pencil.png" alt="Edit Website" /></a>';
 			$table .= '<tr>';
 			$table .= '<td><p>' . $website->VendorName . '</p></td>';
 			$table .= '<td><a href="' . $website->URL . '" target="_blank">' . $website->URL . '</a></td>';
@@ -978,38 +992,6 @@ function load_client_websites($cid = false, $actions = true,$isVendor = false) {
 	return $html;
 }
 
-function load_contact_websites($uid, $actions = true) {
-	
-	$ci =& get_instance();
-	$ci->load->model('administration');
-	
-	$websites = $ci->administration->getContactWebsites($uid);
-	$html = '';
-	$table = '';
-	if($websites) {
-		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
-		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td>' . (($actions) ? '<td class="noSort">Actions</td>' : '') . '</tr></thead>';
-		$table .= '<tbody>';
-		foreach($websites as $website) :
-			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $uid . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/pencil.png" alt="Edit Website" /></a>';
-			$table .= '<tr>';
-			$table .= '<td><p>' . $website->VendorName . '</p></td>';
-			$table .= '<td><a href="' . $website->URL . '" target="_blank">' . $website->URL . '</a></td>';
-			$table .= '<td class="descCell"><p id="web_' . $website->ID . '">' . $website->Description . '</p></td>';
-			if($actions) {
-				$table .= '<td style="text-align:center;">' . $edit_img . '</td>';
-			}
-			$table .= '</tr>';
-		endforeach;
-		$table .= '</tbody></table>';
-		                                    
-		$html = $table;
-	}else {
-		$html .= '<p>No websites found for this contact.' . (($actions) ? ' You can add one by clicking the add website button below.' : '') . '</p>';
-	}
-	return $html;
-}
-
 function load_client_contacts($cid) {
 	$ci =& get_instance();
 	$ci->load->helper('string_parser');
@@ -1022,36 +1004,36 @@ function load_client_contacts($cid) {
 		$table .= '<thead><tr><td>Title</td><td>Name</td><td>Email Address</td><td>Phone</td></tr></thead>';
 		$table .= '<tbody>';
 		foreach($contacts as $contact) {
-			$contact->Email = mod_parser($contact->Email, 'home,work');
+			$contact->Email = mod_parser($contact->Email, 'home,work', true);
 			$contact->Address 	= mod_parser($contact->Address);
-			$contact->Phone 	= mod_parser($contact->Phone, 'main,mobile,fax');
+			$contact->Phone 	= mod_parser($contact->Phone, 'main,mobile,fax', true);
 			$table .= '<tr>';
 				$table .= '<td>' . $contact->JobTitle . '</td>';
 				$table .= '<td>' . $contact->FirstName . ' ' . $contact->LastName . '</td>';
 				$table .= '<td>';
 				// Locate primary.
-				foreach ($contact->Email as $type => $email) {
+				foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) {
 					if ($type == $contact->PrimaryEmailType) {
 						$table .= '<span style="font-weight:bold;">Personal Email</span><br /><a href="mailto:' . $email . '">' . $email . '</a></span>';
 						break;
 					}
 				}
 				// Locate others.
-				foreach ($contact->Email as $type => $email) {
+				foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) {
 					if ($type != $contact->PrimaryEmailType) {
 						$table .= '<br /><span style="font-weight:bold;">'.$type.'</span><br /><a href="mailto:' . $email . '">' . $email . '</a></span>';
 					}
 				}
 				$table .= '</td><td>';
 				// Locate primary.
-				foreach ($contact->Phone as $type => $phone) {
+				foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) {
 					if ($type == $contact->PrimaryPhoneType) {
 						$table .= '<span style="font-weight:bold;">Direct</span><br /><a href="tel:' . $phone . '">' . $phone . '</a></span>';
 						break;
 					}
 				}
 				// Locate others.
-				foreach ($contact->Phone as $type => $phone) {
+				foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) {
 					if ($type != $contact->PrimaryPhoneType) {
 						$table .= '<br /><span style="font-weight:bold;">'.$type.'</span><br /><a href="tel:' . $phone . '">' . $phone . '</a></span>';
 					}

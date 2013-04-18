@@ -19,17 +19,17 @@ class Contacts extends DOM_Controller {
 	private function formatContactInfo(&$contact) {
 		$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
 		$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
-		$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;
+		$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone,false,true) : false;
 		// Locate primary.
-		foreach ($contact->Phone as $type => $phone) {
+		foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) {
 			if ($phone == $contact->PrimaryPhoneType) {
 				$contact->PrimaryPhone = $phone;
 				break;
 			}
 		}
-		$contact->Email = mod_parser($contact->Email);
+		$contact->Email = mod_parser($contact->Email,false,true);
 		// Locate primary.
-		foreach ($contact->Email as $type => $email) {
+		foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) {
 			if ($email == $contact->PrimaryEmailType) {
 				$contact->PrimaryEmail = $email;
 				break;
@@ -66,7 +66,7 @@ class Contacts extends DOM_Controller {
 			$data = array(
 				'contact' => $contact,
 				'level' => $this->user['DropdownDefault']->LevelType,
-				'websites'=>load_contact_websites($contact_id, false),
+				'websites'=>load_websites($contact_id, 'uid', false),
 			);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/view_contact',$data);
 		}
@@ -229,8 +229,8 @@ class Contacts extends DOM_Controller {
 				'vendors'=>$vendors,
 				'types'=>$types,
 				'tags'=>$tags,
-				'websites'=>load_contact_websites($contact_id),
-			);	
+				'websites'=>load_websites($contact_id,'uid'),
+			);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddcontact',$data);
 		}else {
 			echo '0';	
@@ -258,6 +258,7 @@ class Contacts extends DOM_Controller {
 		if(isset($_GET['uid'])) {
 			$contact_id = $_GET['uid'];
 			$type = $_GET['type'];
+			$value = $_GET['value'];
 		}
 		
 		$contact = $this->administration->getContact($contact_id);
@@ -268,6 +269,7 @@ class Contacts extends DOM_Controller {
 				'page'=>'edit',
 				'contact'=>$contact,
 				'type'=>$type,
+				'value'=>$value,
 			);	
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddphone',$data);
 		}else {
@@ -296,6 +298,7 @@ class Contacts extends DOM_Controller {
 		if(isset($_GET['uid'])) {
 			$contact_id = $_GET['uid'];
 			$type = $_GET['type'];
+			$value = $_GET['value'];
 		}
 		
 		$contact = $this->administration->getContact($contact_id);
@@ -306,6 +309,7 @@ class Contacts extends DOM_Controller {
 				'page'=>'edit',
 				'contact'=>$contact,
 				'type'=>$type,
+				'value'=>$value,
 			);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddemail',$data);
 		}else {

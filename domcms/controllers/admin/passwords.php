@@ -260,8 +260,8 @@ class Passwords extends DOM_Controller {
 		$contact = $this->administration->getContact($this->input->post('view_id'));
 		$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
 		$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
-		$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone) : false;
-		$contact->Email = mod_parser($contact->Email);
+		$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone,false,true) : false;
+		$contact->Email = mod_parser($contact->Email,false,true);
 		$data = array(
 			'display'=>$contact
 		);

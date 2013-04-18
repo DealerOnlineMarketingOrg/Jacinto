@@ -1,5 +1,11 @@
 <div class="uDialog">
-    <div class="dialog-message" id="addWebsite" title="<?= (($website) ? 'Edit ' . ((!isset($caller->Name)) ? 'Vendor' : $caller->Name) . ' Website' : 'Add New Website To ' . ((!isset($caller->Name)) ? 'Vendor' : $caller->Name)); ?>">
+	<?php switch ($type) {
+			case 'cid': $typeName = 'Client'; break;
+			case 'vid': $typeName = 'Vendor'; break;
+			case 'uid': $typeName = 'Contact'; break;
+			default: $typeName = 'Vendor';
+		} ?>
+    <div class="dialog-message" id="addWebsite" title="<?= (($website) ? 'Edit ' . $typeName . ' Website' : 'Add New Website To ' . $typeName); ?>">
         <div class="uiForm">
         	 <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
                 	<?= form_open(base_url() . 'admin/websites/add',array('id'=>'web','class'=>'valid mainForm','style'=>'text-align:left;')); ?>
@@ -91,10 +97,12 @@
 		                	<?php if(isset($website->ID)) { ?>
 		                		<input type="hidden" name="web_id" value="<?= $website->ID; ?>" />
 		                	<?php } ?>
-                            <?php if(!isset($selectedVendor)) { ?>
+                            <?php if($type == 'cid') { ?>
 		               			<input type="hidden" name="ClientID" value="<?= $caller->ID; ?>" />
-                            <?php }else { ?>
+                            <?php }elseif($type == 'vid') { ?>
                             	<input type="hidden" name="VendorID" value="<?= $selectedVendor; ?>" />
+                            <?php }elseif($type == 'uid') { ?>
+                            	<input type="hidden" name="ContactID" value="<?= $caller->ID; ?>" />
                             <?php } ?>
 		                    <input type="submit" value="submit" class="redBtn" />
 		                </div> 
@@ -138,7 +146,7 @@
 			cUrl = '/admin/websites/add?<?= $type; ?>='+id;
 		<?php } ?>
 		
-		submitWebsiteForm(id,formData,cUrl,msg);
+		submitWebsiteForm(id,'<?= $type; ?>',formData,cUrl,msg);
 	});
 	
 	jQuery(".chzn-select").chosen();

@@ -22,3 +22,4 @@
     div#client_loader{position:absolute;width:16px;height:16px;top:50%;margin-top:-8px;left:50%;margin-left:-8px;}
 </style>
 <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/vendor_popups.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/websites_popups.js"></script>

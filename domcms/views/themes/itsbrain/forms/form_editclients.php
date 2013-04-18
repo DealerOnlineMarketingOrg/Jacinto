@@ -123,7 +123,7 @@
 			                    <div class="formRight">
                                 	<?php if (isset($client->Phone)) {
 										// Locate primary.
-										foreach ($client->Phone as $type => $phone) {
+										foreach ($client->Phone as $clientPhone) foreach ($clientPhone as $type => $phone) {
 											if ($phone == $client->PrimaryPhoneType) {
 												if(isset($view)) { 
 													echo form_input(array('disabled'=>'disabled','class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value'=>$phone));
@@ -428,7 +428,7 @@
 				{
 					class:'greenBtn hidden addWebsiteBtn',
 					text:"Add New Website",
-					click:function() { addWebsiteForm('<?= $client->ClientID; ?>')}
+					click:function() { addWebsiteForm('<?= $client->ClientID; ?>','cid')}
 				}, <?php } ?>
 			<?php } ?>
 			<?php if(GateKeeper('Contact_Add',$this->user['AccessLevel'])) { ?>

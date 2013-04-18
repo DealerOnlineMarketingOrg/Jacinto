@@ -28,14 +28,14 @@
                                 <div class="rowElem noborder">
                                     <label><span class="req">*</span> Phone</label>
                                     <div class="formRight">
-                                        <div style="position:relative;float:left"><?= form_input(array('class'=>'maskPhoneExt validate[required]','name'=>'phone','id'=>'phone','value'=>($type) ? $contact->Phone[$type] : '','style'=>'width:25em !important','placeholder'=>'Enter Phone Number')); ?>
+                                        <div style="position:relative;float:left"><?= form_input(array('class'=>'maskPhoneExt validate[required]','name'=>'phone','id'=>'phone','value'=>($type) ? $value : '','style'=>'width:25em !important','placeholder'=>'Enter Phone Number')); ?>
                                         <span class="formNote">(999) 999-9999 x99999</span></div>
                                     </div>
                                 </div>    
                                 <div class="fix"></div>
-                                <div class="submitForm">               
+                                <div class="submitForm">
                                     <input type="hidden" name="contact_id" value="<?= ($contact) ? $contact->ContactID : ''; ?>" />
-                                    <input type="hidden" name="old" value="<?= ($type) ? $type.':'.$contact->Phone[$type] : ''; ?>" />
+                                    <input type="hidden" name="old" value="<?= ($type) ? $type.':'.$value : ''; ?>" />
                                 </div>
                             </fieldset>
                         <?= form_close(); ?>

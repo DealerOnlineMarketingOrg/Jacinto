@@ -41,10 +41,10 @@ class Profile extends DOM_Controller {
 		$user->viewCompany 			= $user->Dealership;
 		$user->CompanyAddress		= mod_parser($user->CompanyAddress);
 		$user->viewCompanyAddress   = ArrayWithTextIndexToString($user->CompanyAddress, true);
-		$user->Emails				= mod_parser($user->Emails, 'home,work');
-		$user->viewEmails 		    = OrderArrayForTableDisplay($user->Emails);
-		$user->Phones				= mod_parser($user->Phones, 'home,mobile,work,fax');
-		$user->viewPhones 			= OrderArrayForTableDisplay($user->Phones);
+		$user->Emails				= mod_parser($user->Emails, 'home,work', true);
+		$user->viewEmails 		    = OrderArrayForTableDisplay($user->Emails,false,true);
+		$user->Phones				= mod_parser($user->Phones, 'home,mobile,work,fax', true);
+		$user->viewPhones 			= OrderArrayForTableDisplay($user->Phones,false,true);
 		$user->viewUserModules 		= ParseModulesInReadableArray($user->Modules);
 		
 		$msg = (($msg) ? $msg : FALSE);

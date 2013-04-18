@@ -39,8 +39,8 @@ class Users extends DOM_Controller {
 		$user = $this->administration->getMyUser($this->user_id);
 		$user->Address = mod_parser($user->Address);
 		$user->CompanyAddress = mod_parser($user->CompanyAddress);
-		$user->Emails = mod_parser($user->Emails);
-		$user->Phones = mod_parser($user->Phones);
+		$user->Emails = mod_parser($user->Emails,false,true);
+		$user->Phones = mod_parser($user->Phones,false,true);
 		$user->Modules = ParseModulesInReadableArray($user->Modules);
 		$avatar = $this->members->get_user_avatar($user->ID);
 		$data = array(
@@ -58,8 +58,8 @@ class Users extends DOM_Controller {
 		$user = $this->administration->getMyUser($this->user_id);
 		$user->Address = mod_parser($user->Address);
 		$user->CompanyAddress = mod_parser($user->CompanyAddress);
-		$user->Emails = mod_parser($user->Emails);
-		$user->Phones = mod_parser($user->Phones);
+		$user->Emails = mod_parser($user->Emails,false,true);
+		$user->Phones = mod_parser($user->Phones,false,true);
 		$data = array(
 			'user'=>$user,
 			'dealerships'=>$dealerships
@@ -122,8 +122,8 @@ class Users extends DOM_Controller {
 		$user = $this->administration->getMyUser($this->user_id);
 		$user->Address = mod_parser($user->Address);
 		$user->CompanyAddress = mod_parser($user->CompanyAddress);
-		$user->Emails = mod_parser($user->Emails);
-		$user->Phones = mod_parser($user->Phones);
+		$user->Emails = mod_parser($user->Emails,false,true);
+		$user->Phones = mod_parser($user->Phones,false,true);
 		$user->Modules = ParseModulesInReadableArray($user->Modules);
 		$avatar = $this->members->get_user_avatar($user->ID);
 		
@@ -180,9 +180,9 @@ class Users extends DOM_Controller {
 		$this->load->helper('pass');
 		$user = $this->administration->getMyUser($this->user_id);
 		//set the users primary email address
-		$user->Emails = mod_parser($user->Emails);		
+		$user->Emails = mod_parser($user->Emails,false,true);
 		// Locate primary.
-		foreach ($user->Emails as $type => $email) {
+		foreach ($user->Emails as $userEmails) foreach ($userEmails as $type => $email) {
 			if ($email == $user->PrimaryEmailType) {
 				$primaryEmail = $email;
 				break;

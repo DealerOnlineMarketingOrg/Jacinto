@@ -27,14 +27,14 @@
                                 <div class="rowElem noborder">
                                     <label><span class="req">*</span> Email</label>
                                     <div class="formRight">
-                                        <?= form_input(array('class'=>'validate[required]','name'=>'email','id'=>'email','value'=>($type) ? $contact->Email[$type] : '')); ?>
+                                        <?= form_input(array('class'=>'validate[required]','name'=>'email','id'=>'email','value'=>($type) ? $value : '')); ?>
 										<span class="formNote">example@example.com</span>
                                     </div>
                                 </div>
                                 <div class="fix"></div>          
                                 <div class="submitForm">
                                     <input type="hidden" name="contact_id" value="<?= ($type) ? $contact->ContactID : ''; ?>" />
-									<input type="hidden" name="old" value="<?= ($type) ? $type.':'.$contact->Email[$type] : ''; ?>" />
+									<input type="hidden" name="old" value="<?= ($type) ? $type.':'.$value : ''; ?>" />
                                 </div>
                             </fieldset>
                         <?= form_close(); ?>
