@@ -1,11 +1,28 @@
 // JavaScript Document
 var $ = jQuery;
 function addUser() {
-	
+	$('#editUser').remove();
+	$('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:"GET",
+			url:'/admin/users/add_user_form',
+			success:function(data) {
+				if(data) {
+					$('#loader_block').slideUp('fast',function() {
+						$('#editUsersForm').html(data);
+					});
+				}else {
+					jAlert('There was an error. Please try again.','View Error',function() {
+						$('#loader_block').slideUp('fast');	
+					});
+				}
+			}
+		});
+	});
 }
 
 function editUser(id) {
-	$('#editClient').remove();
+	$('#editUser').remove();
 	$('#loader_block').slideDown('fast',function() {
 		$.ajax({
 			type:"GET",
@@ -41,7 +58,7 @@ function editUserInfo(id) {
 }
 
 function viewUser(id) {
-	$('#editClient').remove();
+	$('#editUser,#addUser,#editUserInfo').remove();
 	$('#loader_block').slideDown('fast',function() {
 		$.ajax({
 			type:"GET",
@@ -61,8 +78,29 @@ function viewUser(id) {
 	});
 }
 
-function load_user_table() {
-	
+function load_user_table(uid) {
+	$('#loader_block').slideDown('fast',function() {
+		$.ajax({
+		  url: "/users?trigger="+uid,
+		  context: document.body,
+		  success: function(s,x){
+			$('#loader_block').slideUp('fast');
+			$(this).html(s);
+		  }
+		});
+	});
+}
+function load_users_table() {
+	$('#loader_block').slideDown('fast',function() {
+		$.ajax({
+		  url: "",
+		  context: document.body,
+		  success: function(s,x){
+			$('#loader_block').slideUp('fast');
+			$(this).html(s);
+		  }
+		});
+	});
 }
 
 function changeMyPass(id) {

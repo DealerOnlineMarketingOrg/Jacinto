@@ -98,18 +98,22 @@
 				if(resp == '1') {
 					jAlert('The users info has been updated.','Success',function() {
 						$('#editUserInfo').dialog('close');	
+						load_user_table();
 					});
 				}else if(resp == '2') {
 					jAlert('The users info was updated, however, the username was not! Please check to see if you have the correct permissions to change usernames.','Success Error',function() {
 						$('#editUserInfo').dialog('close');
+						load_user_table();
 					});
 				}else if(resp == '3') {
 					jAlert('The username was updated however, the users details did not update correctly. Please try again!.','Success Error',function() {
 						$('#editUserInfo').dialog('close');
+						load_user_table();
 					});
 				}else{
 					jAlert('There was a problem updating the users information. Please try again.','Error',function() {
 						$('#editUserInfo').dialog('close');
+						load_user_table();
 					});
 				}
 			}

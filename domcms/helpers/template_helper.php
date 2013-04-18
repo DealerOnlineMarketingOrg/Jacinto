@@ -655,6 +655,11 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
     ?>
     <?php if($addPriv) { ?><a href="javascript:addUser();" class="greenBtn floatRight button" style="margin-top:-74px;margin-right:3px;">Add New User</a><?php } ?>
     <?php if($listingPriv) { ?>
+    	<?php if(isset($error_msg)) { ?>
+			<div class="nNote nError hideit">
+				<p><strong>Error</strong><?= $error_msg; ?></p>
+			</div>
+		<?php } ?>
         <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" width="100%;">
             <thead>
                 <tr>
@@ -672,7 +677,7 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
                 <?php foreach($users as $user) { $avatar = $ci->members->get_user_avatar($user->ID); ?>
                     <tr class="tagElement <?= $user->ClassName; ?>">
                     	<td class="tags" style="vertical-align: middle;"><div class="<?= $user->ClassName; ?>">&nbsp;</div></td>
-                        <td style="text-align:center;vertical-align: middle;"><div style="text-align:center"><img src="<?= $avatar; ?>" style="width:30px;" alt="<?= $user->FirstName . ' ' . $user->LastName; ?>" /></div></td>
+                        <td style="text-align:center;vertical-align: middle;"><div style="text-align:center;margin-top:5px;"><img src="<?= $avatar; ?>" style="width:30px;" alt="<?= $user->FirstName . ' ' . $user->LastName; ?>" /></div></td>
                         <td style="text-align:left;vertical-align: middle;"><a href="mailto:<?= $user->Username; ?>"><?= $user->Username; ?></a></td>
                         <td style="vertical-align:middle;"><?= $user->FirstName . ' ' . $user->LastName; ?></td>
                         <td style="width:30px;text-align:center;vertical-align: middle;"><?= (($user->Status) ? 'Active' : 'Disable'); ?></td>
@@ -686,6 +691,11 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
                 <?php } ?>
             </tbody>
         </table>
+        <?php if(isset($user_id)) { echo $user_id; ?>
+			<script type="text/javascript">
+            	editUser('<?= $user_id; ?>');
+            </script>
+        <? } ?>
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addUser();" class="greenBtn floatRight button" style="margin-top:10px;">Add New User</a><?php } ?>
     <?php }else { ?>
@@ -1111,7 +1121,7 @@ function breadcrumb($replacement = false) {
 			}else {
 				if($section != 'profile') {
 					$link .= '<li style="text-transform:capitalize"><a href="' . $prep_link . '">' . $section . '</a></li>';
-				}elseif($secion == 'clients') {
+				}elseif($section == 'clients') {
 					$link .= '<li style="text-transform:capitalize"><a href="' . base_url() . 'admin">Admin</a></li><li style="text-transform:capitalize"><a href="' . base_url() . 'clients">Clients</a></li>';	
 				}else {
 					$link .= '<li style="text-transform:capitalize"><a href="' . base_url() . 'users">Users</a></li>';	

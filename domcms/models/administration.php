@@ -302,6 +302,45 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
 	}
 	
+	public function addNewUser($user,$directory,$userinfo) {
+		$this->load->helper('pass');
+		$this->load->helper('msg');
+		$this->load->model('members');
+		//Insert user
+		$user_insert = $this->db->insert('Users',$user);
+		//grab the user id after the insert has taken place
+		$user_id = $this->db->insert_id();
+		//insert the directory entry
+		$directory_insert = $this->db->insert('Directories',$directory);
+		//grab the directory id after the insert has taken place
+		$directory_id = $this->db->insert_id();
+		//if both the user and directory has been inserted successfully we need to create the user info entry
+		if($user_insert && $directory_insert) {
+			//create a random string for the password
+			$password = createRandomString();
+			//add more data because we know more....
+			$userinfo['USER_ID'] = $user_id;
+			$userinfo['DIRECTORY_ID'] = $directory_id;
+			$userinfo['USER_Password'] = encrypt_password($password);
+			$ui_insert = $this->db->insert('Users_Info',$userinfo);
+			if($ui_insert) {
+				$subject = 'Welcome to the Dealer Online Marketing Content Management System';
+				$msg = email_new_user($user['USER_Name'],$password);
+                $emailed = $this->members->email_results($user['USER_Name'], $subject, $msg);
+
+				return TRUE;	
+			}else {
+				return FALSE;	
+			}
+		}else {
+			return FALSE;	
+		}
+	}
+	
+	public function generateNewUserPassword($email,$pass) {
+		
+	}
+	
 	public function getAllTags() {
 		$sql = 'SELECT TAG_ID as ID,TAG_Name as Name,TAG_Color as Color,TAG_Notes as Notes,TAG_Active as Status,TAG_ClassName as ClassName FROM xTags ORDER BY TAG_Name ASC;';
 		$query = $this->db->query($sql);

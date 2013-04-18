@@ -19,7 +19,8 @@ class Members extends CI_Model {
 	
 	public function avatar_update($user_id,$filename) {
 		$data = array(
-			'USER_Avatar' => $filename
+			'USER_Avatar' => $filename,
+			'Google_Avatar'=>0
 		);
 		$this->db->where('USER_ID',$user_id);
 		return ($this->db->update('Users_Info',$data)) ? TRUE : FALSE;
@@ -48,13 +49,14 @@ class Members extends CI_Model {
 		}
 	}
 	
+	
 	public function get_user_avatar($user_id = false) {
 		$this->load->helper('url');
 		if($user_id) {
 			$query = $this->db->select('Google_Avatar,USER_Avatar as Avatar')->get_where('Users_Info',array('USER_ID'=>$user_id));
 			if($query) {
 				$user_info = $query->row();
-				if($user_info->Google_Avatar) {
+				if($user_info->Google_Avatar == '1') {
 					$google_query = $this->db->select('Avatar')->get_where('GoogleAvatars',array('USER_ID'=>$user_id));
 					if($google_query) {
 						$google_avatar = $google_query->row()->Avatar;
@@ -63,7 +65,7 @@ class Members extends CI_Model {
 						return base_url() . 'assets/themes/itsbrain/imgs/icons/middlenav/user2.png';	
 					}
 				}else {
-					if(file_exists('/assets/uploads/avatars/' . $user_info->Avatar)) {
+					if($user_info->Avatar != '') {
 						return base_url() . 'assets/uploads/avatars/' . $user_info->Avatar;	
 					}else {
 						return base_url() . 'assets/themes/itsbrain/imgs/icons/middlenav/user2.png';
@@ -260,9 +262,16 @@ class Members extends CI_Model {
 
    public function Save_google_avatar($email,$avatar) {
    	 $uid = $this->db->select('USER_ID')->get_where('Users',array('USER_Name'=>$email));
+	 $google_avatar = array(
+	 	'Avatar'=>$avatar
+	 );
 	 //find if user has a avatar already set
 	 if($uid) {
 		$uid = $uid->row()->USER_ID;
+		
+		//check to see if the user has a avatar set...if not we can make the google avatar the users active avatar automatically after signin.
+		$isCustomAvatar = $this->db->select('USER_Avatar')->get_where('Users_Info',array('USER_ID',$uid));
+		
 		$isGoogleAvatar = $this->db->select('ID')->get_where('GoogleAvatars',array('USER_ID'=>$uid));
 		if($isGoogleAvatar) { //yes there is an instance for the user. 
 			//check to see if the avatar is the same as the one we have.
@@ -270,16 +279,43 @@ class Members extends CI_Model {
 			if(!$ifGoogleAvatarIsSame) {
 				//if the avatar is different we update it
 				$this->db->where('USER_ID',$uid);
-				return ($this->db->update('GoogleAvatars',array('Avatar'=>$avatar))) ? TRUE : FALSE;
+				if($this->db->update('GoogleAvatars',$google_avatar)) {
+					//no avatar set for the user, so lets make our google avatar the users active avatar, else...we need to wait for the user to activate the avatar.
+					if(!$isCustomAvatar) {
+						return $this->activateGoogleAvatar($uid);
+					}else {
+						return TRUE;	
+					}
+				}else {
+					return FALSE;	
+				}
 			}
 			//if the avatar is the same as we have, then we dont need to do anything so just tell the system it was a success
 			return TRUE;
 		}else {
+			$google_avatar['USER_ID'] = $uid;
 			//no google avatar found so insert one	
-			return ($this->db->insert('GoogleAvatars',array('USER_ID'=>$uid,'Avatar'=>$avatar))) ? TRUE : FALSE;
+			if($this->db->insert('GoogleAvatars',$google_avatar)) {
+				//no avatar set for the user, so lets make our google avatar the users active avatar, else...we need to wait for the user to activate the avatar.
+				if(!$isCustomAvatar) {
+					return $this->activateGoogleAvatar($uid);
+				}else {
+					return TRUE;	
+				}
+			}else {
+				return FALSE;	
+			}
 		}
 	 }
    }
+   
+	public function activateGoogleAvatar($uid) {
+		$data = array(
+			'Google_Avatar'=>1
+		);	
+		$this->db->where('USER_ID',$uid);
+		return ($this->db->update('Users_Info',$data)) ? TRUE : FALSE;
+	}
    
    public function checkPasswordGeneration($email) {
 		$sql = 'SELECT u.USER_ID as ID, ui.USER_Generated as IsGenerated FROM Users u INNER JOIN Users_Info ui ON u.USER_ID = ui.USER_ID WHERE u.USER_Name = "' . $email . '"';
@@ -526,5 +562,14 @@ class Members extends CI_Model {
 		return $this->db->update('Users_Info',array('USER_Active'=>1)) ? TRUE : FALSE;
 	}
 	
+	public function getSecurityLevels() {
+		$query = $this->db->select('ACCESS_ID as ID,ACCESS_Name as Name,ACCESS_Level as PermLevel,ACCESS_Perm as Modules')->from('xSystemAccess')->order_by('ACCESS_Level','desc')->get();
+		return ($query) ? $query->result() : FALSE;
+	}
+	
+	public function getDefaultModules($sid) {
+		$query = $this->db->select('ACCESS_Perm as Modules')->get_where('xSystemAccess',array('ACCESS_ID'=>$sid));
+		return ($query) ? $query->row()->Modules : FALSE;
+	}
     
 }
