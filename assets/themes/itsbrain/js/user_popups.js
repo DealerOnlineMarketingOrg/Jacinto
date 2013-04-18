@@ -93,7 +93,7 @@ function load_user_table(uid) {
 function load_users_table() {
 	$('#loader_block').slideDown('fast',function() {
 		$.ajax({
-		  url: "",
+		  url: "/users",
 		  context: document.body,
 		  success: function(s,x){
 			$('#loader_block').slideUp('fast');
