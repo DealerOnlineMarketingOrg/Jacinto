@@ -293,10 +293,10 @@ div.dom_pop{position:absolute;top:5%;left:50%;width:500px;margin-left:-250px;z-i
 /* ===== Tabs ===== */
 ul.tabs { background: url(../imgs/leftNavBg.png) repeat-x; height: 38px; border-bottom: 1px solid #d5d5d5; border-top: 1px solid #d5d5d5; }
 ul.tabs li { float: left; height: 38px; line-height: 39px; border-left: none; overflow: hidden; position: relative; border-right: 1px solid #d5d5d5; font-size: 15px; }
-ul.tabs li a { text-decoration: none; display: block; padding: 0px 12px; outline: none; color: #424242; }
+ul.tabs li a { text-decoration: none; display: block; padding: 0px 12px; outline: none; color: #737272; }
 ul.tabs li a:hover { color: #797979; }
 html ul.tabs li.activeTab  { background-color: #fafafa; height: 39px; }
-html ul.tabs li.activeTab a { color: #797979; } 
+html ul.tabs li.activeTab a { color: #424242; } 
 .tab_container { overflow: hidden; clear: both; float: left; width: 100%; }
 .tab_content { padding: 10px 12px; }
 .tabsRight { position: relative; }
