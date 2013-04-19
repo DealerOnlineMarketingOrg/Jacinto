@@ -22,7 +22,7 @@
 		            	<?php
 					        $form = array(
 					            'name' => (($client) ? 'editClient' : 'addClient'),
-					            'id' => 'valid',
+					            'id' => 'clientForm',
 					            'class' => 'mainForm ' . (($client) ? 'editClient' : 'addClient'),
 					            'style'=>'text-align:left !important;'
 					        );
@@ -134,7 +134,7 @@
 											}
 										}
 									} else {
-										echo form_input(array('disabled'=>'disabled','class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value'=>''));
+										echo form_input(array('class'=>'maskPhone required validate[required,custom[phone]]','name'=>'phone','id'=>'phone','value'=>''));
 									}?>
 			                        <span class="formNote">(999) 999-9999</span>
 			                    </div>
@@ -262,7 +262,7 @@
                             	<?php if($client) { ?>
 			               			<input type="hidden" name="ClientID" value="<?= $client->ClientID; ?>" />
                                 <?php } ?>
-			                    <input type="submit" value="<?= ((isset($client->Status)) ? 'Save' : 'Add'); ?>" class="<?= ((isset($client->Status)) ? 'redBtn' : 'greenBtn'); ?>" />
+			                    <!-- <input type="submit" value="<?= ((isset($client->Status)) ? 'Save' : 'Add'); ?>" class="<?= ((isset($client->Status)) ? 'redBtn' : 'greenBtn'); ?>" />-->
 			                </div> 
                             <?php } ?>
 			                <div class="fix"></div>
@@ -326,9 +326,9 @@
 	$(".maskPct").mask("99%");
 
 	//reinitialize the validation plugin
-	$("#valid,.valid").validationEngine({promptPosition : "right", scroll: true});
+	jQuery("#clientForm").validationEngine({promptPosition : "right", scroll: true});
 	
-	$('form.editClient,form.addClient').submit(function(e) {
+	$('#clientForm').submit(function(e) {
 		e.preventDefault();
 		<?php if(isset($view)) { ?>
 		<?php }else { ?>
@@ -386,6 +386,12 @@
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
 			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addClientBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addClientBtn').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveClientBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveClientBtn').addClass('hidden');
+			}
 		}
 		
 		if(activeContent == 'websites') {
@@ -395,9 +401,22 @@
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').hasClass('hidden')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').removeClass('hidden');
 			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addClientBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addClientBtn').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveClientBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveClientBtn').addClass('hidden');
+			}
 		}
 		
 		if(activeContent == 'clientInfo') {
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveClientBtn').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveClientBtn').removeClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addClientBtn').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addClientBtn').removeClass('hidden');
+			}
+			
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').is(':visible')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').addClass('hidden');
 			}
@@ -418,11 +437,20 @@
 		autoOpen: true,
 		modal: true,
 		buttons: [
+			<?php if(isset($client->Status)) { ?>
 			{
-				class:'greyBtn',
-				text:'Close',
-				click:function() {$('#editClient').dialog('close')}
+				class:'redBtn saveClientBtn',
+				text:'Save',
+				click:function() {$('#clientForm').submit()}	
 			},
+			<?php }; ?>
+			<?php if(!isset($client->Status)) { ?>
+			{
+				class:'greenBtn addClientBtn',
+				text:'Add',
+				click:function() {$('#clientForm').submit()}
+			},
+			<?php }; ?>
 			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
 				<?php if(isset($client->Status)) { ?>
 				{

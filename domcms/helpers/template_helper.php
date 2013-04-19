@@ -556,8 +556,8 @@ function ClientsListingTable($clients = false) { ?>
             </thead>
             <tbody>
                 <?php foreach($clients as $client) { ?>
-                    <tr class="tagElement <?= $client->ClassName; ?>">
-                    	<td class="tags"><div class="<?= $client->ClassName; ?>">&nbsp;</div></td>
+                    <tr class="tagElement <?= $client->ClassName; ?> ">
+                    	<td class="tags"><div class="<?= $client->ClassName; ?>">&nbsp;</div><span style="display:none;"><?= $client->ClassName; ?></span></td>
                         <td><?= $client->ClientCode; ?></td>
                         <td style="text-align:left;"><?= $client->Name; ?></td>
                         <td><?= $client->GroupName; ?></td>
