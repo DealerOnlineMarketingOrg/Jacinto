@@ -2,9 +2,9 @@
     <div class="dialog-message popper" id="<?= (isset($agency)) ? 'editAgency' : 'addAgency'; ?>" title="<?= (isset($agency)) ? 'Edit ' . $agency->Name : 'Add Agency'; ?>">
         <div class="uiForm" style="text-align:left;">
 			<style type="text/css">
-				label{margin-top:0px;float:left;padding-top:12px;}
+				#editAgency label, #addAgency label{margin-top:0px;float:left;padding-top:12px;}
 				div.formError{z-index:2000 !important;}
-				textarea {margin-top:12px;}
+				#editAgency textarea,#addAgency textarea {margin-top:12px;}
 			</style>
             <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
                 <!-- Form begins -->

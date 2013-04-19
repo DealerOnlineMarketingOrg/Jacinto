@@ -173,11 +173,15 @@ function MasterlistTable() { ?>
 <?php 	}
 }
 
-function AgencyListingTable($agencies = false) { ?>
+function AgencyListingTable() { 
+	$ci =& get_instance();
+	$ci->load->model('administration');
+	$agency_id = $ci->user['DropdownDefault']->SelectedAgency;
+	$agencies = $ci->administration->getAgencies();	
+?>
 	<?php if($agencies) : ?>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/masterlist_popups.js"></script>
     <?php 
-		$ci =& get_instance();
         $userPermissionLevel = $ci->user['AccessLevel'];
         $addPriv     		 = GateKeeper('Agency_Add',$userPermissionLevel);
         $editPriv    		 = GateKeeper('Agency_Edit',$userPermissionLevel);
@@ -205,7 +209,7 @@ function AgencyListingTable($agencies = false) { ?>
                         <td style="width:30px;text-align:center;"><?= (($agency->Status) ? 'Active' : 'Disable'); ?></td>
                         <?php if($editPriv) { ?>
                         <td class="actionsCol" style="width:75px;text-align:center;">
-                            <a title="Edit Agency" href="javascript:editEntry('<?= $agency->ID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                            <a title="Edit Agency" href="javascript:editAgency('<?= $agency->ID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
                         </td>
                         <?php } ?>
                     </tr>
