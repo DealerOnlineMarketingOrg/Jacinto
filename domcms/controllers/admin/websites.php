@@ -160,10 +160,10 @@ class Websites extends DOM_Controller {
 			//print_object($this->administration->getWebsite($_GET['wid']));
 			if ($data['website']) {
 				$data['page'] = 'edit';
-				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/websites/add_edit',$data);
+				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
 			} else {
 				$data['page'] = 'add';
-				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/websites/add_edit',$data);
+				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
 			}
 		}elseif(isset($_GET['vid'])) {
 			$this->vendor_id = $_GET['vid'];
@@ -209,10 +209,10 @@ class Websites extends DOM_Controller {
 			);
 			if ($data['website']) {
 				$data['page'] = 'edit';
-				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/websites/add_edit',$data);
+				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
 			} else {
 				$data['page'] = 'add';
-				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/websites/add_edit',$data);
+				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
 			}
 		}
 	}
