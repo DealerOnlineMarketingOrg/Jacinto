@@ -993,6 +993,8 @@ function load_websites($id = false, $type = false, $actions = true,$isVendor = f
 		$websites = $ci->administration->getContactWebsites($id);
 	if ($type == 'vid' || $isVendor)
 		$websites = $ci->administration->getVendorWebsites($id);
+	if ($type == 'user')
+		$websites = $ci->administration->getVendorWebsites($id);
 		
 	$html = '';
 	$table = '';

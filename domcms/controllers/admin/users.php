@@ -142,7 +142,8 @@ class Users extends DOM_Controller {
 		$data = array(
 			'user'=>$user,
 			'avatar'=>$avatar,
-			'allMods'=>$this->administration->getAllModules()
+			'allMods'=>$this->administration->getAllModules(),
+			'websites'=>load_websites($contact_id, 'uid', false),
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/edit_add_view',$data);
 	}
