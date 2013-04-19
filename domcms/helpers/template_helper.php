@@ -385,7 +385,7 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
                     <?php if($level == 'g' || $level == 'a') { ?>
                     <?php if(!$from_tab) { ?><th style="text-align:left;">Client/Vendor Name</th><?php } ?>
                     <?php } ?>
-                    <th style="display:none;text-align:left;">Title Name</th>
+                    <th style="text-align:left;">Title Name</th>
                     <th style="text-align:left;">Contact Name</th>
                     <th style="text-align:left;"><?php if($from_tab) { echo ''; } ?> Primary Email</th>
                     <th style="text-align:left;"><?php if($from_tab) { echo ''; } ?> Primary Phone</th>
@@ -407,6 +407,7 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
 						$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
 						$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone,false,true) : new stdClass();
 						// Locate primary.
+						$contact->PrimaryPhone = '';
 						foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) {
 							if ($phone == $contact->PrimaryPhoneType) {
 								$contact->PrimaryPhone = $phone;
@@ -415,6 +416,7 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
 						}
 						$contact->Email = (isset($contact->Email)) ? mod_parser($contact->Email,false,true) : new stdClass();
 						// Locate primary.
+						$contact->PrimaryEmail = '';
 						foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) {
 							if ($email == $contact->PrimaryEmailType) {
 								$contact->PrimaryEmail = $email;
@@ -433,7 +435,7 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
                         <?php if($level == 'g' || $level == 'a') { ?>
                         <?php if(!$from_tab) { ?><td style="width:auto;white-space:no-wrap;text-align:left;white-space:nowrap;"><?php echo $contact->Parent; ?></td><?php } ?>
                         <?php } ?>
-                        <td style="display:none;text-align:left;white-space:nowrap;"><?= $contact->JobTitle; ?></td>
+                        <td style="text-align:left;white-space:nowrap;"><?= $contact->JobTitle; ?></td>
                         <td><?= $contact->Name; ?></td>
                         <td>
                         	<?php

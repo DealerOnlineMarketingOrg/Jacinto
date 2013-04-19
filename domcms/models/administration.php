@@ -121,21 +121,28 @@ class Administration extends CI_Model {
 		return $newUrl;
 	}
 	
-	public function editWebsiteInfo($formdata) {
+	public function editWebsiteInfo($formdata,$type) {
 		$data = array(
-			'ID' => $formdata['ClientID'],
+			'ID' => $formdata['ID'],
 			'WEB_Vendor' => $formdata['vendor'],
-			'WEB_GoogleUACode'=>$formdata['ua_code'],
-			'WEB_GoogleWebToolsMetaCode'=>$formdata['meta_code_number'],
-			'WEB_GooglePlusCode'=>$formdata['gplus_code'],
-			'WEB_BingCode'=>$formdata['bing_code'],
-			'WEB_YahooCode'=>$formdata['yahoo_code'],
-			'WEB_GlobalScript'=>$formdata['global_code'],
 			'WEB_Url'=>$this->formatUrl($formdata['url']),
 			'WEB_Notes'=>$formdata['notes'],
 			'WEB_ActiveTS'=>date(FULL_MILITARY_DATETIME),
 			//'WEB_Created'=>date(FULL_MILITARY_DATETIME)
 		);
+		if ($type != 'uid') {
+			$otherData = array(
+				'WEB_GoogleUACode'=>$formdata['ua_code'],
+				'WEB_GoogleWebToolsMetaCode'=>$formdata['meta_code_number'],
+				'WEB_GooglePlusCode'=>$formdata['gplus_code'],
+				'WEB_BingCode'=>$formdata['bing_code'],
+				'WEB_YahooCode'=>$formdata['yahoo_code'],
+				'WEB_GlobalScript'=>$formdata['global_code'],
+			);
+		}
+		if ($type != 'uid')
+			$data = array_merge($data,$otherData);
+			
 		$this->db->where('WEB_ID',$formdata['web_id']);
 		return ($this->db->update('Websites',$data) ? TRUE :FALSE);
 	}
@@ -179,7 +186,7 @@ class Administration extends CI_Model {
 		return ($this->db->insert('Websites',$data) ? TRUE : FALSE);
 	}
 	
-	public function addWebsiteInfo($formdata) {
+	public function addWebsiteInfo($formdata,$type) {
 		$vid = FALSE;
 		if($formdata['custom_vendor'] != '') {
 			$vendor = array(
@@ -200,21 +207,27 @@ class Administration extends CI_Model {
 			}
 		}
 		$data = array(
-			'ID' => $formdata['ClientID'],
+			'ID' => $formdata['ID'],
 			'WEB_Vendor' => ($vid) ? $vid : $formdata['vendor'],
-			'WEB_GoogleUACode'=>$formdata['ua_code'],
-			'WEB_GoogleWebToolsMetaCode'=>$formdata['meta_code_number'],
-			'WEB_GooglePlusCode'=>$formdata['gplus_code'],
-			'WEB_BingCode'=>$formdata['bing_code'],
-			'WEB_YahooCode'=>$formdata['yahoo_code'],
-			'WEB_GlobalScript'=>$formdata['global_code'],
-			'WEB_Type'=>'CID:' . $formdata['ClientID'],
 			'WEB_Url'=>$this->formatUrl($formdata['url']),
 			'WEB_Active'=>'1',
 			'WEB_Notes'=>$formdata['notes'],
 			'WEB_ActiveTS'=>date(FULL_MILITARY_DATETIME),
+			'WEB_Type'=>strtoupper($type).':' . $formdata['ID'],
 			'WEB_Created'=>date(FULL_MILITARY_DATETIME)
 		);
+		if ($type != 'uid') {
+			$otherData = array(
+				'WEB_GoogleUACode'=>$formdata['ua_code'],
+				'WEB_GoogleWebToolsMetaCode'=>$formdata['meta_code_number'],
+				'WEB_GooglePlusCode'=>$formdata['gplus_code'],
+				'WEB_BingCode'=>$formdata['bing_code'],
+				'WEB_YahooCode'=>$formdata['yahoo_code'],
+				'WEB_GlobalScript'=>$formdata['global_code'],
+			);
+		}
+		if ($type != 'uid')
+			$data = array_merge($data,$otherData);
 		
 		return ($this->db->insert('Websites',$data) ? TRUE : FALSE);
 	}
@@ -242,7 +255,7 @@ class Administration extends CI_Model {
 		
 		$this->db->select($get);
 		$this->db->from('Websites w');
-		$this->db->join('Vendors v','w.WEB_Vendor = v.VENDOR_ID');
+		$this->db->join('Vendors v','w.WEB_Vendor = v.VENDOR_ID','left outer');
 		$this->db->where('w.WEB_ID',$wid);
 		//$this->db->where('w.CLIENT_ID',$cid);
 		$website = $this->db->get();

@@ -14,6 +14,8 @@ class Websites extends DOM_Controller {
 	//when working with a contact, we use this
 	public $contact_id;
 	
+	protected $type = '';
+
     public function __construct() {
         parent::__construct();
 		//load the admin model
@@ -21,33 +23,33 @@ class Websites extends DOM_Controller {
 		
 		if(isset($_POST['cid'])) {
 			$this->client_id = $_POST['cid'];
-			$type = 'cid';
+			$this->type = 'cid';
 		}elseif(isset($_GET['cid'])) {
 			$this->client_id = $_GET['cid'];
-			$type = 'cid';
+			$this->type = 'cid';
 		}
 		if(isset($_POST['wid'])) {
 			$this->website_id = $_POST['wid'];
-			$type = 'wid';
+			$this->type = 'wid';
 		}elseif(isset($_GET['wid'])) {
 			$this->website_id = $_GET['wid'];
-			$type = 'wid';
+			$this->type = 'wid';
 		}
 		if(isset($_POST['uid'])) {
 			$this->contact_id = $_POST['uid'];
-			$type = 'uid';
+			$this->type = 'uid';
 		}elseif(isset($_GET['uid'])) {
 			$this->contact_id = $_GET['uid'];
-			$type = 'uid';
+			$this->type = 'uid';
 		}
 	}
 	
 	public function Load_table() {
 		$this->load->helper('template');
 		if (isset($this->client_id))
-			$table = load_websites($this->client_id,$type);
+			$table = load_websites($this->client_id,$this->type);
 		if (isset($this->contact_id))
-			$table = load_websites($this->contact_id,$type);
+			$table = load_websites($this->contact_id,$this->type);
 		print $table;
 	}
 	
@@ -55,7 +57,7 @@ class Websites extends DOM_Controller {
 		$form = $this->input->post();
 		if(isset($_GET['cid'])) {
 			//var_dump($form);
-			$add = $this->administration->addWebsiteInfo($form);
+			$add = $this->administration->addWebsiteInfo($form,$this->type);
 			if($add) {
 				print 1;
 			}else {
@@ -69,7 +71,7 @@ class Websites extends DOM_Controller {
 				print 0;
 			}
 		}elseif(isset($_GET['uid'])) {
-			$add = $this->administration->addKnownVendorWebsite($form,$_GET['uid']);
+			$add = $this->administration->addWebsiteInfo($form,$this->type);
 			if($add) {
 				print 1;	
 			}else {
@@ -83,7 +85,7 @@ class Websites extends DOM_Controller {
 	public function edit() {
 		$form = $this->input->post();
 		if(isset($_GET['wid'])) {
-			$add = $this->administration->editWebsiteInfo($form);
+			$add = $this->administration->editWebsiteInfo($form,$this->type);
 			if($add) {
 				print 1;
 			}else {
@@ -132,18 +134,24 @@ class Websites extends DOM_Controller {
 			//prepare the array
 			$data = array(
 				'caller'=>$client,
-				'type'=>$type,
+				'type'=>$this->type,
 				'vendors'=>$vendors,
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE),
 			);
 			//print_object($this->administration->getWebsite($_GET['wid']));
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
+			if ($data['website']) {
+				$data['page'] = 'edit';
+				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
+			} else {
+				$data['page'] = 'add';
+				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
+			}
 		}elseif(isset($_GET['vid'])) {
 			$this->vendor_id = $_GET['vid'];
 			$vendor = $this->administration->getVendor($_GET['vid']);
 			$data = array(
 				'selectedVendor'=>$vendor->ID,
-				'type'=>$type,
+				'type'=>$this->type,
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
 			);
 		}elseif(isset($_GET['uid'])) {
@@ -155,11 +163,17 @@ class Websites extends DOM_Controller {
 			$vendors = $this->administration->getAllVendors();
 			$data = array(
 				'caller'=>$contact,
-				'type'=>$type,
+				'type'=>$this->type,
 				'vendors'=>$vendors,
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
 			);
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
+			if ($data['website']) {
+				$data['page'] = 'edit';
+				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
+			} else {
+				$data['page'] = 'add';
+				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
+			}
 		}
 	}
 	

@@ -301,6 +301,7 @@
 					'  AND (p.PROVIDERDATA_ID = sm.SOURCEMETRICS_SourceID AND s.SERVICE_ID = sm.SOURCEMETRICS_MetricID) ' .
 				   'GROUP BY s.SERVICE_ID ' .
 				   'ORDER BY s.SERVICE_Name ASC';
+			echo $sql;
 			$query = $this->db->query($sql);
 			$service_list = $query->result();
 			$service_options = $this->getdpr->output_as_options($service_list);

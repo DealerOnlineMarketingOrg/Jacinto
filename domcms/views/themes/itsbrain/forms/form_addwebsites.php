@@ -5,10 +5,10 @@
 			case 'uid': $typeName = 'Contact'; break;
 			default: $typeName = 'Vendor';
 		} ?>
-    <div class="dialog-message" id="addWebsite" title="<?= (($website) ? 'Edit ' . $typeName . ' Website' : 'Add New Website To ' . $typeName); ?>">
+    <div class="dialog-message" id="addWebsite" title="<?= (($page == 'edit') ? 'Edit ' . $typeName . ' Website' : 'Add New Website To ' . $typeName); ?>">
         <div class="uiForm">
         	 <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
-                	<?= form_open(base_url() . 'admin/websites/add',array('id'=>'web','class'=>'valid mainForm','style'=>'text-align:left;')); ?>
+                	<?= form_open(base_url() . 'admin/websites/'.$page,array('id'=>'web','class'=>'valid mainForm','style'=>'text-align:left;')); ?>
 					<fieldset>
                     	<?php if(!isset($selectedVendor)) { ?>
                             <div class="rowElem noborder noSearch">
@@ -40,7 +40,7 @@
 							</div>
 							<div class="fix"></div>
 						</div>
-                        <?php if ($type != 'UID') { ?>
+                        <?php if ($type != 'uid') { ?>
                             <div class="rowElem noborder">
                                 <label>UA Code</label>
                                 <div class="formRight">
@@ -97,13 +97,8 @@
 		                	<?php if(isset($website->ID)) { ?>
 		                		<input type="hidden" name="web_id" value="<?= $website->ID; ?>" />
 		                	<?php } ?>
-                            <?php if($type == 'cid') { ?>
-		               			<input type="hidden" name="ClientID" value="<?= $caller->ID; ?>" />
-                            <?php }elseif($type == 'vid') { ?>
-                            	<input type="hidden" name="VendorID" value="<?= $selectedVendor; ?>" />
-                            <?php }elseif($type == 'uid') { ?>
-                            	<input type="hidden" name="ContactID" value="<?= $caller->ID; ?>" />
-                            <?php } ?>
+	               			<input type="hidden" name="ID" value="<?= $caller->ID; ?>" />
+                           	<input type="hidden" name="VendorID" value="<?= (isset($selectedVendor) ? $selectedVendor : ''); ?>" />
 		                    <input type="submit" value="submit" class="redBtn" />
 		                </div> 
 					</fieldset>

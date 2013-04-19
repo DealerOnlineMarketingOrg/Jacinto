@@ -21,6 +21,7 @@ class Contacts extends DOM_Controller {
 		$contact->Address = (isset($contact->Address)) ? mod_parser($contact->Address) : false;
 		$contact->Phone = (isset($contact->Phone)) ? mod_parser($contact->Phone,false,true) : false;
 		// Locate primary.
+		$contact->PrimaryPhone = '';
 		foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) {
 			if ($phone == $contact->PrimaryPhoneType) {
 				$contact->PrimaryPhone = $phone;
@@ -29,6 +30,7 @@ class Contacts extends DOM_Controller {
 		}
 		$contact->Email = mod_parser($contact->Email,false,true);
 		// Locate primary.
+		$contact->PrimaryEmail = '';
 		foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) {
 			if ($email == $contact->PrimaryEmailType) {
 				$contact->PrimaryEmail = $email;
