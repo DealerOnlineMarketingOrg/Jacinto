@@ -219,11 +219,27 @@ function AgencyListingTable($agencies = false) { ?>
     <?php endif; ?>
 <?php }
 
-function GroupsListingTable($groups = false) { ?>
+function GroupsListingTable() { 
+		$ci =& get_instance();
+		$ci->load->model('administration');
+		
+		//the dropdown level, agency, groups or clients
+		$level = $ci->user['DropdownDefault']->LevelType;
+		//the selected agency id
+		$agency_id = $ci->user['DropdownDefault']->SelectedAgency;
+		
+		//if we are on agency level, get all groups in the agency
+		if($level == 1 OR $level == 'a') {
+			$groups = $ci->administration->getGroups($agency_id);
+		}else {
+			//else, we just need to get the selected group
+			$groups = $ci->administration->getGroups($agency_id,$ci->user['DropdownDefault']->SelectedGroup);
+		}
+
+?>
 	<?php if($groups) : ?>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/group_popups.js"></script>
     <?php 
-		$ci =& get_instance();
         $userPermissionLevel = $ci->user['AccessLevel'];
         $addPriv     		 = GateKeeper('Group_Add',$userPermissionLevel);
         $editPriv    		 = GateKeeper('Group_Edit',$userPermissionLevel);

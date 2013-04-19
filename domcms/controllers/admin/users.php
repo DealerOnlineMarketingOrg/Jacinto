@@ -20,11 +20,11 @@ class Users extends DOM_Controller {
     }
 
 	public function Load_table($return = false) {
-		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/user_listing_table');
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/users/table');
 	}
 
     public function Index() {
-		$this->LoadTemplate('pages/user_listing');
+		$this->LoadTemplate('pages/users/listing');
     }
 	
 	public function Add() {
@@ -32,14 +32,14 @@ class Users extends DOM_Controller {
 		$data = array(
 		  'html' => $html  
 		);
-		$this->LoadTemplate('forms/form_adduser',$data);
+		$this->LoadTemplate('forms/users/add',$data);
 	}
 	
 	public function Edit_avatar_form() {
 		$data = array(
 			'user_id'=>$this->user_id
 		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editavatar',$data);	
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/edit_avatar',$data);	
 	}
 	
 	public function Upload_avatar() {
@@ -91,7 +91,7 @@ class Users extends DOM_Controller {
 			'SecurityLevels'=>$this->members->getSecurityLevels(),
 			'tags'=>$this->administration->getAllTags()
 		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_adduser',$data);	
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/add',$data);	
 	}
 	
 	public function Submit_add_user() {
@@ -144,7 +144,7 @@ class Users extends DOM_Controller {
 			'avatar'=>$avatar,
 			'allMods'=>$this->administration->getAllModules()
 		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddviewuser',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/edit_add_view',$data);
 	}
 	
 	public function Edit_details_form() {
@@ -160,7 +160,7 @@ class Users extends DOM_Controller {
 			'user'=>$user,
 			'dealerships'=>$dealerships
 		);	
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_userinfoedit',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/edit_details',$data);
 	}
 	
 	public function Submit_user_details_form() {
@@ -229,7 +229,7 @@ class Users extends DOM_Controller {
 			'avatar'=>$avatar,
 			'allMods'=>$this->administration->getAllModules()
 		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddviewuser',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/edit_add_view',$data);
 	}
 	
 	public function Change_pass_form() {
@@ -237,7 +237,7 @@ class Users extends DOM_Controller {
 		$data = array(
 			'user'=>$user
 		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_changepasswordpopup',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/change_password',$data);
 	}
 	
 	/*This will change the users password to whatever the user wants it to be*/
@@ -316,6 +316,6 @@ class Users extends DOM_Controller {
 		$data = array(
 			'display' => $user
 		);
-		$this->LoadTemplate('pages/details_user',$data);
+		$this->LoadTemplate('pages/users/view',$data);
 	}
 }

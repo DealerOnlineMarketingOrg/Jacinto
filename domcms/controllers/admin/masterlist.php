@@ -23,11 +23,11 @@ class Masterlist extends DOM_Controller {
 		//$client = $this->mlist->buildMasterList();
 		//print_object($client);
 		
-		$this->LoadTemplate('pages/masterlist_listing');
+		$this->LoadTemplate('pages/masterlist/listing');
     }
 	
 	public function Load_table() {
-		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/masterlist_listing_table');	
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/masterlist/table');	
 	}
 	
 	public function Edit_entry() {
@@ -42,7 +42,7 @@ class Masterlist extends DOM_Controller {
 				'crazyEggOptions'=>$crazyEggOptions
 			);
 			
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editmasterlist',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/masterlist/edit',$data);
 		else:
 			echo 0;
 		endif;	

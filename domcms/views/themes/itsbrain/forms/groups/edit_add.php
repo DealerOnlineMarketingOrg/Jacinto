@@ -1,5 +1,9 @@
+<style type="text/css">
+#editGroup .mainForm input[type="text"], #editGroup .mainForm textarea, #editGroup .mainForm input[type="password"], #addGroup .mainForm input[type="text"], #addGroup .mainForm textarea, #addGroup .mainForm input[type="password"] {margin:0;}
+#editGroup 
+</style>
 <div class="uDialog" style="text-align:left;">
-    <div class="dialog-message popper" id="<?= ((isset($group)) ? 'editGroup' : 'addGroup'); ?>" title="View Group Details">
+    <div class="dialog-message popper" id="<?= ((isset($group)) ? 'editGroup' : 'addGroup'); ?>" title="<?= ((isset($group)) ? 'Edit Groups Details' : 'Add New Group'); ?>">
         <div class="uiForm">
             <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
             	<?php
@@ -23,11 +27,11 @@
 							</div>
                             <div class="fix"></div>
                         </div>
-                        <div class="rowElem noborder">
+                        <div class="rowElem noborder noSearch">
                             <label style="padding-top:10px;">Member Of</label>
-                            <div class="formRight" style="text-align:left;padding-top:10px;margin-left:68px;float:left;width:auto;">
+                            <div class="formRight" style="text-align:left;padding-top:10px;margin-left:60px;float:left;width:auto;">
                             	<?php
-									echo form_dropdown('agency', $agencies, ((isset($group->AgencyID)) ? $group->AgencyID : ''),'id="memberOf" class="chzn-select" disabled="disabled" style="margin-left:10px;"');
+									echo form_dropdown('agency', $agencies, ((isset($group->AgencyID)) ? $group->AgencyID : ''),'id="memberOf" class="chzn-select" ' . ((isset($group->AgencyID)) ? (($this->user['AccessLevel'] < 600000) ? 'disabled="disabled"' : '') : '') . ' style="margin-left:10px;"');
 								?>
                             </div>
                             <div class="fix"></div>

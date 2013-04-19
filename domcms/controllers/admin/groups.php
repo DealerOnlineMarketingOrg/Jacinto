@@ -15,27 +15,11 @@ class Groups extends DOM_Controller {
     }
 
     public function index() {
-		if($this->level == 1 OR $this->level == 'a') {
-			$groups = $this->administration->getGroups($this->agency_id);
-		}else {
-			$groups = $this->administration->getGroups($this->agency_id,$this->user['DropdownDefault']->SelectedGroup);
-		}
-		$data = array(
-			'groups' => $groups
-		);
-		$this->LoadTemplate('pages/group_listing',$data);
+		$this->LoadTemplate('pages/groups/listing');
     }
 	
 	public function load_table() {
-		if($this->level != 1 OR $this->level != 'a') {
-			$groups = $this->administration->getGroup($this->user['DropdownDefault']->SelectedGroup);
-		}else {
-			$groups = $this->administration->getGroups($this->agency_id);
-		}
-		$data = array(
-			'groups'=>$groups
-		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/group_listing_table',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/groups/listing');
 	}
 	
 	public function View() {
@@ -50,7 +34,7 @@ class Groups extends DOM_Controller {
 			$data = array(
 				'group' => $group,
 			);
-			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/view_group',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/groups/view',$data);
 		}
 	}
 	
@@ -60,6 +44,10 @@ class Groups extends DOM_Controller {
 			$group_id = $_GET['gid'];
 			$group_data = $this->security->xss_clean($this->input->post());
 			
+			//we need to change all the clients Status if we disable a group.
+			if($this->user['AccessLevel'] >= 600000 AND $group_data['status'] == '0') {
+				$client_change = $this->administration->clientGroupedStatus($gid);
+			}
 			//prepare the update
 			$edit_data = array(
 				'AGENCY_ID'=>$group_data['agency_id'],
@@ -94,7 +82,6 @@ class Groups extends DOM_Controller {
 			}else {
 				echo '0';	
 			}
-			
 		}
 	}
 	
@@ -108,7 +95,7 @@ class Groups extends DOM_Controller {
 			'agencies'=>$myAgencies
 		);
 		
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddgroup',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/groups/edit_add',$data);
 	}
 	
 	public function Edit() {
@@ -130,7 +117,7 @@ class Groups extends DOM_Controller {
 				'group'=>$group,
 				'agencies'=>$myAgencies
 			);	
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddgroup',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/groups/edit_add',$data);
 		}else {
 			echo '0';	
 		}

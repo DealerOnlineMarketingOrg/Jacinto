@@ -85,7 +85,7 @@ class Agency extends DOM_Controller {
 			'html' => ''
 		);
 		//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editagency', $data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/agencies/edit_add', $data);
 	}
 	
 	public function Disable() {
@@ -98,12 +98,12 @@ class Agency extends DOM_Controller {
 		$data = array(
 			'agencies'=>$agencies
 		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/agency_listing_table',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/agencies/table',$data);
 	}
 	
 	
 	public function Add() {
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editagency');
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/agencies/edit_add');
 	}
 
     public function index() {
@@ -115,7 +115,7 @@ class Agency extends DOM_Controller {
 			$data = array(
 				'agencies' => $agencies
 			);
-			$this->LoadTemplate('pages/agency_listing',$data);
+			$this->LoadTemplate('pages/agencies/listing',$data);
 		} else {
 			throwError(newError('Agencies', -1, 'Sorry, the Agency page is not available for ' . (($level == 'g') ? 'groups' : 'clients') . '.',0,''));
 			redirect('/','refresh');
