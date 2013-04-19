@@ -10,16 +10,16 @@ class Vendors extends DOM_Controller {
     }
 	
 	public function index() {
-		$this->LoadTemplate('pages/vendor_listing');
+		$this->LoadTemplate('pages/vendors/listing');
 	}
 	
 	public function Load_table() {
-		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/vendor_listing_table');	
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/vendors/table');	
 	}
 	
 	public function add() {
 		//were loading this page on a popup
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addeditviewvendors');
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/vendors/add_edit_view');
 	}
 	
 	public function edit() {
@@ -31,7 +31,7 @@ class Vendors extends DOM_Controller {
 			'contacts'=>true,
 			'websites'=>true
 		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addeditviewvendors',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/vendors/add_edit_view',$data);
 	}
 	
 	public function view() {
@@ -43,7 +43,7 @@ class Vendors extends DOM_Controller {
 			'websites'=>true,
 			'view'=>true
 		);	
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addeditviewvendors',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/vendors/add_edit_view',$data);
 	}
 	
 	public function remove($which) {

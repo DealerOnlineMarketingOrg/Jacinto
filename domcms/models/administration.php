@@ -12,6 +12,15 @@ class Administration extends CI_Model {
         $this->load->helper('string_parser');
     }
 	
+	//disable all clients in a group when a group is disabled...only super admins can do this
+	public function clientGroupedStatus($gid) {
+		$data = array(
+			'CLIENT_Active'=>0
+		);
+		$this->db->where('GROUP_ID',$gid);
+		return ($this->db->update('Clients',$data)) ? TRUE : FALSE;	
+	}
+	
 	public function getAllModules() {
 		$query = $this->db->select('*')->from('xModules')->where('MODULE_Active',1)->get();
 		return ($query) ? $query->result() : FALSE;	

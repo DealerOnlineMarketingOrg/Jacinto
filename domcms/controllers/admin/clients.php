@@ -36,7 +36,7 @@ class Clients extends DOM_Controller {
 			'clients'=>$clients
 		);
 		
-		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/client_listing_table',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/clients/table',$data);
 	}
 	
 	private function _getClientsByDropdownLevel($level = false) {
@@ -75,7 +75,7 @@ class Clients extends DOM_Controller {
 		);
 		
 		//LOAD THE TEMPLATE
-		$this->LoadTemplate('pages/client_listing', $data);
+		$this->LoadTemplate('pages/clients/listing', $data);
     }
 	
 	public function form() {
@@ -130,7 +130,7 @@ class Clients extends DOM_Controller {
 			'tags' => $tags
 		);
 
-		$this->LoadTemplate('forms/form_addclients',$data);
+		$this->LoadTemplate('forms/clients/edit_add',$data);
 	}
     
     public function add_form() {
@@ -143,7 +143,7 @@ class Clients extends DOM_Controller {
 			'groups'=>$groups
 		);
 		
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/clients/edit_add',$data);
     }
 	
 	public function Edit() {
@@ -188,7 +188,7 @@ class Clients extends DOM_Controller {
 				'contacts'=>true
 			);
 			//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);		
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/clients/edit_add',$data);		
 		}else {
 			//this returns nothing to the ajax call....therefor the ajax call knows to show a popup error.
 			print 0;
@@ -239,7 +239,7 @@ class Clients extends DOM_Controller {
 			);
 			
 			//
-      		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editclients',$data);
+      		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/clients/edit_add',$data);
 		}else {
 			//no client found	
 		}

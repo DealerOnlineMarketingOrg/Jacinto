@@ -270,7 +270,7 @@ class Members extends CI_Model {
 		$uid = $uid->row()->USER_ID;
 		
 		//check to see if the user has a avatar set...if not we can make the google avatar the users active avatar automatically after signin.
-		$isCustomAvatar = $this->db->select('USER_Avatar')->get_where('Users_Info',array('USER_ID',$uid));
+		$isCustomAvatar = $this->db->select('USER_Avatar')->from('Users_Info')->where('USER_ID',$uid)->get();
 		
 		$isGoogleAvatar = $this->db->select('ID')->get_where('GoogleAvatars',array('USER_ID'=>$uid));
 		if($isGoogleAvatar) { //yes there is an instance for the user. 

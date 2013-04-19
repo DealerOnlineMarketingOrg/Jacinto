@@ -1,13 +1,13 @@
+<div id="loader_block">
+	<div id="client_loader"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
+</div>
 <div class="content hideTagFilter">
-    <div id="loader_block">
-        <div id="client_loader"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
-    </div>
     <div class="title"><h5>Groups</div>
     <?php notifyError(); ?>
     <?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
     <div class="table" style="margin-top:5px;">
         <div class="head"><h5 class="iView">View All Groups</h5></div>
-        	<div id="groupTable"><?= GroupsListingTable($groups); ?></div>
+        	<div id="groupTable"><?= GroupsListingTable(); ?></div>
         </div>
     </div>
     <div class="fix"></div>

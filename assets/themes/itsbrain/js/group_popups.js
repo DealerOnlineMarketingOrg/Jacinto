@@ -5,17 +5,22 @@ function addGroup() {
 	$('#addGroup').remove();
 	$('#editGroup').remove();
 	$('#viewGroup').remove();
-	
-	$.ajax({
-		type:'GET',
-		url:'/admin/groups/add',
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The Group can not be found. Please try again','Error');
-			}else {
-				$('#editGroupPop').html(code);
+	$('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/groups/add',
+			success:function(code) {
+				if(code == '0') {
+					jAlert('The Group can not be found. Please try again','Error',function() {
+						$('#loader_block').slideUp('fast');	
+					});
+				}else {
+					$('#loader_block').slideUp('fast',function() {
+						$('#editGroupPop').html(code);
+					});
+				}
 			}
-		}
+		});
 	});
 }
 
@@ -23,16 +28,22 @@ function editGroup(gid) {
 	$('#addGroup').remove();
 	$('#editGroup').remove();
 	$('#viewGroup').remove();
-	$.ajax({
-		type:'GET',
-		url:'/admin/groups/edit?gid='+gid,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The Group can not be found. Please try again','Error');
-			}else {
-				$('#editGroupPop').html(code);
+	$('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/groups/edit?gid='+gid,
+			success:function(code) {
+				if(code == '0') {
+					jAlert('The Group can not be found. Please try again','Error',function() {
+						$('#loader_block').slideUp('fast');	
+					});
+				}else {
+					$('#loader_block').slideUp('fast',function() {
+						$('#editGroupPop').html(code);
+					});
+				}
 			}
-		}
+		});
 	});
 }
 
@@ -40,12 +51,22 @@ function viewGroup(gid) {
 	$('#addGroup').remove();
 	$('#editGroup').remove();
 	$('#viewGroup').remove();
-	$.ajax({
-		type:'GET',
-		url:'/admin/groups/view?gid='+gid,
-		success:function(code) {
-			$('#editGroupPop').html(code);	
-		}
+	$('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/groups/view?gid='+gid,
+			success:function(code) {
+				if(code) {
+					$('#loader_block').slideUp('fast',function() {
+						$('#editGroupPop').html(code);
+					});
+				}else {
+					jAlert('The Group can not be found. Please try again','Error',function() {
+						$('#loader_block').slideUp('fast');
+					});
+				}
+			}
+		});
 	});
 }
 
