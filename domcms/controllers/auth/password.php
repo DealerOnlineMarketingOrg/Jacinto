@@ -8,10 +8,6 @@ class Password extends CI_Controller {
 		$this->load->helper('pass');
 		$this->load->helper('msg');	
 	}
-
-	public function Reset() {
-		
-	}
 	
 	public function Change() {
 		$email = $this->input->post('email');
@@ -35,11 +31,11 @@ class Password extends CI_Controller {
 		$data = array(
 			'email' => $email
 		);
-		$this->load->view('themes/itsbrain/forms/form_changepassword',$data);	
+		$this->load->view('themes/itsbrain/forms/auth/change_password',$data);	
 	}
 	
 	public function loadResetPasswordForm() {
-		$this->load->view('themes/itsbrain/forms/form_resetpassword');	
+		$this->load->view('themes/itsbrain/forms/auth/reset_password');	
 	}
 	
 	public function processChangePassword() {

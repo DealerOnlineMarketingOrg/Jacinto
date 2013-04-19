@@ -16,10 +16,6 @@ class Ajax extends DOM_Controller {
         $this->load->library('security');
     }
 	
-	public function yahooReviews() {
-		
-	}
-
     public function name_changer() {
         $this->load->model('administration');
         
@@ -107,18 +103,9 @@ class Ajax extends DOM_Controller {
     /*
       ADMIN CONTROLLERS
      */
-
-    public function add_agency_popup() {
-        $this->load->helper('formwriter');
-        $data = array(
-            'formName' => 'Add New Agency',
-            'form' => AddAgencyForm()
-        );
-        $this->load->view(THEMEDIR . 'popups/basic_form', $data);
-    }
 	
 	public function add_new_tag() {
-		$this->load->view('themes/itsbrain/forms/form_addtags');
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/ajax/add_tags');
 	}
 
 }

@@ -170,7 +170,7 @@ class Passwords extends DOM_Controller {
 			'page_scripts' => $scripts
 		);
 		//LOAD THE TEMPLATE
-		$this->LoadTemplate('pages/listings', $data);
+		$this->LoadTemplate('pages/passwords/listings', $data);
     }
 	
 	private function getData($action) {
@@ -224,7 +224,7 @@ class Passwords extends DOM_Controller {
 		$data = $this->getData('add');
 
 		if ($data)
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addpasswords',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/passwords/add',$data);
 		else
 			echo 0;
 	}
@@ -246,7 +246,7 @@ class Passwords extends DOM_Controller {
 		$data = $this->getData('edit');
 		if ($data)
 			//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editpasswords',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/passwords/edit',$data);
 		else
 			//this returns nothing to the ajax call....therefor the ajax call knows to show a popup error.
 			echo 0;
@@ -265,7 +265,7 @@ class Passwords extends DOM_Controller {
 		$data = array(
 			'display'=>$contact
 		);
-		$this->LoadTemplate('pages/details',$data);
+		$this->LoadTemplate('pages/passwords/view',$data);
 	}
 
 }

@@ -31,6 +31,10 @@ class Google extends CI_Controller {
 		  unset($_SESSION['token']);
 		}
 		
+		if(isset($_GET['error'])) {
+			redirect('/','refresh');	
+		}
+		
 		if (isset($_GET['code'])) {
 		  if (strval($_SESSION['state']) !== strval($_GET['state'])) {
 		    die("The session state did not match.");
