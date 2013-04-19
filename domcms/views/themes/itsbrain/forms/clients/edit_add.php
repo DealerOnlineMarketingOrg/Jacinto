@@ -1,10 +1,12 @@
 <div class="uDialog" style="text-align:left;">
-    <div class="dialog-message" id="editClient" title="<?= ($client) ? 'Edit ' . $client->Name : 'Add New Client'; ?>">
+    <div class="dialog-message" id="editClient" title="<?= ((isset($view) AND isset($client->Status)) ? 'View ' . $client->Name . ' Details' : ((isset($client->Status)) ? 'Edit ' . $client->Name . ' Details' : 'Add New Client')); ?>">
         <div class="uiForm">
 			<style type="text/css">
-				#editClient label{margin-top:0px;float:left;padding-top:12px;}
+				#editClient label{margin-top:0px;float:left;padding-top:5px;}
 				div.formError{z-index:2000 !important;}
-				#editClient .chzn-container,textarea{margin-top:12px;}
+				#editClient .chzn-container{margin-top:5px;}
+				#editClient div.tags .chzn-container{margin-top:12px;}
+				#editClient .mainForm input[type="text"], #editClient .mainForm textarea, #editGroup .mainForm input[type="password"], #editClient .mainForm input[type="text"], #editClient .mainForm textarea, #editClient .mainForm input[type="password"] {margin:0;}
 			</style>
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
@@ -31,16 +33,20 @@
 			    		?>
         				<!-- Input text fields -->
         				<fieldset>
-                        	<?php if(isset($client->Tag)) { ?>
-                        	<div class="rowElem noborder">
+                        	<div class="rowElem noborder tags">
                             	<label><span class="req">*</span> Tag</label>
                                 <div class="formRight noSearch">
                                 	<div style="width:25px;border:1px solid #d5d5d5;margin-right:5px;float:left;margin-top:12px;">
-                                		<div id="tagThumb" class="<?= $client->ClassName; ?>" style="float:left;">&nbsp;</div>
+                                		<div id="tagThumb" class="<?= ((isset($client->Status)) ? $client->ClassName : 'black_team'); ?>" style="float:left;">&nbsp;</div>
                                     </div>
-                                    <?php if(isset($view)) { ?>
-                                    
-                                    <?php }else { ?>
+                                    <?php if(!isset($view) AND !isset($client->Status)) { ?>
+                                        <select id="tagChanger" name="tags" data-placeholder="Link Tags To Client..." class="chzn-select validate[required]" tabindex="1">
+                                            <option value=""></option>
+                                            <?php foreach($tags as $tag) : ?>
+                                                <option rel="<?= $tag->ClassName; ?>" value="<?= $tag->ID; ?>"><?= $tag->Name; ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    <?php }elseif(!isset($view) AND isset($client->Status)) { ?>
                                     <select id="tagChanger" name="tags" data-placeholder="Link Tags To Client..." class="chzn-select validate[required]" tabindex="1">
 			                            <option value=""></option>
 			                            <?php foreach($tags as $tag) : ?>
@@ -50,7 +56,6 @@
                                     <?php } ?>
                                 </div>
                             </div>
-                            <?php } ?>
 			                <div class="rowElem noborder">
 			                    <label><span class="req">*</span> Client Code</label>
 			                    <div class="formRight">
@@ -63,7 +68,7 @@
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
-			                    <label><span class="req">*</span>Client Name</label>
+			                    <label><span class="req">*</span> Client Name</label>
 			                    <div class="formRight">
                                 	<?php if(isset($view)) { 
 										echo form_input(array('disabled'=>'disabled','class'=>'required validate[required]','name'=>'ClientName','id'=>'name','value'=>($client) ? $client->Name : ''));
@@ -119,7 +124,7 @@
 			
 			                </div>
 			                <div class="rowElem noborder">
-			                    <label><span class="req">*</span> Phone</label>
+			                    <label><span class="req">*</span> Phone Number</label>
 			                    <div class="formRight">
                                 	<?php if (isset($client->Phone)) {
 										// Locate primary.
@@ -169,6 +174,15 @@
                                 </div>
                                 <div class="fix"></div>
                             </div>
+                            <?php if(isset($view) and isset($client->Status)) { ?>
+                            <div class="rowElem noborder">
+                            	<label>Member Since</label>
+                                <div class="formRight">
+                                	<?= form_input(array('disabled'=>'disabled','value'=>date('m/d/Y', strtotime($client->JoinDate)))); ?>
+                                </div>
+                                <div class="fix"></div>
+                            </div>
+                            <?php } ?>
 			                <div class="rowElem noborder">
 			                    <label>Notes</label>
 			                    <div class="formRight">
@@ -231,29 +245,29 @@
                                     <?php } ?>
 			                    </div>
 			                </div>
-                            <div class="rowElem noborder">
-                            	<?php if(isset($view)) { ?>
-                                <label>Client Status</label>
-                                <?php } ?>
-                                <div class="formRight" style="text-align:left;padding-top:15px;">
-                                	<?php if(isset($view)) { ?>
-                                    	<?php echo (($client->Status >= 1) ? 'Enabled' : 'Disabled'); ?>
-                                    <?php }else { ?>
-                                	<?php if(isset($client->Status)) { ?>
-                                        <input type="radio" id="radio1" name="status" value="1" <?= (($client->Status >= 1) ? 'checked="checked"' : ''); ?> />
-                                        <label style="float:none;display:inline;" for="radio1">Enable</label>
-                                        <input type="radio" id="radio2" name="status" value="0" <?= (($client->Status < 1) ? 'checked="checked"' : ''); ?>  />
-                                        <label style="float:none;display:inline;" for="radio2">Disable</label>
+                            <?php if(!isset($view)) { ?>
+                                <div class="rowElem noborder">
+                                    <label>Client Status</label>
+                                    <div class="formRight" style="text-align:left;padding-top:5px;">
+                                        <?php if(isset($view)) { ?>
+                                            <?php echo (($client->Status >= 1) ? 'Enabled' : 'Disabled'); ?>
                                         <?php }else { ?>
-                                        <input type="radio" id="radio1" name="status" value="1" checked="checked" />
-                                        <label style="float:none;display:inline;" for="radio1">Enable</label>
-                                        <input type="radio" id="radio2" name="status" value="0" />
-                                        <label style="float:none;display:inline;" for="radio2">Disable</label>
+                                        <?php if(isset($client->Status)) { ?>
+                                            <input type="radio" id="radio1" name="status" value="1" <?= (($client->Status >= 1) ? 'checked="checked"' : ''); ?> />
+                                            <label style="float:none;display:inline;" for="radio1">Enable</label>
+                                            <input type="radio" id="radio2" name="status" value="0" <?= (($client->Status < 1) ? 'checked="checked"' : ''); ?>  />
+                                            <label style="float:none;display:inline;" for="radio2">Disable</label>
+                                            <?php }else { ?>
+                                            <input type="radio" id="radio1" name="status" value="1" checked="checked" />
+                                            <label style="float:none;display:inline;" for="radio1">Enable</label>
+                                            <input type="radio" id="radio2" name="status" value="0" />
+                                            <label style="float:none;display:inline;" for="radio2">Disable</label>
+                                            <?php } ?>
                                         <?php } ?>
-                                    <?php } ?>
+                                    </div>
+                                    <div class="fix"></div>
                                 </div>
-                                <div class="fix"></div>
-                            </div>
+                            <?php } ?>
 			                <div class="fix"></div>
                             <?php if(isset($view)) { ?>
                             
@@ -341,21 +355,21 @@
 				success:function(resp) {
 					if(resp == '1') {
 						if(formType == 'edit') {
-							jAlert('The client was edited successfully','Success',function() {
+							jAlert('The Client was edited successfully','Success',function() {
 								clientListTable();
 								writeDealerDropdown();
 							});
 						}else {
-							jAlert('The client was added successfully','Success',function() {
+							jAlert('The Client was added successfully','Success',function() {
 								clientListTable();
 								writeDealerDropdown();
 							});
 						}
 					}else {
 						if(formType == 'edit') {
-							jAlert('Something went wrong while editing the client. Please try again.','Error');
+							jAlert('Something went wrong while editing the Client. Please try again.','Error');
 						}else {
-							jAlert('Something went wrong while adding the client. Please try again.','Error');
+							jAlert('Something went wrong while adding the Client. Please try again.','Error');
 						}
 					}
 				}
@@ -437,7 +451,14 @@
 		autoOpen: true,
 		modal: true,
 		buttons: [
-			<?php if(isset($client->Status)) { ?>
+			<?php if(isset($view) AND isset($client->Status)) { ?>
+			{
+				class:'greyBtn',
+				text:'Close',
+				click:function() {$(this).dialog('close')}	
+			},
+			<?php } ?>
+			<?php if(isset($client->Status) AND !isset($view)) { ?>
 			{
 				class:'redBtn saveClientBtn',
 				text:'Save',
