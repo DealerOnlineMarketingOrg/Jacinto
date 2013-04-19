@@ -63,42 +63,65 @@ function runWizardSteps(wrapper, steps, postData) {
 	
 	$('#wizardPop').remove();
 	
-	$.ajax({
-		type:'POST',
-		url:step,
-		data:postData,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('Something went wrong. Please try again','Error');
-			}else {
-				/* code = code.replace('</script>', wizardScripts())
-				alert(code); */
-				$(wrapper).html(code);
-				loadInit();
-				
-				function nextStep() {
-					// Convert object back from json object.
-					var returnData = JSON.parse($(wrapper).attr('return'));
-					//alert($(wrapper).attr('return'));
-					if (returnData.state == 'success') {
+	// This step may be a redirect (redirect:page)
+	//  (used to refresh after a wizard).
+	if (steps[0].substring(0,9) == 'redirect:') {
+		window.location.replace(steps[0].substring(9));
+		// Strip current step from steps.
+		nextSteps = new Array();
+		for (i = 1; i < steps.length; i++)
+			nextSteps.push(steps[i]);
+		// Go onto next step.
+		runWizardSteps(wrapper, nextSteps, '');
+	} else {
+		// Not a redirect. Open another wizard popup window.
+		$.ajax({
+			type:'POST',
+			url:step,
+			data:postData,
+			success:function(code) {
+				if(code == '0') {
+					jAlert('Something went wrong. Please try again','Error');
+				}else {
+					/* code = code.replace('</script>', wizardScripts())
+					alert(code); */
+					$(wrapper).html(code);
+					loadInit();
+					
+					function nextStep() {
+						// Convert object back from json object.
+						var returnData = JSON.parse($(wrapper).attr('return'));
+						//alert($(wrapper).attr('return'));
+						if (returnData.state == 'success') {
+							// Strip current step from steps.
+							nextSteps = new Array();
+							for (i = 1; i < steps.length; i++)
+								nextSteps.push(steps[i]);
+							// returnData.data is also in a JSON state.
+							var data = JSON.parse(returnData.data);
+							// Go onto next step.
+							runWizardSteps(wrapper, nextSteps, data);
+						}
+						else if (returnData.state == 'error')
+							// Error and drop out.
+							jAlert('You chose to cancel the import.','Error');
+					}
+					
+					// If code == 1, simple flow-through to next step, no window.
+					// Used with redirects.
+					if (code == '1') {
 						// Strip current step from steps.
 						nextSteps = new Array();
 						for (i = 1; i < steps.length; i++)
 							nextSteps.push(steps[i]);
-						// returnData.data is also in a JSON state.
-						var data = JSON.parse(returnData.data);
 						// Go onto next step.
-						runWizardSteps(wrapper, nextSteps, data);
-					}
-					else if (returnData.state == 'error')
-						// Error and drop out.
-						jAlert('You chose to cancel the import.','Error');
+						runWizardSteps(wrapper, nextSteps, '');
+					} else
+						watchChange(wrapper, "return", nextStep);
 				}
-				
-				watchChange(wrapper, "return", nextStep);
 			}
-		}
-	});
+		});
+	}
 }
 
 function wizardScripts() {

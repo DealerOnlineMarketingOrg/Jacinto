@@ -249,7 +249,8 @@
 			$err_msg = 'DPR Sources saved!';
 			// Throw error and redirect back to DPR.
 			throwError(newError("DPR Sources", $err_level, $err_msg, 0, ''));
-			redirect('dpr','refresh');
+			// Tell the wizard it's still good to go.
+			echo '1';
 		}
 		
 		public function add_step1() {
@@ -289,7 +290,9 @@
 			
 			$source = $this->getdpr->get('Provider', $form['source']);
 			$sql = 'SELECT s.SERVICE_ID as ID,s.SERVICE_Name as Name,p.PROVIDERDATA_Cost as Cost ' .
-				   'FROM DPRReportServices s, DPRProviderData p, DPRSourceMetrics sm ' .
+				   'FROM DPRReportServices s ' .
+				   'LEFT JOIN DPRSourceMetrics sm ON (s.SERVICE_ID = sm.SOURCEMETRICS_MetricID) ' .
+				   'RIGHT JOIN DPRProviderData p ON (p.PROVIDER_ID = sm.SOURCEMETRICS_SourceID) ' .
 				   'WHERE ( ' .
 				   		'SELECT COUNT(*) ' .
 						'FROM DPRReports dr ' .
@@ -298,8 +301,8 @@
 						'  AND dr.REPORT_Provider = '.$source->ID.' ' .
 						'  AND dr.CLIENT_ID = ' . $this->user['DropdownDefault']->SelectedClient.' ' .
 				   		') = 0 ' .
-					'  AND (p.PROVIDERDATA_ID = sm.SOURCEMETRICS_SourceID AND s.SERVICE_ID = sm.SOURCEMETRICS_MetricID) ' .
-				   'GROUP BY s.SERVICE_ID ' .
+				   '  AND sm.SOURCEMETRICS_SourceID = '.$source->ID.' ' .
+				   'GROUP BY sm.SOURCEMETRICS_MetricID ' .
 				   'ORDER BY s.SERVICE_Name ASC';
 			echo $sql;
 			$query = $this->db->query($sql);
@@ -359,7 +362,8 @@
 			$err_msg = 'DPR Sources saved!';
 			// Throw error and redirect back to DPR.
 			throwError(newError("DPR Sources", $err_level, $err_msg, 0, ''));
-			redirect('dpr','refresh');
+			// Tell the wizard it's still good to go.
+			echo '1';
 		}
 		
 		public function edit_step1() {
@@ -397,9 +401,11 @@
 			
 			$date = $form['metricsStartYear'].'/'.$form['metricsStartMonth'].'/1';
 			
-			$source = $this->getdpr->get('Provider', $form['source']);
+			$source = $this->getdpr->get('Provider', $form['source']);				   
 			$sql = 'SELECT s.SERVICE_ID as ID,s.SERVICE_Name as Name,r.REPORT_Value as Value,p.PROVIDERDATA_Cost as Cost ' .
-				   'FROM DPRReportServices s, DPRReports r, DPRProviderData p ' .
+				   'FROM DPRReports r, DPRReportServices s ' .
+				   'LEFT JOIN DPRSourceMetrics sm ON (s.SERVICE_ID = sm.SOURCEMETRICS_MetricID) ' .
+				   'RIGHT JOIN DPRProviderData p ON (p.PROVIDER_ID = sm.SOURCEMETRICS_SourceID) ' .
 				   'WHERE ( ' .
 				   		'SELECT COUNT(*) ' .
 						'FROM DPRReports dr ' .
@@ -408,10 +414,10 @@
 						'  AND dr.REPORT_Provider = '.$source->ID.' ' .
 						'  AND dr.CLIENT_ID = ' . $this->user['DropdownDefault']->SelectedClient.' ' .
 				   		') > 0 ' .
-					'  AND s.SERVICE_ID = r.REPORT_Service ' .
-					'  AND r.CLIENT_ID = ' . $this->user['DropdownDefault']->SelectedClient.' ' .
-					'  AND p.PROVIDERDATA_ID = r.REPORT_Provider ' .
-				   'GROUP BY s.SERVICE_ID ' . 
+				   '  AND sm.SOURCEMETRICS_SourceID = '.$source->ID.' ' .
+				   '  AND r.CLIENT_ID = ' . $this->user['DropdownDefault']->SelectedClient.' ' .
+				   '  AND p.PROVIDERDATA_ID = r.REPORT_Provider ' .
+				   'GROUP BY sm.SOURCEMETRICS_MetricID ' .
 				   'ORDER BY s.SERVICE_Name ASC';
 			$query = $this->db->query($sql);
 			$service_list = $query->result();
@@ -471,7 +477,6 @@
 						'cost' => $cost,
 						'clientID' => $this->user['DropdownDefault']->SelectedClient
 					);
-					print_object($lead_data);
 					$this->rep->addLeadCost($lead_data);
 					$this->rep->addLeadTotal($lead_data);
 				}
@@ -481,7 +486,8 @@
 			$err_msg = 'DPR Sources saved!';
 			// Throw error and redirect back to DPR.
 			throwError(newError("DPR Sources", $err_level, $err_msg, 0, ''));
-			redirect('dpr','refresh');
+			// Tell the wizard it's still good to go.
+			echo '1';
 		}
 		
 		public function reports() {

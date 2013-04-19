@@ -127,7 +127,7 @@
 		$('input#add').click(function() {
 			// Go to add report lead page with date range values.
 			//addDpr();
-			wizardDialog("#dprAddPop", [ '/dpr/add_step1', '/dpr/add_step2', '/dpr/add_step3', '/dpr/add_stepSubmit' ]);
+			wizardDialog("#dprAddPop", [ '/dpr/add_step1', '/dpr/add_step2', '/dpr/add_step3', '/dpr/add_stepSubmit', 'redirect:/dpr' ]);
 			//jQuery('form#reportDpr').attr('action', '<?= base_url(); ?>dpr/add');
 			//$("form#reportDpr").submit();
 		});
@@ -135,13 +135,13 @@
 		$('input#edit').click(function() {
 			// Go to add report lead page with date range values.
 			//addDpr();
-			wizardDialog("#dprEditPop", [ '/dpr/edit_step1', '/dpr/edit_step2', '/dpr/edit_step3', '/dpr/edit_stepSubmit' ]);
+			wizardDialog("#dprEditPop", [ '/dpr/edit_step1', '/dpr/edit_step2', '/dpr/edit_step3', '/dpr/edit_stepSubmit', 'redirect:/dpr' ]);
 			//jQuery('form#reportDpr').attr('action', '<?= base_url(); ?>dpr/add');
 			//$("form#reportDpr").submit();
 		});
 		
 		$('input#import').click(function() {
-			wizardDialog("#dprImportPop", [ '/dpr/import_step1', '/dpr/import_step2', '/dpr/import_step3', '/dpr/import_step4', '/dpr/import_stepSubmit' ]);
+			wizardDialog("#dprImportPop", [ '/dpr/import_step1', '/dpr/import_step2', '/dpr/import_step3', '/dpr/import_step4', '/dpr/import_stepSubmit', 'redirect:/dpr' ]);
 		});
 
 		

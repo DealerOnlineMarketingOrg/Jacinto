@@ -70,6 +70,7 @@
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/jquery.fileDownload.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/ZeroClipboard/ZeroClipboard.js"></script>
     <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/ZClip/jquery.zclip.js"></script>
+    <script type="text/javascript" src="<?php echo  base_url(); ?>assets/<?php echo  $GlobalDir; ?>/js/plugins/chosenExtender.js"></script>
     <?php if(isset($TagCss)) { echo $TagCss; }; ?>  
 
 </head>

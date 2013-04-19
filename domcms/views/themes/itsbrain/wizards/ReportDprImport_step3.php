@@ -42,19 +42,159 @@
 	//re initialize jQuery
 	var $ = jQuery.noConflict();
 	
-	function loadInit() {};
+	var today = new Date();
+	var rangeSelectorStartMonth = '';
+	var rangeSelectorStartYear = '';
+	var rangeSelectorEndMonth = '';
+	var rangeSelectorEndYear = '';
+	var rangeStartMonth = 1;
+	var rangeStartYear = 2000;
+	var rangeEndMonth = 12;
+	var rangeEndYear = 2013;
+	var thisStartMonth = 1;
+	var thisStartYear = today.getFullYear();
+	var thisEndMonth = today.getMonth()+1;
+	var thisEndYear = today.getFullYear();
 	
-	jQuery('[id^="addmetric"]').click(function(e) {
+	function loadInit() {
+		dateRangeInitialize("#metricsStartMonth", "#metricsStartYear",
+							"#metricsEndMonth", "#metricsEndYear",
+							 rangeStartMonth, rangeStartYear, rangeEndMonth, rangeEndYear);
+		dateRangeSet(thisStartMonth, false,
+					 thisStartYear, false,
+					 thisEndMonth, false,
+					 thisEndYear, false);
+	};
+	
+	function dateRangeInitialize(startMonthSelector, startYearSelector,
+								 endMonthSelector, endYearSelector,
+								 startMonth, startYear, endMonth, endYear) {
+		
+		rangeSelectorStartMonth = startMonthSelector;
+		rangeSelectorStartYear = startYearSelector;
+		rangeSelectorEndMonth = endMonthSelector;
+		rangeSelectorEndYear = endYearSelector;
+		
+		rangeStartMonth = startMonth;
+		rangeStartYear = startYear;
+		rangeEndMonth = endMonth;
+		rangeEndYear = endYear;
+		
+		dateRangeSetMonths(rangeSelectorStartMonth, startMonth, endMonth);
+		dateRangeSetYears(rangeSelectorStartYear, startYear, endYear);
+		dateRangeSetMonths(rangeSelectorEndMonth, startMonth, endMonth);
+		dateRangeSetYears(rangeSelectorEndYear, startYear, endYear);
+	}
+	
+	function dateRangeSetMonths(monthSelector, start, end) {
+		months = {
+			'1':'January','2':'Febuary','3':'March','4':'April','5':'May','6':'June',
+			'7':'July','8':'August','9':'September','10':'October','11':'November','12':'December',
+		};
+
+		chosenClear(monthSelector);
+		for (var val in months) {
+			if (val >= start && val <= end)
+				chosenAdd(monthSelector, months[val], val);
+		}
+	}
+	
+	function dateRangeSetYears(yearSelector, start, end) {
+		chosenClear(yearSelector);
+		for (year = start; year <= end; year++) {
+			if (year >= start && year <= end)
+				chosenAdd(yearSelector, year, year);
+		}
+	}
+	
+	// Compares two month/year pairs.
+	// Returns -1 if month1/year1 is before, 0 if equal, and 1 if after month2/year2.
+	function compareMonthYear(month1, year1, month2, year2) {
+		if (year1 < year2)
+			return -1;
+		if (year1 == year2) {
+			if (month1 < month2)
+				return -1;
+			if (month1 == month2)
+				return 0;
+			if (month1 > month2)
+				return 1;
+		}
+		if (year1 > year2) {
+			return 1;
+		}		
+	}
+	
+	function dateRangeSet(selectedStartMonth, changeStartMonth, selectedStartYear, changeStartYear, selectedEndMonth, changeEndMonth, selectedEndYear, changeEndYear) {
+		if (compareMonthYear(selectedStartMonth, selectedStartYear, selectedEndMonth, selectedEndYear) == 1) {
+			// Selected dates don't fall inside proper date range. Force conform.
+			if (changeStartMonth) {
+				// Force end month to conform to start month.
+				selectedEndMonth = selectedStartMonth;
+			} else if (changeStartYear) {
+				// Force end month/year to conform to start month/year.
+				selectedEndMonth = selectedStartMonth;
+				selectedEndYear = selectedStartYear;
+			} else if (changeEndMonth) {
+				// Force start month to conform to end month.
+				selectedStartMonth = selectedEndMonth;
+			} else if (changeEndYear) {
+				// Force start month/year to conform to end month/year.
+				selectedStartMonth = selectedEndMonth;
+				selectedStartYear = selectedEndYear;
+			} else {
+				// Default. End month/year will be forced to conform to start month/year.
+				selectedEndMonth = selectedStartMonth;
+				selectedEndYear = selectedStartYear;
+			}
+		}
+		
+		// Set all date boxes.
+		chosenValSet(rangeSelectorStartMonth, selectedStartMonth);
+		chosenValSet(rangeSelectorStartYear, selectedStartYear);
+		chosenValSet(rangeSelectorEndMonth, selectedEndMonth);
+		chosenValSet(rangeSelectorEndYear, selectedEndYear);
+	}
+	
+	$("#metricsStartMonth").change(function(e) {
+		dateRangeSet(chosenVal("#metricsStartMonth"), true,
+					 chosenVal("#metricsStartYear"), false,
+					 chosenVal("#metricsEndMonth"), false,
+					 chosenVal("#metricsEndYear"), false);
+	});
+	
+	$("#metricsStartYear").change(function(e) {
+		dateRangeSet(chosenVal("#metricsStartMonth"), false,
+			 chosenVal("#metricsStartYear"), true,
+			 chosenVal("#metricsEndMonth"), false,
+			 chosenVal("#metricsEndYear"), false);
+	});
+
+	$("#metricsEndMonth").change(function(e) {
+		dateRangeSet(chosenVal("#metricsStartMonth"), false,
+					 chosenVal("#metricsStartYear"), false,
+					 chosenVal("#metricsEndMonth"), true,
+					 chosenVal("#metricsEndYear"), false);
+	});
+	
+	$("#metricsEndYear").change(function(e) {
+		dateRangeSet(chosenVal("#metricsStartMonth"), false,
+					 chosenVal("#metricsStartYear"), false,
+					 chosenVal("#metricsEndMonth"), false,
+					 chosenVal("#metricsEndYear"), true);
+	});
+	
+	$('[id^="addmetric"]').click(function(e) {
 		// Set next metric to visible.
-		next = parseInt(jQuery("#metricCount").val())+1;
-		jQuery("#metricCount").val(next);
+		next = parseInt($("#metricCount").val())+1;
+		$("#metricCount").val(next);
 		// Make last add-metric button invisible.
-		jQuery("#metricCopy_" + (next-2)).css('display','none');
-		jQuery("#metricBlock_" + (next-1)).css('display','');
+		$("#metricCopy_" + (next-2)).css('display','none');
+		$("#metricBlock_" + (next-1)).css('display','');
 		
 		// If we're at the last metric, turn off addmetric button.
 		if (next == 10)
-			jQuery("#metricCopy_9").css('display','none');
+			$("#metricCopy_9").css('display','none');
 
 	});
 		
