@@ -1,5 +1,9 @@
+<style type="text/css">
+	 .ui-dialog #viewGroup input[type="text"]  {margin:0}
+</style>
+
 <div class="uDialog" style="text-align:left;">
-    <div class="dialog-message popper" id="viewGroup" title="View Group Details">
+    <div class="dialog-message popper" id="viewGroup" title="Group Information">
         <div class="uiForm">
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
@@ -62,7 +66,14 @@
 		minWidth:800,
 		height:500,
 		autoOpen: true,
-		modal: true
+		modal: true,
+		buttons: [
+			{
+				class:'greyBtn',
+				text:'Close',
+				click:function() {$(this).dialog('close')}
+			},
+		] 
 	});
 </script>
 

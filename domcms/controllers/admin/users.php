@@ -8,7 +8,7 @@ class Users extends DOM_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model(array('members','administration','utilities'));
-        $this->load->helper(array('template','msg','html'));
+        $this->load->helper(array('template','msg','html','file'));
         $this->level = $this->user['DropdownDefault']->LevelType;
 		$this->activeNav = 'admin';
 		
@@ -33,6 +33,102 @@ class Users extends DOM_Controller {
 		  'html' => $html  
 		);
 		$this->LoadTemplate('forms/form_adduser',$data);
+	}
+	
+	public function Edit_avatar_form() {
+		$data = array(
+			'user_id'=>$this->user_id
+		);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editavatar',$data);	
+	}
+	
+	public function Upload_avatar() {
+		$user = $this->administration->getMyUser($this->user_id);
+		$profile_url = base_url() . 'profile/' . strtolower($user->FirstName . $user->LastName);
+		//print_object($this->input->post());
+		$rootpath = $_SERVER['DOCUMENT_ROOT'];
+		
+		$config['upload_path'] = $rootpath . '/assets/uploads/avatars/';
+		$config['allowed_types'] = 'gif|jpg|png';
+		$config['max_size'] = '1000';
+		$config['max_width'] = '640';
+		$config['max_height'] = '480';
+		$config['file_name'] = $this->user_id . '_' . strtolower($user->FirstName) . '_' . strtolower($user->LastName) . "_" . createRandomString(30,"ALPHANUM") . '.jpg';
+		
+		$this->load->library('upload',$config);
+		$avatar = 'avatar';
+		if(!$this->upload->do_upload($avatar)) {
+			$error = $this->upload->display_errors();
+			redirect('/users?trigger=' . $this->user_id . '&cem=' . $error,'location');
+		}else {
+			$data = array('upload_data' => $this->upload->data());
+			$filename = $data['upload_data']['file_name'];
+			// the current logged in users profile url
+			//log the url to the database
+			$updateAvatar = $this->members->avatar_update($this->user_id,$filename);
+			// if the query was successfull, redirect back to the profile.
+			if($updateAvatar) :
+				redirect('/users?trigger=' . $this->user_id,'location');
+			else :
+			    redirect('/users?trigger=' . $this->user_id . '&e=2','location');
+			endif;
+		}
+	}
+	
+	public function Import_google_avatar() {
+		$import = $this->members->activateGoogleAvatar($this->user_id);
+		if($import) {
+			echo '1';
+		}else {
+			echo '0';	
+		}
+	}
+	
+	public function Add_user_Form() {
+		$this->load->model('mlist');
+		$data = array(
+			'dealerships'=>$this->mlist->getClients(),
+			'SecurityLevels'=>$this->members->getSecurityLevels(),
+			'tags'=>$this->administration->getAllTags()
+		);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_adduser',$data);	
+	}
+	
+	public function Submit_add_user() {
+		$this->load->helper('pass');
+		$form = $this->input->post();
+		$modules = $this->members->getDefaultModules($form['security_level']);
+		
+		$user_update = array(
+			'USER_Name'=>$form['username'],
+			'Team'=>$form['team']
+		);
+		
+		$directory_update = array(
+			'DIRECTORY_Type'=>'CID:' . $form['dealership'],
+			'CLIENT_Owner'=>$form['dealership'],
+			'DIRECTORY_Address'=>'street:' . $form['street'] . ',city:' . $form['city'] . ',state:' . $form['state'] . ',zipcode:' . $form['zipcode'],
+			'DIRECTORY_Tag'=>$form['team'],
+			'DIRECTORY_Email'=>'work:'.$form['username'],
+			'DIRECTORY_Primary_Email'=>$form['username']
+			
+		);
+		
+		$user_info_update = array(
+			'ACCESS_ID' => $form['security_level'],
+			'USER_Modules'=>$modules,
+			'CLIENT_ID'=>$form['dealership'],
+			'USER_Active'=>1,
+			'USER_Generated'=>1,
+		);
+		
+		$add_user = $this->administration->addNewUser($user_update,$directory_update,$user_info_update);
+		
+		if($add_user) {
+			echo '1';	
+		}else {
+			echo '0';
+		}
 	}
 	
 	public function Edit() {

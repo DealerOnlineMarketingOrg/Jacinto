@@ -4,11 +4,20 @@
 <div class="content">
     <div class="title"><h5>Users</h5></div>
     <?php notifyError(); ?>
+	<?php if(isset($_GET['e']) OR isset($_GET['cem'])) { ?>
+        <div id="errors" class="nNote nFailure" style="margin:0;border:none;">
+            <?php if(isset($_GET['e'])) { ?>
+                <p><?= ((isset($_GET['e'])) ? 'There was a problem uploading your avatar. Please Try Again.' : ''); ?><a href="javascript:editUser('<?= $_GET['trigger']; ?>');" id="reloadPop">Try Again!</a></p>
+            <?php }elseif(isset($_GET['cem'])) { ?>
+                <p><strong>Error: </strong><?= ((isset($_GET['cem'])) ? strip_tags($_GET['cem']) : ''); ?>. <a href="javascript:editUser('<?= $_GET['trigger']; ?>');" id="reloadPop">Try Again!</a></p>
+            <?php } ?>
+        </div>
+    <?php } ?>
     <?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
     <div class="table" id="dataClient">
         <div class="head" style="margin-top:5px;"><h5 class="iView">View All Users</h5></div>
-        <div id="clientTableHolder">
-			<?= UserListingTable(false,false); ?>
+        <div id="usersTableHolder">
+            <?= UserListingTable(false,false); ?>
         </div>
     </div>
     <div class="fix"></div>
@@ -23,4 +32,14 @@
 <div id="passwordForms"></div>
 <div id="editAvatarForm"></div>
 <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/user_popups.js"></script>
-<script type="text/javascript"></script>
+<script type="text/javascript">
+	<?php if(isset($_GET['trigger'])) { ?>
+		<?php if(!isset($_GET['cem']) AND !isset($_GET['e'])) { ?>
+			editUser('<?= $_GET['trigger']; ?>');
+		<?php }else { ?>
+			jQuery('#reloadPop').click(function() {
+				editUser('<?= $_GET['trigger']; ?>');
+			});
+		<?php } ?>
+	<?php } ?>
+</script>

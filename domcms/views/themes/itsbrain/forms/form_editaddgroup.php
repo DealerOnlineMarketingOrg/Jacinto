@@ -11,7 +11,7 @@
 				?>
                     <fieldset>
                         <div class="rowElem noborder">
-                            <label>Group Name</label>
+                            <label><span class="req">*</span> Group Name</label>
                             <div class="formRight">
 								<?php
 									if(isset($group->Name)) {
@@ -55,7 +55,6 @@
                             <?php if(isset($group->GroupId)) { ?>
                                 <input type="hidden" name="agency_id" value="<?= $group->AgencyId; ?>" />
                             <?php } ?>
-                            <input type="submit" value="<?= (isset($group)) ? 'Save' : 'Add'; ?>" class="<?= (isset($group)) ? 'redBtn' : 'greenBtn'; ?>" />
                         </div>
                     </fieldset>
                	<?= form_close(); ?>
@@ -83,7 +82,7 @@
 			success:function(code) {
 				var msg;
 				if(code == '1') {
-					msg = '<?= (isset($group)) ? 'Your edit was made succesfully.' : 'Your add was made successfully'; ?>';
+					msg = '<?= (isset($group)) ? 'Your edit was made successfully.' : 'Your group was created successfully.'; ?>';
 					jAlert(msg,'Success',function() {
 						groupListTable();
 					}); 
@@ -109,16 +108,30 @@
 	<?php if(isset($group)) { ?>
 	$("#editGroup").dialog({
 		minWidth:800,
-		height:500,
+		height:475,
 		autoOpen: true,
 		modal: true,
+		buttons: [
+			{
+				class:'redBtn',
+				text:'Save',
+				click:function() {$('.formPop').submit();}
+			},
+		] 
 	});
 	<?php }else { ?>
 	$("#addGroup").dialog({
 		minWidth:800,
-		height:500,
+		height:420,
 		autoOpen: true,
 		modal: true,
+		buttons: [
+			{
+				class:'greenBtn',
+				text:'Add',
+				click:function() {$('.formPop').submit();}
+			},
+		] 
 	});
 	<?php } ?>
 </script>

@@ -30,6 +30,8 @@
 				ul.modulesTable.first{border-top:1px solid #d5d5d5 !important;margin-top:0 !important;}
 				ul.odd{background-color:#E2E4FF;}
 				div.submitForm{margin-top:10px;}
+				#importGoogleAvatar{background:url('<?= base_url() . THEMEIMGS; ?>icons/color/google_icon.png') no-repeat top left;background-size:12px 12px;}
+				#importGoogleAvatar span {display:none;}
 			</style>
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
@@ -41,12 +43,25 @@
             	<div class="tab_container">
             		<div id="userInfo" class="tab_content">
                     	<div class="title">
-                        	<h5 class="iUsers2"><?= $user->FirstName . ' ' . $user->LastName; ?></h5>
+                        	<h5 class="iUsers2" style="min-height:20px;"><?= $user->FirstName . ' ' . $user->LastName; ?></h5>
                             <?php if(($this->user['AccessLevel'] >= 600000 || $this->user['UserID'] == $user->ID) AND !isset($view)) { ?>
                             	<a title="Edit Contact" href="javascript:editUserInfo('<?= $user->ID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                                
                             <?php } ?>
                         </div>
-                        <img class="profileAvatar" src="<?= $avatar; ?>" alt="<?= $user->FirstName . ' ' . $user->LastName; ?>" style="width:120px;" />
+                        
+                        <div class="avatar" style="width:122px;margin-right:2px;">
+                        	<img class="profileAvatar" src="<?= $avatar; ?>" alt="<?= $user->FirstName . ' ' . $user->LastName; ?>" style="width:120px;" />
+                            <?php if($this->user['UserID'] == $user->ID || $this->user['AccessLevel'] >= 600000) { ?>
+                            	<div class="editButton inAvatar">
+                                	<a title="Upload Custom Avatar" id="editUsersAvatar" rel="<?= $user->ID; ?>" href="javascript:void(0);"><span>Edit</span></a>
+                                    <?php if(isset($_SESSION['token'])) { ?>
+                                    	<a title="Import Google Avatar" id="importGoogleAvatar" rel="<?= $user->ID; ?>" href="javascript:void(0);"><span>Import Google Avatar</span></a>
+                                    <?php } ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                        
                         <div class="profileRight">
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" class="profile">
                                 <tr class="odd">
@@ -169,6 +184,7 @@
 		</div>
 	</div>
 </div>
+<div id="editAvatarPop"></div>
 <script type="text/javascript">
 
 	var $ = jQuery;
@@ -182,6 +198,36 @@
 			$('#tagThumb').attr('class',classname);
 		});
 	<?php } ?>
+
+
+	$('#editUsersAvatar').click(function() {
+		var uid = $(this).attr('rel');
+		$.ajax({
+			type:'GET',
+			url:'/admin/users/edit_avatar_form?uid='+uid,
+			success:function(data) {
+				$('#editAvatarPop').html(data);	
+			}
+		});
+
+	});
+	
+	$('#importGoogleAvatar').click(function() {
+		var uid = $(this).attr('rel');
+		jConfirm('Are you sure you want to import your google avatar into the system? This will overwrite any existing avatars you have set.','Import Google Avatar',function(r) {
+			if(r) {
+				$.ajax({
+					type:'GET',
+					url:'/admin/users/import_google_avatar?uid='+uid,
+					success:function(data) {
+						if(data) {
+							load_user_table(uid);
+						}
+					}
+				});
+			}
+		});
+	});
 
 	$.mask.definitions['~'] = "[+-]";
 	$(".maskDate").mask("99/99/9999",{completed:function(){alert("Callback when completed");}});
@@ -198,21 +244,6 @@
 	//reinitialize the validation plugin
 	$("#valid,.valid").validationEngine({promptPosition : "right", scroll: true});
 	
-	$('form.editClient,form.addClient').submit(function(e) {
-		e.preventDefault();
-		<?php if(isset($view)) { ?>
-		<?php }else { ?>
-			var formData = $(this).serialize();
-			$.ajax({
-				type:'POST',
-				data:formData,
-				url:'',
-				success:function(resp) {
-				}
-			});
-		<?php } ?>
-	});
-
 	$('ul.tabs li a').live('click',function() {
 		//remove all activetabs
 		$('ul.tabs').find('li.activeTab').removeClass('activeTab');
@@ -224,15 +255,8 @@
 		$('#editUser div.tab_container').find(content).css({'display':'block'});
 		
 		var activeContent = $(this).attr('rel');
-		
-		<?php if(isset($view)) { ?>
-		
-		<?php }else { ?>
-		
-		<?php } ?>
-		
-		//alert(content);
 	});
+	
 	//jQuery("div[class^='widget']").simpleTabs();
 	$(".chzn-select").chosen();
 	$("#editUser").dialog({
@@ -249,4 +273,13 @@
 			},
 		] 
 	});
+	
+	$('div.avatar').hover(function() {
+		$(this).find('.editButton').slideDown('fast');
+	},function() {
+		$(this).find('.editButton').slideUp('fast');
+	});
+
+
+	
 </script>

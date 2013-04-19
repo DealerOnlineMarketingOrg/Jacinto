@@ -1,3 +1,12 @@
+<style type="text/css">
+		ul.modulesTable{min-width:709px !important;width:100%;display:block;border-bottom:1px solid #d5d5d5;height:30px;border-left:1px solid #d5d5d5;border-right:1px solid #d5d5d5;}
+		ul.modulesTable li {display:inline;float:left;width:23%;padding:5px;border-right:1px solid #d5d5d5;}
+		ul.modulesTable li span.check{float:left;margin-right:5px;}
+		ul.modulesTable li:last-child{border-right:none;}
+		ul.modulesTable.first{border-top:1px solid #d5d5d5 !important;margin-top:0 !important;}
+		ul.odd{background-color:#E2E4FF;}
+
+</style>
 <div class="content">
     <div class="title"><h5>User Information</h5></div>
     <? notifyError(); ?>
