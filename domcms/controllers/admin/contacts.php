@@ -43,7 +43,7 @@ class Contacts extends DOM_Controller {
 	}
 	
     public function index() {
-		$this->LoadTemplate('pages/contact_listing');
+		$this->LoadTemplate('pages/contacts/listing');
     }
 	
 	public function load_table() {
@@ -51,7 +51,7 @@ class Contacts extends DOM_Controller {
 		$data = array(
 			'contacts'=>$contacts
 		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/contact_listing_table',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/contacts/table',$data);
 	}
 	
 	public function View() {
@@ -70,7 +70,7 @@ class Contacts extends DOM_Controller {
 				'level' => $this->user['DropdownDefault']->LevelType,
 				'websites'=>load_websites($contact_id, 'uid', false),
 			);
-			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/view_contact',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/contacts/view',$data);
 		}
 	}
 	
@@ -208,7 +208,7 @@ class Contacts extends DOM_Controller {
 			'websites'=>'',
 		);
 		
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddcontact',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add',$data);
 	}
 	
 	public function Edit() {
@@ -233,7 +233,7 @@ class Contacts extends DOM_Controller {
 				'tags'=>$tags,
 				'websites'=>load_websites($contact_id,'uid'),
 			);
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddcontact',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add',$data);
 		}else {
 			echo '0';	
 		}
@@ -253,7 +253,7 @@ class Contacts extends DOM_Controller {
 			'type'=>'',
 		);
 		
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddphone',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add_phone',$data);
 	}
 	
 	public function PhoneEdit() {
@@ -273,7 +273,7 @@ class Contacts extends DOM_Controller {
 				'type'=>$type,
 				'value'=>$value,
 			);	
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddphone',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add_phone',$data);
 		}else {
 			echo '0';	
 		}		
@@ -293,7 +293,7 @@ class Contacts extends DOM_Controller {
 			'type'=>'',
 		);
 		
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddemail',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add_email',$data);
 	}
 	
 	public function EmailEdit() {
@@ -313,7 +313,7 @@ class Contacts extends DOM_Controller {
 				'type'=>$type,
 				'value'=>$value,
 			);
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddemail',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add_email',$data);
 		}else {
 			echo '0';	
 		}		

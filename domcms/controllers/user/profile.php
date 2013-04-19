@@ -54,7 +54,7 @@ class Profile extends DOM_Controller {
 			'admin' => $this->user
 		);
 			
-		$this->LoadTemplate('pages/profile',$data);
+		$this->LoadTemplate('pages/users/profile',$data);
 	}
 	
 	public function Upload_avatar() {

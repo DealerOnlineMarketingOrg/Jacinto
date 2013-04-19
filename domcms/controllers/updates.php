@@ -10,7 +10,7 @@ class Updates extends DOM_Controller {
 
     public function index() {
 		$updateUserRelease = $this->beta->update_user_release();
-		$this->LoadTemplate('pages/changes');
+		$this->LoadTemplate('pages/updates/view');
     }
 	
 	public function add() {
@@ -98,7 +98,7 @@ class Updates extends DOM_Controller {
 		$data = array(
 			'change' => $form_data
 		);
-		$this->load->view('themes/itsbrain/forms/form_editchange',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/updates/edit',$data);
 	}
 	
 	public function update_change() {

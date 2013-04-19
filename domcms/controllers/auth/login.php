@@ -12,7 +12,6 @@ class Login extends DOM_Controller {
 		$this->load->helper('pass');
 		$this->load->helper('msg');
 		$this->load->library('form_validation');
-				
     }
 	
     public function index($msg = false) {
@@ -30,7 +29,7 @@ class Login extends DOM_Controller {
 		}
 		
 		if(!$this->user) {
-			$this->LoadTemplate('pages/login',$data);
+			$this->LoadTemplate('pages/auth/login',$data);
 		}else {
 			redirect('/','refresh');	
 		}
