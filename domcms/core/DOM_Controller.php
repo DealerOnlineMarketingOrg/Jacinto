@@ -183,7 +183,7 @@ class DOM_Controller extends CI_Controller {
 		
 		//if were not on the login screen, load the tags form in the footer. Its hidden by default.
 		if($page != 'login' && $page != 'sign_in') { 
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addtags');
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/ajax/add_tags');
 		}
 		
 		//Load the footers
