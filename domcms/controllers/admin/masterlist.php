@@ -7,7 +7,7 @@ class Masterlist extends DOM_Controller {
     public function __construct() {
         parent::__construct();
 		$this->load->model(array('mlist'));
-		
+		$this->activeNav = 'admin';
 		//if we detect the get paramater 'cid' 
 		//we know that the system already knows which client we need to work with.
 		//set the global var for the class that is available for all methods.

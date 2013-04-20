@@ -1,47 +1,68 @@
-function addAgency() {
-	jQuery('#addAgency').remove();
-	jQuery('#editAgency').remove();
-	jQuery('.ui-dialog').remove();
 
-	jQuery.ajax({
-		type:'GET',
-		url:'/admin/agency/add',
-		success:function(code) {
-			jQuery('#editAgencyPop').html(code);	
-		}
+var $ = jQuery;
+
+function addAgency() {
+	$('#addAgency').remove();
+	$('#editAgency').remove();
+	$('.ui-dialog').remove();
+	$('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/agency/add',
+			success:function(code) {
+				if(code) {
+					$('#loader_block').slideUp('fast',function() {
+						$('#editAgencyPop').html(code);	
+					});
+				}else {
+					jAlert('The Agency requested could not be found. Please try again!','Error',function() {
+						$('#loader_block').slideUp('fast');
+					});
+				}
+			}
+		});
 	});
 }
 
 function editAgency(aid) {
-	jQuery('#addAgency').remove();
-	jQuery('#editAgency').remove();
-	jQuery('.ui-dialog').remove();
-
-	jQuery.ajax({
-		type:'GET',
-		url:'/admin/agency/edit?aid='+aid,
-		success:function(code) {
-			jQuery('#editAgencyPop').html(code);	
-		}
+	$('#addAgency').remove();
+	$('#editAgency').remove();
+	$('.ui-dialog').remove();
+	$('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/agency/edit?aid='+aid,
+			success:function(code) {
+				if(code) {
+					$('#loader_block').slideUp('fast',function() {
+						$('#editAgencyPop').html(code);
+					});
+				}else{
+					jAlert('The Agency requested could not be found. Please Try Again!','Error',function() {
+						$('#loader_block').slideUp('fast');
+					});
+				}
+			}
+		});
 	});
 }
 
 function agencyListTable() {
-	jQuery('#addAgency').dialog('close');
-	jQuery('#editAgency').dialog('close');
-	jQuery('.ui-dialog').remove();
+	$('#addAgency').dialog('close');
+	$('#editAgency').dialog('close');
+	$('.ui-dialog').remove();
 
-  jQuery('#editAgency').dialog('destroy');
-  jQuery('#loader_block').slideDown('fast',function() {
-	jQuery.ajax({
+  $('#editAgency').dialog('destroy');
+  $('#loader_block').slideDown('fast',function() {
+	$.ajax({
 	  type:"GET",
 	  url:'/admin/agency/load_table',
 	  success:function(data) {
 		if(data) {
-		  jQuery('#agencyTable').html(data);
-		  jQuery('#loader_block').slideUp('fast',function() {
-			jQuery('#agencyTable').slideDown('fast');
-				jQuery('#example').dataTable({
+		  $('#agencyTable').html(data);
+		  $('#loader_block').slideUp('fast',function() {
+			$('#agencyTable').slideDown('fast');
+				$('#example').dataTable({
 					"bJQueryUI": true,
 					"sPaginationType": "full_numbers",
 					"sDom": '<""f>t<"F"lp>',
@@ -50,7 +71,7 @@ function agencyListTable() {
 				});
 		  });
 		}else {
-		  jQuery('#agencyTable').html('<p>No clients found at this level. Please use the Dealer Dropdown to change to a different group.</p>');
+		  $('#agencyTable').html('<p>No clients found at this level. Please use the Dealer Dropdown to change to a different group.</p>');
 		}
 	  }
 	});

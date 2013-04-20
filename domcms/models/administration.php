@@ -704,6 +704,7 @@ class Administration extends CI_Model {
 						   c.CLIENT_Tag as Tag,
 						   c.CLIENT_Active as Status,
 						   c.GROUP_ID as GroupID,
+						   c.CLIENT_Created as JoinDate,
 						   t.TAG_ClassName as ClassName');
 		$this->db->from('Clients c');
 		$this->db->join('xTags t','c.CLIENT_Tag = t.TAG_ID');
