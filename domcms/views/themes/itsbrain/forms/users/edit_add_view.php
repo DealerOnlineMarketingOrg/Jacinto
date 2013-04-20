@@ -32,6 +32,7 @@
 				div.submitForm{margin-top:10px;}
 				#importGoogleAvatar{background:url('<?= base_url() . THEMEIMGS; ?>icons/color/google_icon.png') no-repeat top left;background-size:12px 12px;}
 				#importGoogleAvatar span {display:none;}
+				div.tab_content div.head {background:none;border:none;width:14em;margin:0 auto;}
 			</style>
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
@@ -125,9 +126,57 @@
                         <?php } ?>
     				</div>
     				<div id="websites" class="tab_content" style="display:none;">
-                    <?= $websites; ?>
+                    	<?= $websites; ?>
     				</div>
                     <div id="contacts" class="tab_content" style="display:none;">
+                    	<div style="margin-top:10px;margin-bottom:60px;">
+                            <div class="head"><h5 class="iPhone">Phone Numbers</h5></div>
+                            <div class="fix"></div>
+                            <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
+                                <thead>
+                                    <tr>
+                                        <td width="10%" style="text-align:left;padding-left:10px;">Primary</td>
+                                        <td width="80%" style="text-align:left;padding-left:10px;">Phone Number</td>
+                                        <td width="10%" style="text-align:left;padding-left:10px;">Actions</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if ($user) foreach ($user->Phones as $userPhone) foreach ($userPhone as $type => $phone) { ?>
+                                    <tr>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="phonePrimary" name="phonePrimary" value="<?= $phone; ?>" <?= ($phone == $user->PrimaryPhoneType) ? 'checked' : ''; ?> /></div></td>
+                                        <td width="80%"><?= (($user) ? $phone : ''); ?></td>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Phone Number" href="javascript:editPhone('<?= $user->ID; ?>','<?= $type; ?>','<?= $phone; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
+                                    </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                            <a href="javascript:addPhone('<?= $user->ID; ?>','<?= $type; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Phone</a>
+                        </div>
+                        
+                        <div style="margin-top:10px;">
+                            <div class="head"><h5 class="iMail">Email Addresses</h5></div>
+                            <div class="fix"></div>
+                            <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
+                                <thead>
+                                    <tr>
+                                        <td width="10%" style="text-align:left;padding-left:10px;">Primary</td>
+                                        <td width="80%" style="text-align:left;padding-left:10px;">Email Addresses</td>
+                                        <td width="10%" style="text-align:left;padding-left:10px;">Actions</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if ($user) foreach ($user->Emails as $userEmail) foreach ($userEmail as $type => $email) { ?>
+                                    <tr>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="emailPrimary" name="emailPrimary" value="<?= $email; ?>" <?= ($email == $user->PrimaryEmailType) ? 'checked' : ''; ?> /></div></td>
+                                        <td width="80%"><?= (($user) ? $email : ''); ?></td>
+                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Email" href="javascript:editEmail('<?= $user->ID; ?>','<?= $type; ?>','<?= $email; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
+                                    </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                            <a href="javascript:addEmail('<?= $user->ID; ?>','<?= $type; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Email</a>
+                        </div>
+                    <div class="fix"></div>
                     </div>
                     <div id="modules" class="tab_content" style="display:none;">
                     	<?php if(isset($view)) { ?>
@@ -256,6 +305,47 @@
 		$('#editUser div.tab_container').find(content).css({'display':'block'});
 		
 		var activeContent = $(this).attr('rel');
+		
+		<?php if(isset($view)) { ?>
+		
+		<?php }else{ ?>
+		
+		if(activeContent == 'userInfo') {
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').addClass('hidden');
+			}
+		}
+		
+		if(activeContent == 'websites') {
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').removeClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').addClass('hidden');
+			}
+		}
+		
+		if(activeContent == 'contacts') {
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').removeClass('hidden');
+			}
+		}
+		
+		if(activeContent == 'modules') {
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').addClass('hidden');
+			}
+		}
+		<?php } ?>
 	});
 	
 	//jQuery("div[class^='widget']").simpleTabs();
@@ -272,6 +362,18 @@
 				text:'Close',
 				click:function() {$(this).dialog('close')}
 			},
+			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
+				{
+					class:'greenBtn hidden addWebsiteBtn',
+					text:"Add New Website",
+					click:function() { addWebsiteForm('<?= ($user) ? $user->ID : ''; ?>','uid')}
+				},
+			<?php } ?>
+				{
+					class:'redBtn hidden savePrimariesBtn',
+					text:"Save",
+					click:function() { updatePrimaries('<?= ($user) ? $user->ID : ''; ?>',$(".phonePrimary:checked").val(),$(".emailPrimary:checked").val())}
+				},
 		] 
 	});
 	

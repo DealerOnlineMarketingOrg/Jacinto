@@ -21,3 +21,4 @@
 </style>
 <div id="addWebsiteForm"></div>
 <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/contact_popups.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/contactInfo_popups.js"></script>

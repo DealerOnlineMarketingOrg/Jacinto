@@ -43,7 +43,7 @@ class Contacts extends DOM_Controller {
 	}
 	
     public function index() {
-		$this->LoadTemplate('pages/contact_listing');
+		$this->LoadTemplate('pages/contacts/listing');
     }
 	
 	public function load_table() {
@@ -51,12 +51,12 @@ class Contacts extends DOM_Controller {
 		$data = array(
 			'contacts'=>$contacts
 		);
-		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/contact_listing_table',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/contacts/table',$data);
 	}
 	
 	public function View() {
-		if(isset($_GET['uid'])) {
-			$contact_id = $_GET['uid'];	
+		if(isset($_GET['gid'])) {
+			$contact_id = $_GET['gid'];	
 		}else {
 			$contact_id = $this->user['DropdownDefault']->SelectedContact;
 		}
@@ -68,17 +68,17 @@ class Contacts extends DOM_Controller {
 			$data = array(
 				'contact' => $contact,
 				'level' => $this->user['DropdownDefault']->LevelType,
-				'websites'=>load_websites($contact_id, 'uid', false),
+				'websites'=>load_websites($contact_id, 'gid', false),
 			);
-			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/view_contact',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/contacts/view',$data);
 		}
 	}
 	
 	public function Form() {
 		$contact_data = $this->security->xss_clean($this->input->post());
 		
-		if(isset($_GET['uid']))
-			$contact_id = $_GET['uid'];
+		if(isset($_GET['gid']))
+			$contact_id = $_GET['gid'];
 		else
 			$contact_id = '';
 		
@@ -121,77 +121,6 @@ class Contacts extends DOM_Controller {
 		}
 	}
 	
-	public function FormPhone() {
-		$form = $this->security->xss_clean($this->input->post());
-		
-		if(isset($_GET['uid'])) {
-			$contact_id = $_GET['uid'];
-			$page = $_GET['page'];
-		} else
-			$contact_id = '';
-			
-		$type = $form['type'];
-		$phone = $form['phone'];
-		$new = $type.':'.$phone;
-		$old = $form['old'];
-		
-		if ($page == 'edit')
-			$ret = $this->administration->editContactPhone($contact_id, $old, $new);
-		else
-			$ret = $this->administration->addContactPhone($contact_id, $new);
-		
-		if($contact_id && $ret) {
-			echo '1';
-		}else {
-			echo '0';
-		}
-	}
-	
-	public function FormEmail() {
-		$form = $this->security->xss_clean($this->input->post());
-		
-		if(isset($_GET['uid'])) {
-			$contact_id = $_GET['uid'];
-			$page = $_GET['page'];
-		} else
-			$contact_id = '';
-			
-		$type = $form['type'];
-		$email = $form['email'];
-		$new = $type.':'.$email;
-		$old = $form['old'];
-		
-		if ($page == 'edit')
-			$ret = $this->administration->editContactEmail($contact_id, $old, $new);
-		else
-			$ret = $this->administration->addContactEmail($contact_id, $new);
-		
-		if($contact_id && $ret) {
-			echo '1';	
-		}else {
-			echo '0';
-		}
-
-	}
-	
-	public function FormPrimary() {
-		
-		if(isset($_GET['uid'])) {
-			$contact_id = $_GET['uid'];
-			$phonePrimary = $_GET['phone'];
-			$emailPrimary = $_GET['email'];
-		} else
-			$contact_id = '';
-			
-		$ret = $this->administration->editPrimaryPhoneEmail($contact_id, $phonePrimary, $emailPrimary);
-		
-		if($contact_id && $ret) {
-			echo '1';	
-		}else {
-			echo '0';
-		}
-	}
-	
 	public function Add() {
 		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
 		$vendors = $this->administration->getAllVendors();
@@ -208,15 +137,16 @@ class Contacts extends DOM_Controller {
 			'websites'=>'',
 		);
 		
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddcontact',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add',$data);
 	}
 	
 	public function Edit() {
-		if(isset($_GET['uid'])) {
-			$contact_id = $_GET['uid'];
+		if(isset($_GET['gid'])) {
+			$contact_id = $_GET['gid'];
 		}
 		
 		$contact = $this->administration->getContact($contact_id);
+		$contact->ID = $contact_id;
 		$this->formatContactInfo($contact);
 		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
 		$vendors = $this->administration->getAllVendors();
@@ -231,92 +161,12 @@ class Contacts extends DOM_Controller {
 				'vendors'=>$vendors,
 				'types'=>$types,
 				'tags'=>$tags,
-				'websites'=>load_websites($contact_id,'uid'),
+				'websites'=>load_websites($contact_id,'gid'),
 			);
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddcontact',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add',$data);
 		}else {
 			echo '0';	
 		}
 	}
 	
-	public function PhoneAdd() {
-		if(isset($_GET['uid'])) {
-			$contact_id = $_GET['uid'];
-		}
-		
-		$contact = $this->administration->getContact($contact_id);
-		$this->formatContactInfo($contact);
-
-		$data = array(
-			'page'=>'add',
-			'contact'=>$contact,
-			'type'=>'',
-		);
-		
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddphone',$data);
-	}
-	
-	public function PhoneEdit() {
-		if(isset($_GET['uid'])) {
-			$contact_id = $_GET['uid'];
-			$type = $_GET['type'];
-			$value = $_GET['value'];
-		}
-		
-		$contact = $this->administration->getContact($contact_id);
-		$this->formatContactInfo($contact);
-
-		if($contact) {
-			$data = array(
-				'page'=>'edit',
-				'contact'=>$contact,
-				'type'=>$type,
-				'value'=>$value,
-			);	
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddphone',$data);
-		}else {
-			echo '0';	
-		}		
-	}
-	
-	public function EmailAdd() {
-		if(isset($_GET['uid'])) {
-			$contact_id = $_GET['uid'];
-		}
-		
-		$contact = $this->administration->getContact($contact_id);
-		$this->formatContactInfo($contact);
-
-		$data = array(
-			'page'=>'add',
-			'contact'=>$contact,
-			'type'=>'',
-		);
-		
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddemail',$data);
-	}
-	
-	public function EmailEdit() {
-		if(isset($_GET['uid'])) {
-			$contact_id = $_GET['uid'];
-			$type = $_GET['type'];
-			$value = $_GET['value'];
-		}
-		
-		$contact = $this->administration->getContact($contact_id);
-		$this->formatContactInfo($contact);
-
-		if($contact) {
-			$data = array(
-				'page'=>'edit',
-				'contact'=>$contact,
-				'type'=>$type,
-				'value'=>$value,
-			);
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_editaddemail',$data);
-		}else {
-			echo '0';	
-		}		
-	}
-
 }

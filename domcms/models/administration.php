@@ -1208,37 +1208,37 @@ class Administration extends CI_Model {
 		return ($query) ? $query->row()->Signature : FALSE;
 	}
 	
-	public function editContactPhone($uid, $oldPhone, $newPhone) {
+	public function editContactInfoPhone($id, $oldPhone, $newPhone) {
 		$this->db->set('DIRECTORY_Phone','REPLACE(DIRECTORY_Phone,"'.$oldPhone.'","'.$newPhone.'")',false);
-		$this->db->where('DIRECTORY_ID',$uid);
+		$this->db->where('DIRECTORY_ID',$id);
 		return $this->db->update('Directories');
 	}
 
-	public function addContactPhone($uid, $newPhone) {
+	public function addContactInfoPhone($id, $newPhone) {
 		$this->db->set('DIRECTORY_Phone','CONCAT(DIRECTORY_Phone,",'.$newPhone.'")',false);
-		$this->db->where('DIRECTORY_ID',$uid);
+		$this->db->where('DIRECTORY_ID',$id);
 		return $this->db->update('Directories');
 	}
 
-	public function editContactEmail($uid, $oldEmail, $newEmail) {
+	public function editContactInfoEmail($id, $oldEmail, $newEmail) {
 		$this->db->set('DIRECTORY_Email','REPLACE(DIRECTORY_Email,"'.$oldEmail.'","'.$newEmail.'")',false);
-		$this->db->where('DIRECTORY_ID',$uid);
+		$this->db->where('DIRECTORY_ID',$id);
 		return $this->db->update('Directories');
 	}
 
-	public function addContactEmail($uid, $newEmail) {
+	public function addContactInfoEmail($id, $newEmail) {
 		$this->db->set('DIRECTORY_Email','CONCAT(DIRECTORY_Email,",'.$newEmail.'")',false);
-		$this->db->where('DIRECTORY_ID',$uid);
+		$this->db->where('DIRECTORY_ID',$id);
 		return $this->db->update('Directories');
 	}
 	
-	public function editPrimaryPhoneEmail($uid, $phonePrimary, $emailPrimary) {
+	public function editPrimaryPhoneEmail($id, $phonePrimary, $emailPrimary) {
 		$data = array(
 			'DIRECTORY_Primary_Email' => $emailPrimary,
 			'DIRECTORY_Primary_Phone' => $phonePrimary,
 		);
 		$this->db->set($data);
-		$this->db->where('DIRECTORY_ID',$uid);
+		$this->db->where('DIRECTORY_ID',$id);
 		return $this->db->update('Directories');
 	}
 	

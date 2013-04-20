@@ -2,7 +2,8 @@
 	<?php switch ($type) {
 			case 'cid': $typeName = 'Client'; break;
 			case 'vid': $typeName = 'Vendor'; break;
-			case 'uid': $typeName = 'Contact'; break;
+			case 'gid': $typeName = 'Contact'; break;
+			case 'uid': $typeName = 'User'; break;
 			default: $typeName = 'Vendor';
 		} ?>
     <div class="dialog-message" id="addWebsite" title="<?= (($page == 'edit') ? 'Edit ' . $typeName . ' Website' : 'Add New Website To ' . $typeName); ?>">

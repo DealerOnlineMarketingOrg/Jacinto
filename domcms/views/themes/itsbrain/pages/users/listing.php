@@ -32,6 +32,7 @@
 <div id="passwordForms"></div>
 <div id="editAvatarForm"></div>
 <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/user_popups.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/contactInfo_popups.js"></script>
 <script type="text/javascript">
 	<?php if(isset($_GET['trigger'])) { ?>
 		<?php if(!isset($_GET['cem']) AND !isset($_GET['e'])) { ?>

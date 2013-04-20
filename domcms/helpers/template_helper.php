@@ -987,14 +987,22 @@ function load_websites($id = false, $type = false, $actions = true,$isVendor = f
 	$ci =& get_instance();
 	$ci->load->model('administration');
 	
-	if ($type == 'cid')
+	if ($type == 'cid') {
 		$websites = $ci->administration->getClientWebsites($id);
-	if ($type == 'uid')
+		$name = 'client';
+	}
+	if ($type == 'gid') {
 		$websites = $ci->administration->getContactWebsites($id);
-	if ($type == 'vid' || $isVendor)
+		$name = 'contact';
+	}
+	if ($type == 'vid' || $isVendor) {
 		$websites = $ci->administration->getVendorWebsites($id);
-	if ($type == 'user')
-		$websites = $ci->administration->getVendorWebsites($id);
+		$name = 'vendor';
+	}
+	if ($type == 'uid') {
+		$websites = $ci->administration->getUserWebsites($id);
+		$name = 'user';
+	}
 		
 	$html = '';
 	$table = '';
@@ -1017,7 +1025,7 @@ function load_websites($id = false, $type = false, $actions = true,$isVendor = f
 		                                    
 		$html = $table;
 	}else {
-		$html .= '<p>No websites found for this client.' . (($actions) ? ' You can add one by clicking the add website button below.' : '') . '</p>';
+		$html .= '<p>No websites found for this '.$name.'.' . (($actions) ? ' You can add one by clicking the add website button below.' : '') . '</p>';
 	}
 	return $html;
 }

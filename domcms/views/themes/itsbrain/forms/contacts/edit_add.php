@@ -168,7 +168,7 @@
                                     <?php } ?>
                                 </tbody>
                             </table>
-                            <a href="javascript:addPhone('<?= $contact->ContactID; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Phone</a>
+                            <a href="javascript:addPhone('<?= $contact->ContactID; ?>','<?= $type; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Phone</a>
                         </div>
                         
                         <div style="margin-top:10px;">
@@ -191,7 +191,7 @@
                                     <?php } ?>
                                 </tbody>
                             </table>
-                            <a href="javascript:addEmail('<?= $contact->ContactID; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Email</a>
+                            <a href="javascript:addEmail('<?= $contact->ContactID; ?>','<?= $type; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Email</a>
                         </div>
                     <div class="fix"></div>
                     </div>
@@ -231,7 +231,7 @@
 		$.ajax({
 			type:'POST',
 			data:formData,
-			url:'/admin/contacts/form<?= (($page == 'edit') ? '?uid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
+			url:'/admin/contacts/form<?= (($page == 'edit') ? '?gid=' . (($contact) ? $contact->ContactID : '') : ''); ?>',
 			success:function(code) {
 				var msg;
 				if(code == '1') {
@@ -326,7 +326,7 @@
 				{
 					class:'greenBtn hidden addWebsiteBtn',
 					text:"Add New Website",
-					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>','uid')}
+					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>','gid')}
 				},
 			<?php } ?>
 				{

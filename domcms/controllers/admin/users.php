@@ -89,7 +89,7 @@ class Users extends DOM_Controller {
 		$data = array(
 			'dealerships'=>$this->mlist->getClients(),
 			'SecurityLevels'=>$this->members->getSecurityLevels(),
-			'tags'=>$this->administration->getAllTags()
+			'tags'=>$this->administration->getAllTags(),
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/add',$data);	
 	}
@@ -143,7 +143,7 @@ class Users extends DOM_Controller {
 			'user'=>$user,
 			'avatar'=>$avatar,
 			'allMods'=>$this->administration->getAllModules(),
-			'websites'=>load_websites($contact_id, 'uid', false),
+			'websites'=>load_websites($this->user_id, 'uid'),
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/edit_add_view',$data);
 	}
@@ -228,7 +228,8 @@ class Users extends DOM_Controller {
 			'user'=>$user,
 			'view'=>TRUE,
 			'avatar'=>$avatar,
-			'allMods'=>$this->administration->getAllModules()
+			'allMods'=>$this->administration->getAllModules(),
+			'websites'=>load_websites($this->user_id, 'uid', false),
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/edit_add_view',$data);
 	}
@@ -315,8 +316,9 @@ class Users extends DOM_Controller {
 		$user->Address = $users_address;		
 		$user->Notes = (($user->Notes) ? $user->Notes : FALSE);
 		$data = array(
-			'display' => $user
+			'display' => $user,
 		);
 		$this->LoadTemplate('pages/users/view',$data);
 	}
+	
 }

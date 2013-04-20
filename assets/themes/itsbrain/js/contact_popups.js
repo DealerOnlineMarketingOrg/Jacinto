@@ -19,13 +19,13 @@ function addContact() {
 	});
 }
 
-function editContact(uid) {
+function editContact(gid) {
 	$('#addContact').remove();
 	$('#editContact').remove();
 	$('#viewContact').remove();
 	$.ajax({
 		type:'GET',
-		url:'/admin/contacts/edit?uid='+uid,
+		url:'/admin/contacts/edit?gid='+gid,
 		success:function(code) {
 			if(code == '0') {
 				jAlert('The Contact can not be found. Please try again','Error');
@@ -36,13 +36,13 @@ function editContact(uid) {
 	});
 }
 
-function viewContact(uid) {
+function viewContact(gid) {
 	$('#addContact').remove();
 	$('#editContact').remove();
 	$('#viewContact').remove();
 	$.ajax({
 		type:'GET',
-		url:'/admin/contacts/view?uid='+uid,
+		url:'/admin/contacts/view?gid='+gid,
 		success:function(code) {
 			$('#editContactPop').html(code);	
 		}
@@ -70,90 +70,5 @@ function contactListTable() {
 				}
 			}
 		});
-	});
-}
-
-function addPhone(uid) {
-	$('#addContactPhone').remove();
-	$('#editContactPhone').remove();
-	
-	$.ajax({
-		type:'GET',
-		url:'/admin/contacts/PhoneAdd?uid='+uid,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The Contact can not be found. Please try again','Error');
-			}else {
-				$('#addContactPhonePop').html(code);
-			}
-		}
-	});
-}
-
-function editPhone(uid, type, value) {
-	$('#addContactPhone').remove();
-	$('#editContactPhone').remove();
-	
-	$.ajax({
-		type:'GET',
-		url:'/admin/contacts/PhoneEdit?uid='+uid+'&type='+type+'&value='+value,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The Contact can not be found. Please try again','Error');
-			}else {
-				$('#editContactPhonePop').html(code);
-			}
-		}
-	});
-}
-
-function addEmail(uid) {
-	$('#addContactEmail').remove();
-	$('#editContactEmail').remove();
-	
-	$.ajax({
-		type:'GET',
-		url:'/admin/contacts/EmailAdd?uid='+uid,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The Contact can not be found. Please try again','Error');
-			}else {
-				$('#addContactEmailPop').html(code);
-			}
-		}
-	});
-}
-
-function editEmail(uid, type, value) {
-	$('#addContactEmail').remove();
-	$('#editContactEmail').remove();
-	
-	$.ajax({
-		type:'GET',
-		url:'/admin/contacts/EmailEdit?uid='+uid+'&type='+type+'&value='+value,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The Contact can not be found. Please try again','Error');
-			}else {
-				$('#editContactEmailPop').html(code);
-			}
-		}
-	});
-}
-
-function updatePrimaries(uid, phonePrimary, emailPrimary) {
-	$('#addContactEmail').remove();
-	$('#editContactEmail').remove();
-	
-	$.ajax({
-		type:'GET',
-		url:'/admin/contacts/FormPrimary?uid='+uid+'&phone='+phonePrimary+'&email='+emailPrimary,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The Contact can not be found. Please try again','Error');
-			}else {
-				jAlert('The primary phone and email have been saved.','Primary');
-			}
-		}
 	});
 }
