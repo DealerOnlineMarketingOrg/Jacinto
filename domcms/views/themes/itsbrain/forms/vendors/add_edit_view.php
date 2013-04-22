@@ -143,7 +143,7 @@
                                     <?php if(isset($vendor->ID)) { ?>
                                         <input type="hidden" name="ID" value="<?= $vendor->ID; ?>" />
                                     <?php } ?>
-                                    <input type="submit" value="<?= (isset($vendor)) ? 'Save' : 'Add'; ?>" class="<?= (isset($vendor)) ? 'redBtn' : 'greenBtn'; ?>" />
+                                    <!--<input type="submit" value="<?= (isset($vendor)) ? 'Save' : 'Add'; ?>" class="<?= (isset($vendor)) ? 'redBtn' : 'greenBtn'; ?>" />-->
                                 </div>
                                 <?php } ?>
                             </fieldset>
@@ -265,6 +265,12 @@
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
 			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addVendor').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addVendor').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveVendor').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveVendor').addClass('hidden');
+			}
 		}
 		
 		if(activeContent == 'websites') {
@@ -274,6 +280,12 @@
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').hasClass('hidden')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').removeClass('hidden');
 			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addVendor').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addVendor').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveVendor').is(':visible')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveVendor').addClass('hidden');
+			}
 		}
 		
 		if(activeContent == 'clientInfo') {
@@ -282,6 +294,12 @@
 			}
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addVendor').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addVendor').removeClass('hidden');
+			}
+			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveVendor').hasClass('hidden')) {
+				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.saveVendor').removeClass('hidden');
 			}
 		}
 		<?php } ?>
@@ -294,11 +312,20 @@
 		autoOpen: true,
 		modal: true,
 		buttons: [
+			<?php if(!isset($view) && isset($vendor->ID)) { ?>
 			{
-				class:'greyBtn',
-				text:'Close',
-				click:function() {$('#editVendor').dialog('close')}
+				class:'redBtn saveVendor',
+				text:'Save',
+				click:function(){$('#editVendorForm').submit()}
 			},
+			<?php } ?>
+			<?php if(!isset($view) && !isset($vendor->ID)) { ?>
+			{
+				class:'greenBtn addVendor',
+				text:'Add',
+				click:function() {$('#addVendorForm').submit()}
+			},
+			<?php } ?>
 			<?php if(GateKeeper('Website_Add',$this->user['AccessLevel'])) { ?>
 				<?php if(!isset($view) && isset($vendor->ID)) { ?>
 				{
