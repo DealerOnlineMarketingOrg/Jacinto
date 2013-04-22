@@ -27,30 +27,34 @@
         				<fieldset>
                         	<div class="rowElem noborder">
 			                    <label>Type</label>
-			                    <div class="formRight">
-                                   	<input type="radio" name="radioType" value="old" checked>
-                                    <select name="types">
-                                    	<option value="">Select Type</option>
-                                        <?php foreach ($types as $type) { ?>
-                                            <option value="<?php echo $type->ID; ?>"><?php echo $type->Name; ?></option>
-                                        <?php } ?>
-                                    </select>
-                                   	<input type="radio" name="radioType" value="new" style="margin-left:15px">
+			                    <div class="formRight noSearch">
+                                   	<input type="radio" name="radioType" value="old" style="float:left;margin-right:5px;margin-top:18px;" checked>
+                                    <div style="float:left;margin-left:5px;margin-top:10px;width:125px;">
+                                        <select name="types" class="chzn-select">
+                                            <option value="">Select Type</option>
+                                            <?php foreach ($types as $type) { ?>
+                                                <option value="<?php echo $type->ID; ?>"><?php echo $type->Name; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                   	<input type="radio" name="radioType" value="new" style="margin-top:5px;margin-left:15px;margin-right:5px;">
                                     <input type="text" name="newType" style="width:15em !important">
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label>Vendor</label>
-			                    <div class="formRight">
-                                    <input type="radio" name="radioVendor" value="old" checked>
-                                    <select name="vendors">
-                                    	<option value="">Select Vendor</option>
-                                        <?php foreach ($vendors as $vendor) { ?>
-                                            <option value="<?php echo $vendor->ID; ?>"><?php echo $vendor->Name; ?></option>
-                                        <?php } ?>
-                                    </select>
-                                   	<input type="radio" name="radioVendor" value="new" style="margin-left:15px">
+			                    <div class="formRight noSearch">
+                                    <input type="radio" name="radioVendor" style="float:left;margin-right:5px;margin-top:18px;" value="old" checked>
+                                    <div style="float:left;margin-left:5px;margin-top:10px;width:125px;">
+                                        <select name="vendors" class="chzn-select" style="margin-top:15px !important;">
+                                            <option value="">Select Vendor</option>
+                                            <?php foreach ($vendors as $vendor) { ?>
+                                                <option value="<?php echo $vendor->ID; ?>"><?php echo $vendor->Name; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                   	<input type="radio" name="radioVendor" value="new" style="margin-top:5px;margin-left:15px;margin-right:5px;">
                                     <input type="text" name="newVendor" style="width:15em !important">
 			                    </div>
 			                    <div class="fix"></div>
@@ -87,7 +91,6 @@
 			                 
 			                <div class="submitForm">
 			               		<input type="hidden" name="ClientID" value="<?php echo  $clientID; ?>" />
-			                    <input type="submit" value="submit" class="redBtn" />
 			                </div>
 			                <div class="fix"></div>
 			           </fieldset>
@@ -120,11 +123,12 @@
 		height:700,
 		autoOpen: true,
 		modal: false,
-		buttons: {
-			Close:function() {
-				jQuery('#addPasswords').dialog('close');
-				jQuery('#addPasswordsInfo').empty();
+		buttons: [
+			{
+				class:'greenBtn',
+				text:'Add',
+				click:function() {jQuery('#valid').submit()}	
 			},
-		}
+		]
 	});
 </script>

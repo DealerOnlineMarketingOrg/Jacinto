@@ -23,6 +23,143 @@ function GateKeeper($mod,$uPerm) {
 	}
 }
 
+function PasswordlistTable() { ?>
+	<script type="text/javascript" src="' . base_url() . 'assets/themes/itsbrain/js/passwords_popups.js"></script>
+    <?php
+	
+		$ci =& get_instance();
+		$userPermissionLevel = $ci->user['AccessLevel'];
+		$addPriv = GateKeeper('Passwords_Add',$userPermissionLevel);
+		$editPriv = GateKeeper('Passwords_Edit',$userPermissionLevel);
+		$disablePriv = GateKeeper('Passwords_Disable_Enable',$userPermissionLevel);
+		$listingPriv = GateKeeper('Passwords_List',$userPermissionLevel);
+		
+		//load the queries
+		$ci->load->model('administration');
+		$passwords = $ci->administration->getPasswords($ci->user['DropdownDefault']->SelectedClient);
+		$counter=0;
+		
+		if($addPriv) : ?>
+        	<a href="javascript:addPasswords('<?= base_url(); ?>')" class="greenBtn floatRight button" style="margin-top:-73px;margin-right:3px">Add New Password</a>
+        <?php endif; 
+        
+        if($passwords AND $listingPriv) :  ?>
+        	<style type="text/css">
+				table.passwordsListTable tr td{text-align:left;}
+				.align-cell-left{text-align:left;}
+				.no-text-wrap{white-space:nowrap}
+				.boldTheText{font-weight:bold;}
+				.clipData{width:22px;height:22px;float:left;cursor:pointer;background:url(<?=base_url() . THEMEIMGS; ?>icons/dark/clipboard.png) no-repeat;}
+				.passwordNotes{overflow:hidden; max-height:22px;float:left;width:80%;}
+				.passwordNotesMore{cursor:pointer;color:blue;top:0;}
+				.notesCol{width:25%;}
+				.actionsCol{width:32px !important;text-align:center !important;}
+			</style>
+        	<table cellpadding="0" cellspacing="0" border="0" class="display passwordsListTable" id="example" width="100%">
+            	<thead>
+                	<tr>
+                    	<th>Team</th>
+                        <th>Type</th>
+                        <th>Vendor</th>
+                        <th>Login Address</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Notes</th>
+                        <?php if($editPriv) { ?>
+                        	<th class="noSort">Actions</th>
+                        <?php } ?>
+                    </tr>
+                </thead>
+                <tbody>
+                	<?php foreach($passwords as $password) : ?>
+                    	<?php $clipData = 'Login Address,' . $password->LoginAddress . ',User Name,' . $password->Username . ',Password,' . $password->Password; ?>
+                		<tr class="tagElement <?= $password->Tag; ?>">
+                        	<td class="tags"><div class="<?= $password->Tag; ?>">&nbsp;<span style="display:none;"><?= $password->Tag;?></span></div></td>
+                            <td class="align-cell-left"><?= $password->Type; ?></td>
+                            <td class="align-cell-left"><?= $password->Vendor; ?></td>
+                            <td><a target="_blank" href="<?= $password->LoginAddress; ?>"><?= $password->LoginAddress; ?></a></td>
+                            <td class="no-text-wrap">
+                            	<span class="boldTheText">
+                                	<div id="username<?=$counter;?>" class="clipBoard clipData" clipBoardData="<?=$clipData; ?>"></div>
+                                    <div style="float:left;"><a href="mailto:<?=$password->Username;?>"><?=$password->Username;?></div>
+                                </span>
+                            </td>
+                            <td class="no-text-wrap">
+                            	<div id="password<?=$counter;?>" class="clipBoard clipData" clipBoardData="<?=$clipData;?>"></div>
+                                <div style="float:left;"><?=$password->Password;?></div>
+                            </td>
+                            <td class="notesCol">
+                            	<div class="passwordNotes">
+									<?=$password->Notes;?>
+                                </div>
+								<a href="javascript:openMore('<?=$password->Notes;?>')" class="passwordNotesMore">...more</a>                            
+                            </td>
+                            <?php if($editPriv) { ?>
+                            	<td class="actionsCol">
+                                	<a title="Edit Password" href="javascript:editPasswords('<?=$password->ID;?>','<?=base_url();?>');" class="actions_link">
+                                    	<img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" />
+                                    </a>
+                                </td>
+                            <?php } ?>
+                        </tr>
+						<?php $counter++; 
+					endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+        	<p style="padding-left:10px;padding-bottom:10px;">Sorry, no passwords were found for this client. Please add a password or select a different Client.</p>
+        <?php endif; 
+        
+        if($addPriv) : ?>
+        	<a href="javascript:addPasswords('<?= base_url(); ?>')" class="greenBtn floatRight button" style="margin-top:10px;">Add New Password</a>
+        <?php endif; ?>
+        
+        <?php if($passwords) { ?>
+            <script type="text/javascript">
+			
+				var $ = jQuery;
+			
+				$(".clipBoard").click(function() {
+					// Arguments need to be in the order of:
+					//  Login Address Label, Login Address data,
+					//  User Name label, User Name data,
+					//  Password label, Password data
+					var data = $(this).attr("clipBoardData");
+					clipboardCopyDialog(data);
+				});
+				
+				// Creates a clipboard-copy dialog.
+				// The textList is an associative array:
+				//   textLabel = textDescriptionToCopy
+				function clipboardCopyDialog(textList) {
+					var htmlHead = '<div class="uDialog" title="Copy" style="text-align:left;"><div class="dialog-message" id="copy" title="Copy"><div class="uiForm"><style type="text/css">label{margin-top:5px;float:left;}</style><div class="widget" style="margin-top:0;padding-top:0;"><fieldset>';
+					
+					var htmlBody = '';
+					var args = textList.split(",");
+					for (var i = 0; i < args.length; i = i + 2) {
+						htmlBody += '<div class="rowElem noborder"><label style="white-space:nowrap">' + args[i] + '</label><div class="formRight"><input type="text" class="clipBoard" value="' + args[i+1] + '" readonly><label style="font-size:75%;color:grey;margin:0">Click on box and press control+c to copy</label></div></div>';
+					}
+					
+					var htmlFoot = '</fieldset></div></div></div></div>';
+					
+					// We use <\/script> because some browsers have issues parsing this, even in a static string.
+					var scripts = $(".clipBoard").click(function() {$(this).select();});
+					
+					var dialogHtml = $(htmlHead + htmlBody + htmlFoot + scripts);
+					// This syntax manually appends the script to the dialog window.
+					// On some versions of dialog, there is a bug which will open a seperate window for
+					//   the script fragment.
+					dialogHtml.filter("div").dialog({width:500}).end().filter("script").appendTo("body");
+				}
+				
+				function openMore(text) {
+					var dialogHtml = $('<div id="notesDialog" title="Note"><p>' + text + '</p></div>');
+					dialogHtml.dialog();
+				}
+			</script>
+		<?php } ?>
+<?php }
+
 function MasterlistTable() { ?>
 	<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/masterlist_popups.js"></script>
     <?php
@@ -55,7 +192,7 @@ function MasterlistTable() { ?>
                         <th class="doclist noSort">DOC</th>
                         <th class="excellist noSort">XSL</th>
                         <?php if($editPriv) { ?>
-                            <th class="noSort">Actions</th>
+                            <th class="noSort" style="width:30px;">Actions</th>
                         <?php } ?>
                     </tr>
                 </thead>
@@ -157,7 +294,7 @@ function MasterlistTable() { ?>
                             </td>
                             <?php //blue-document-excel.png; ?>
                             <?php if($editPriv) { ?>
-                                <td class="actionsCol noSort">
+                                <td class="actionsCol noSort" style="text-align:center !important;">
                                     <a title="Edit Client" href="javascript:editEntry('<?= $client->ClientID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
                                 </td>
                             <?php } ?>
@@ -166,7 +303,7 @@ function MasterlistTable() { ?>
                 </tbody>
             </table>
 <?php   }else { ?>
-            <p>You don't have access to view this data. Sorry.</p>
+            <p style="padding-left:10px;padding-bottom:10px;">You don't have access to view this data. Sorry.</p>
 <?php   }
         if($addPriv) { ?>
             <!-- <a href="javascript:addMasterlist();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Entry</a> -->
@@ -219,7 +356,7 @@ function AgencyListingTable() {
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addAgency();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Agency</a><?php } ?>
     <?php else : ?>
-    <p>No agencies found.</p>
+    <p style="padding-left:10px;padding-bottom:10px;">No agencies found.</p>
     <?php endif; ?>
 <?php }
 
@@ -282,7 +419,7 @@ function GroupsListingTable() {
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addGroup();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Group</a><?php } ?>
     <?php else : ?>
-    <p>No groups found.</p>
+    <p style="padding-left:10px;padding-bottom:10px;">No groups found.</p>
     <?php endif; ?>
 <?php }
 
@@ -336,10 +473,10 @@ function VendorListingTable($hide_actions=false,$hide_add=false) { ?>
                     </tbody>
                 </table>
             <?php }else { ?>
-                <p>No Vendors found.</p>
+                <p style="padding-left:10px;padding-bottom:10px;">No Vendors found.</p>
 			<?php } ?>
     <?php }else { ?>
-    	<p>You dont have access to view vendors.</p>
+    	<p style="padding-left:10px;padding-bottom:10px;">You dont have access to view vendors.</p>
     <?php } ?>
     <?php if($addPriv) { ?><?php if(!$hide_add OR !$hide_actions) { ?><a href="javascript:addVendor();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Vendor</a><?php } ?><?php } ?>
 <?php }
@@ -470,7 +607,7 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
             </tbody>
         </table>
     <?php }else { ?>
-       <p>No Contacts have been added.</p>
+       <p style="padding-left:10px;padding-bottom:10px;">No Contacts have been added.</p>
 	<? }?>
     <?php if($addPriv) { ?>
     	<?php if(!$hide_add) { ?>
@@ -478,7 +615,7 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
         <?php } ?>
 	<?php } ?>
     <?php }else { ?>
-        <p>No contacts found.</p>
+        <p style="padding-left:10px;padding-bottom:10px;">No contacts found.</p>
 	<?php } ?>
 <?php }
 
@@ -514,7 +651,7 @@ function GroupsClientTable($group_id) {
     </table>
     
 <?php }else { ?>
-	<p>No clients have been added to this group.</p>
+	<p style="padding-left:10px;padding-bottom:10px;">No clients have been added to this group.</p>
 <? } }
 
 function ClientsListingTable() { 
@@ -568,7 +705,7 @@ function ClientsListingTable() {
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addClient();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Client</a><?php } ?>
     <?php else : ?>
-    <p>No clients found.</p>
+    <p style="padding-left:10px;padding-bottom:10px;">No clients found.</p>
     <?php endif; ?>
 <?php }
 
@@ -666,10 +803,9 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
 			break;	
 		}
 		
-		if(count($users) > 0) {
     ?>
     <?php if($addPriv) { ?><a href="javascript:addUser();" class="greenBtn floatRight button" style="margin-top:-74px;margin-right:3px;">Add New User</a><?php } ?>
-    <?php if($listingPriv) { ?>
+    <?php if($users AND $listingPriv) { ?>
     	<?php if(isset($error_msg)) { ?>
 			<div class="nNote nError hideit">
 				<p><strong>Error</strong><?= $error_msg; ?></p>
@@ -711,11 +847,10 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
             	editUser('<?= $user_id; ?>');
             </script>
         <? } ?>
+    <?php }else { ?>
+    	<p style="padding-left:10px;padding-bottom:10px;">No Users found. Please select a different Client or add a user by selecting the "Add New User" button below.</p>
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addUser();" class="greenBtn floatRight button" style="margin-top:10px;">Add New User</a><?php } ?>
-    <?php }else { ?>
-    	<p>No Users found.</p>
-    <?php } ?>
 <?php }
 
 function get_welcome_message() {

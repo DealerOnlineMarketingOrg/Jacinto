@@ -7,7 +7,7 @@
 				#editUser .chzn-container,textarea{margin-top:12px;}
 				div.tab_content div.title {border:1px solid #d5d5d5;padding:5px;margin-bottom:5px;background:url('<?= base_url(); ?>assets/themes/itsbrain/imgs/leftNavBg.png') repeat-x scroll 0 0 transparent;}
 				div.tab_content div.title h5{padding-left:30px;margin-top:3px;}
-				div.tab_content div.profileRight{margin-left:125px;}
+				div.tab_content div.profileRight{margin-left:130px;}
 				div.tab_content img.profileAvatar{float:left;border:1px solid #d5d5d5;}
 				div.tab_content table.profile{margin-right:10px;border:1px solid #d5d5d5;margin-bottom:5px;}
 				div.tab_content table.profile td.icon{text-align:center;width:20px;vertical-align:middle;border-right:none;}
@@ -50,7 +50,6 @@
                                 
                             <?php } ?>
                         </div>
-                        
                         <div class="avatar" style="width:122px;margin-right:2px;">
                         	<img class="profileAvatar" src="<?= $avatar; ?>" alt="<?= $user->FirstName . ' ' . $user->LastName; ?>" style="width:120px;" />
                             <?php if($this->user['UserID'] == $user->ID || $this->user['AccessLevel'] >= 600000) { ?>
@@ -62,7 +61,6 @@
                                 </div>
                             <?php } ?>
                         </div>
-                        
                         <div class="profileRight">
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" class="profile">
                                 <tr class="odd">

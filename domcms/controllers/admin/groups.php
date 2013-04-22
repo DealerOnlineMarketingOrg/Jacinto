@@ -50,7 +50,7 @@ class Groups extends DOM_Controller {
 			}
 			//prepare the update
 			$edit_data = array(
-				'AGENCY_ID'=>$group_data['agency_id'],
+				'AGENCY_ID'=>$group_data['agency'],
 				'GROUP_Name'=>$group_data['name'],
 				'GROUP_Notes'=>$group_data['notes'],
 				'GROUP_Active'=>$group_data['status'],
@@ -86,13 +86,9 @@ class Groups extends DOM_Controller {
 	}
 	
 	public function Add() {
-		$agencies = $this->administration->getAgencies();
-		$myAgencies = array();
-		foreach($agencies as $agency) {
-			$myAgencies[$agency->ID] = $agency->Name;	
-		}
+		$agencies = $this->administration->getAllAgenciesForDropdown();
 		$data = array(
-			'agencies'=>$myAgencies
+			'agencies'=>$agencies
 		);
 		
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/groups/edit_add',$data);
@@ -106,16 +102,11 @@ class Groups extends DOM_Controller {
 		}
 		
 		$group = $this->administration->getGroup($group_id);
-		$agencies = $this->administration->getAgencies();
+		$agencies = $this->administration->getAllAgenciesForDropdown();
 		if($group) {
-			$myAgencies = array();
-			foreach($agencies as $agency) {
-				$myAgencies[$agency->ID] = $agency->Name;	
-			}
-			
 			$data = array(
 				'group'=>$group,
-				'agencies'=>$myAgencies
+				'agencies'=>$agencies
 			);	
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/groups/edit_add',$data);
 		}else {
