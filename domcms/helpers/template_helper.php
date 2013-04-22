@@ -77,7 +77,7 @@ function PasswordlistTable() { ?>
                         	<td class="tags"><div class="<?= $password->Tag; ?>">&nbsp;<span style="display:none;"><?= $password->Tag;?></span></div></td>
                             <td class="align-cell-left"><?= $password->Type; ?></td>
                             <td class="align-cell-left"><?= $password->Vendor; ?></td>
-                            <td><a href="<?= $password->LoginAddress; ?>"><?= $password->LoginAddress; ?></a></td>
+                            <td><a target="_blank" href="<?= $password->LoginAddress; ?>"><?= $password->LoginAddress; ?></a></td>
                             <td class="no-text-wrap">
                             	<span class="boldTheText">
                                 	<div id="username<?=$counter;?>" class="clipBoard clipData" clipBoardData="<?=$clipData; ?>"></div>
