@@ -1,6 +1,10 @@
 <style type="text/css">
-#editGroup .mainForm input[type="text"], #editGroup .mainForm textarea, #editGroup .mainForm input[type="password"], #addGroup .mainForm input[type="text"], #addGroup .mainForm textarea, #addGroup .mainForm input[type="password"] {margin:0;}
-#editGroup 
+	#editGroup .mainForm input[type="text"], 
+	#editGroup .mainForm textarea, 
+	#editGroup .mainForm input[type="password"], 
+	#addGroup .mainForm input[type="text"], 
+	#addGroup .mainForm textarea, 
+	#addGroup .mainForm input[type="password"] {margin:0;}
 </style>
 <div class="uDialog" style="text-align:left;">
     <div class="dialog-message popper" id="<?= ((isset($group)) ? 'editGroup' : 'addGroup'); ?>" title="<?= ((isset($group)) ? 'Edit Groups Details' : 'Add New Group'); ?>">
@@ -30,9 +34,16 @@
                         <div class="rowElem noborder noSearch">
                             <label style="padding-top:10px;">Member Of</label>
                             <div class="formRight" style="text-align:left;padding-top:10px;margin-left:60px;float:left;width:auto;">
-                            	<?php
-									echo form_dropdown('agency', $agencies, ((isset($group->AgencyID)) ? $group->AgencyID : ''),'id="memberOf" class="chzn-select" ' . ((isset($group->AgencyID)) ? (($this->user['AccessLevel'] < 600000) ? 'disabled="disabled"' : '') : '') . ' style="margin-left:10px;"');
-								?>
+                            	<select class="chzn-select" name="agency" style="width:200px;">
+                                	<option value="">Select a Agency</option>
+                                    <?php foreach($agencies as $agency) { ?>
+                                    	<?php if($agency->ID == $group->AgencyID) { ?>
+                                        	<option selected="selected" value="<?= $agency->ID; ?>"><?= $agency->Name; ?></option>
+                                        <?php }else { ?>
+                                        	<option value="<?= $agency->ID; ?>"><?= $agency->Name; ?></option>
+                                        <?php } ?>
+                                    <?php } ?>
+                                </select>
                             </div>
                             <div class="fix"></div>
                         </div>

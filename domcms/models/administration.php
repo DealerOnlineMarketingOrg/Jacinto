@@ -873,6 +873,11 @@ class Administration extends CI_Model {
 		return ($query) ? $query->result() : FALSE;
     }
 	
+	public function getAllAgenciesForDropdown() {
+		$query = $this->db->select('AGENCY_ID as ID,AGENCY_Name as Name,AGENCY_Active as Status')->from('Agencies')->where('AGENCY_Active',1)->get();
+		return ($query) ? $query->result() : FALSE;
+	}
+	
 	public function getGroupsForDropdown($aid) {
 		$query = $this->db->select('g.GROUP_ID as GroupID,g.GROUP_Name as Name,g.GROUP_Active as Status')->from('Groups g')->where('g.AGENCY_ID',$aid)->where('g.GROUP_Active',1)->get();
 		return ($query) ? $query->result() : FALSE;	
