@@ -308,7 +308,7 @@ class Administration extends CI_Model {
 		
 		return ($website) ? $website->result() : FALSE;
 	}
-	public function getUserWebsites($userid,$wid=false) {
+	public function getUserWebsites($uid,$wid=false) {
 		$this->db->select('w.WEB_ID as ID,w.WEB_Vendor as Vendor,w.WEB_GoogleUACode as GoogleUACode,w.WEB_GoogleWebToolsMetaCode as GoogleWebToolsMetaCode,w.WEB_GooglePlusCode as GooglePlusCode,w.WEB_BingCode as BingCode,w.WEB_YahooCode as YahooCode,w.WEB_GlobalScript as GlobalScript,w.WEB_Type as Type,w.WEB_Url as URL,w.WEB_Notes as Description,w.WEB_Active as Status,w.WEB_ActiveTS as LastUpdate,w.WEB_Created as Created,v.VENDOR_Name as VendorName,v.VENDOR_Address as VendorAddress,v.VENDOR_Phone as VendorPhone,v.Vendor_Notes as VendorDescription,v.VENDOR_Active as VendorStatus');
 		$this->db->from('Websites w');
 		$this->db->join('Vendors v','w.WEB_Vendor = v.VENDOR_ID','left outer');

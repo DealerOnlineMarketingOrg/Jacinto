@@ -56,9 +56,7 @@ class Contacts extends DOM_Controller {
 	
 	public function View() {
 		if(isset($_GET['gid'])) {
-			$contact_id = $_GET['gid'];	
-		}else {
-			$contact_id = $this->user['DropdownDefault']->SelectedContact;
+			$contact_id = $_GET['gid'];
 		}
 		
 		$contact = $this->administration->getContact($contact_id);
@@ -69,6 +67,7 @@ class Contacts extends DOM_Controller {
 				'contact' => $contact,
 				'level' => $this->user['DropdownDefault']->LevelType,
 				'websites'=>load_websites($contact_id, 'gid', false),
+				'contactInfo'=>load_contactInfo_view($contact, 'gid'),
 			);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/contacts/view',$data);
 		}
@@ -135,6 +134,7 @@ class Contacts extends DOM_Controller {
 			'types'=>$types,
 			'tags'=>$tags,
 			'websites'=>'',
+			'contactInfo'=>'',
 		);
 		
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add',$data);
@@ -146,12 +146,11 @@ class Contacts extends DOM_Controller {
 		}
 		
 		$contact = $this->administration->getContact($contact_id);
-		$contact->ID = $contact_id;
 		$this->formatContactInfo($contact);
 		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
 		$vendors = $this->administration->getAllVendors();
 		$types = $this->administration->getTypeList();
-		$tags = $this->administration->getAllTags();  
+		$tags = $this->administration->getAllTags();
 
 		if($contact) {
 			$data = array(
@@ -162,6 +161,7 @@ class Contacts extends DOM_Controller {
 				'types'=>$types,
 				'tags'=>$tags,
 				'websites'=>load_websites($contact_id,'gid'),
+				'contactInfo'=>load_contactInfo_edit_add($contact, 'gid'),
 			);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add',$data);
 		}else {

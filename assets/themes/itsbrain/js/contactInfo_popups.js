@@ -10,7 +10,6 @@ function getPhoneEmailName(type) {
 
 function addPhone(id, type) {
 	$('#addContactInfoPhone').remove();
-	$('#editContactInfoPhone').remove();
 	
 	$.ajax({
 		type:'GET',
@@ -26,7 +25,6 @@ function addPhone(id, type) {
 }
 
 function editPhone(id, type, value) {
-	$('#addContactInfoPhone').remove();
 	$('#editContactInfoPhone').remove();
 	
 	$.ajax({
@@ -44,7 +42,6 @@ function editPhone(id, type, value) {
 
 function addEmail(id, type) {
 	$('#addContactInfoEmail').remove();
-	$('#editContactInfoEmail').remove();
 	
 	$.ajax({
 		type:'GET',
@@ -60,7 +57,6 @@ function addEmail(id, type) {
 }
 
 function editEmail(id, type, value) {
-	$('#addContactInfoEmail').remove();
 	$('#editContactInfoEmail').remove();
 	
 	$.ajax({
@@ -77,9 +73,6 @@ function editEmail(id, type, value) {
 }
 
 function updatePrimaries(id, type, phonePrimary, emailPrimary) {
-	$('#addContactInfoEmail').remove();
-	$('#editContactInfoEmail').remove();
-	
 	$.ajax({
 		type:'GET',
 		url:'/admin/contactInfo/FormPrimary?id='+id+'&phone='+phonePrimary+'&email='+emailPrimary,

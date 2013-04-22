@@ -49,7 +49,7 @@ function viewContact(gid) {
 	});
 }
 
-function contactListTable() {	
+function contactListTable() {
 	$('#addContact').remove();
 	$('#editContact').remove();
 	$('#viewContact').remove();

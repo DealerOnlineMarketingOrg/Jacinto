@@ -17,9 +17,9 @@
                                     <label><span class="req">*</span> Type</label>
                                     <div class="formRight searchDrop">
                                         <select id="contactPhoneType" class="chzn-select validate[required]" style="width:350px" name="type">
-                                            <option value="cell" <?= ($caller) ? (($type == 'cell') ? 'selected="selected"' : '') : ''; ?>>Cell</option>
-                                            <option value="home" <?= ($caller) ? (($type == 'home') ? 'selected="selected"' : '') : ''; ?>>Home</option>
-                                            <option value="work" <?= ($caller) ?
+                                            <option value="cell" <?= ($contact) ? (($type == 'cell') ? 'selected="selected"' : '') : ''; ?>>Cell</option>
+                                            <option value="home" <?= ($contact) ? (($type == 'home') ? 'selected="selected"' : '') : ''; ?>>Home</option>
+                                            <option value="work" <?= ($contact) ?
 												(($type == 'work' || $type == 'main') ? 'selected="selected"' : '') : 'selected="selected"'; ?>>Work</option>
                                         </select>
                                     </div>
@@ -31,11 +31,11 @@
                                         <div style="position:relative;float:left"><?= form_input(array('class'=>'maskPhoneExt validate[required]','name'=>'phone','id'=>'phone','value'=>($type) ? $value : '','style'=>'width:25em !important','placeholder'=>'Enter Phone Number')); ?>
                                         <span class="formNote">(999) 999-9999 x99999</span></div>
                                     </div>
-                                </div>    
+                                </div>
                                 <div class="fix"></div>
                                 <div class="submitForm">
-                                    <input type="hidden" name="contact_id" value="<?= ($caller) ? $caller->ID : ''; ?>" />
-                                    <input type="hidden" name="old" value="<?= ($type) ? $type.':'.$value : ''; ?>" />
+                                    <input type="hidden" name="contact_id" value="<?= (($contact) ? $contact->ContactID : ''); ?>" />
+                                    <input type="hidden" name="old" value="<?= (($type) ? $type.':'.$value : ''); ?>" />
                                 </div>
                             </fieldset>
                         <?= form_close(); ?>
@@ -70,13 +70,13 @@
 		$.ajax({
 			type:'POST',
 			data:formData,
-			url:'/admin/contactInfo/formPhone?id=<?= (($caller) ? $caller->ID : ''); ?>&page=<?= $page; ?>',
+			url:'/admin/contactInfo/formPhone?id=<?= (($contact) ? $contact->ContactID : ''); ?>&page=<?= $page; ?>',
 			success:function(code) {
 				var msg;
 				if(code == '1') {
 					msg = '<?= ($page == 'edit') ? 'Your edit was made succesfully.' : 'Your add was made successfully'; ?>';
 					jAlert(msg,'Success',function() {
-						contactListTable();
+						$('#<?= $pageID; ?>').dialog('close');
 					});
 				}else {
 					msg = '<?= ($page == 'edit') ? 'There was a problem with editing the contact requested. Please try again.':'There was a problem adding the contact. Please try again.'; ?>';
@@ -136,7 +136,7 @@
 	});
 	
 	<?php if($page != 'edit') { ?>
-	$("#addContactInfoPhone").dialog({
+	$("#addContactInfoPhonePop").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,
@@ -145,17 +145,17 @@
 			{
 				class:'greyBtn',
 				text:'Close',
-				click:function() {$('#<?= $pageID; ?>').dialog('close')}
+				click:function() {$('#<?= $pageID; ?>').dialog('close');}
 			},
 				{
 					class:'greenBtn addPhoneBtn',
 					text:"Add",
-					click:function() { $('#<?= $pageID; ?>Form').submit(); }
+					click:function() { $("#<?= $pageID; ?>Form").submit(); }
 				},
 		]
 	});
-	<?php }else { ?>
-	$("#editContactInfoPhone").dialog({
+	<?php }else { ?>	
+	$("#editContactInfoPhonePop").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,
@@ -164,7 +164,7 @@
 			{
 				class:'greyBtn',
 				text:'Close',
-				click:function() {$('#<?= $pageID; ?>').dialog('close')}
+				click:function() {$('#<?= $pageID; ?>').dialog('close');}
 			},
 				{
 					class:'redBtn savePhoneBtn',

@@ -1124,6 +1124,114 @@ function load_client_related_users($cid) {
 	return $html;
 }
 
+function load_contactInfo_view($contact, $type) {
+	$ci =& get_instance();
+	
+	$fragment =
+	'<style type="text/css">
+		div.tab_content div.head {background:none;border:none;width:14em;margin:0 auto;}
+	</style>
+	<div style="margin-top:10px;margin-bottom:60px;">
+		<div class="head"><h5 class="iPhone">Phone Numbers</h5></div>
+		<table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
+			<thead>
+				<tr>
+					<td width="10%" style="text-align:left;padding-left:10px;">Type</td>
+					<td width="90%" colspan="2" style="text-align:left;padding-left:10px;">Phone Number</td>
+				</tr>
+			</thead>
+			<tbody>';
+				foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) {
+				$fragment .= '<tr>
+					<td width="10%">'.ucwords($type).'</td>
+					<td width="80%">'.$phone.'</td>
+					<td width="10%">'.((($contact->PrimaryPhoneType) == $phone) ? 'Primary' : '').'</td>
+				</tr>';
+				}
+			$fragment .= '</tbody>
+		</table>
+	</div>
+	
+	<div style="margin-top:10px;">
+		<div class="head"><h5 class="iMail">Email Addresses</h5></div>
+		<table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
+			<thead>
+				<tr>
+					<td width="10%" style="text-align:left;padding-left:10px;">Type</td>
+					<td width="90%" colspan="2" style="text-align:left;padding-left:10px;">Email Address</td>
+				</tr>
+			</thead>
+			<tbody>';
+				foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) {
+				$fragment .= '<tr>
+					<td width="10%">'.ucwords($type).'</td>
+					<td width="80%">'.$email.'</td>
+					<td width="10%">'.((($contact->PrimaryEmailType) == $email) ? 'Primary' : '').'</td>
+				</tr>';
+				}
+			$fragment .= '</tbody>
+		</table>
+	</div>';
+	
+	return $fragment;
+}
+
+function load_contactInfo_edit_add($contact, $type) {
+	$ci =& get_instance();
+
+	$fragment =
+	'<style type="text/css">
+		div.tab_content div.head {background:none;border:none;width:14em;margin:0 auto;}
+	</style>
+	<div style="margin-top:10px;margin-bottom:60px;">
+    	<div class="head"><h5 class="iPhone">Phone Numbers</h5></div>
+		<table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
+			<thead>
+				<tr>
+					<td width="10%" style="text-align:left;padding-left:10px;">Primary</td>
+					<td width="80%" style="text-align:left;padding-left:10px;">Phone Number</td>
+					<td width="10%" style="text-align:left;padding-left:10px;">Actions</td>
+				</tr>
+			</thead>
+			<tbody>';
+				if ($contact) foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) {
+				$fragment .= '<tr>
+					<td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="phonePrimary" name="phonePrimary" value="'.$phone.'" '.(($phone == $contact->PrimaryPhoneType) ? 'checked' : '').' /></div></td>
+					<td width="80%">'.(($contact) ? $phone : '').'</td>
+					<td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Phone Number" href="javascript:editPhone(\''.$contact->ContactID.'\',\''.$type.'\',\''.$phone.'\');" class="actions_link"><img src="'.base_url().THEMEIMGS.'icons/color/pencil.png" alt="" /></a></div></td>
+				</tr>';
+				}
+			$fragment .= '</tbody>
+		</table>
+		<a href="javascript:addPhone(\''.$contact->ContactID.'\',\''.$type.'\');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Phone</a>
+	</div>
+	
+	<div style="margin-top:10px;">
+		<div class="head"><h5 class="iMail">Email Addresses</h5></div>
+		<table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
+			<thead>
+				<tr>
+					<td width="10%" style="text-align:left;padding-left:10px;">Primary</td>
+					<td width="80%" style="text-align:left;padding-left:10px;">Email Addresses</td>
+					<td width="10%" style="text-align:left;padding-left:10px;">Actions</td>
+				</tr>
+			</thead>
+			<tbody>';
+				if ($contact) foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) {
+				$fragment .= '<tr>
+					<td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="emailPrimary" name="emailPrimary" value="'.$email.'" '.(($email == $contact->PrimaryEmailType) ? 'checked' : '').' /></div></td>
+					<td width="80%">'.(($contact) ? $email : '').'</td>
+					<td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Email" href="javascript:editEmail(\''.$contact->ContactID.'\',\''.$type.'\',\''.$email.'\');" class="actions_link"><img src="'.base_url().THEMEIMGS.'icons/color/pencil.png" alt="" /></a></div></td>
+				</tr>';
+				}
+			$fragment .= '</tbody>
+		</table>
+		<a href="javascript:addEmail(\''.$contact->ContactID.'\',\''.$type.'\');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Email</a>
+	</div>';
+
+	return $fragment;
+}
+
 function breadcrumb($replacement = false) {
 	//create a empty var to hold the breakcrumb html
 	$link = '';

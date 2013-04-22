@@ -90,7 +90,7 @@
                                     <td class="info">
 										<?php
                                             // Locate primary.
-                                            foreach ($user->Emails as $userEmails) foreach ($userEmails as $type => $email) {
+                                            foreach ($user->Email as $userEmail) foreach ($userEmail as $type => $email) {
                                                 if ($email == $user->PrimaryEmailType) {
                                                     echo '<span>Primary Email:</span><a href="mailto:'.$email.'">'.$email.'</a>';
                                                     break;
@@ -104,7 +104,7 @@
                                     <td class="info">
                                     	<?php
                                             // Locate primary.
-                                            foreach ($user->Phones as $userPhones) foreach ($userPhones as $type => $phone) {
+                                            foreach ($user->Phone as $userPhone) foreach ($userPhone as $type => $phone) {
                                                 if ($phone == $user->PrimaryPhoneType) {
                                                     echo '<span>Primary Phone:</span><a href="mailto:'.$phone.'">'.$phone.'</a>';
                                                     break;
@@ -129,53 +129,7 @@
                     	<?= $websites; ?>
     				</div>
                     <div id="contacts" class="tab_content" style="display:none;">
-                    	<div style="margin-top:10px;margin-bottom:60px;">
-                            <div class="head"><h5 class="iPhone">Phone Numbers</h5></div>
-                            <div class="fix"></div>
-                            <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
-                                <thead>
-                                    <tr>
-                                        <td width="10%" style="text-align:left;padding-left:10px;">Primary</td>
-                                        <td width="80%" style="text-align:left;padding-left:10px;">Phone Number</td>
-                                        <td width="10%" style="text-align:left;padding-left:10px;">Actions</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if ($user) foreach ($user->Phones as $userPhone) foreach ($userPhone as $type => $phone) { ?>
-                                    <tr>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="phonePrimary" name="phonePrimary" value="<?= $phone; ?>" <?= ($phone == $user->PrimaryPhoneType) ? 'checked' : ''; ?> /></div></td>
-                                        <td width="80%"><?= (($user) ? $phone : ''); ?></td>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Phone Number" href="javascript:editPhone('<?= $user->ID; ?>','<?= $type; ?>','<?= $phone; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
-                                    </tr>
-                                    <?php } ?>
-                                </tbody>
-                            </table>
-                            <a href="javascript:addPhone('<?= $user->ID; ?>','<?= $type; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Phone</a>
-                        </div>
-                        
-                        <div style="margin-top:10px;">
-                            <div class="head"><h5 class="iMail">Email Addresses</h5></div>
-                            <div class="fix"></div>
-                            <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
-                                <thead>
-                                    <tr>
-                                        <td width="10%" style="text-align:left;padding-left:10px;">Primary</td>
-                                        <td width="80%" style="text-align:left;padding-left:10px;">Email Addresses</td>
-                                        <td width="10%" style="text-align:left;padding-left:10px;">Actions</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if ($user) foreach ($user->Emails as $userEmail) foreach ($userEmail as $type => $email) { ?>
-                                    <tr>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="emailPrimary" name="emailPrimary" value="<?= $email; ?>" <?= ($email == $user->PrimaryEmailType) ? 'checked' : ''; ?> /></div></td>
-                                        <td width="80%"><?= (($user) ? $email : ''); ?></td>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Email" href="javascript:editEmail('<?= $user->ID; ?>','<?= $type; ?>','<?= $email; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
-                                    </tr>
-                                    <?php } ?>
-                                </tbody>
-                            </table>
-                            <a href="javascript:addEmail('<?= $user->ID; ?>','<?= $type; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Email</a>
-                        </div>
+						<?= $contactInfo; ?>
                     <div class="fix"></div>
                     </div>
                     <div id="modules" class="tab_content" style="display:none;">
@@ -235,6 +189,12 @@
 	</div>
 </div>
 <div id="editAvatarPop"></div>
+
+<div id="addContactInfoPhonePop"></div>
+<div id="editContactInfoPhonePop"></div>
+<div id="addContactInfoEmailPop"></div>
+<div id="editContactInfoEmailPop"></div>
+
 <script type="text/javascript">
 
 	var $ = jQuery;

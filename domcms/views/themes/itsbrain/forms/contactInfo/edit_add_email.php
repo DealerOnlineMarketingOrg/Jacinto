@@ -17,8 +17,8 @@
                                     <label><span class="req">*</span> Type</label>
                                     <div class="formRight searchDrop">
                                         <select id="contactEmailType" class="chzn-select validate[required]" style="width:350px" name="type">
-                                            <option value="home" <?= ($caller) ? (($type == 'home') ? 'selected="selected"' : '') : ''; ?>>Home</option>
-                                            <option value="work" <?= ($caller) ?
+                                            <option value="home" <?= ($contact) ? (($type == 'home') ? 'selected="selected"' : '') : ''; ?>>Home</option>
+                                            <option value="work" <?= ($contact) ?
 												(($type == 'work' || $type == 'main') ? 'selected="selected"' : '') : 'selected="selected"'; ?>>Work</option>
                                         </select>
                                     </div>
@@ -33,7 +33,7 @@
                                 </div>
                                 <div class="fix"></div>
                                 <div class="submitForm">
-                                    <input type="hidden" name="contact_id" value="<?= ($type) ? $caller->ID : ''; ?>" />
+                                    <input type="hidden" name="contact_id" value="<?= ($contact) ? $contact->ContactID : ''; ?>" />
 									<input type="hidden" name="old" value="<?= ($type) ? $type.':'.$value : ''; ?>" />
                                 </div>
                             </fieldset>
@@ -69,13 +69,13 @@
 		$.ajax({
 			type:'POST',
 			data:formData,
-			url:'/admin/contactInfo/formEmail?uid=<?= (($caller) ? $caller->ID : ''); ?>&page=<?= $page; ?>',
+			url:'/admin/contactInfo/formEmail?uid=<?= (($contact) ? $contact->ContactID : ''); ?>&page=<?= $page; ?>',
 			success:function(code) {
 				var msg;
 				if(code == '1') {
 					msg = '<?= ($page == 'edit') ? 'Your edit was made succesfully.' : 'Your add was made successfully'; ?>';
 					jAlert(msg,'Success',function() {
-						contactListTable();
+						$('#<?= $pageID; ?>').dialog('close')
 					});
 				}else {
 					msg = '<?= ($page == 'edit') ? 'There was a problem with editing the contact requested. Please try again.':'There was a problem adding the contact. Please try again.'; ?>';
@@ -135,7 +135,7 @@
 	});
 	
 	<?php if($page != 'edit') { ?>
-	$("#addContactInfoEmail").dialog({
+	$("#addContactInfoEmailPop").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,
@@ -144,7 +144,7 @@
 			{
 				class:'greyBtn',
 				text:'Close',
-				click:function() {$('#<?= $pageID; ?>').dialog('close')}
+				click:function() {$('#<?= $pageID; ?>').dialog('close');}
 			},
 				{
 					class:'greenBtn addEmailBtn',
@@ -154,7 +154,7 @@
 		]
 	});
 	<?php }else { ?>
-	$("#editContactInfoEmail").dialog({
+	$("#editContactInfoEmailPop").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,
@@ -163,7 +163,7 @@
 			{
 				class:'greyBtn',
 				text:'Close',
-				click:function() {$('#<?= $pageID; ?>').dialog('close')}
+				click:function() {$('#<?= $pageID; ?>').dialog('close');}
 			},
 				{
 					class:'redBtn saveEmailBtn',

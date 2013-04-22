@@ -80,7 +80,7 @@ class ContactInfo extends DOM_Controller {
 
 		$data = array(
 			'page'=>'add',
-			'caller'=>$contact,
+			'contact'=>$contact,
 			'type'=>'',
 		);
 		
@@ -95,11 +95,11 @@ class ContactInfo extends DOM_Controller {
 		}
 		
 		$contact = $this->administration->getContact($id);
-
+		
 		if($contact) {
 			$data = array(
 				'page'=>'edit',
-				'caller'=>$contact,
+				'contact'=>$contact,
 				'type'=>$type,
 				'value'=>$value,
 			);	
@@ -118,11 +118,11 @@ class ContactInfo extends DOM_Controller {
 		
 		$data = array(
 			'page'=>'add',
-			'caller'=>$contact,
+			'contact'=>$contact,
 			'type'=>'',
 		);
 		
-		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add_email',$data);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contactInfo/edit_add_email',$data);
 	}
 	
 	public function EmailEdit() {
@@ -137,11 +137,11 @@ class ContactInfo extends DOM_Controller {
 		if($contact) {
 			$data = array(
 				'page'=>'edit',
-				'caller'=>$contact,
+				'contact'=>$contact,
 				'type'=>$type,
 				'value'=>$value,
 			);
-			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add_email',$data);
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contactInfo/edit_add_email',$data);
 		}else {
 			echo '0';	
 		}		

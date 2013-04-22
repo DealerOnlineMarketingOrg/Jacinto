@@ -148,51 +148,7 @@
                         <?= $websites; ?>
                     </div>
                     <div id="contactInfo" class="tab_content" style="display:none;">
-                        <div style="margin-top:10px;margin-bottom:60px;">
-                            <div style="text-align:center;"><label><div class="iPhone" style="width:14em;margin:0 auto;">Phone Numbers</div></label></div>
-                            <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
-                                <thead>
-                                    <tr>
-                                        <td width="10%" style="text-align:left;padding-left:10px;">Primary</td>
-                                        <td width="80%" style="text-align:left;padding-left:10px;">Phone Number</td>
-                                        <td width="10%" style="text-align:left;padding-left:10px;">Actions</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if ($contact) foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) { ?>
-                                    <tr>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="phonePrimary" name="phonePrimary" value="<?= $phone; ?>" <?= ($phone == $contact->PrimaryPhoneType) ? 'checked' : ''; ?> /></div></td>
-                                        <td width="80%"><?= (($contact) ? $phone : ''); ?></td>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Phone Number" href="javascript:editPhone('<?= $contact->ContactID; ?>','<?= $type; ?>','<?= $phone; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
-                                    </tr>
-                                    <?php } ?>
-                                </tbody>
-                            </table>
-                            <a href="javascript:addPhone('<?= $contact->ContactID; ?>','<?= $type; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Phone</a>
-                        </div>
-                        
-                        <div style="margin-top:10px;">
-                            <div style="text-align:center;"><label class="iMail"><div class="iMail" style="width:14em;margin:0 auto;">Email Addresses</div></label></div>
-                            <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
-                                <thead>
-                                    <tr>
-                                        <td width="10%" style="text-align:left;padding-left:10px;">Primary</td>
-                                        <td width="80%" style="text-align:left;padding-left:10px;">Email Addresses</td>
-                                        <td width="10%" style="text-align:left;padding-left:10px;">Actions</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if ($contact) foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) { ?>
-                                    <tr>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><input type="radio" class="emailPrimary" name="emailPrimary" value="<?= $email; ?>" <?= ($email == $contact->PrimaryEmailType) ? 'checked' : ''; ?> /></div></td>
-                                        <td width="80%"><?= (($contact) ? $email : ''); ?></td>
-                                        <td width="10%"><div style="width:20px;margin:0 auto;"><a title="Edit Email" href="javascript:editEmail('<?= $contact->ContactID; ?>','<?= $type; ?>',,'<?= $email; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a></div></td>
-                                    </tr>
-                                    <?php } ?>
-                                </tbody>
-                            </table>
-                            <a href="javascript:addEmail('<?= $contact->ContactID; ?>','<?= $type; ?>');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Email</a>
-                        </div>
+						<?= $contactInfo; ?>
                     <div class="fix"></div>
                     </div>
                     <?php } ?>
@@ -202,10 +158,10 @@
 	</div>
 </div>
 
-<div id="addContactPhonePop"></div>
-<div id="editContactPhonePop"></div>
-<div id="addContactEmailPop"></div>
-<div id="editContactEmailPop"></div>
+<div id="addContactInfoPhonePop"></div>
+<div id="editContactInfoPhonePop"></div>
+<div id="addContactInfoEmailPop"></div>
+<div id="editContactInfoEmailPop"></div>
 
 <style type="text/css">
 .rowElem > label {padding-top:5px;}
