@@ -12,6 +12,33 @@ class Administration extends CI_Model {
         $this->load->helper('string_parser');
     }
 	
+	public function getClientsByDDLevel() {
+		$level = $this->user['DropdownDefault']->LevelType;
+		switch($level) {
+			case 1:
+				return $this->getAllClientsInAgency($this->agency_id);
+			break;
+			case 2:
+				return $this->getAllClientsInGroup($this->group_id);
+			break;
+			case 3:
+				return $this->getClientByID($this->user['DropdownDefault']->SelectedClient);
+			break;
+			case 'a':
+				return $this->getAllClientsInAgency($this->agency_id);
+			break;
+			case 'g':
+				return $this->getAllClientsInGroup($this->group_id);
+			break;
+			case 'c':
+				return $this->getClientByID($this->user['DropdownDefault']->SelectedClient);
+			break;	
+			default:
+				return $this->getAllClientsInAgency($this->agency_id);
+			break;
+		}
+	}
+	
 	//disable all clients in a group when a group is disabled...only super admins can do this
 	public function clientGroupedStatus($gid) {
 		$data = array(

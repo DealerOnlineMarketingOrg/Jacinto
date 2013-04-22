@@ -8,7 +8,7 @@
     <div class="table" id="dataClient">
         <div class="head" style="margin-top:5px;"><h5 class="iView">View All Clients</h5></div>
         <div id="clientTableHolder">
-			<?= ClientsListingTable($clients); ?>
+			<?= ClientsListingTable(); ?>
         </div>
     </div>
     <div class="fix"></div>
