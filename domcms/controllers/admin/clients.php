@@ -235,7 +235,7 @@ class Clients extends DOM_Controller {
 				'client' => $client,
 				'html' => $html,
 				'tags'=>$tags,
-				'websites'=>load_websites($client_id,'cid'),
+				'websites'=>load_websites($client_id,'cid',false),
 				'contacts'=>true,
 			);
 			

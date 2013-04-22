@@ -400,18 +400,18 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
         <table cellpadding="0" cellspacing="0" border="0" class="<?php echo ($from_tab) ? 'tableStatic' : 'display contacts'; ?>" id="<?php echo ($from_tab) ? 'contacts' : 'example'; ?>" width="100%;">
             <thead>
                 <tr>
-                    <?php if(!$from_tab) { ?><th>Team</th><?php } ?>
-                    <?php if(!$from_tab) { ?><th style="text-align:left;">Type</th><?php } ?>
+                    <?php if(!$from_tab) { ?><td style="text-align:left;padding-left:1em;">Team</th><?php } ?>
+                    <?php if(!$from_tab) { ?><td style="text-align:left;padding-left:1em;">Type</th><?php } ?>
                     <?php if($level == 'g' || $level == 'a') { ?>
-                    <?php if(!$from_tab) { ?><th style="text-align:left;">Client/Vendor Name</th><?php } ?>
+                    <?php if(!$from_tab) { ?><td style="text-align:left;padding-left:1em;">Client/Vendor Name</th><?php } ?>
                     <?php } ?>
-                    <th style="text-align:left;">Title Name</th>
-                    <th style="text-align:left;">Contact Name</th>
-                    <th style="text-align:left;"><?php if($from_tab) { echo ''; } ?> Primary Email</th>
-                    <th style="text-align:left;"><?php if($from_tab) { echo ''; } ?> Primary Phone</th>
+                    <td style="text-align:left;padding-left:1em;">Title Name</th>
+                    <td style="text-align:left;padding-left:1em;">Contact Name</th>
+                    <td style="text-align:left;padding-left:1em;"><?php if($from_tab) { echo ''; } ?> Primary Email</th>
+                    <td style="text-align:left;padding-left:1em;"><?php if($from_tab) { echo ''; } ?> Primary Phone</th>
                     <?php if($editPriv) { ?>
                     	<?php if(!$hide_actions) { ?>
-                    		<th class="noSort" style="text-align:left;">Actions</th>
+                    		<td class="noSort" style="text-align:left;padding-left:1em;">Actions</th>
                     	<?php } ?>
                     <?php } ?>
                 </tr>
@@ -1015,7 +1015,7 @@ function load_websites($id = false, $type = false, $actions = true,$isVendor = f
 	$table = '';
 	if($websites) {
 		$table .= '<table cellpadding="0" cellspacing="0" border="0" class="tableStatic" id="example" width="100%" style="border:1px solid #d5d5d5">';
-		$table .= '<thead><tr><td>Vendor</td><td>Web URL</td><td>Notes</td>' . (($actions) ? '<td class="noSort">Actions</td>' : '') . '</tr></thead>';
+		$table .= '<thead><tr><td style="text-align:left;padding-left:1em;">Vendor</td><td style="text-align:left;padding-left:1em;">URL</td><td style="text-align:left;padding-left:1em;">Notes</td>' . (($actions) ? '<td class="noSort" style="text-align:left;padding-left:1em;">Actions</td>' : '') . '</tr></thead>';
 		$table .= '<tbody>';
 		foreach($websites as $website) :
 			$edit_img = '<a href="javascript:editWebsiteForm(\'' . $id . '\',\'' . $type . '\',\'' . $website->ID . '\');"><img src="' . base_url() . THEMEIMGS . 'icons/color/pencil.png" alt="Edit Website" /></a>';
