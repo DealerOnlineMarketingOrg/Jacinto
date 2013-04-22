@@ -28,8 +28,3 @@
 			}
 		})
 	}
-	
-	function viewPasswords(id) {
-		alert(id);
-	}
-	
