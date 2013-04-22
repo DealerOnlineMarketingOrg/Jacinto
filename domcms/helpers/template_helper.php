@@ -192,7 +192,7 @@ function MasterlistTable() { ?>
                         <th class="doclist noSort">DOC</th>
                         <th class="excellist noSort">XSL</th>
                         <?php if($editPriv) { ?>
-                            <th class="noSort">Actions</th>
+                            <th class="noSort" style="width:30px;">Actions</th>
                         <?php } ?>
                     </tr>
                 </thead>
@@ -294,7 +294,7 @@ function MasterlistTable() { ?>
                             </td>
                             <?php //blue-document-excel.png; ?>
                             <?php if($editPriv) { ?>
-                                <td class="actionsCol noSort">
+                                <td class="actionsCol noSort" style="text-align:center !important;">
                                     <a title="Edit Client" href="javascript:editEntry('<?= $client->ClientID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
                                 </td>
                             <?php } ?>
@@ -813,7 +813,6 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
 			break;	
 		}
 		
-		if(count($users) > 0) {
     ?>
     <?php if($addPriv) { ?><a href="javascript:addUser();" class="greenBtn floatRight button" style="margin-top:-74px;margin-right:3px;">Add New User</a><?php } ?>
     <?php if($users AND $listingPriv) { ?>
@@ -858,11 +857,10 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
             	editUser('<?= $user_id; ?>');
             </script>
         <? } ?>
+    <?php }else { ?>
+    	<p style="padding-left:10px;padding-bottom:10px;">No Users found. Please select a different Client or add a user by selecting the "Add New User" button below.</p>
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addUser();" class="greenBtn floatRight button" style="margin-top:10px;">Add New User</a><?php } ?>
-    <?php }else { ?>
-    	<p style="padding-left:10px;padding-bottom:10px;">No Users found.</p>
-    <?php } ?>
 <?php }
 
 function get_welcome_message() {

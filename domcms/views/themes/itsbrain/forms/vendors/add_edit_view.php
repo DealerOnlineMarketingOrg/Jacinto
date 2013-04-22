@@ -312,6 +312,13 @@
 		autoOpen: true,
 		modal: true,
 		buttons: [
+			<?php if(isset($view) && isset($vendor->ID)) { ?>
+				{
+					class:'greyBtn close',
+					text:'Close',
+					click:function() {$(this).dialog('close')}	
+				}
+			<?php } ?>
 			<?php if(!isset($view) && isset($vendor->ID)) { ?>
 			{
 				class:'redBtn saveVendor',
