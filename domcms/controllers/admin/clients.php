@@ -136,7 +136,7 @@ class Clients extends DOM_Controller {
     
     public function add_form() {
 		$tags = $this->administration->getAllTags();    
-		$groups = $this->administration->getAllGroupsInAgency($this->user['DropdownDefault']->SelectedAgency);
+		$groups = $this->administration->getGroupsForDropdown($this->user['DropdownDefault']->SelectedAgency);
 
 		$data = array(
 			'client'=>false,
