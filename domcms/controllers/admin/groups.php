@@ -19,7 +19,7 @@ class Groups extends DOM_Controller {
     }
 	
 	public function load_table() {
-		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/groups/listing');
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/groups/table');
 	}
 	
 	public function View() {
