@@ -303,7 +303,7 @@ function MasterlistTable() { ?>
                 </tbody>
             </table>
 <?php   }else { ?>
-            <p>You don't have access to view this data. Sorry.</p>
+            <p style="padding-left:10px;padding-bottom:10px;">You don't have access to view this data. Sorry.</p>
 <?php   }
         if($addPriv) { ?>
             <!-- <a href="javascript:addMasterlist();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Entry</a> -->
@@ -356,7 +356,7 @@ function AgencyListingTable() {
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addAgency();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Agency</a><?php } ?>
     <?php else : ?>
-    <p>No agencies found.</p>
+    <p style="padding-left:10px;padding-bottom:10px;">No agencies found.</p>
     <?php endif; ?>
 <?php }
 
@@ -419,7 +419,7 @@ function GroupsListingTable() {
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addGroup();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Group</a><?php } ?>
     <?php else : ?>
-    <p>No groups found.</p>
+    <p style="padding-left:10px;padding-bottom:10px;">No groups found.</p>
     <?php endif; ?>
 <?php }
 
@@ -473,10 +473,10 @@ function VendorListingTable($hide_actions=false,$hide_add=false) { ?>
                     </tbody>
                 </table>
             <?php }else { ?>
-                <p>No Vendors found.</p>
+                <p style="padding-left:10px;padding-bottom:10px;">No Vendors found.</p>
 			<?php } ?>
     <?php }else { ?>
-    	<p>You dont have access to view vendors.</p>
+    	<p style="padding-left:10px;padding-bottom:10px;">You dont have access to view vendors.</p>
     <?php } ?>
     <?php if($addPriv) { ?><?php if(!$hide_add OR !$hide_actions) { ?><a href="javascript:addVendor();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Vendor</a><?php } ?><?php } ?>
 <?php }
@@ -617,7 +617,7 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
             </tbody>
         </table>
     <?php }else { ?>
-       <p>No Contacts have been added.</p>
+       <p style="padding-left:10px;padding-bottom:10px;">No Contacts have been added.</p>
 	<? }?>
     <?php if($addPriv) { ?>
     	<?php if(!$hide_add) { ?>
@@ -625,7 +625,7 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
         <?php } ?>
 	<?php } ?>
     <?php }else { ?>
-        <p>No contacts found.</p>
+        <p style="padding-left:10px;padding-bottom:10px;">No contacts found.</p>
 	<?php } ?>
 <?php }
 
@@ -661,7 +661,7 @@ function GroupsClientTable($group_id) {
     </table>
     
 <?php }else { ?>
-	<p>No clients have been added to this group.</p>
+	<p style="padding-left:10px;padding-bottom:10px;">No clients have been added to this group.</p>
 <? } }
 
 function ClientsListingTable() { 
@@ -715,7 +715,7 @@ function ClientsListingTable() {
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addClient();" class="greenBtn floatRight button" style="margin-top:10px;">Add New Client</a><?php } ?>
     <?php else : ?>
-    <p>No clients found.</p>
+    <p style="padding-left:10px;padding-bottom:10px;">No clients found.</p>
     <?php endif; ?>
 <?php }
 
@@ -861,7 +861,7 @@ function UserListingTable($client_id = false,$hide_actions = false) { ?>
     <?php } ?>
     <?php if($addPriv) { ?><a href="javascript:addUser();" class="greenBtn floatRight button" style="margin-top:10px;">Add New User</a><?php } ?>
     <?php }else { ?>
-    	<p>No Users found.</p>
+    	<p style="padding-left:10px;padding-bottom:10px;">No Users found.</p>
     <?php } ?>
 <?php }
 
