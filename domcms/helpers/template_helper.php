@@ -400,18 +400,18 @@ function ContactsListingTable($id = false,$hide_add = false,$hide_actions = fals
         <table cellpadding="0" cellspacing="0" border="0" class="<?php echo ($from_tab) ? 'tableStatic' : 'display contacts'; ?>" id="<?php echo ($from_tab) ? 'contacts' : 'example'; ?>" width="100%;">
             <thead>
                 <tr>
-                    <?php if(!$from_tab) { ?><td style="text-align:left;padding-left:1em;">Team</th><?php } ?>
-                    <?php if(!$from_tab) { ?><td style="text-align:left;padding-left:1em;">Type</th><?php } ?>
+                    <?php if(!$from_tab) { ?><th style="text-align:left;padding-left:1em;">Team</th><?php } ?>
+                    <?php if(!$from_tab) { ?><th style="text-align:left;padding-left:1em;">Type</th><?php } ?>
                     <?php if($level == 'g' || $level == 'a') { ?>
-                    <?php if(!$from_tab) { ?><td style="text-align:left;padding-left:1em;">Client/Vendor Name</th><?php } ?>
+                    <?php if(!$from_tab) { ?><th style="text-align:left;padding-left:1em;">Client/Vendor Name</th><?php } ?>
                     <?php } ?>
-                    <td style="text-align:left;padding-left:1em;">Title Name</th>
-                    <td style="text-align:left;padding-left:1em;">Contact Name</th>
-                    <td style="text-align:left;padding-left:1em;"><?php if($from_tab) { echo ''; } ?> Primary Email</th>
-                    <td style="text-align:left;padding-left:1em;"><?php if($from_tab) { echo ''; } ?> Primary Phone</th>
+                    <th style="text-align:left;padding-left:1em;">Title Name</th>
+                    <th style="text-align:left;padding-left:1em;">Contact Name</th>
+                    <th style="text-align:left;padding-left:1em;"><?php if($from_tab) { echo ''; } ?> Primary Email</th>
+                    <th style="text-align:left;padding-left:1em;"><?php if($from_tab) { echo ''; } ?> Primary Phone</th>
                     <?php if($editPriv) { ?>
                     	<?php if(!$hide_actions) { ?>
-                    		<td class="noSort" style="text-align:left;padding-left:1em;">Actions</th>
+                    		<th class="noSort" style="text-align:left;padding-left:1em;">Actions</th>
                     	<?php } ?>
                     <?php } ?>
                 </tr>
