@@ -144,7 +144,7 @@ class Users extends DOM_Controller {
 			'user'=>$user,
 			'avatar'=>$avatar,
 			'allMods'=>$this->administration->getAllModules(),
-			'websites'=>load_websites($this->user_id, 'uid'),
+			'websites'=>WebsiteListingTable($this->user_id, 'uid'),
 			'contact'=>$user,
 			'contactInfo'=>load_contactInfo_edit_add($user, 'uid'),
 		);
@@ -233,7 +233,7 @@ class Users extends DOM_Controller {
 			'view'=>TRUE,
 			'avatar'=>$avatar,
 			'allMods'=>$this->administration->getAllModules(),
-			'websites'=>load_websites($this->user_id, 'uid', false),
+			'websites'=>WebsiteListingTable($this->user_id, 'uid', false),
 			'contact'=>$user,
 			'contactInfo'=>load_contactInfo_view($user, 'uid'),
 		);

@@ -6,46 +6,70 @@ function addContact() {
 	$('#editContact').remove();
 	$('#viewContact').remove();
 	
-	$.ajax({
-		type:'GET',
-		url:'/admin/contacts/add',
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The Contact can not be found. Please try again','Error');
-			}else {
-				$('#editContactPop').html(code);
+	jQuery('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/contacts/add',
+			success:function(code) {
+				if(code == '0') {
+					jAlert('The Contact can not be found. Please try again','Error',function() {
+						jQuery('#loader_block').slideUp('fast');	
+					});
+				}else {					
+					jQuery('#loader_block').slideUp('fast',function() {
+						$('#editContactPop').html(code);
+					});
+				}
 			}
-		}
+		});
 	});
 }
 
-function editContact(gid) {
+function editContact(id,type) {
 	$('#addContact').remove();
 	$('#editContact').remove();
 	$('#viewContact').remove();
-	$.ajax({
-		type:'GET',
-		url:'/admin/contacts/edit?gid='+gid,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The Contact can not be found. Please try again','Error');
-			}else {
-				$('#editContactPop').html(code);
+
+	jQuery('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/contacts/edit?id='+id+'&type='+type,
+			success:function(code) {
+				if(code == '0') {
+					jAlert('The Contact can not be found. Please try again','Error',function() {
+						jQuery('#loader_block').slideUp('fast');	
+					});
+				}else {
+					jQuery('#loader_block').slideUp('fast',function() {
+						$('#editContactPop').html(code);
+					});
+				}
 			}
-		}
+		});
 	});
 }
 
-function viewContact(gid) {
+function viewContact(id,type) {
 	$('#addContact').remove();
 	$('#editContact').remove();
 	$('#viewContact').remove();
-	$.ajax({
-		type:'GET',
-		url:'/admin/contacts/view?gid='+gid,
-		success:function(code) {
-			$('#editContactPop').html(code);	
-		}
+
+	jQuery('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/contacts/view?id='+id+'&type='+type,
+			success:function(code) {
+				if (code == '0') {
+					jAlert('The Contact can not be found. Please try again','Error',function() {
+						jQuery('#loader_block').slideUp('fast');
+					});
+				}else {
+					jQuery('#loader_block').slideUp('fast',function() {
+						$('#editContactPop').html(code);
+					});
+				}
+			}
+		});
 	});
 }
 
@@ -53,7 +77,8 @@ function contactListTable() {
 	$('#addContact').remove();
 	$('#editContact').remove();
 	$('#viewContact').remove();
-	$('#loader_block').slideDown('fast',function() {
+	
+	jQuery('#loader_block').slideDown('fast',function() {
 		$.ajax({
 			type:"GET",
 			url:'/admin/contacts/load_table',
@@ -62,7 +87,6 @@ function contactListTable() {
 					$('#contactTable').html(data);
 					$('#loader_block').slideUp('fast',function() {
 						$('#example').dataTable();
-						
 						$('#contactTable').slideDown('fast');
 					});
 				}else {

@@ -37,7 +37,7 @@ class Contacts extends DOM_Controller {
 				break;
 			}
 		}
-		$contact->Parent = $this->administration->getClient(substr($contact->Type,4))->Name;
+		$contact->Parent = $contact->Dealership;
 		$contact->TypeCode = substr($contact->Type,0,3);
 		$contact->TypeID = substr($contact->Type,4);
 	}
@@ -55,19 +55,21 @@ class Contacts extends DOM_Controller {
 	}
 	
 	public function View() {
-		if(isset($_GET['gid'])) {
-			$contact_id = $_GET['gid'];
+		if(isset($_GET['id'])) {
+			$id = $_GET['id'];
+			$type = $_GET['type'];
 		}
 		
-		$contact = $this->administration->getContact($contact_id);
+		$contact = $this->administration->getContactByTypeID($type, $id);
+		$contact_id = $contact->ContactID;
 		$this->formatContactInfo($contact);
 		
 		if($contact) {
 			$data = array(
 				'contact' => $contact,
 				'level' => $this->user['DropdownDefault']->LevelType,
-				'websites'=>load_websites($contact_id, 'gid', false),
-				'contactInfo'=>load_contactInfo_view($contact, 'gid'),
+				'websites'=>WebsiteListingTable($id, $type, false),
+				'contactInfo'=>load_contactInfo_view($contact, $type),
 			);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/contacts/view',$data);
 		}
@@ -141,11 +143,13 @@ class Contacts extends DOM_Controller {
 	}
 	
 	public function Edit() {
-		if(isset($_GET['gid'])) {
-			$contact_id = $_GET['gid'];
+		if(isset($_GET['id'])) {
+			$id = $_GET['id'];
+			$type = $_GET['type'];
 		}
 		
-		$contact = $this->administration->getContact($contact_id);
+		$contact = $this->administration->getContactByTypeID($type, $id);
+		$contact_id = $contact->ContactID;
 		$this->formatContactInfo($contact);
 		$clients = $this->administration->getAllClientsInAgency($this->user['DropdownDefault']->SelectedAgency);
 		$vendors = $this->administration->getAllVendors();
@@ -160,8 +164,8 @@ class Contacts extends DOM_Controller {
 				'vendors'=>$vendors,
 				'types'=>$types,
 				'tags'=>$tags,
-				'websites'=>load_websites($contact_id,'gid'),
-				'contactInfo'=>load_contactInfo_edit_add($contact, 'gid'),
+				'websites'=>WebsiteListingTable($id, $type),
+				'contactInfo'=>load_contactInfo_edit_add($contact, $type),
 			);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add',$data);
 		}else {

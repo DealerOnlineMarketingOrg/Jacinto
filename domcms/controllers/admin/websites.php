@@ -3,19 +3,13 @@
 class Websites extends DOM_Controller {
 	
 	//should always have this
-	public $client_id;
+	public $id;
 	
 	//when working with a vendor, we fill this
 	public $vendor_id;
 	
 	//if we're editing we should always have this
 	public $website_id;
-	
-	//when working with a contact, we use this
-	public $contact_id;
-	
-	//when working with a user
-	public $user_id;
 	
 	protected $type = '';
 
@@ -24,12 +18,12 @@ class Websites extends DOM_Controller {
 		//load the admin model
 		$this->load->model('administration');
 		
-		if(isset($_POST['cid'])) {
-			$this->client_id = $_POST['cid'];
-			$this->type = 'cid';
-		}elseif(isset($_GET['cid'])) {
-			$this->client_id = $_GET['cid'];
-			$this->type = 'cid';
+		if(isset($_POST['CID'])) {
+			$this->id = $_POST['CID'];
+			$this->type = 'CID';
+		}elseif(isset($_GET['CID'])) {
+			$this->id = $_GET['CID'];
+			$this->type = 'CID';
 		}
 		if(isset($_POST['wid'])) {
 			$this->website_id = $_POST['wid'];
@@ -38,61 +32,55 @@ class Websites extends DOM_Controller {
 			$this->website_id = $_GET['wid'];
 			$this->type = 'wid';
 		}
-		if(isset($_POST['gid'])) {
-			$this->contact_id = $_POST['gid'];
-			$this->type = 'gid';
-		}elseif(isset($_GET['gid'])) {
-			$this->contact_id = $_GET['gid'];
-			$this->type = 'gid';
+		if(isset($_POST['GID'])) {
+			$this->id = $_POST['GID'];
+			$this->type = 'GID';
+		}elseif(isset($_GET['GID'])) {
+			$this->contact_id = $_GET['GID'];
+			$this->type = 'GID';
 		}
-		if(isset($_POST['uid'])) {
-			$this->user_id = $_POST['uid'];
-			$this->type = 'uid';
-		}elseif(isset($_GET['uid'])) {
-			$this->user_id = $_GET['uid'];
-			$this->type = 'uid';
+		if(isset($_POST['UID'])) {
+			$this->id = $_POST['UID'];
+			$this->type = 'UID';
+		}elseif(isset($_GET['UID'])) {
+			$this->id = $_GET['UID'];
+			$this->type = 'UID';
 		}
 	}
 	
-	public function Load_table() {
-		$this->load->helper('template');
-		if (isset($this->client_id))
-			$table = load_websites($this->client_id,$this->type);
-		if (isset($this->contact_id))
-			$table = load_websites($this->contact_id,$this->type);
-		if (isset($this->user_id))
-			$table = load_websites($this->user_id,$this->type);
-		print $table;
+	public function Load_table($id=false,$type=false,$actions=false,$isVendor=false) {
+		if(isset($_GET['id']))
+			$id = $_GET['id'];
+		if(isset($_GET['type']))
+			$type = $_GET['type'];
+		if(isset($_GET['actions']))
+			$actions = $_GET['actions'];
+		if(isset($_GET['isVendor']))
+			$isVendor = $_GET['isVendor'];
+		
+		$data = array(
+			'id'=>$id,
+			'type'=>$type,
+			'actions'=>$actions,
+			'isVendor'=>$isVendor,
+		);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/websites/table',$data);
 	}
 	
 	public function add() {
 		$form = $this->input->post();
-		if(isset($_GET['cid'])) {
+		if(isset($_GET['VID'])) {
+			$add = $this->administration->addKnownVendorWebsite($form,$_GET['VID']);
+			if($add) {
+				print 1;	
+			}else {
+				print 0;
+			}
+		}elseif(isset($_GET['CID']) || isset($_GET['GID']) || isset($_GET['UID'])) {
 			//var_dump($form);
 			$add = $this->administration->addWebsiteInfo($form,$this->type);
 			if($add) {
 				print 1;
-			}else {
-				print 0;
-			}
-		}elseif(isset($_GET['vid'])) {
-			$add = $this->administration->addKnownVendorWebsite($form,$_GET['vid']);
-			if($add) {
-				print 1;	
-			}else {
-				print 0;
-			}
-		}elseif(isset($_GET['gid'])) {
-			$add = $this->administration->addWebsiteInfo($form,$this->type);
-			if($add) {
-				print 1;	
-			}else {
-				print 0;
-			}
-		}elseif(isset($_GET['uid'])) {
-			$add = $this->administration->addWebsiteInfo($form,$this->type);
-			if($add) {
-				print 1;	
 			}else {
 				print 0;
 			}
@@ -104,13 +92,35 @@ class Websites extends DOM_Controller {
 	public function edit() {
 		$form = $this->input->post();
 		if(isset($_GET['wid'])) {
-			$add = $this->administration->editWebsiteInfo($form,$this->type);
+			$data = array(
+				'web_id' => $form['web_id'],
+				'ID' => $form['ID'],
+				'WEB_Vendor' => $form['vendor'],
+				'WEB_Url'=>$this->administration->formatUrl($form['url']),
+				'WEB_Notes'=>$form['notes'],
+				'WEB_ActiveTS'=>date(FULL_MILITARY_DATETIME),
+				//'WEB_Created'=>date(FULL_MILITARY_DATETIME)
+			);
+			if ($this->type != 'GID' && $this->type != 'UID') {
+				$otherData = array(
+					'WEB_GoogleUACode'=>$form['ua_code'],
+					'WEB_GoogleWebToolsMetaCode'=>$form['meta_code_number'],
+					'WEB_GooglePlusCode'=>$form['gplus_code'],
+					'WEB_BingCode'=>$form['bing_code'],
+					'WEB_YahooCode'=>$form['yahoo_code'],
+					'WEB_GlobalScript'=>$form['global_code'],
+				);
+			}
+			if ($this->type != 'GID' && $this->type != 'UID')
+				$data = array_merge($data,$otherData);
+			
+			$add = $this->administration->editWebsiteInfo($data,$this->type);
 			if($add) {
 				print 1;
 			}else {
 				print 0;
 			}
-		}elseif(isset($_GET['vid'])) {
+		}elseif(isset($_GET['VID'])) {
 		
 		}else {
 			print 0;
@@ -144,68 +154,33 @@ class Websites extends DOM_Controller {
 	}
 	
 	public function form() {
-		if(isset($_GET['cid'])) {
-			$this->client_id = $_GET['cid'];
-			//get the right client info
-			$client = $this->administration->getClient($_GET['cid']);
-			//vendors are not associated per client
-			$vendors = $this->administration->getAllVendors();
-			//prepare the array
-			$data = array(
-				'caller'=>$client,
-				'type'=>$this->type,
-				'vendors'=>$vendors,
-				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE),
-			);
-			//print_object($this->administration->getWebsite($_GET['wid']));
-			if ($data['website']) {
-				$data['page'] = 'edit';
-				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/websites/add_edit',$data);
-			} else {
-				$data['page'] = 'add';
-				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/websites/add_edit',$data);
-			}
-		}elseif(isset($_GET['vid'])) {
-			$this->vendor_id = $_GET['vid'];
-			$vendor = $this->administration->getVendor($_GET['vid']);
+		if(isset($_GET['VID'])) {
+			$this->vendor_id = $_GET['VID'];
+			$vendor = $this->administration->getVendor($_GET['VID']);
 			$data = array(
 				'selectedVendor'=>$vendor->ID,
 				'type'=>$this->type,
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
 			);
-		}elseif(isset($_GET['gid'])) {
-			$this->contact_id = $_GET['gid'];
-			$contact = $this->administration->getContact($_GET['gid']);
-			// ID property on add websites page.
-			$contact->ID = $contact->ContactID;
-			//vendors are not associated per contact
-			$vendors = $this->administration->getAllVendors();
-			$data = array(
-				'caller'=>$contact,
-				'type'=>$this->type,
-				'vendors'=>$vendors,
-				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
-			);
-			if ($data['website']) {
-				$data['page'] = 'edit';
-				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
-			} else {
-				$data['page'] = 'add';
-				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/form_addwebsites',$data);
+		}elseif(isset($_GET[$this->type])) {
+			$this->id = $_GET[$this->type];
+			//get the right client info
+			switch ($this->type) {
+				case 'CID': $caller = $this->administration->getClient($this->id); break;
+				case 'GID': $caller = $this->administration->getContactByTypeID($this->type,$this->id); $caller->ID = $caller->ContactID; break;
+				case 'UID': $caller = $this->administration->getContactByTypeID($this->type,$this->id); $caller->ID = $caller->ContactID; break;
 			}
-		}elseif(isset($_GET['uid'])) {
-			$this->contact_id = $_GET['uid'];
-			$contact = $this->administration->getContact($_GET['uid']);
-			// ID property on add websites page.
-			$contact->ID = $contact->ContactID;
-			//vendors are not associated per contact
+			//vendors are not associated per client
 			$vendors = $this->administration->getAllVendors();
+			//prepare the array
 			$data = array(
-				'caller'=>$contact,
+				'caller'=>$caller,
+				'typeID'=>$this->id,
 				'type'=>$this->type,
 				'vendors'=>$vendors,
-				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
+				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : false),
 			);
+			//print_object($this->administration->getWebsite($_GET['wid']));
 			if ($data['website']) {
 				$data['page'] = 'edit';
 				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/websites/add_edit',$data);
@@ -217,4 +192,3 @@ class Websites extends DOM_Controller {
 	}
 	
 }
-	

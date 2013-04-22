@@ -144,7 +144,7 @@
 			{
 				class:'greyBtn',
 				text:'Close',
-				click:function() {$('#<?= $pageID; ?>').dialog('close');}
+				click:function() {$(this).dialog('close');}
 			},
 				{
 					class:'greenBtn addEmailBtn',
@@ -163,7 +163,7 @@
 			{
 				class:'greyBtn',
 				text:'Close',
-				click:function() {$('#<?= $pageID; ?>').dialog('close');}
+				click:function() {$(this).dialog('close');}
 			},
 				{
 					class:'redBtn saveEmailBtn',

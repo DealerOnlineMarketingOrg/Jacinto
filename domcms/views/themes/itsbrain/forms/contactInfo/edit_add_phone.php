@@ -1,15 +1,14 @@
 <div class="uDialog">
-	<?php $pageID = (($page == 'edit') ? 'editContactInfoPhone' : 'addContactInfoPhone'); ?>
-    <div class="dialog-message popper" id="<?= $pageID; ?>" title="<?= (($page == 'edit') ? 'Edit' : 'Add'); ?> Phone">
+    <div class="dialog-message popper" id="editContactInfoPhone" title="<?= (($page == 'edit') ? 'Edit' : 'Add'); ?> Phone">
         <div class="uiForm">
             <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
                 <div class="tab_container">
             		<div id="contactPhone" class="tab_content">
 						<?php
                             if($page == 'edit') :
-                                echo form_open('/admin/contactInfo/editPhone',array('id'=>$pageID.'Form','class' => 'validate mainForm formPop','style' => 'text-align:left'));
+                                echo form_open('/admin/contactInfo/editPhone',array('id'=>'editContactInfoPhoneForm','class' => 'validate mainForm formPop','style' => 'text-align:left'));
                             else :
-                                echo form_open('/admin/contactInfo/addPhone',array('id'=>$pageID.'Form','class'=>'validate mainForm formPop','style' => 'text-align:left'));				
+                                echo form_open('/admin/contactInfo/addPhone',array('id'=>'editContactInfoPhoneForm','class'=>'validate mainForm formPop','style' => 'text-align:left'));				
                             endif;
                         ?>
                             <fieldset>
@@ -52,7 +51,7 @@
 </style>
 <script type="text/javascript">
 	//re initialize jQuery
-	var $ = jQuery.noConflict();
+	var $ = jQuery;
 	
 	$.mask.definitions['~'] = "[+-]";
 	$(".maskPhoneExt").mask("(999) 999-9999? x99999");
@@ -63,7 +62,7 @@
 		$('#contactParentGeneral').css('display',(($(this).val()) == 'GID' ? '' : 'none'));
 	});
 	
-	$('#<?= $pageID; ?>Form').submit(function(e) {
+	$('#editContactInfoPhoneForm').submit(function(e) {
 		e.preventDefault();
 		var formData = $(this).serialize();
 		
@@ -76,7 +75,7 @@
 				if(code == '1') {
 					msg = '<?= ($page == 'edit') ? 'Your edit was made succesfully.' : 'Your add was made successfully'; ?>';
 					jAlert(msg,'Success',function() {
-						$('#<?= $pageID; ?>').dialog('close');
+						$('#editContactInfoPhone').dialog('close');
 					});
 				}else {
 					msg = '<?= ($page == 'edit') ? 'There was a problem with editing the contact requested. Please try again.':'There was a problem adding the contact. Please try again.'; ?>';
@@ -95,8 +94,8 @@
 		$(this).parent().addClass('activeTab');
 		var content = 'div#' + $(this).attr('rel');
 		//alert(content);
-		$('#<?= $pageID; ?> div.tab_container div.tab_content').hide();
-		$('#<?= $pageID; ?> div.tab_container').find(content).css({'display':'block'});
+		$('#editContactInfoPhone div.tab_container div.tab_content').hide();
+		$('#editContactInfoPhone div.tab_container').find(content).css({'display':'block'});
 		
 		var activeContent = $(this).attr('rel');
 		
@@ -145,16 +144,16 @@
 			{
 				class:'greyBtn',
 				text:'Close',
-				click:function() {$('#<?= $pageID; ?>').dialog('close');}
+				click:function() {$(this).dialog('close');}
 			},
 				{
 					class:'greenBtn addPhoneBtn',
 					text:"Add",
-					click:function() { $("#<?= $pageID; ?>Form").submit(); }
+					click:function() { $("#editContactInfoPhoneForm").submit(); }
 				},
 		]
 	});
-	<?php }else { ?>	
+	<?php }else { ?>
 	$("#editContactInfoPhonePop").dialog({
 		minWidth:800,
 		height:500,
@@ -164,12 +163,12 @@
 			{
 				class:'greyBtn',
 				text:'Close',
-				click:function() {$('#<?= $pageID; ?>').dialog('close');}
+				click:function() {$(this).dialog('close');}
 			},
 				{
 					class:'redBtn savePhoneBtn',
 					text:"Save",
-					click:function() { $('#<?= $pageID; ?>Form').submit(); }
+					click:function() { $('#editContactInfoPhoneForm').submit(); }
 				},
 		]
 	});

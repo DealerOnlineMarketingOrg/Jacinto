@@ -185,7 +185,7 @@ class Clients extends DOM_Controller {
 				'client' => $client,
 				'html' => $html,
 				'tags'=>$tags,
-				'websites'=>load_websites($client_id,'cid'),
+				'websites'=>WebsiteListingTable($client_id,'CID'),
 				'contacts'=>true
 			);
 			//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
@@ -235,10 +235,9 @@ class Clients extends DOM_Controller {
 				'client' => $client,
 				'html' => $html,
 				'tags'=>$tags,
-				'websites'=>load_websites($client_id,'cid',false),
+				'websites'=>WebsiteListingTable($client_id,'CID',false),
 				'contacts'=>true,
 			);
-			
 			//
       		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/clients/edit_add',$data);
 		}

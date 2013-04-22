@@ -1,9 +1,9 @@
 <div class="uDialog">
 	<?php switch ($type) {
-			case 'cid': $typeName = 'Client'; break;
-			case 'vid': $typeName = 'Vendor'; break;
-			case 'gid': $typeName = 'Contact'; break;
-			case 'uid': $typeName = 'User'; break;
+			case 'CID': $typeName = 'Client'; break;
+			case 'VID': $typeName = 'Vendor'; break;
+			case 'GID': $typeName = 'Contact'; break;
+			case 'UID': $typeName = 'User'; break;
 			default: $typeName = 'Vendor';
 		} ?>
     <div class="dialog-message" id="addWebsite" title="<?= (($page == 'edit') ? 'Edit ' . $typeName . ' Website' : 'Add New Website To ' . $typeName); ?>">
@@ -41,7 +41,7 @@
 							</div>
 							<div class="fix"></div>
 						</div>
-                        <?php if ($type != 'uid') { ?>
+                        <?php if ($type != 'GID' && $type != 'UID') { ?>
                             <div class="rowElem noborder">
                                 <label>UA Code</label>
                                 <div class="formRight">
@@ -100,7 +100,6 @@
 		                	<?php } ?>
 	               			<input type="hidden" name="ID" value="<?= $caller->ID; ?>" />
                            	<input type="hidden" name="VendorID" value="<?= (isset($selectedVendor) ? $selectedVendor : ''); ?>" />
-		                    <input type="submit" value="submit" class="redBtn" />
 		                </div> 
 					</fieldset>
 				<?= form_close(); ?>
@@ -110,50 +109,66 @@
 	</div>
 </div>
 <script type="text/javascript">
-	jQuery('#web').validationEngine({promptPosition : "top", scroll: true});
-	jQuery('.vendors').change(function() {
-		var selectBox = jQuery(this);
+	$ = jQuery;
+	
+	$('#web').validationEngine({promptPosition : "top", scroll: true});
+	$('.vendors').change(function() {
+		var selectBox = $(this);
 		if(selectBox.val() == '') {
 			alert('Vendors are required');	
 		}
 		if(selectBox.val() == 'custom') {
-			jQuery('div.CustomVendor').slideDown('fast');
-			jQuery('div.CustomVendor input').addClass('validate[required]');
-			jQuery('.vendors').removeClass('validate[required]');
+			$('div.CustomVendor').slideDown('fast');
+			$('div.CustomVendor input').addClass('validate[required]');
+			$('.vendors').removeClass('validate[required]');
 		}else {
-			jQuery(".vendors").addClass('validate[required]');
-			jQuery("div.CustomVendor input").removeClass('validate[required]');
-			jQuery('div.CustomVendor').slideUp('fast');	
+			$(".vendors").addClass('validate[required]');
+			$("div.CustomVendor input").removeClass('validate[required]');
+			$('div.CustomVendor').slideUp('fast');	
 		}
 	});
 
-	jQuery('#web').submit(function(e) {
+	$('#web').submit(function(e) {
 		e.preventDefault();
 		var id = '<?= $caller->ID; ?>';
 		var msg;
 		var wid;
 		var cUrl;
-		var formData = jQuery(this).serialize();
+		var formData = $(this).serialize();
 		<?php if($website) { ?>
 			wid = '<?= $website->ID; ?>';
 			cUrl = '/admin/websites/edit?<?= $type; ?>='+id+'&wid='+wid;
 			msg = 'Website edited successfully.';
 		<?php }else { ?>
 			cUrl = '/admin/websites/add?<?= $type; ?>='+id;
+			msg = 'Website added successfully.';
 		<?php } ?>
 		
-		submitWebsiteForm(id,'<?= $type; ?>',formData,cUrl,msg);
+		$("#addWebsite").dialog('close');
+		clientListTable('<?= $typeID; ?>','<?= $type; ?>');
 	});
 	
-	jQuery(".chzn-select").chosen();
+	$(".chzn-select").chosen();
 	
 	//load the popup by default;
-	jQuery("#addWebsite").dialog({
+	$("#addWebsite").dialog({
 		minWidth:300,
 		width:500,
 		height:550,
 		autoOpen: true,
-		modal: true
+		modal: true,
+		buttons: [
+			{
+				class:'greyBtn',
+				text:'Close',
+				click:function() {$(this).dialog('close');}
+			},
+			{
+				class:'redBtn saveWebsite',
+				text:"Save",
+				click:function() {$('#web').submit();}
+			},
+		]
 	});
 
 </script>

@@ -11,77 +11,107 @@ function getPhoneEmailName(type) {
 function addPhone(id, type) {
 	$('#addContactInfoPhone').remove();
 	
-	$.ajax({
-		type:'GET',
-		url:'/admin/contactInfo/PhoneAdd?id='+id,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The '+getPhoneEmailName(type)+' can not be found. Please try again','Error');
-			}else {
-				$('#addContactInfoPhonePop').html(code);
+	jQuery('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/contactInfo/PhoneAdd?id='+id,
+			success:function(code) {
+				if(code == '0') {
+					jAlert('The '+getPhoneEmailName(type)+' can not be found. Please try again','Error',function() {
+						jQuery('#loader_block').slideUp('fast');	
+					});
+				}else {
+					jQuery('#loader_block').slideUp('fast',function() {
+						$('#addContactInfoPhonePop').html(code);
+					});
+				}
 			}
-		}
+		});
 	});
 }
 
 function editPhone(id, type, value) {
 	$('#editContactInfoPhone').remove();
 	
-	$.ajax({
-		type:'GET',
-		url:'/admin/contactInfo/PhoneEdit?id='+id+'&type='+type+'&value='+value,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The '+getPhoneEmailName(type)+' can not be found. Please try again','Error');
-			}else {
-				$('#editContactInfoPhonePop').html(code);
+	jQuery('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/contactInfo/PhoneEdit?id='+id+'&type='+type+'&value='+value,
+			success:function(code) {
+				if(code == '0') {
+					jAlert('The '+getPhoneEmailName(type)+' can not be found. Please try again','Error',function() {
+						jQuery('#loader_block').slideUp('fast');	
+					});
+				}else {
+					jQuery('#loader_block').slideUp('fast',function() {
+						$('#editContactInfoPhonePop').html(code);
+					});
+				}
 			}
-		}
+		});
 	});
 }
 
 function addEmail(id, type) {
 	$('#addContactInfoEmail').remove();
 	
-	$.ajax({
-		type:'GET',
-		url:'/admin/contactInfo/EmailAdd?id='+id,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The '+getPhoneEmailName(type)+' can not be found. Please try again','Error');
-			}else {
-				$('#addContactInfoEmailPop').html(code);
+	jQuery('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/contactInfo/EmailAdd?id='+id,
+			success:function(code) {
+				if(code == '0') {
+					jAlert('The '+getPhoneEmailName(type)+' can not be found. Please try again','Error',function() {
+						jQuery('#loader_block').slideUp('fast');	
+					});
+				}else {
+					jQuery('#loader_block').slideUp('fast',function() {
+						$('#addContactInfoEmailPop').html(code);
+					});
+				}
 			}
-		}
+		});
 	});
 }
 
 function editEmail(id, type, value) {
 	$('#editContactInfoEmail').remove();
 	
-	$.ajax({
-		type:'GET',
-		url:'/admin/contactInfo/EmailEdit?id='+id+'&type='+type+'&value='+value,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The '+getPhoneEmailName(type)+' can not be found. Please try again','Error');
-			}else {
-				$('#editContactInfoEmailPop').html(code);
+	jQuery('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/contactInfo/EmailEdit?id='+id+'&type='+type+'&value='+value,
+			success:function(code) {
+				if(code == '0') {
+					jAlert('The '+getPhoneEmailName(type)+' can not be found. Please try again','Error',function() {
+						jQuery('#loader_block').slideUp('fast');	
+					});
+				}else {
+					jQuery('#loader_block').slideUp('fast',function() {
+						$('#editContactInfoEmailPop').html(code);
+					});
+				}
 			}
-		}
+		});
 	});
 }
 
 function updatePrimaries(id, type, phonePrimary, emailPrimary) {
-	$.ajax({
-		type:'GET',
-		url:'/admin/contactInfo/FormPrimary?id='+id+'&phone='+phonePrimary+'&email='+emailPrimary,
-		success:function(code) {
-			if(code == '0') {
-				jAlert('The '+getPhoneEmailName(type)+' can not be found. Please try again','Error');
-			}else {
-				jAlert('The primary phone and email have been saved.','Primary');
+	jQuery('#loader_block').slideDown('fast',function() {
+		$.ajax({
+			type:'GET',
+			url:'/admin/contactInfo/FormPrimary?id='+id+'&phone='+phonePrimary+'&email='+emailPrimary,
+			success:function(code) {
+				if(code == '0') {
+					jAlert('The '+getPhoneEmailName(type)+' can not be found. Please try again','Error',function() {
+						jQuery('#loader_block').slideUp('fast');	
+					});
+				}else {
+					jQuery('#loader_block').slideUp('fast',function() {
+						jAlert('The primary phone and email have been saved.','Primary');
+					});
+				}
 			}
-		}
+		});
 	});
 }
