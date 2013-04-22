@@ -124,10 +124,11 @@ class Clients extends DOM_Controller {
 	public function Add() {
 		$html = '';
 		$tags = $this->administration->getAllTags();  
-		
+		$groups = $this->administration->getAllGroupsInAgency($this->user['DropdownDefault']->SelectedAgency);
 		$data = array(
 			'html' => $html,
-			'tags' => $tags
+			'tags' => $tags,
+			'groups'=>$groups
 		);
 
 		$this->LoadTemplate('forms/clients/edit_add',$data);
@@ -240,11 +241,7 @@ class Clients extends DOM_Controller {
 			
 			//
       		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/clients/edit_add',$data);
-		}else {
-			//no client found	
 		}
-
-		
 	}
 
 }

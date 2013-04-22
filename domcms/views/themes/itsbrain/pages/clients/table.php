@@ -1,1 +1,1 @@
-<?= ClientsListingTable($clients); ?>
+<?= ClientsListingTable(); ?>

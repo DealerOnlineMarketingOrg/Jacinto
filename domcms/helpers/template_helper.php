@@ -527,12 +527,15 @@ function GroupsClientTable($group_id) {
 	<p>No clients have been added to this group.</p>
 <? } }
 
-function ClientsListingTable($clients = false) { ?>
+function ClientsListingTable() { 
+	$ci =& get_instance();
+	$ci->load->model('administration');
+	$clients = $ci->administration->getClientsByDDLevel();
+?>
 	<?php if($clients) : ?>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/client_popups.js"></script>
     <script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/websites_popups.js"></script>
     <?php 
-		$ci =& get_instance();
         $userPermissionLevel = $ci->user['AccessLevel'];
         $addPriv     		 = GateKeeper('Client_Add',$userPermissionLevel);
         $editPriv    		 = GateKeeper('Client_Edit',$userPermissionLevel);
