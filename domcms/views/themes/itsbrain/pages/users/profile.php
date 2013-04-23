@@ -89,65 +89,64 @@
 <div id="editInfo">
     <div class="dialog-message" id="editUser" title="Edit User Info">
         <div class="uiForm">
-                <?= form_open(base_url().'profile/update/userInfo', array('id' => 'UpdateUserInfo','class'=>'valid'));
-	            echo '<p style="margin-left:5px !important;text-align:left;">First Name</p>';
-	            echo form_input(array('id' => 'firstname','name'=>'firstname','placeHolder'=>'Your First Name','value'=>$user->FirstName,'class'=>'validate[required]','style'=>'margin-top:5px;'));
-    	        echo '<p style="margin-left:5px !important;text-align:left;">Last Name</p>';
-                echo form_input(array('id' => 'lastname','name'=>'lastname','placeHolder'=>'Your Last Name','value'=>$user->LastName,'class'=>'validate[required]','style'=>'margin-top:5px;'));
-    	        echo '<p style="margin-left:5px !important;text-align:left;">Username</p>';
-				echo form_input(array('id' => 'username','name'=>'username','placeHolder'=>'Your Username','value'=>$user->Username,'class'=>'validate[required]','style'=>'margin-top:5px;'));
-				if($admin['AccessLevel'] >= 600000) {
-					echo '<p style="margin-left:5px !important;text-align:left;">Security Level</p>';
-					$options = array(
-						'1' => 'Super-Admin',
-						'2' => 'Admin',
-						'3' => 'Group Admin',
-						'4' => 'Client Admin',
-						'5' => 'Manager',
-						'6' => 'User'
-					);
-					echo form_dropdown('permissionlevel', $options, $user->AccessID,'style="width:100%;"');        
-					if($admin['AccessLevel'] >= 600000) {
-						echo '<br /><a href="javascript:resetPassword(\'' . $user->EmailAddress . '\');" class="button blueBtn" style="display:block;margin-top:15px;width:90%;float:left;">Change Password</a>';
-					}
-				}
-				echo form_close(); ?>
+            <?= form_open(base_url().'profile/update/userInfo', array('id' => 'UpdateUserInfo','class'=>'valid'));
+            echo '<p style="margin-left:5px !important;text-align:left;">First Name</p>';
+            echo form_input(array('id' => 'firstname','name'=>'firstname','placeHolder'=>'Your First Name','value'=>$user->FirstName,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+            echo '<p style="margin-left:5px !important;text-align:left;">Last Name</p>';
+            echo form_input(array('id' => 'lastname','name'=>'lastname','placeHolder'=>'Your Last Name','value'=>$user->LastName,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+            echo '<p style="margin-left:5px !important;text-align:left;">Username</p>';
+            echo form_input(array('id' => 'username','name'=>'username','placeHolder'=>'Your Username','value'=>$user->Username,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+            if($admin['AccessLevel'] >= 600000) {
+                echo '<p style="margin-left:5px !important;text-align:left;">Security Level</p>';
+                $options = array(
+                    '1' => 'Super-Admin',
+                    '2' => 'Admin',
+                    '3' => 'Group Admin',
+                    '4' => 'Client Admin',
+                    '5' => 'Manager',
+                    '6' => 'User'
+                );
+                echo form_dropdown('permissionlevel', $options, $user->AccessID,'style="width:100%;"');        
+                if($admin['AccessLevel'] >= 600000) {
+                    echo '<br /><a href="javascript:resetPassword(\'' . $user->EmailAddress . '\');" class="button blueBtn" style="display:block;margin-top:15px;width:90%;float:left;">Change Password</a>';
+                }
+            }
+            echo form_close(); ?>
         </div>
     </div>
 </div>
 <div id="editContactInfo">
     <div class="dialog-message" id="editUserContact" title="Edit User Contact Info">
         <div class="uiForm">
-                <?= form_open(base_url().'profile/update/userContactInfo', array('id' => 'UpdateUserContactInfo','class'=>'valid'));
-	            
-				foreach ($contact->Email as $type => $email) {
-					echo '<p style="margin-left:15px !important;">'.$type.' Email</p>';
-					echo form_input(array('id' => $type.'_email','name'=>$type.'_email','placeHolder'=>'Your '.$type.' Email','value'=>$email,'class'=>'validate[required]','style'=>'margin-top:5px;'));
-				}
-				
-				// Locate primary.
-				foreach ($contact->Phone as $type => $phone) {
-					if ($phone == $contact->PrimaryPhoneType) {
-						echo '<p style="margin-left:15px !important;">Main Phone</p>';
-						echo form_input(array('id' => $type.'_phone','name'=>$type.'_phone','placeHolder'=>'Your '.$type.' Phone Number','value'=>$phone,'class'=>'validate[required]','style'=>'margin-top:5px;'));
-						break;
-					}
-				}
-				// Locate others.
-				foreach ($contact->Phone as $type => $phone) {
-					if ($phone != $contact->PrimaryPhoneType) {
-						echo '<p style="margin-left:15px !important;">'.$type.' Phone</p>';
-						echo form_input(array('id' => $type.'_phone','name'=>$type.'_phone','placeHolder'=>'Your '.$type.' Phone Number','value'=>$phone,'class'=>'validate[required]','style'=>'margin-top:5px;'));
-					}
-				}
-				
-				echo '</form>'; ?>
+            <?= form_open(base_url().'profile/update/userContactInfo', array('id' => 'UpdateUserContactInfo','class'=>'valid'));
+
+            foreach ($contact->Email as $type => $email) {
+                echo '<p style="margin-left:15px !important;">'.$type.' Email</p>';
+                echo form_input(array('id' => $type.'_email','name'=>$type.'_email','placeHolder'=>'Your '.$type.' Email','value'=>$email,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+            }
+
+            // Locate primary.
+            foreach ($contact->Phone as $type => $phone) {
+                if ($phone == $contact->PrimaryPhoneType) {
+                    echo '<p style="margin-left:15px !important;">Main Phone</p>';
+                    echo form_input(array('id' => $type.'_phone','name'=>$type.'_phone','placeHolder'=>'Your '.$type.' Phone Number','value'=>$phone,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+                    break;
+                }
+            }
+            // Locate others.
+            foreach ($contact->Phone as $type => $phone) {
+                if ($phone != $contact->PrimaryPhoneType) {
+                    echo '<p style="margin-left:15px !important;">'.$type.' Phone</p>';
+                    echo form_input(array('id' => $type.'_phone','name'=>$type.'_phone','placeHolder'=>'Your '.$type.' Phone Number','value'=>$phone,'class'=>'validate[required]','style'=>'margin-top:5px;'));
+                }
+            }
+
+            echo '</form>'; ?>
         </div>
     </div>
 </div>
 <div id="editUserModules"></div>
 <script type="text/javascript">
-
 	function resetPassword(email) {
 		jConfirm('Are you sure you want to reset this users password?', 'Confirmation Password Reset', function(r) {
 			if(r) {

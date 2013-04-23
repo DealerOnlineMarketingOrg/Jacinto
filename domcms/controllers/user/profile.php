@@ -25,6 +25,7 @@ class Profile extends DOM_Controller {
 		
 		//Grab avatar
         $user->Avatar = $this->members->get_user_avatar($user->ID);
+        
 		$user->viewCompany 			= $user->Dealership;
 		$user->CompanyAddress		= mod_parser($user->CompanyAddress);
 		$user->viewCompanyAddress   = ArrayWithTextIndexToString($user->CompanyAddress, true);
