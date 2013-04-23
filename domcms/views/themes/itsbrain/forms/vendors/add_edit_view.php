@@ -162,6 +162,8 @@
 	</div>
 </div>
 
+<div id="addWebsiteForm"></div>
+
 <div id="addContactInfoPhonePop"></div>
 <div id="editContactInfoPhonePop"></div>
 <div id="addContactInfoEmailPop"></div>
@@ -311,7 +313,7 @@
 				{
 					class:'greenBtn hidden addWebsiteBtn',
 					text:"Add New Website",
-					click:function() { addWebsiteForm('<?= $vendor->ID; ?>')}
+					click:function() { addWebsiteForm('<?= ($vendor) ? $vendor->TypeID : ''; ?>','<?= $vendor->TypeCode; ?>')}
 				}, <?php } ?>
 			<?php } ?>
 			<?php if(GateKeeper('Contact_Add',$this->user['AccessLevel'])) { ?>

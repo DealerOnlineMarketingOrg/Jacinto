@@ -95,12 +95,13 @@ class Websites extends DOM_Controller {
 			$data = array(
 				'web_id' => $form['web_id'],
 				'ID' => $form['ID'],
-				'WEB_Vendor' => ($form['vendor']) ? $form['vendor'] : NULL,
 				'WEB_Url'=>$this->administration->formatUrl($form['url']),
 				'WEB_Notes'=>$form['notes'],
 				'WEB_ActiveTS'=>date(FULL_MILITARY_DATETIME),
 				//'WEB_Created'=>date(FULL_MILITARY_DATETIME)
 			);
+			if (isset($form['vendor']))
+				$data['WEB_Vendor'] = ($form['vendor']) ? $form['vendor'] : NULL;
 			if ($this->type != 'GID' && $this->type != 'UID') {
 				$otherData = array(
 					'WEB_GoogleUACode'=>$form['ua_code'],
@@ -158,7 +159,9 @@ class Websites extends DOM_Controller {
 			$this->vendor_id = $_GET['VID'];
 			$vendor = $this->administration->getVendor($_GET['VID']);
 			$data = array(
+				'caller'=>$vendor,
 				'selectedVendor'=>$vendor->ID,
+				'typeID'=>$this->id,
 				'type'=>$this->type,
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
 			);
@@ -180,14 +183,14 @@ class Websites extends DOM_Controller {
 				'vendors'=>$vendors,
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : false),
 			);
-			//print_object($this->administration->getWebsite($_GET['wid']));
-			if ($data['website']) {
-				$data['page'] = 'edit';
-				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/websites/add_edit',$data);
-			} else {
-				$data['page'] = 'add';
-				$this->load->view($this->theme_settings['ThemeDir'] . '/forms/websites/add_edit',$data);
-			}
+		}
+		//print_object($this->administration->getWebsite($_GET['wid']));
+		if ($data['website']) {
+			$data['page'] = 'edit';
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/websites/add_edit',$data);
+		} else {
+			$data['page'] = 'add';
+			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/websites/add_edit',$data);
 		}
 	}
 	

@@ -190,6 +190,8 @@
 </div>
 <div id="editAvatarPop"></div>
 
+<div id="addWebsiteForm"></div>
+
 <div id="addContactInfoPhonePop"></div>
 <div id="editContactInfoPhonePop"></div>
 <div id="addContactInfoEmailPop"></div>
@@ -288,7 +290,7 @@
 			}
 		}
 		
-		if(activeContent == 'contacts') {
+		if(activeContent == 'contactInfo') {
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').is(':visible')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addWebsiteBtn').addClass('hidden');
 			}
@@ -326,7 +328,7 @@
 				{
 					class:'greenBtn hidden addWebsiteBtn',
 					text:"Add New Website",
-					click:function() { addWebsiteForm('<?= ($user) ? $user->ID : ''; ?>','uid')}
+					click:function() { addWebsiteForm('<?= ($contact) ? $contact->TypeID : ''; ?>','<?= $contact->TypeCode; ?>')}
 				},
 			<?php } ?>
 				{

@@ -25,6 +25,9 @@ class Profile extends DOM_Controller {
 		$user->UserID           	= $user->ID;
 		$user->Edit       			= ($this->user['UserID'] == $user->UserID OR $this->user['AccessLevel'] >= 600000) ? TRUE : FALSE;
 		
+		$user->TypeCode = 'UID';
+		$user->TypeID = $user->ID;
+		
 		//Grab avatar
         $user->Avatar 				= $this->members->get_user_avatar($user->ID);
         $user->Address 				= mod_parser($user->CompanyAddress); 

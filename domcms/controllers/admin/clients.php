@@ -168,7 +168,8 @@ class Clients extends DOM_Controller {
 		$client->ContactID = $client_id;
 		$tags = $this->administration->getAllTags();    
 		$groups = $this->administration->getAllGroupsInAgency($this->user['DropdownDefault']->SelectedAgency);
-		
+		$client->TypeCode = 'CID';
+		$client->TypeID = $client_id;
 		
 		if($client) {
 			$client->Address = (isset($client->Address)) ? mod_parser($client->Address) : false;
