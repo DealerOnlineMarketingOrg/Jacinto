@@ -154,6 +154,9 @@ class Websites extends DOM_Controller {
 	}
 	
 	public function form() {
+		
+		echo $_GET['uid'];
+		
 		if(isset($_GET['VID'])) {
 			$this->vendor_id = $_GET['VID'];
 			$vendor = $this->administration->getVendor($_GET['VID']);
@@ -163,6 +166,7 @@ class Websites extends DOM_Controller {
 				'website'=>((isset($_GET['wid'])) ? $this->administration->getWebsite($_GET['wid']) : FALSE)
 			);
 		}elseif(isset($_GET[$this->type])) {
+			echo 'hi';
 			$this->id = $_GET[$this->type];
 			//get the right client info
 			switch ($this->type) {

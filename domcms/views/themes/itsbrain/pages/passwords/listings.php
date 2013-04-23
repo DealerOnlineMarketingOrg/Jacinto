@@ -1,7 +1,6 @@
-    <div id="loader_block">
-        <div id="client_loader"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
-    </div>
-
+<div id="loader_block">
+    <div id="client_loader"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
+</div>
 <div class="content">
     <div class="title"><h5>Passwords</div>
     <?php notifyError(); ?>
