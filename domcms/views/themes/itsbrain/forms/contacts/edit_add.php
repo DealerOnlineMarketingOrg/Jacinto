@@ -282,7 +282,7 @@
 				{
 					class:'greenBtn hidden addWebsiteBtn',
 					text:"Add New Website",
-					click:function() { addWebsiteForm('<?= ($contact) ? $contact->ContactID : ''; ?>','gid')}
+					click:function() { addWebsiteForm('<?= ($contact) ? $contact->TypeID : ''; ?>','<?= $contact->TypeCode; ?>')}
 				},
 			<?php } ?>
 				{

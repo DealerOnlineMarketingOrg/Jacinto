@@ -78,8 +78,8 @@ class Contacts extends DOM_Controller {
 	public function Form() {
 		$contact_data = $this->security->xss_clean($this->input->post());
 		
-		if(isset($_GET['gid']))
-			$contact_id = $_GET['gid'];
+		if(isset($_GET['GID']))
+			$contact_id = $_GET['GID'];
 		else
 			$contact_id = '';
 		
