@@ -82,6 +82,13 @@
 		minWidth:800,
 		height:500,
 		autoOpen: true,
-		modal: true
+		modal: true,
+		buttons: [
+			{
+				class:'greyBtn',
+				text:'Close',
+				click:function() {$(this).dialog('close')}
+			},
+		]
 	});
 </script>

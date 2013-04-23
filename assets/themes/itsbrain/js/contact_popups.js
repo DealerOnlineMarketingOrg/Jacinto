@@ -2,9 +2,9 @@
 var $ = jQuery.noConflict();
 
 function addContact() {
-	$('#addContact').remove();
-	$('#editContact').remove();
-	$('#viewContact').remove();
+	$('#addContactInfo').remove();
+	$('#editContactInfo').remove();
+	$('#viewContactInfo').remove();
 	
 	jQuery('#loader_block').slideDown('fast',function() {
 		$.ajax({
@@ -26,9 +26,9 @@ function addContact() {
 }
 
 function editContact(id,type) {
-	$('#addContact').remove();
-	$('#editContact').remove();
-	$('#viewContact').remove();
+	$('#addContactInfo').remove();
+	$('#editContactInfo').remove();
+	$('#viewContactInfo').remove();
 
 	jQuery('#loader_block').slideDown('fast',function() {
 		$.ajax({
@@ -50,9 +50,9 @@ function editContact(id,type) {
 }
 
 function viewContact(id,type) {
-	$('#addContact').remove();
-	$('#editContact').remove();
-	$('#viewContact').remove();
+	$('#addContactInfo').remove();
+	$('#editContactInfo').remove();
+	$('#viewContactInfo').remove();
 
 	jQuery('#loader_block').slideDown('fast',function() {
 		$.ajax({
@@ -74,9 +74,9 @@ function viewContact(id,type) {
 }
 
 function contactListTable() {
-	$('#addContact').remove();
-	$('#editContact').remove();
-	$('#viewContact').remove();
+	$('#addContactInfo').remove();
+	$('#editContactInfo').remove();
+	$('#viewContactInfo').remove();
 	
 	jQuery('#loader_block').slideDown('fast',function() {
 		$.ajax({
