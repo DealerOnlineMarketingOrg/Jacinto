@@ -66,23 +66,7 @@
 		e.preventDefault();
 		var formData = $(this).serialize();
 		
-		$.ajax({
-			type:'POST',
-			data:formData,
-			url:'/admin/contactInfo/formPhone?id=<?= (($contact) ? $contact->ContactID : ''); ?>&page=<?= $page; ?>',
-			success:function(code) {
-				var msg;
-				if(code == '1') {
-					msg = '<?= ($page == 'edit') ? 'Your edit was made succesfully.' : 'Your add was made successfully'; ?>';
-					jAlert(msg,'Success',function() {
-						$('#editContactInfoPhone').dialog('close');
-					});
-				}else {
-					msg = '<?= ($page == 'edit') ? 'There was a problem with editing the contact requested. Please try again.':'There was a problem adding the contact. Please try again.'; ?>';
-					jAlert(msg,'Error');
-				}
-			}
-		});
+		savePhone('<?= $page; ?>','<?= $contact->TypeID; ?>','<?= $contact->TypeCode; ?>',formData);
 	});
 	
 	$(".chzn-select").chosen();
@@ -136,8 +120,10 @@
 	
 	<?php if($page != 'edit') { ?>
 	$("#addContactInfoPhonePop").dialog({
-		minWidth:800,
-		height:500,
+		minWidth:600,
+		width:600,
+		minHeight:300,
+		height:300,
 		autoOpen: true,
 		modal: true,
 		buttons: [
@@ -155,8 +141,10 @@
 	});
 	<?php }else { ?>
 	$("#editContactInfoPhonePop").dialog({
-		minWidth:800,
-		height:500,
+		minWidth:600,
+		width:600,
+		minHeight:300,
+		height:300,
 		autoOpen: true,
 		modal: true,
 		buttons: [

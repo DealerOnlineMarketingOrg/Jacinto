@@ -209,13 +209,13 @@ function loadWebsiteTable(id,type) {
 
 	function websiteListTable(id,type) {
 	  jQuery('#editClient').remove();
-	  jQuery('#loader_block').slideUp('fast',function() {
+	  jQuery('#loader_block').slideDown('fast',function() {
 		jQuery.ajax({
 		  type:"GET",
 		  url:'/admin/websites/load_table?type='+type+'&id='+id,
 		  success:function(data) {
 			if(data) {
-			  jQuery('#loader_block').slideUp('fast',function() {
+			  jQuery('#loader_block').delay(1000).slideUp('fast',function() {
 				  jQuery('#websites').html(data);
 			  });
 			}else {
