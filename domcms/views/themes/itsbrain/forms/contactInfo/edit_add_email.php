@@ -1,15 +1,14 @@
 <div class="uDialog">
-	<?php $pageID = (($page == 'edit') ? 'editContactInfoEmail' : 'addContactInfoEmail'); ?>
-    <div class="dialog-message popper" id="<?= $pageID; ?>" title="<?= (($page == 'edit') ? 'Edit' : 'Add'); ?> Email">
+    <div class="dialog-message popper" id="editContactInfoEmail" title="<?= (($page == 'edit') ? 'Edit' : 'Add'); ?> Email">
         <div class="uiForm">
             <div class="widget" style="margin-top:-10px;padding-top:0;margin-bottom:10px;">
                 <div class="tab_container">
             		<div id="contactEmail" class="tab_content">
 						<?php
                             if($page == 'edit') :
-                                echo form_open('/admin/contactInfo/editEmail',array('id'=>$pageID.'Form','class' => 'validate mainForm formPop','style' => 'text-align:left'));
+                                echo form_open('/admin/contactInfo/editEmail',array('id'=>'editContactInfoEmailForm','class' => 'validate mainForm formPop','style' => 'text-align:left'));
                             else :
-                                echo form_open('/admin/contactInfo/addEmail',array('id'=>$pageID.'Form','class'=>'validate mainForm formPop','style' => 'text-align:left'));				
+                                echo form_open('/admin/contactInfo/addEmail',array('id'=>'editContactInfoEmailForm','class'=>'validate mainForm formPop','style' => 'text-align:left'));				
                             endif;
                         ?>
                             <fieldset>
@@ -62,27 +61,11 @@
 		$('#contactParentGeneral').css('display',(($(this).val()) == 'GID' ? '' : 'none'));
 	});
 	
-	$('#<?= $pageID; ?>Form').submit(function(e) {
+	$('#editContactInfoEmailForm').submit(function(e) {
 		e.preventDefault();
 		var formData = $(this).serialize();
 		
-		$.ajax({
-			type:'POST',
-			data:formData,
-			url:'/admin/contactInfo/formEmail?uid=<?= (($contact) ? $contact->ContactID : ''); ?>&page=<?= $page; ?>',
-			success:function(code) {
-				var msg;
-				if(code == '1') {
-					msg = '<?= ($page == 'edit') ? 'Your edit was made succesfully.' : 'Your add was made successfully'; ?>';
-					jAlert(msg,'Success',function() {
-						$('#<?= $pageID; ?>').dialog('close')
-					});
-				}else {
-					msg = '<?= ($page == 'edit') ? 'There was a problem with editing the contact requested. Please try again.':'There was a problem adding the contact. Please try again.'; ?>';
-					jAlert(msg,'Error');
-				}
-			}
-		});
+		saveEmail('<?= $page; ?>','<?= $contact->TypeID; ?>','<?= $contact->TypeCode; ?>',formData);
 	});
 	
 	$(".chzn-select").chosen();
@@ -94,8 +77,8 @@
 		$(this).parent().addClass('activeTab');
 		var content = 'div#' + $(this).attr('rel');
 		//alert(content);
-		$('#<?= $pageID; ?> div.tab_container div.tab_content').hide();
-		$('#<?= $pageID; ?> div.tab_container').find(content).css({'display':'block'});
+		$('#editContactInfoEmail div.tab_container div.tab_content').hide();
+		$('#editContactInfoEmail div.tab_container').find(content).css({'display':'block'});
 		
 		var activeContent = $(this).attr('rel');
 		
@@ -136,8 +119,10 @@
 	
 	<?php if($page != 'edit') { ?>
 	$("#addContactInfoEmailPop").dialog({
-		minWidth:800,
-		height:500,
+		minWidth:600,
+		width:600,
+		minHeight:300,
+		height:300,
 		autoOpen: true,
 		modal: true,
 		buttons: [
@@ -149,14 +134,16 @@
 				{
 					class:'greenBtn addEmailBtn',
 					text:"Add",
-					click:function() { $('#<?= $pageID; ?>Form').submit(); }
+					click:function() { $('#editContactInfoEmailForm').submit(); }
 				},
 		]
 	});
 	<?php }else { ?>
 	$("#editContactInfoEmailPop").dialog({
-		minWidth:800,
-		height:500,
+		minWidth:600,
+		width:600,
+		minHeight:300,
+		height:300,
 		autoOpen: true,
 		modal: true,
 		buttons: [
@@ -168,7 +155,7 @@
 				{
 					class:'redBtn saveEmailBtn',
 					text:"Save",
-					click:function() { $('#<?= $pageID; ?>Form').submit(); }
+					click:function() { $('#editContactInfoEmailForm').submit(); }
 				},
 		]
 	});

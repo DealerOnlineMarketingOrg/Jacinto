@@ -18,29 +18,45 @@ class ContactInfo extends DOM_Controller {
 	
     public function index() { }
 	
-	public function Load_table() {
+	public function Load_table($id=false,$type=false) {
+		if(isset($_GET['id']))
+			$id = $_GET['id'];
+		if(isset($_GET['type']))
+			$type = $_GET['type'];
+		if(isset($_GET['page']))
+			$page = $_GET['page'];			
 		
+		$contact = $this->administration->getContactByTypeID($type,$id);
+		$contact->Email = mod_parser($contact->Email,false,true);
+		$contact->Phone = mod_parser($contact->Phone,false,true);
+		$data = array(
+			'contact'=>$contact,
+			'type'=>$type,
+			'page'=>$page,
+		);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/contactInfo/table',$data);
 	}
 	
 	public function FormPhone() {
 		$form = $this->security->xss_clean($this->input->post());
 		
-		if(isset($_GET['id'])) {
-			$id = $_GET['id'];
+		if(isset($_GET['page'])) {
 			$page = $_GET['page'];
-		} else
+		} else {
+			$page = 'add';
 			$id = '';
-			
+		}
+
+		$id = $form['contact_id'];		
 		$type = $form['type'];
-		$phone = $form['phone'];
-		$new = $type.':'.$phone;
-		$old = $form['old'];
-		
+		$oldValue = $form['old'];
+		$newValue = $form['phone'];
+		$phone = $type.':'.$newValue;
+
 		if ($page == 'edit')
-			$ret = $this->administration->editContactInfoPhone($id, $old, $new);
+			$ret = $this->administration->editContactInfoPhone($id, $oldValue, $phone);
 		else
-			$ret = $this->administration->addContactInfoPhone($id, $new);
-		
+			$ret = $this->administration->addContactInfoPhone($id, $phone);
 		if($id && $ret) {
 			echo '1';
 		}else {
@@ -51,28 +67,28 @@ class ContactInfo extends DOM_Controller {
 	public function FormEmail() {
 		$form = $this->security->xss_clean($this->input->post());
 		
-		if(isset($_GET['id'])) {
-			$id = $_GET['id'];
+		if(isset($_GET['page'])) {
 			$page = $_GET['page'];
-		} else
+		} else {
+			$page = 'add';
 			$id = '';
-			
+		}
+
+		$id = $form['contact_id'];		
 		$type = $form['type'];
-		$email = $form['email'];
-		$new = $type.':'.$email;
-		$old = $form['old'];
-		
+		$oldValue = $form['old'];
+		$newValue = $form['email'];
+		$email = $type.':'.$newValue;
+
 		if ($page == 'edit')
-			$ret = $this->administration->editContactInfoEmail($id, $old, $new);
+			$ret = $this->administration->editContactInfoEmail($id, $oldValue, $email);
 		else
-			$ret = $this->administration->addContactInfoEmail($id, $new);
-		
+			$ret = $this->administration->addContactInfoEmail($id, $email);
 		if($id && $ret) {
-			echo '1';	
+			echo '1';
 		}else {
 			echo '0';
 		}
-
 	}
 
 	public function PhoneAdd() {
@@ -81,7 +97,9 @@ class ContactInfo extends DOM_Controller {
 		}
 		
 		$contact = $this->administration->getContact($id);
-
+		$contact->TypeCode = substr($contact->Type,0,3);
+		$contact->TypeID = substr($contact->Type,4);
+		
 		$data = array(
 			'page'=>'add',
 			'contact'=>$contact,
@@ -99,6 +117,8 @@ class ContactInfo extends DOM_Controller {
 		}
 		
 		$contact = $this->administration->getContact($id);
+		$contact->TypeCode = substr($contact->Type,0,3);
+		$contact->TypeID = substr($contact->Type,4);
 		
 		if($contact) {
 			$data = array(
@@ -119,6 +139,8 @@ class ContactInfo extends DOM_Controller {
 		}
 		
 		$contact = $this->administration->getContact($id);
+		$contact->TypeCode = substr($contact->Type,0,3);
+		$contact->TypeID = substr($contact->Type,4);
 		
 		$data = array(
 			'page'=>'add',
@@ -137,6 +159,8 @@ class ContactInfo extends DOM_Controller {
 		}
 		
 		$contact = $this->administration->getContact($id);
+		$contact->TypeCode = substr($contact->Type,0,3);
+		$contact->TypeID = substr($contact->Type,4);
 
 		if($contact) {
 			$data = array(
