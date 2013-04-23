@@ -19,13 +19,15 @@ class Profile extends DOM_Controller {
 			$user_id = $this->user['UserID'];
 		}
 		
-		$user                   = $this->administration->getUsers($user_id);
-		$user->UserID           = $user->ID;
-		$user->Edit       		= ($this->user['UserID'] == $user->UserID OR $this->user['AccessLevel'] >= 600000) ? TRUE : FALSE;
+		$user                   	= $this->administration->getUsers($user_id);
+		
+		
+		$user->UserID           	= $user->ID;
+		$user->Edit       			= ($this->user['UserID'] == $user->UserID OR $this->user['AccessLevel'] >= 600000) ? TRUE : FALSE;
 		
 		//Grab avatar
-        $user->Avatar = $this->members->get_user_avatar($user->ID);
-        
+        $user->Avatar 				= $this->members->get_user_avatar($user->ID);
+        $user->Address 				= mod_parser($user->CompanyAddress); 
 		$user->viewCompany 			= $user->Dealership;
 		$user->CompanyAddress		= mod_parser($user->CompanyAddress);
 		$user->viewCompanyAddress   = ArrayWithTextIndexToString($user->CompanyAddress, true);
@@ -41,7 +43,7 @@ class Profile extends DOM_Controller {
 			'msg' => $msg,
 			'admin' => $this->user
 		);
-			
+
 		$this->LoadTemplate('pages/users/profile',$data);
 	}
 	
@@ -124,6 +126,7 @@ class Profile extends DOM_Controller {
 				'DIRECTORY_ID'			=> $user->DirectoryID,
 				'DIRECTORY_FirstName'   => $form['firstname'],
 				'DIRECTORY_LastName'    => $form['lastname'],
+				'DIRECTORY_Address'		=>'street:' . $form['street'] . 'city:' . $form['city'] . ',state:' . $form['state'] . ',zipcode:' . $form['zipcode']
 			),
 			'Users_Info' => array(
 				'USER_ID'               => $user->UserID,

@@ -1217,7 +1217,7 @@ function ContactInfoListingTable($contact, $type, $edit = false) {
 	} else {
 		$fragment =
 		'<style type="text/css">
-			div.tab_content div.head {background:none;border:none;width:14em;margin:0 auto;}
+			#contactInfo div.head {background:none;border:none;width:14em;margin:0 auto;}
 		</style>
 		<div style="margin-top:10px;margin-bottom:60px;">
 			<div class="head"><h5 class="iPhone">Phone Numbers</h5></div>
@@ -1272,7 +1272,7 @@ function ContactInfoListingTable_EditAdd($contact, $type) {
 
 	$fragment =
 	'<style type="text/css">
-		div.tab_content div.head {background:none;border:none;width:14em;margin:0 auto;}
+		#contactInfo div.head {background:none;border:none;width:14em;margin:0 auto;}
 	</style>
 	<div style="margin-top:10px;margin-bottom:60px;">
     	<div class="head"><h5 class="iPhone">Phone Numbers</h5></div>
@@ -1340,39 +1340,37 @@ function breadcrumb($replacement = false) {
 	$link .= '<li class="firstB"><a href="' . base_url() . '">Home</a></li>';
 	$prep_link = '';
 		
+    
+    //print_object($uri);
+    if(isset($uri[1]) AND $uri[0] == 'profile') {
+        
+        unset($uri[1]);
+        
+    }
 	//loop through array and create the breadcrumb elements
 	foreach($uri as $section) {
 		if($section == '') {
 			unset($uri[$i]);	
 		}
-		
+		        
 		if($i != 0) $prep_link .= $uri[$i] . '/';	
 
 		if($section != '') {
 			if($i >= count($uri)) {
-				$link .= '<li class="lastB" style="text-transform:capitalize">'. $section . '</li>';
+               $link .= '<li class="lastB" style="text-transform:capitalize">'. $section . '</li>';
 			}else {
 				if($section != 'profile') {
-					$link .= '<li style="text-transform:capitalize"><a href="' . $prep_link . '">' . $section . '</a></li>';
+					$link .= '<li style="text-transform:capitalize"><a href="' . base_url() . '">' . $section . '</a></li>';
 				}elseif($section == 'clients') {
 					$link .= '<li style="text-transform:capitalize"><a href="' . base_url() . 'admin">Admin</a></li><li style="text-transform:capitalize"><a href="' . base_url() . 'clients">Clients</a></li>';	
 				}else {
-					$link .= '<li style="text-transform:capitalize"><a href="' . base_url() . 'users">Users</a></li>';	
+                    
+					$link .= '<li style="text-transform:capitalize" class="lastB">User Preferences</li>';
+                    
 				}
 			}
 		}
 		$i++;
-		/*for($j = 0; $j <= $i; $j++) {
-			$prep_link .= $uri[$j] . '/';	
-		}
-		
-		if(count($uri - 1) > $i) {
-			$link = '<li><a href="' . site_url($prep_link) . '">' . $section . '</a></li>';
-		}else {
-			$link = '<li class="lastB">' . ($replacement) ? $replacement : $section . '</li>';	
-		}
-		
-		$i++;*/
 	}
 	
 	return $link;
