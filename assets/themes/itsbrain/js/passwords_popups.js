@@ -28,7 +28,7 @@
 		jQuery('#loader_block').slideDown('fast',function() {
 			jQuery.ajax({
 				type:'GET',
-				url:'/passwords/edit?pwdid=' + pwdid,
+				url:'/admin/passwords/edit?pwdid=' + pwdid,
 				//data:{client_id:id},
 				success:function(data) {
 					if(data) {

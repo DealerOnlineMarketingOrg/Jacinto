@@ -26,7 +26,7 @@ class Passwords extends DOM_Controller {
 	
 	public function load_table() {
 		//LOAD THE TEMPLATE
-		$this->load->view($this->theme_settings['ThemeDir'] . 'pages/passwords/table');
+		$this->load->view($this->theme_settings['ThemeDir'] . '/pages/passwords/table');
 	}
 	
 	private function getData($action) {

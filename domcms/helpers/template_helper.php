@@ -24,7 +24,7 @@ function GateKeeper($mod,$uPerm) {
 }
 
 function PasswordlistTable() { ?>
-	<script type="text/javascript" src="<?= base_url() . THEMEDIR; ?>js/passwords_popups.js"></script>
+	<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/passwords_popups.js"></script>
     <?php
 	
 		$ci =& get_instance();
