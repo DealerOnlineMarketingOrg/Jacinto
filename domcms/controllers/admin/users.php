@@ -137,7 +137,6 @@ class Users extends DOM_Controller {
 		}
 		
 		$user = $this->administration->getMyUser($uid);
-		print_object($this->user_id);
 		$user->ContactID = $user->DirectoryID;
 		$user->Address = mod_parser($user->Address);
 		$user->CompanyAddress = mod_parser($user->CompanyAddress);

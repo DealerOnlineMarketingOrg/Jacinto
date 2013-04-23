@@ -1,25 +1,4 @@
 
-function addWebsiteForm(id,type) {
-	jQuery('#loader_block').slideDown('fast',function() {
-		$.ajax({
-			type:'GET',
-			url:'/admin/websites/form?'+type+'='+id,
-			//data:{client_id:id},
-			success:function(data) {
-				if(data){
-					jQuery('#loader_block').slideUp('fast',function() {
-						$('#addWebsiteForm').html(data);
-					});
-				}else {
-					$('There was a problem finding the client you needed. Please try again.','Add Website Error',function() {
-						jQuery('#loader_block').slideUp('fast');	
-					});
-				}
-			}
-		})
-	});
-}
-
 function disableWebsite(wid) {
 	jConfirm('Are you sure you would like to disable this website?','Disable Confirmation',function(r) {
 		if(r) {
@@ -70,6 +49,7 @@ function enableWebsite(wid) {
 
 
 function addWebsiteForm(id,type) {
+	jQuery('#addWebsite').remove();
 	jQuery('#loader_block').slideDown('fast',function() {
 		jQuery.ajax({
 			type:'GET',
@@ -89,7 +69,7 @@ function addWebsiteForm(id,type) {
 		});
 	});
 }
-
+ 
 function editWebsiteForm(id,type,wid) {
 	jQuery('#addWebsite').remove();
 	jQuery('#loader_block').slideDown('fast',function() {

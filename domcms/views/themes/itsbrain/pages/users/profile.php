@@ -1,3 +1,6 @@
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/userProfile_popups.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/websites_popups.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/contactInfo_popups.js"></script>
 <style type="text/css">
     ul.modulesTable{min-width:709px !important;width:100%;display:block;border-bottom:1px solid #d5d5d5;height:30px;border-left:1px solid #d5d5d5;border-right:1px solid #d5d5d5;}
     ul.modulesTable li {display:inline;float:left;width:23%;padding:5px;border-right:1px solid #d5d5d5;}
@@ -40,7 +43,7 @@
             <div class="head contactInfo">
                 <h5 class="iPhone">Contact Information</h5>
                 <?php if($user->Edit) { ?>
-                    <div class="editButton"><a href="javascript:editContactInfo('<?= $user->UserID; ?>');"><span>Edit</span></a></div>
+                    <div class="editButton"><a href="javascript:editUserProfile('<?= $user->UserID; ?>');"><span>Edit</span></a></div>
                 <?php } ?>
             </div>
             <div class="body alignleft contactInfo">
@@ -49,6 +52,8 @@
                     <li class="userContent" style="margin-left:126px !important;"><?= $user->viewEmails; ?></li>
                     <li class="parentLabel" style="width:125px !important;"><span>Phone:</span></li>
                     <li class="userContent" style="margin-left:126px !important;"><?= $user->viewPhones; ?></li>
+                    <li class="parentLabel" style="width:125px !important;"><span>Website:</span></li>
+                    <li class="userContent" style="margin-left:126px !important;"><?= ArrayToTable($user->websites,2); ?></li>
                 </ul>
                 <div class="fix"></div>
             </div>

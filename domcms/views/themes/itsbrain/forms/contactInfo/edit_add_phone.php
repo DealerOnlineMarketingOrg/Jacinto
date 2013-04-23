@@ -119,7 +119,7 @@
 	});
 	
 	<?php if($page != 'edit') { ?>
-	$("#addContactInfoPhonePop").dialog({
+	$("#editContactInfoPhonePop").dialog({
 		minWidth:600,
 		width:600,
 		minHeight:300,

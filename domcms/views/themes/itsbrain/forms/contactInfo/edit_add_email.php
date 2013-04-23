@@ -118,7 +118,7 @@
 	});
 	
 	<?php if($page != 'edit') { ?>
-	$("#addContactInfoEmailPop").dialog({
+	$("#editContactInfoEmailPop").dialog({
 		minWidth:600,
 		width:600,
 		minHeight:300,
