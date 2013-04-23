@@ -18,6 +18,10 @@ class ContactInfo extends DOM_Controller {
 	
     public function index() { }
 	
+	public function Load_table() {
+		
+	}
+	
 	public function FormPhone() {
 		$form = $this->security->xss_clean($this->input->post());
 		

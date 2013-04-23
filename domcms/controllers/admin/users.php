@@ -132,7 +132,12 @@ class Users extends DOM_Controller {
 	}
 	
 	public function Edit() {
-		$user = $this->administration->getMyUser($this->user_id);
+		if(isset($_GET['UID'])) {
+			$uid = $_GET['UID'];
+		}
+		
+		$user = $this->administration->getMyUser($uid);
+		print_object($this->user_id);
 		$user->ContactID = $user->DirectoryID;
 		$user->Address = mod_parser($user->Address);
 		$user->CompanyAddress = mod_parser($user->CompanyAddress);
@@ -144,9 +149,9 @@ class Users extends DOM_Controller {
 			'user'=>$user,
 			'avatar'=>$avatar,
 			'allMods'=>$this->administration->getAllModules(),
-			'websites'=>WebsiteListingTable($this->user_id, 'uid'),
+			'websites'=>WebsiteListingTable($uid, 'UID'),
 			'contact'=>$user,
-			'contactInfo'=>load_contactInfo_edit_add($user, 'uid'),
+			'contactInfo'=>ContactInfoListingTable($user, 'UID', true),
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/edit_add_view',$data);
 	}
@@ -219,7 +224,11 @@ class Users extends DOM_Controller {
 	}
 	
 	public function View_popup() {
-		$user = $this->administration->getMyUser($this->user_id);
+		if(isset($_GET['UID'])) {
+			$uid = $_GET['UID'];
+		}
+		
+		$user = $this->administration->getMyUser($uid);
 		$user->ContactID = $user->DirectoryID;
 		$user->Address = mod_parser($user->Address);
 		$user->CompanyAddress = mod_parser($user->CompanyAddress);
@@ -233,9 +242,9 @@ class Users extends DOM_Controller {
 			'view'=>TRUE,
 			'avatar'=>$avatar,
 			'allMods'=>$this->administration->getAllModules(),
-			'websites'=>WebsiteListingTable($this->user_id, 'uid', false),
+			'websites'=>WebsiteListingTable($uid, 'UID', false),
 			'contact'=>$user,
-			'contactInfo'=>load_contactInfo_view($user, 'uid'),
+			'contactInfo'=>ContactInfoListingTable($user, 'UID'),
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/users/edit_add_view',$data);
 	}

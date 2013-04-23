@@ -295,7 +295,7 @@ function MasterlistTable() { ?>
                             <?php //blue-document-excel.png; ?>
                             <?php if($editPriv) { ?>
                                 <td class="actionsCol noSort" style="text-align:center !important;">
-                                    <a title="Edit Client" href="javascript:editEntry('<?= $client->ClientID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                                    <a title="Edit Client" href="javascript:editEntry('<?= $client->ClientID; ?>',);" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
                                 </td>
                             <?php } ?>
                         </tr>
@@ -1209,59 +1209,65 @@ function load_client_related_users($cid) {
 	return $html;
 }
 
-function load_contactInfo_view($contact, $type) {
+function ContactInfoListingTable($contact, $type, $edit = false) {
 	$ci =& get_instance();
 	
-	$fragment =
-	'<style type="text/css">
-		div.tab_content div.head {background:none;border:none;width:14em;margin:0 auto;}
-	</style>
-	<div style="margin-top:10px;margin-bottom:60px;">
-		<div class="head"><h5 class="iPhone">Phone Numbers</h5></div>
-		<table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
-			<thead>
-				<tr>
-					<td width="10%" style="text-align:left;padding-left:10px;">Type</td>
-					<td width="90%" colspan="2" style="text-align:left;padding-left:10px;">Phone Number</td>
-				</tr>
-			</thead>
-			<tbody>';
-				foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) {
-				$fragment .= '<tr>
-					<td width="10%">'.ucwords($type).'</td>
-					<td width="80%">'.$phone.'</td>
-					<td width="10%">'.((($contact->PrimaryPhoneType) == $phone) ? 'Primary' : '').'</td>
-				</tr>';
-				}
-			$fragment .= '</tbody>
-		</table>
-	</div>
+	if ($edit) {
+		return ContactInfoListingTable_EditAdd($contact, $type);
+	} else {
+		$fragment =
+		'<style type="text/css">
+			div.tab_content div.head {background:none;border:none;width:14em;margin:0 auto;}
+		</style>
+		<div style="margin-top:10px;margin-bottom:60px;">
+			<div class="head"><h5 class="iPhone">Phone Numbers</h5></div>
+			<table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
+				<thead>
+					<tr>
+						<td width="10%" style="text-align:left;padding-left:10px;">Type</td>
+						<td width="90%" colspan="2" style="text-align:left;padding-left:10px;">Phone Number</td>
+					</tr>
+				</thead>
+				<tbody>';
+					foreach ($contact->Phone as $contactPhone) foreach ($contactPhone as $type => $phone) {
+					$fragment .= '<tr>
+						<td width="10%">'.ucwords($type).'</td>
+						<td width="80%">'.$phone.'</td>
+						<td width="10%">'.((($contact->PrimaryPhoneType) == $phone) ? 'Primary' : '').'</td>
+					</tr>';
+					}
+				$fragment .= '</tbody>
+			</table>
+		</div>';
 	
-	<div style="margin-top:10px;">
-		<div class="head"><h5 class="iMail">Email Addresses</h5></div>
-		<table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
-			<thead>
-				<tr>
-					<td width="10%" style="text-align:left;padding-left:10px;">Type</td>
-					<td width="90%" colspan="2" style="text-align:left;padding-left:10px;">Email Address</td>
-				</tr>
-			</thead>
-			<tbody>';
-				foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) {
-				$fragment .= '<tr>
-					<td width="10%">'.ucwords($type).'</td>
-					<td width="80%">'.$email.'</td>
-					<td width="10%">'.((($contact->PrimaryEmailType) == $email) ? 'Primary' : '').'</td>
-				</tr>';
-				}
-			$fragment .= '</tbody>
-		</table>
-	</div>';
-	
-	return $fragment;
+		if (isset($contact->Email)) {
+		$fragment .= '<div style="margin-top:10px;">
+			<div class="head"><h5 class="iMail">Email Addresses</h5></div>
+			<table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
+				<thead>
+					<tr>
+						<td width="10%" style="text-align:left;padding-left:10px;">Type</td>
+						<td width="90%" colspan="2" style="text-align:left;padding-left:10px;">Email Address</td>
+					</tr>
+				</thead>
+				<tbody>';
+					foreach ($contact->Email as $contactEmail) foreach ($contactEmail as $type => $email) {
+					$fragment .= '<tr>
+						<td width="10%">'.ucwords($type).'</td>
+						<td width="80%">'.$email.'</td>
+						<td width="10%">'.((($contact->PrimaryEmailType) == $email) ? 'Primary' : '').'</td>
+					</tr>';
+					}
+				$fragment .= '</tbody>
+			</table>
+		</div>';
+		}
+		
+		return $fragment;
+	}
 }
 
-function load_contactInfo_edit_add($contact, $type) {
+function ContactInfoListingTable_EditAdd($contact, $type) {
 	$ci =& get_instance();
 
 	$fragment =
@@ -1289,9 +1295,10 @@ function load_contactInfo_edit_add($contact, $type) {
 			$fragment .= '</tbody>
 		</table>
 		<a href="javascript:addPhone(\''.$contact->ContactID.'\',\''.$type.'\');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Phone</a>
-	</div>
+	</div>';
 	
-	<div style="margin-top:10px;">
+	if (isset($contact->Email)) {
+	$fragment .= '<div style="margin-top:10px;">
 		<div class="head"><h5 class="iMail">Email Addresses</h5></div>
 		<table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
 			<thead>
@@ -1313,6 +1320,7 @@ function load_contactInfo_edit_add($contact, $type) {
 		</table>
 		<a href="javascript:addEmail(\''.$contact->ContactID.'\',\''.$type.'\');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Email</a>
 	</div>';
+	}
 
 	return $fragment;
 }

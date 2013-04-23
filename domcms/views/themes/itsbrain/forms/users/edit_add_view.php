@@ -38,7 +38,7 @@
             	<ul class="tabs">
             		<li class="activeTab"><a href="javascript:void(0);" rel="userInfo">User Details</a></li>
                     <li><a href="javascript:void(0);" rel="websites">Websites</a></li>
-                    <li><a href="javascript:void(0);" rel="contacts">Contact Info</a></li>
+                    <li><a href="javascript:void(0);" rel="contactInfo">Contact Info</a></li>
                     <li><a href="javascript:void(0);" rel="modules">Modules</a></li>
             	</ul>
             	<div class="tab_container">
@@ -126,7 +126,7 @@
     				<div id="websites" class="tab_content" style="display:none;">
                     	<?= $websites; ?>
     				</div>
-                    <div id="contacts" class="tab_content" style="display:none;">
+                    <div id="contactInfo" class="tab_content" style="display:none;">
 						<?= $contactInfo; ?>
                     <div class="fix"></div>
                     </div>

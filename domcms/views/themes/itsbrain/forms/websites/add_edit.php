@@ -144,8 +144,7 @@
 			msg = 'Website added successfully.';
 		<?php } ?>
 		
-		$("#addWebsite").dialog('close');
-		clientListTable('<?= $typeID; ?>','<?= $type; ?>');
+		submitWebsiteForm('<?= $typeID; ?>','<?= $type; ?>',formData,cUrl,msg);
 	});
 	
 	$(".chzn-select").chosen();

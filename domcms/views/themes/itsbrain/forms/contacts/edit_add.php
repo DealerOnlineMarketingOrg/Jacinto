@@ -1,6 +1,5 @@
 <div class="uDialog">
-	<?php $pageID = (($page == 'edit') ? 'editContact' : 'addContact'); ?>
-    <div class="dialog-message popper" id="<?= $pageID; ?>" title="<?= (($page == 'edit') ? 'Edit' : 'Add'); ?> Contact">
+    <div class="dialog-message popper" id="editContactInfo" title="<?= (($page == 'edit') ? 'Edit' : 'Add'); ?> Contact">
         <div class="uiForm">
 			<style type="text/css">
 				#editClient label{margin-top:0px;float:left;padding-top:12px;}
@@ -193,6 +192,7 @@
 				if(code == '1') {
 					msg = '<?= ($page == 'edit') ? 'Your edit was made succesfully.' : 'Your add was made successfully'; ?>';
 					jAlert(msg,'Success',function() {
+						$("#editContactInfo").dialog('close');
 						contactListTable();
 					}); 
 				}else {
@@ -212,8 +212,8 @@
 		$(this).parent().addClass('activeTab');
 		var content = 'div#' + $(this).attr('rel');
 		//alert(content);
-		$('#<?= $pageID; ?> div.tab_container div.tab_content').hide();
-		$('#<?= $pageID; ?> div.tab_container').find(content).css({'display':'block'});
+		$('#editContactInfo div.tab_container div.tab_content').hide();
+		$('#editContactInfo div.tab_container').find(content).css({'display':'block'});
 		
 		var activeContent = $(this).attr('rel');
 		
@@ -262,7 +262,7 @@
 	});
 	
 	<?php if($page == 'edit') { ?>
-	$("#editContact").dialog({
+	$("#editContactInfo").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,
@@ -271,7 +271,7 @@
 			{
 				class:'greyBtn',
 				text:'Close',
-				click:function() {$('#<?= $pageID; ?>').dialog('close')}
+				click:function() {$(this).dialog('close')}
 			},
 				{
 					class:'redBtn saveContactBtn',
@@ -294,7 +294,7 @@
 		]
 	});
 	<?php }else { ?>
-	$("#addContact").dialog({
+	$("#editContactInfo").dialog({
 		minWidth:800,
 		height:500,
 		autoOpen: true,
@@ -303,7 +303,7 @@
 			{
 				class:'greyBtn',
 				text:'Close',
-				click:function() {$('#<?= $pageID; ?>').dialog('close')}
+				click:function() {$(this).dialog('close')}
 			},
 				{
 					class:'greenBtn addContactBtn',

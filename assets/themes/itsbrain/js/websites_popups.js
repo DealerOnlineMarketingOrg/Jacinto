@@ -170,14 +170,12 @@ function submitWebsiteForm(id,type,formData,cUrl,msg) {
 				if(data == '1') {
 					jQuery('#loader_block').slideUp('fast',function() {
 						jAlert(msg,'Success',function() {
-							reloadWebsites(id,type);	
-							jQuery('#editWebsite').empty();
-							jQuery('#addWebsite').empty();
+							$("#addWebsite").dialog('close');
+							websiteListTable(id,type);
 						});
 					});
 				}else {
 					jAlert('There was a problem with processing your change. Please try again.','Error',function() {
-						reloadWebsites(id,type);
 						jQuery('#loader_block').slideUp('fast');
 					});
 				}
@@ -209,7 +207,7 @@ function loadWebsiteTable(id,type) {
 	});					
 }
 
-	function clientListTable(id,type) {
+	function websiteListTable(id,type) {
 	  jQuery('#editClient').remove();
 	  jQuery('#loader_block').slideUp('fast',function() {
 		jQuery.ajax({

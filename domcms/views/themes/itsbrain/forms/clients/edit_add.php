@@ -16,7 +16,7 @@
                     <?php } 
 					
 					if(isset($contacts)) { ?>
-            		<li><a href="javascript:void(0);" rel="contacts">Contacts</a></li>
+            		<li><a href="javascript:void(0);" rel="contactInfo">Contacts</a></li>
                     <?php } ?>
             	</ul>
             	<div class="tab_container">
@@ -286,24 +286,8 @@
     				<div id="websites" class="tab_content" style="display:none;">
                     	<?= (isset($websites)) ? $websites : ''; ?>
     				</div>
-                    <div id="contacts" class="tab_content" style="display:none;">
-                    	<?php 
-							if(isset($view)) { 
-								echo ContactsListingTable($client->ClientID,true,true,true);
-							}else {
-                    			echo ContactsListingTable($client->ClientID,true,false,true);
-							}
-						?>
-                        <script type="text/javascript">
-							jQuery('.contacts').dataTable({
-								"bJQueryUI": true,
-								"sPaginationType": "full_numbers",
-								"sDom": '<""f>t<"F"lp>',
-								'iDisplayLength':1000,
-								"aLengthMenu": [[-1,10,25,50],['All',10,25,50]],
-								'bFilter':false,
-							});
-						</script>
+                    <div id="contactInfo" class="tab_content" style="display:none;">
+                    	<?= (isset($contactInfo)) ? $contactInfo : ''; ?>
                     </div>
                     <div id="loader" style="display:none;"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
     				<div class="fix"></div>
@@ -313,6 +297,12 @@
 		</div>
 	</div>
 </div>
+
+<div id="addContactInfoPhonePop"></div>
+<div id="editContactInfoPhonePop"></div>
+<div id="addContactInfoEmailPop"></div>
+<div id="editContactInfoEmailPop"></div>
+
 <script type="text/javascript">
 
 	var $ = jQuery;
@@ -393,7 +383,7 @@
 		
 		<?php }else { ?>
 		
-		if(activeContent == 'contacts') {
+		if(activeContent == 'contactInfo') {
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').hasClass('hidden')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').removeClass('hidden');
 			}

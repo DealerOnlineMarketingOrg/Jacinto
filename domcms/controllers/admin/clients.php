@@ -165,6 +165,7 @@ class Clients extends DOM_Controller {
 		//$client_id = ($this->input->post('client_id'))?$this->input->post('client_id'):$this->user['DropdownDefault']->SelectedClient;
 		$this->load->model('administration');
 		$client = $this->administration->getSelectedClient($client_id);
+		$client->ContactID = $client_id;
 		$tags = $this->administration->getAllTags();    
 		$groups = $this->administration->getAllGroupsInAgency($this->user['DropdownDefault']->SelectedAgency);
 		
@@ -185,8 +186,9 @@ class Clients extends DOM_Controller {
 				'client' => $client,
 				'html' => $html,
 				'tags'=>$tags,
-				'websites'=>WebsiteListingTable($client_id,'CID'),
-				'contacts'=>true
+				'websites'=>WebsiteListingTable($client_id, 'CID'),
+				'contacts'=>true,
+				'contactInfo'=>ContactInfoListingTable($client, 'CID', true),
 			);
 			//THIS IS THE DEFAULT VIEW FOR ANY BASIC FORM.
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/clients/edit_add',$data);		
@@ -197,7 +199,7 @@ class Clients extends DOM_Controller {
 	}
 	
 	
-	public function View() {		
+	public function View() {			
 		$this->load->helper('template');
 		$level = $this->user['DropdownDefault']->LevelType;
 		
@@ -215,6 +217,7 @@ class Clients extends DOM_Controller {
 		//$client_id = ($this->input->post('client_id'))?$this->input->post('client_id'):$this->user['DropdownDefault']->SelectedClient;
 		$this->load->model('administration');
 		$client = $this->administration->getSelectedClient($client_id);
+		$client->ContactID = $client_id;
 		$tags = $this->administration->getAllTags();    
 		$groups = $this->administration->getAllGroupsInAgency($this->user['DropdownDefault']->SelectedAgency);
 		
@@ -235,8 +238,9 @@ class Clients extends DOM_Controller {
 				'client' => $client,
 				'html' => $html,
 				'tags'=>$tags,
-				'websites'=>WebsiteListingTable($client_id,'CID',false),
+				'websites'=>WebsiteListingTable($client_id, 'CID', false),
 				'contacts'=>true,
+				'contactInfo'=>ContactInfoListingTable($client, 'CID'),
 			);
 			//
       		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/clients/edit_add',$data);

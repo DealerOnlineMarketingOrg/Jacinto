@@ -18,7 +18,7 @@
                     <li><a href="javascript:void(0);" rel="websites">Websites</a></li>
                     <?php } 
 					if(isset($contacts)) { ?>
-            		<li><a href="javascript:void(0);" rel="contacts">Contacts</a></li>
+            		<li><a href="javascript:void(0);" rel="contactInfo">Contacts</a></li>
                     <?php } ?>
             	</ul>
             	<div class="tab_container">
@@ -150,43 +150,10 @@
                         <?= form_close(); ?>
                      </div>
                      <div id="websites" class="tab_content" style="display:none;">
-                     	<?php 
-							if(isset($view)) {
-								echo WebsiteListingTable($vendor->ID,true,true,true,true);	
-							}else {
-								echo WebsiteListingTable($vendor->ID,true,false,true,true);	
-							}
-						 ?>
-                        <script type="text/javascript">
-							jQuery('.websiteTable').dataTable({
-								"bJQueryUI": true,
-								"sPaginationType": "full_numbers",
-								"sDom": '<""f>t<"F"lp>',
-								'iDisplayLength':1000,
-								"aLengthMenu": [[-1,10,25,50],['All',10,25,50]],
-								'bFilter':false,
-							});
-						</script>
-
+                     	<?= $websites; ?>
                      </div>
-                     <div id="contacts" class="tab_content" style="display:none;">
-                    	<?php 
-							if(isset($view)) { 
-								echo ContactsListingTable($vendor->ID,true,true,true,'VID');
-							}else {
-                    			echo ContactsListingTable($vendor->ID,true,false,true,'VID');
-							}
-						?>
-                        <script type="text/javascript">
-							jQuery('.contacts').dataTable({
-								"bJQueryUI": true,
-								"sPaginationType": "full_numbers",
-								"sDom": '<""f>t<"F"lp>',
-								'iDisplayLength':1000,
-								"aLengthMenu": [[-1,10,25,50],['All',10,25,50]],
-								'bFilter':false,
-							});
-						</script>
+                     <div id="contactInfo" class="tab_content" style="display:none;">
+                    	<?= $contactInfo; ?>
                      </div>
                   </div>
                 <div class="fix"></div>			       
@@ -194,6 +161,12 @@
 		</div>
 	</div>
 </div>
+
+<div id="addContactInfoPhonePop"></div>
+<div id="editContactInfoPhonePop"></div>
+<div id="addContactInfoEmailPop"></div>
+<div id="editContactInfoEmailPop"></div>
+
 <style type="text/css">
 	.rowElem > label {padding-top:5px;}
 	.ui-datepicker-append{float:left;}
@@ -288,7 +261,7 @@
 			}
 		}
 		
-		if(activeContent == 'clientInfo') {
+		if(activeContent == 'contactInfo') {
 			if($('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').is(':visible')) {
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.addContactBtn').addClass('hidden');
 			}

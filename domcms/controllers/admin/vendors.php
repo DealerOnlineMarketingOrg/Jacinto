@@ -24,23 +24,32 @@ class Vendors extends DOM_Controller {
 	
 	public function edit() {
 		//this is a popup that receives a post/get so we need to set the id
-		$vid = $_GET['vid'];
+		if(isset($_GET['VID'])) {
+			$vid = $_GET['VID'];
+		}
 		$vendor = $this->administration->getVendor($vid);
 		$data = array(
 			'vendor' => $vendor,
 			'contacts'=>true,
-			'websites'=>true
+			'websites'=>WebsiteListingTable($vid, 'VID'),
+			'contactInfo'=>ContactInfoListingTable($vendor, 'VID', true),
 		);
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/vendors/add_edit_view',$data);
 	}
 	
 	public function view() {
-		$vid = $_GET['vid'];
+		if(isset($_GET['VID'])) {
+			$vid = $_GET['VID'];
+		}
+		
 		$vendor = $this->administration->getVendor($vid);
+		$vendor->ContactID = $vendor->ID;
+		$vendor->Phone = (isset($vendor->Phone)) ? mod_parser($vendor->Phone,false,true) : false;
 		$data = array(
 			'vendor'=>$vendor,
 			'contacts'=>true,
-			'websites'=>true,
+			'websites'=>WebsiteListingTable($vid, 'VID'),
+			'contactInfo'=>ContactInfoListingTable($vendor, 'VID', true),
 			'view'=>true
 		);	
 		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/vendors/add_edit_view',$data);

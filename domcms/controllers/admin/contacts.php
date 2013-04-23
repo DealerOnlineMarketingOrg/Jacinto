@@ -69,7 +69,7 @@ class Contacts extends DOM_Controller {
 				'contact' => $contact,
 				'level' => $this->user['DropdownDefault']->LevelType,
 				'websites'=>WebsiteListingTable($id, $type, false),
-				'contactInfo'=>load_contactInfo_view($contact, $type),
+				'contactInfo'=>ContactInfoListingTable($contact, $type),
 			);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/pages/contacts/view',$data);
 		}
@@ -165,7 +165,7 @@ class Contacts extends DOM_Controller {
 				'types'=>$types,
 				'tags'=>$tags,
 				'websites'=>WebsiteListingTable($id, $type),
-				'contactInfo'=>load_contactInfo_edit_add($contact, $type),
+				'contactInfo'=>ContactInfoListingTable($contact, $type, true),
 			);
 			$this->load->view($this->theme_settings['ThemeDir'] . '/forms/contacts/edit_add',$data);
 		}else {

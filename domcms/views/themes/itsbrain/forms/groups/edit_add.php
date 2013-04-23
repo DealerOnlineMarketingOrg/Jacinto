@@ -78,6 +78,12 @@
 		</div>
 	</div>
 </div>
+
+<div id="addContactInfoPhonePop"></div>
+<div id="editContactInfoPhonePop"></div>
+<div id="addContactInfoEmailPop"></div>
+<div id="editContactInfoEmailPop"></div>
+
 <style type="text/css">
 .rowElem > label {padding-top:5px;}
 	.ui-datepicker-append{float:left;}
