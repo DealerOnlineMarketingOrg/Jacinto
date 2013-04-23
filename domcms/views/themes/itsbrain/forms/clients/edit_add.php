@@ -151,7 +151,7 @@
                                 	<?php if(isset($view)) { ?>
                                 		<select class="chzn-select validate[required]" name="Group" disabled style="width:200px;">
                                     <? }else { ?>
-                                    	<select class="chzn-select validate[required]" name="Group" <?= ($this->user['AccessLevel'] >= 600000) ? '' : 'disabled'; ?> style="width:200px;">
+                                    	<select class="chzn-select validate[required]" name="Group" <?= ($this->user['AccessLevel'] >= 500000) ? '' : 'disabled'; ?> style="width:200px;">
                                     <? } ?>
                                     	<option value=""></option>
                                         <?php foreach($groups as $group) { ?>
