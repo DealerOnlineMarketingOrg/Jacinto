@@ -298,6 +298,9 @@
 	</div>
 </div>
 
+
+<div id="addWebsiteForm"></div>
+
 <div id="addContactInfoPhonePop"></div>
 <div id="editContactInfoPhonePop"></div>
 <div id="addContactInfoEmailPop"></div>
@@ -467,7 +470,7 @@
 				{
 					class:'greenBtn hidden addWebsiteBtn',
 					text:"Add New Website",
-					click:function() { addWebsiteForm('<?= $client->ClientID; ?>','cid')}
+					click:function() { addWebsiteForm('<?= ($client) ? $client->TypeID : ''; ?>','<?= $client->TypeCode; ?>')}
 				}, <?php } ?>
 			<?php } ?>
 			<?php if(GateKeeper('Contact_Add',$this->user['AccessLevel'])) { ?>

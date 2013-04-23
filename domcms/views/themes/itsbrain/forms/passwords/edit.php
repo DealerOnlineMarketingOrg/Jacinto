@@ -16,7 +16,7 @@
 		            	<?php
 					        $form = array(
 					            'name' => 'addPasswords',
-					            'id' => 'valid',
+					            'id' => 'notvalid',
 					            'class' => 'mainForm editPasswords',
 					            'style'=>'text-align:left !important;'
 					        );
@@ -28,12 +28,12 @@
                         	<div class="rowElem noborder">
 			                    <label>Type</label>
 			                    <div class="formRight noSearch">
-                                   	<input type="radio" name="radioType" value="old" style="float:left;margin-right:5px;margin-top:18px;" checked>
+                                   	<input type="radio" name="radioType" value="old" style="float:left;margin-right:5px;margin-top:18px;" checked="checked">
                                     <div style="float:left;margin-left:5px;margin-top:10px;width:125px;">
                                         <select name="types" class="chzn-select">
                                             <option value="">Select Type</option>
                                             <?php foreach ($types as $type) { ?>
-                                                <option value="<?=$type->ID; ?>"<?php if ($type->ID == $password->ID) echo ' selected'; ?>><?=$type->Name; ?></option>
+                                                <option value="<?=$type->ID; ?>"<?php if ($type->ID == $password->ID){ echo ' selected';} ?>><?=$type->Name; ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -45,12 +45,12 @@
 			                <div class="rowElem noborder">
 			                    <label>Vendor</label>
 			                    <div class="formRight noSearch">
-                                    <input type="radio" name="radioVendor" style="float:left;margin-right:5px;margin-top:18px;" value="old" checked>
+                                    <input type="radio" name="radioVendor" style="float:left;margin-right:5px;margin-top:18px;" value="old" checked="checked">
                                     <div style="float:left;margin-left:5px;margin-top:10px;width:125px;">
                                         <select name="vendors" class="chzn-select" style="margin-top:15px !important;">
                                             <option value="">Select Vendor</option>
                                             <?php foreach ($vendors as $vendor) { ?>
-                                                <option value="<?=$vendor->ID; ?>"<?php if ($vendor->ID == $password->VendorID) echo ' selected'; ?>><?=$vendor->Name; ?></option>
+                                                <option value="<?=$vendor->ID; ?>"<?php if ($vendor->ID == $password->VendorID){ echo ' selected';} ?>><?=$vendor->Name; ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -99,7 +99,7 @@
                     <div id="loader" style="display:none;"><img src="<?= base_url() . THEMEIMGS; ?>loaders/loader2.gif" /></div>
     				<div class="fix"></div>
     			</div>	
-    			<div class="fix"></div>			       
+    			<div class="fix"></div>		       
             </div> <? //end widget ?>
 		</div>
 	</div>
@@ -127,22 +127,21 @@
 			{
 				class:'redBtn',
 				text:'Save',
-				click:function() {jQuery('#valid').submit()}	
+				click:function() {jQuery('#notvalid').submit()}	
 			},
 		]
 	});
 	
-	jQuery('#valid').submit(function(e) {
+	jQuery('#notvalid').submit(function(e) {
 		e.preventDefault();
 		var formData = jQuery(this).serialize();
 		
-		alert(formData);
 		
 		jQuery.ajax({
 			url:'/admin/passwords/process_edit?pass_id=<?=$password->ID; ?>',
 			type:'POST',
 			data:formData,
-			success:function() {
+			success:function(data) {
 				if(data == '1') {
 					jAlert('Password edited successfully!','Edit Confirmation',function() {
 						passListTable();

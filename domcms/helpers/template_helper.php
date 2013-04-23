@@ -24,7 +24,7 @@ function GateKeeper($mod,$uPerm) {
 }
 
 function PasswordlistTable() { ?>
-	<script type="text/javascript" src="<?= base_url() . THEMEDIR; ?>js/passwords_popups.js"></script>
+	<script type="text/javascript" src="<?= base_url(); ?>assets/themes/itsbrain/js/passwords_popups.js"></script>
     <?php
 	
 		$ci =& get_instance();
@@ -1295,8 +1295,10 @@ function ContactInfoListingTable_EditAdd($contact, $type) {
 	$fragment =
 	'<style type="text/css">
 		#contactInfo div.head {background:none;border:none;width:14em;margin:0 auto;}
-	</style>
-	<div style="margin-top:10px;margin-bottom:60px;">
+	</style>';
+	
+	if (isset($contact->Phone)) {	
+	$fragment .= '<div style="margin-top:10px;margin-bottom:60px;">
     	<div class="head"><h5 class="iPhone">Phone Numbers</h5></div>
 		<table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
 			<thead>
@@ -1318,6 +1320,7 @@ function ContactInfoListingTable_EditAdd($contact, $type) {
 		</table>
 		<a href="javascript:addPhone(\''.$contact->ContactID.'\',\''.$type.'\');" class="greenBtn floatRight button" style="margin-top:10px;">Add New Phone</a>
 	</div>';
+	}
 	
 	if (isset($contact->Email)) {
 	$fragment .= '<div style="margin-top:10px;">

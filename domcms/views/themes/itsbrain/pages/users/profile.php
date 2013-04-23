@@ -16,7 +16,7 @@
     div#client_loader{position:absolute;width:16px;height:16px;top:50%;margin-top:-8px;left:50%;margin-left:-8px;}
 
 </style>
-<div class="content hideTagFilter">
+<div class="content">
     <div class="title"><h5>User Preferences</h5></div>
     <? notifyError(); ?>
     <?php include 'domcms/views/themes/global/breadcrumb.php'; ?>
@@ -216,6 +216,11 @@
 </div>
 <div id="editUserModules"></div>
 <div id="addWebsiteForm"></div>
+<div id="addContactInfoPhonePop"></div>
+<div id="editContactInfoPhonePop"></div>
+<div id="addContactInfoEmailPop"></div>
+<div id="editContactInfoEmailPop"></div>
+
 <script type="text/javascript">
 	function resetPassword(email) {
 		jConfirm('Are you sure you want to reset this users password?', 'Confirmation Password Reset', function(r) {

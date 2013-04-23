@@ -28,6 +28,8 @@ class Vendors extends DOM_Controller {
 			$vid = $_GET['VID'];
 		}
 		$vendor = $this->administration->getVendor($vid);
+		$vendor->TypeCode = 'VID';
+		$vendor->TypeID = $vid;
 		$data = array(
 			'vendor' => $vendor,
 			'contacts'=>true,

@@ -144,6 +144,9 @@ class Users extends DOM_Controller {
 		$user->Phone = mod_parser($user->Phones,false,true);
 		$user->Modules = ParseModulesInReadableArray($user->Modules);
 		$avatar = $this->members->get_user_avatar($user->ID);
+		echo $user->UserType;
+		$user->TypeCode = substr($user->UserType,0,3);
+		$user->TypeID = substr($user->UserType,4);
 		$data = array(
 			'user'=>$user,
 			'avatar'=>$avatar,
