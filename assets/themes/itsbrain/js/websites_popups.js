@@ -165,7 +165,7 @@ function submitWebsiteForm(id,type,formData,cUrl,msg) {
 }
 
 function loadWebsiteTable(id,type) {
-	jQuery('#editClient').remove();
+	jQuery('#addWebsite').remove();
 	//jQuery('#addWebsiteForm').dialog('close');	
 	jQuery('#websites').slideUp('fast',function() {
 		jQuery('#websites').empty();
@@ -188,7 +188,7 @@ function loadWebsiteTable(id,type) {
 }
 
 	function websiteListTable(id,type) {
-	  jQuery('#editClient').remove();
+	  jQuery('#addWebsite').remove();
 	  jQuery('#loader_block').slideDown('fast',function() {
 		jQuery.ajax({
 		  type:"GET",

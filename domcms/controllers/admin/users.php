@@ -144,9 +144,9 @@ class Users extends DOM_Controller {
 		$user->Phone = mod_parser($user->Phones,false,true);
 		$user->Modules = ParseModulesInReadableArray($user->Modules);
 		$avatar = $this->members->get_user_avatar($user->ID);
-		echo $user->UserType;
 		$user->TypeCode = substr($user->UserType,0,3);
 		$user->TypeID = substr($user->UserType,4);
+		
 		$data = array(
 			'user'=>$user,
 			'avatar'=>$avatar,
@@ -239,6 +239,9 @@ class Users extends DOM_Controller {
 		$user->Modules = ParseModulesInReadableArray($user->Modules);
 		$avatar = $this->members->get_user_avatar($user->ID);
 		
+		$user->TypeCode = substr($user->UserType,0,3);
+		$user->TypeID = substr($user->UserType,4);
+		
 		$data = array(
 			'user'=>$user,
 			'view'=>TRUE,
@@ -321,6 +324,9 @@ class Users extends DOM_Controller {
 		//print_object($user);
 		$user->Name = $user->FirstName . ' ' . $user->LastName;
 		$users_address = '';
+		
+		$user->TypeCode = substr($user->UserType,0,3);
+		$user->TypeID = substr($user->UserType,4);
 		
 		if($user->Address['street'] != '') {
 			foreach($user->Address as $address) {
