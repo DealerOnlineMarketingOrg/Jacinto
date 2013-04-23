@@ -295,7 +295,7 @@ function MasterlistTable() { ?>
                             <?php //blue-document-excel.png; ?>
                             <?php if($editPriv) { ?>
                                 <td class="actionsCol noSort" style="text-align:center !important;">
-                                    <a title="Edit Client" href="javascript:editEntry('<?= $client->ClientID; ?>',);" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                                    <a title="Edit Client" href="javascript:editEntry('<?= $client->ClientID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
                                 </td>
                             <?php } ?>
                         </tr>
