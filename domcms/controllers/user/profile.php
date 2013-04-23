@@ -24,20 +24,7 @@ class Profile extends DOM_Controller {
 		$user->Edit       		= ($this->user['UserID'] == $user->UserID OR $this->user['AccessLevel'] >= 600000) ? TRUE : FALSE;
 		
 		//Grab avatar
-		if($user->Avatar AND !$user->Google_Avatar) {
-			$user->avatar       = base_url() . 'assets/uploads/avatars/' . $user->Avatar;	
-		}else {
-			if($user->Google_Avatar) {
-				$user->avatar = $user->Avatar;
-			}else {
-				if($user->Gravatar) {
-					$user->avatar   = $this->gravatar->get_gravatar($user->Gravatar);	
-				}else {
-					$user->avatar   = base_url() . 'assets/uploads/avatars/default_avatar.gif';
-				}
-			}
-		}
-		
+        $user->Avatar = $this->members->get_user_avatar($user->ID);
 		$user->viewCompany 			= $user->Dealership;
 		$user->CompanyAddress		= mod_parser($user->CompanyAddress);
 		$user->viewCompanyAddress   = ArrayWithTextIndexToString($user->CompanyAddress, true);
