@@ -123,7 +123,22 @@
 	$('form#addPasswordsForm').submit(function(e){
 		e.preventDefault();
 		var formData = $(this).serialize();
-		alert(formData);
+				
+		jQuery.ajax({
+			url:'/admin/passwords/process_add',
+			type:'POST',
+			data:formData,
+			success:function(data) {
+				if(data == '1') {
+					jAlert('Password added successfully!','Add Confirmation',function() {
+						passListTable();
+						jQuery('#addPasswords').dialog('close');
+					});
+				}else {
+					jAlert('There was an error adding the password. Please try again.','Password Add Failed');
+				}
+			}
+		});
 	});
 	
 	$(".chzn-select").chosen();
