@@ -36,6 +36,10 @@ class Profile extends DOM_Controller {
 		$user->Phones				= mod_parser($user->Phones, 'home,mobile,work,fax', true);
 		$user->viewPhones 			= OrderArrayForTableDisplay($user->Phones,false,true);
 		$user->viewUserModules 		= ParseModulesInReadableArray($user->Modules);
+		$websites					= $this->administration->getUserWebsites($user->ID);
+		$user->websites = array();
+		foreach ($websites as $website)
+			$user->websites[] = $website->URL;
 		
 		$msg = (($msg) ? $msg : FALSE);
 		$data = array(
@@ -180,5 +184,29 @@ class Profile extends DOM_Controller {
 						  : 'Something went wrong. Please try again or contact your admin.',
 				0, ''));
 		redirect($profile_url,'refresh');
+	}
+	
+	public function Edit() {
+		if(isset($_GET['UID'])) {
+			$uid = $_GET['UID'];
+		}
+		
+		$user = $this->administration->getMyUser($uid);
+		$user->ContactID = $user->DirectoryID;
+		$user->Address = mod_parser($user->Address);
+		$user->CompanyAddress = mod_parser($user->CompanyAddress);
+		$user->Email = mod_parser($user->Emails,false,true);
+		$user->Phone = mod_parser($user->Phones,false,true);
+		$user->Modules = ParseModulesInReadableArray($user->Modules);
+		$avatar = $this->members->get_user_avatar($user->ID);
+		$data = array(
+			'user'=>$user,
+			'avatar'=>$avatar,
+			'allMods'=>$this->administration->getAllModules(),
+			'websites'=>WebsiteListingTable($uid, 'UID'),
+			'contact'=>$user,
+			'contactInfo'=>ContactInfoListingTable($user, 'UID', true),
+		);
+		$this->load->view($this->theme_settings['ThemeDir'] . '/forms/userProfile/edit_add_view',$data);
 	}
 }

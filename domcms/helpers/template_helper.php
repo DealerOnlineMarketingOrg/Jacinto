@@ -890,6 +890,24 @@ function ArrayWithTextIndexToString($array, $type = false) {
 	return $myString;
 }
 
+// Converts an array into a table, with num_columns.
+function ArrayToTable($array, $num_columns) {
+	$table = '<table class="tableStatic" cellspacing="0" cellpadding="0"><tr>';
+	
+	$col = 1;
+	foreach ($array as $cell) {
+		$table .= '<td><a href="'.$cell.'" target="_blank">'.$cell.'</a></td>';
+		$col++;
+		if ($col > $num_columns) {
+			$table .= '</tr><tr>';
+			$col = 1;
+		}
+	}
+	$table .= '</table>';
+	
+	return $table;
+}
+
 /* removeEmpty removes any empty-string key=>value from array */
 /* deepArray is for arrays where the key->value pair is set one array level */
 /*   deeper, for purposes of allowing duplicate keys. */
