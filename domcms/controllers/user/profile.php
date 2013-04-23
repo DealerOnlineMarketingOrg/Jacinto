@@ -126,6 +126,7 @@ class Profile extends DOM_Controller {
 				'DIRECTORY_ID'			=> $user->DirectoryID,
 				'DIRECTORY_FirstName'   => $form['firstname'],
 				'DIRECTORY_LastName'    => $form['lastname'],
+				'DIRECTORY_Address'		=>'street:' . $form['street'] . 'city:' . $form['city'] . ',state:' . $form['state'] . ',zipcode:' . $form['zipcode']
 			),
 			'Users_Info' => array(
 				'USER_ID'               => $user->UserID,

@@ -165,7 +165,9 @@
                     </div>
                     <?= form_close(); ?>
             	</fieldset>
-                <div style="width:80%;margin:0 auto;">
+                <div style="width:120px;margin:0 auto;">
+                	<a href="javascript:resetPassword('<?= $user->Username;?>');" class="button blueBtn" style="display: block; margin-top: 15px; width: 90%; float: left;text-align:center;color:#fff;">Change Password</a>
+                </div>
             </div>
         </div>
     </div>
@@ -238,7 +240,7 @@
 		jQuery("#editUser").dialog({
 			minWidth:400,
 			width:600,
-			height:475,
+			height:380,
 			autoOpen: true,
 			modal: true,
 			buttons: [

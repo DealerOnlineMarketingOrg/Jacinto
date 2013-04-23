@@ -13,7 +13,7 @@
 				div.tab_content table.profile td.icon{text-align:center;width:20px;vertical-align:middle;border-right:none;float:none !important;}
 				div.tab_content table.profile td.info{vertical-align:middle;float:none !important;}
 				div.tab_content table.profile td.icon img {margin:7px;}
-				div.tab_content table.profile td.info span {margin-right:5px;font-weight:bold;margin-left:-35px;}
+				div.tab_content table.profile td.info span {margin-right:5px;font-weight:bold;}
 				div.tab_content table.profile td a {color:#2B6893;}
 				div.tab_content table.profile td a:hover{color:#666;}
 				div#userInfo a.actions_link{float:right;margin-top:-19px;margin-right:3px;}
@@ -342,7 +342,4 @@
 	},function() {
 		$(this).find('.editButton').slideUp('fast');
 	});
-
-
-	
 </script>
