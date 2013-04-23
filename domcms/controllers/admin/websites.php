@@ -17,20 +17,20 @@ class Websites extends DOM_Controller {
         parent::__construct();
 		//load the admin model
 		$this->load->model('administration');
-		
+
+		if(isset($_POST['VID'])) {
+			$this->id = $_POST['VID'];
+			$this->type = 'VID';
+		}elseif(isset($_GET['VID'])) {
+			$this->id = $_GET['VID'];
+			$this->type = 'VID';
+		}
 		if(isset($_POST['CID'])) {
 			$this->id = $_POST['CID'];
 			$this->type = 'CID';
 		}elseif(isset($_GET['CID'])) {
 			$this->id = $_GET['CID'];
 			$this->type = 'CID';
-		}
-		if(isset($_POST['wid'])) {
-			$this->website_id = $_POST['wid'];
-			$this->type = 'wid';
-		}elseif(isset($_GET['wid'])) {
-			$this->website_id = $_GET['wid'];
-			$this->type = 'wid';
 		}
 		if(isset($_POST['GID'])) {
 			$this->id = $_POST['GID'];
@@ -48,13 +48,13 @@ class Websites extends DOM_Controller {
 		}
 	}
 	
-	public function Load_table($id=false,$type=false,$actions=false,$isVendor=false) {
+	public function Load_table($id=false,$type=false,$actions=true,$isVendor=false) {
 		if(isset($_GET['id']))
 			$id = $_GET['id'];
 		if(isset($_GET['type']))
 			$type = $_GET['type'];
 		if(isset($_GET['actions']))
-			$actions = $_GET['actions'];
+			$actions = ($_GET['actions'])?true:false;
 		if(isset($_GET['isVendor']))
 			$isVendor = $_GET['isVendor'];
 		
@@ -95,7 +95,7 @@ class Websites extends DOM_Controller {
 			$data = array(
 				'web_id' => $form['web_id'],
 				'ID' => $form['ID'],
-				'WEB_Vendor' => $form['vendor'],
+				'WEB_Vendor' => ($form['vendor']) ? $form['vendor'] : NULL,
 				'WEB_Url'=>$this->administration->formatUrl($form['url']),
 				'WEB_Notes'=>$form['notes'],
 				'WEB_ActiveTS'=>date(FULL_MILITARY_DATETIME),

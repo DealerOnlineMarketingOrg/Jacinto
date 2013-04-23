@@ -20,12 +20,12 @@
 		});
 	}
 	
-	function editClient(id,link) {
+	function editClient(cid) {
 		jQuery('#editClient').remove();
 		jQuery('#loader_block').slideDown('fast',function() {
 			jQuery.ajax({
 				type:'GET',
-				url:'/admin/clients/edit?cid=' + id,
+				url:'/admin/clients/edit?cid='+cid,
 				//data:{client_id:id},
 				success:function(data) {
 					if(data) {
@@ -42,12 +42,12 @@
 		});
 	}
 	
-	function viewClient(id) {
+	function viewClient(cid) {
 		jQuery('#editClient').remove();
 		jQuery('#loader_block').slideDown('fast',function() {
 			jQuery.ajax({
 				type:"GET",
-				url:'/admin/clients/view?cid='+id,
+				url:'/admin/clients/view?cid='+cid,
 				success:function(data) {
 					if(data) {
 						jQuery('#loader_block').slideUp('fast',function() {

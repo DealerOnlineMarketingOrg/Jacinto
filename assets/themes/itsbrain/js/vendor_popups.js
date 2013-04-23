@@ -28,7 +28,7 @@ function editVendor(vid) {
 	$('#loader_block').slideDown('fast',function() {
 		$.ajax({
 			type:'GET',
-			url:'/admin/vendors/edit?vid=' + vid,
+			url:'/admin/vendors/edit?VID='+vid,
 			//data:{client_id:id},
 			success:function(data) {
 				if(data) {
@@ -50,7 +50,7 @@ function viewVendor(vid) {
 	$('#loader_block').slideDown('fast',function() {
 		$.ajax({
 			type:'GET',
-			url:'/admin/vendors/view?vid=' + vid,
+			url:'/admin/vendors/view?VID='+vid,
 			//data:{client_id:id},
 			success:function(data) {
 				if(data) {
