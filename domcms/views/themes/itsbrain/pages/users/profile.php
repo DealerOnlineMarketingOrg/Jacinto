@@ -207,7 +207,13 @@
         </div>
     </div>
 </div>
-<div id="editUserModules"></div>
+
+<div id="addWebsite"></div>
+<div id="addContactInfoPhonePop"></div>
+<div id="editContactInfoPhonePop"></div>
+<div id="addContactInfoEmailPop"></div>
+<div id="editContactInfoEmailPop"></div>
+
 <script type="text/javascript">
 	function resetPassword(email) {
 		jConfirm('Are you sure you want to reset this users password?', 'Confirmation Password Reset', function(r) {

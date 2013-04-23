@@ -32,7 +32,6 @@ function addPhone(id, type) {
 
 function editPhone(id, type, value) {
 	$('#editContactInfoPhone').remove();
-	
 	jQuery('#loader_block').slideDown('fast',function() {
 		$.ajax({
 			type:'GET',
