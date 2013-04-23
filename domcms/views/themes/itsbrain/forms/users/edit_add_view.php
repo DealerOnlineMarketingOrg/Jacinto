@@ -10,10 +10,10 @@
 				div.tab_content div.profileRight{margin-left:130px;}
 				div.tab_content img.profileAvatar{float:left;border:1px solid #d5d5d5;}
 				div.tab_content table.profile{margin-right:10px;border:1px solid #d5d5d5;margin-bottom:5px;}
-				div.tab_content table.profile td.icon{text-align:center;width:20px;vertical-align:middle;border-right:none;}
-				div.tab_content table.profile td.info{vertical-align:middle;}
-				div.tab_content table.profile td.icon img {float:left;margin:7px;}
-				div.tab_content table.profile td.info span {float:left;margin-right:5px;font-weight:bold;margin-left:-35px;}
+				div.tab_content table.profile td.icon{text-align:center;width:20px;vertical-align:middle;border-right:none;float:none !important;}
+				div.tab_content table.profile td.info{vertical-align:middle;float:none !important;}
+				div.tab_content table.profile td.icon img {margin:7px;}
+				div.tab_content table.profile td.info span {margin-right:5px;font-weight:bold;margin-left:-35px;}
 				div.tab_content table.profile td a {color:#2B6893;}
 				div.tab_content table.profile td a:hover{color:#666;}
 				div#userInfo a.actions_link{float:right;margin-top:-19px;margin-right:3px;}
@@ -33,7 +33,7 @@
 				#importGoogleAvatar{background:url('<?= base_url() . THEMEIMGS; ?>icons/color/google_icon.png') no-repeat top left;background-size:12px 12px;}
 				#importGoogleAvatar span {display:none;}
 				div.tab_content div.head {background:none;border:none;width:14em;margin:0 auto;}
-			</style>
+				</style>
             <div class="widget" style="margin-top:0;padding-top:0;margin-bottom:10px;">
             	<ul class="tabs">
             		<li class="activeTab"><a href="javascript:void(0);" rel="userInfo">User Details</a></li>
@@ -71,10 +71,12 @@
                                     <td class="icon"><img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/icons/dark/building.png" alt="" /></td>
                                     <td class="info"><span>Company:</span> <?= $user->Dealership; ?></td>
                                 </tr>
-                                <tr class="odd">
-                                    <td class="icon"><img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/icons/dark/home.png" alt="" /></td>
-                                    <td class="info"><span>Address:</span> <?= $user->Address['street'] . ' ' . $user->Address['city'] . ', ' . $user->Address['state'] . ' ' . $user->Address['zipcode']; ?></td> 
-                                </tr>
+                                <?php if(!empty($user->Address)) { ?>
+                                    <tr class="odd">
+                                        <td class="icon"><img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/icons/dark/home.png" alt="" /></td>
+                                        <td class="info"><span>Address:</span> <?= $user->Address['street'] . ' ' . $user->Address['city'] . ', ' . $user->Address['state'] . ' ' . $user->Address['zipcode']; ?></td> 
+                                    </tr>
+                                <?php } ?>
                                 <tr class="even">
                                     <td class="icon"><img src="<?= base_url(); ?>assets/themes/itsbrain/imgs/icons/dark/locked2.png" alt="" /></td>
                                     <td class="info"><span>Security:</span> <?= $user->AccessName; ?></td>
