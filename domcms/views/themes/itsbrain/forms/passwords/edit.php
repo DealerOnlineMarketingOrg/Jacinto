@@ -33,7 +33,7 @@
                                         <select name="types" class="chzn-select">
                                             <option value="">Select Type</option>
                                             <?php foreach ($types as $type) { ?>
-                                                <option value="<?php echo $type->ID; ?>"<?php if ($type->ID == $password->ID) echo ' selected'; ?>><?php echo $type->Name; ?></option>
+                                                <option value="<?=$type->ID; ?>"<?php if ($type->ID == $password->ID) echo ' selected'; ?>><?=$type->Name; ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -50,7 +50,7 @@
                                         <select name="vendors" class="chzn-select" style="margin-top:15px !important;">
                                             <option value="">Select Vendor</option>
                                             <?php foreach ($vendors as $vendor) { ?>
-                                                <option value="<?php echo $vendor->ID; ?>"<?php if ($vendor->ID == $password->VendorID) echo ' selected'; ?>><?php echo $vendor->Name; ?></option>
+                                                <option value="<?=$vendor->ID; ?>"<?php if ($vendor->ID == $password->VendorID) echo ' selected'; ?>><?=$vendor->Name; ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -62,7 +62,7 @@
 			                <div class="rowElem noborder">
 			                    <label>URL</label>
 			                    <div class="formRight">
-			                        <?php echo  form_input(array('name'=>'login_address','id'=>'login_address','value' => $password->LoginAddress)); ?>
+			                        <?=form_input(array('name'=>'login_address','id'=>'login_address','value' => $password->LoginAddress)); ?>
 			                    </div>
 			                    <div class="fix"></div>
 			
@@ -70,27 +70,27 @@
 			                <div class="rowElem noborder">
 			                    <label><span class="req">*</span>Username</label>
 			                    <div class="formRight">
-			                        <?php echo  form_input(array('class'=>'required validate[required]','name'=>'username','id'=>'username','value'=>$password->Username)); ?>
+			                        <?=form_input(array('class'=>'required validate[required]','name'=>'username','id'=>'username','value'=>$password->Username)); ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label>Password</label>
 			                    <div class="formRight">
-			                        <?php echo  form_input(array('name'=>'password','id'=>'password','value'=>$password->Password)); ?>
+			                        <?=form_input(array('name'=>'password','id'=>'password','value'=>$password->Password)); ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>
 			                <div class="rowElem noborder">
 			                    <label>Notes</label>
 			                    <div class="formRight">
-			                        <?php echo  form_input(array('name'=>'notes','id'=>'notes','value'=>$password->Notes)); ?>
+			                        <?=form_input(array('name'=>'notes','id'=>'notes','value'=>$password->Notes)); ?>
 			                    </div>
 			                    <div class="fix"></div>
 			                </div>	                
 			                 
 			                <div class="submitForm">
-			               		<input type="hidden" name="PasswordsID" value="<?php echo  $password->ID; ?>" />
+			               		<input type="hidden" name="PasswordsID" value="<?=$password->ID; ?>" />
 			                </div>
 			                <div class="fix"></div>
 			           </fieldset>
@@ -130,5 +130,28 @@
 				click:function() {jQuery('#valid').submit()}	
 			},
 		]
+	});
+	
+	jQuery('#valid').submit(function(e) {
+		e.preventDefault();
+		var formData = jQuery(this).serialize();
+		
+		alert(formData);
+		
+		jQuery.ajax({
+			url:'/admin/passwords/process_edit?pass_id=<?=$password->ID; ?>',
+			type:'POST',
+			data:formData,
+			success:function() {
+				if(data == '1') {
+					jAlert('Password edited successfully!','Edit Confirmation',function() {
+						passListTable();
+						jQuery('#editPasswords').dialog('close');
+					});
+				}else {
+					jAlert('There was an error editing the password. Please try again.','Password Edit Failed');
+				}
+			}
+		});
 	});
 </script>

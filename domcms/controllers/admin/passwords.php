@@ -24,6 +24,11 @@ class Passwords extends DOM_Controller {
 		$this->LoadTemplate('pages/passwords/listings');
     }
 	
+	public function load_table() {
+		//LOAD THE TEMPLATE
+		$this->load->view($this->theme_settings['ThemeDir'] . 'pages/passwords/table');
+	}
+	
 	private function getData($action) {
 		$this->load->model('administration');
 
@@ -103,10 +108,6 @@ class Passwords extends DOM_Controller {
 			echo 0;
 	}
 	
-	public function Delete($msg=false) {
-		
-	}
-	
 	public function View($msg=false) {
 		$contact = $this->administration->getContact($this->input->post('view_id'));
 		$contact->Name = $contact->FirstName . ' ' . $contact->LastName;
@@ -117,6 +118,96 @@ class Passwords extends DOM_Controller {
 			'display'=>$contact
 		);
 		$this->LoadTemplate('pages/passwords/view',$data);
+	}
+	
+	public function Process_edit() {
+		$pass_id = $_GET['pass_id'];
+		$form = $this->input->post();
+		
+		// Get ID of Type. Add new Type if needed.
+		if ($form['radioType'] == 'old')
+			$typeID = $form['types'];
+		else {
+			$typeID = $this->administration->hasPasswordType($form['newType']);
+			if (!$typeID) {
+				$data = array('PASS_TYPE_Name' => $form['newType']);
+				$typeID = $this->administration->addPasswordType($data);
+			}
+		}
+		
+		// Get ID of Vendor. Add new Vendor if needed.
+		if ($form['radioVendor'] == 'old')
+			$vendorID = $form['vendors'];
+		else {
+			$vendorID = $this->administration->hasVendor($form['newVendor']);
+			if (!$vendorID) {
+				$data = array('VENDOR_Name' => $form['newVendor']);
+				$vendorID = $this->administration->addVendor($data);
+			}
+		}
+			
+		// Save information.
+		$data = array(
+			'PASS_TypeID' => $typeID,
+			'PASS_VendorID' => $vendorID,
+			'PASS_LoginAddress' => $form['login_address'],
+			'PASS_Username' => $form['username'],
+			'PASS_Password' => $form['password'],
+			'PASS_Notes' => $form['notes']
+		);
+		$pwds = $this->administration->editPassword($data, $pass_id);
+		
+		// Throw error and redirect back to Passwords.
+		if ($pwds) {
+			echo '1';
+		}else{
+			echo '0';
+		}
+	}
+	
+	public function process_add() {
+		$form = $this->input->post();
+		
+		// Get ID of Type. Add new Type if needed.
+		if ($form['radioType'] == 'old')
+			$typeID = $form['types'];
+		else {
+			$typeID = $this->administration->hasPasswordType($form['newType']);
+			if (!$typeID) {
+				$data = array('PASS_TYPE_Name' => $form['newType']);
+				$typeID = $this->administration->addPasswordType($data);
+			}
+		}
+		
+		// Get ID of Vendor. Add new Vendor if needed.
+		if ($form['radioVendor'] == 'old')
+			$vendorID = $form['vendors'];
+		else {
+			$vendorID = $this->administration->hasVendor($form['newVendor']);
+			if (!$vendorID) {
+				$data = array('VENDOR_Name' => $form['newVendor']);
+				$vendorID = $this->administration->addVendor($data);
+			}
+		}
+		
+		// Save information.
+		$data = array(
+			'PASS_ClientID' => $form['ClientID'],
+			'PASS_TypeID' => $typeID,
+			'PASS_VendorID' => $vendorID,
+			'PASS_LoginAddress' => $form['login_address'],
+			'PASS_Username' => $form['username'],
+			'PASS_Password' => $form['password'],
+			'PASS_Notes' => $form['notes']
+		);
+		$pwds = $this->administration->addPasswords($data);
+		
+		// Throw error and redirect back to Passwords.
+		if ($pwds) {
+			echo '1';
+		}else{
+			echo '0';
+		}
 	}
 
 }

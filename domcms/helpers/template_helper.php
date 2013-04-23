@@ -24,7 +24,7 @@ function GateKeeper($mod,$uPerm) {
 }
 
 function PasswordlistTable() { ?>
-	<script type="text/javascript" src="' . base_url() . 'assets/themes/itsbrain/js/passwords_popups.js"></script>
+	<script type="text/javascript" src="<?= base_url() . THEMEDIR; ?>js/passwords_popups.js"></script>
     <?php
 	
 		$ci =& get_instance();
@@ -89,14 +89,18 @@ function PasswordlistTable() { ?>
                                 <div style="float:left;"><?=$password->Password;?></div>
                             </td>
                             <td class="notesCol">
+                            	<?php if($password->Notes) { ?>
                             	<div class="passwordNotes">
 									<?=$password->Notes;?>
                                 </div>
-								<a href="javascript:openMore('<?=$password->Notes;?>')" class="passwordNotesMore">...more</a>                            
+								<a href="javascript:openMore('<?=$password->Notes;?>')" class="passwordNotesMore">...more</a>  
+                                <?php }else { ?>
+                                <span>...</span>
+                                <?php } ?>                          
                             </td>
                             <?php if($editPriv) { ?>
                             	<td class="actionsCol">
-                                	<a title="Edit Password" href="javascript:editPasswords('<?=$password->ID;?>','<?=base_url();?>');" class="actions_link">
+                                	<a title="Edit Password" href="javascript:editPasswords('<?=$password->ID;?>');" class="actions_link">
                                     	<img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" />
                                     </a>
                                 </td>
@@ -295,7 +299,7 @@ function MasterlistTable() { ?>
                             <?php //blue-document-excel.png; ?>
                             <?php if($editPriv) { ?>
                                 <td class="actionsCol noSort" style="text-align:center !important;">
-                                    <a title="Edit Client" href="javascript:editEntry('<?= $client->ClientID; ?>',);" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
+                                    <a title="Edit Client" href="javascript:editEntry('<?= $client->ClientID; ?>');" class="actions_link"><img src="<?= base_url() . THEMEIMGS; ?>icons/color/pencil.png" alt="" /></a>
                                 </td>
                             <?php } ?>
                         </tr>
