@@ -1,5 +1,5 @@
 <div class="uDialog" style="text-align:left;">
-    <div class="dialog-message popper" id="<?= (isset($agency)) ? 'editAgency' : 'addAgency'; ?>" title="<?= (isset($agency)) ? 'Edit ' . $agency->Name : 'Add Agency'; ?>">
+    <div class="dialog-message popper" id="editAgency" title="<?= (isset($agency)) ? 'Edit ' . $agency->Name : 'Add Agency'; ?>">
         <div class="uiForm" style="text-align:left;">
 			<style type="text/css">
 				#editAgency label, #addAgency label{margin-top:0px;float:left;padding-top:12px;}
@@ -12,7 +12,7 @@
 					$form = array(
 						'name' => 'EditAgency',
 						'id' => 'EditAgencyForm',
-						'class' => 'mainForm',
+						'class' => 'mainForm formPop',
 						'style'=>'text-align:left;'
 					);
 					
@@ -74,7 +74,7 @@
                             	<?php if(isset($agency->ID)) { ?>
                                 	<input type="hidden" name="agency_id" value="<?= $agency->ID; ?>" />
                                 <?php } ?>
-                                <input type="submit" value="<?= (isset($agency)) ? 'Save' : 'Add'; ?>" class="<?= (isset($agency)) ? 'redBtn' : 'greenBtn'; ?>" />
+                                <!-- <input type="submit" value="<?= (isset($agency)) ? 'Save' : 'Add'; ?>" class="<?= (isset($agency)) ? 'redBtn' : 'greenBtn'; ?>" />-->
                             </div>
                             <div class="fix"></div>
                         </div>
@@ -128,25 +128,30 @@
 		});
 	});
 	
-	<?php if(isset($agency)) { ?>
 	
 	jQuery("#editAgency").dialog({
 		minWidth:300,
 		width:500,
 		height:400,
 		autoOpen: true,
-		modal: true
+		modal: true,
+		buttons: [
+			<?php if(isset($agency->ID)) { ?>
+			{
+				class:'redBtn',
+				text:'Save',
+				click:function() {$('.formPop').submit();}
+			},
+			<?php } ?>
+			<?php if(!isset($agency->ID)) { ?>
+			{
+				class:'greenBtn',
+				text:'Add',
+				click:function() {$('.formPop').submit();}
+			},
+			<? } ?>
+		] 
+
 	});
-	
-	<?php }else { ?>
-	jQuery("#addAgency").dialog({
-		minWidth:300,
-		width:500,
-		height:350,
-		autoOpen: true,
-		modal: true
-	});
-	
-	<?php } ?>
 	
 </script>
