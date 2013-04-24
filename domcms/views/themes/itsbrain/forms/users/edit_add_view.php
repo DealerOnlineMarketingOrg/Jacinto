@@ -307,6 +307,7 @@
 				$('.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button.savePrimariesBtn').addClass('hidden');
 			}
 		}
+		
 		<?php } ?>
 	});
 	
@@ -328,7 +329,7 @@
 				{
 					class:'greenBtn hidden addWebsiteBtn',
 					text:"Add New Website",
-					click:function() { addWebsiteForm('<?= ($contact) ? $contact->TypeID : ''; ?>','<?= $contact->TypeCode; ?>')}
+					click:function() { addWebsiteForm('<?= ($user) ? $user->TypeID : ''; ?>','<?= $user->TypeCode; ?>')}
 				},
 			<?php } ?>
 				{
